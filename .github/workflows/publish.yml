@@ -1,0 +1,21 @@
+name: Publish as npm module
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install
+        run: npm ci
+
+      - name: Publish
+        run: cd dist && npm publish --access restricted && cd -
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
