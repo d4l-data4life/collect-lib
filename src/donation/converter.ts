@@ -1,0 +1,111 @@
+import { Buffer } from 'buffer/';
+
+export interface Converter {
+  arrayBufferToBase64: (buffer: ArrayBuffer) => string;
+  base64StringToArrayBuffer: (string: string) => ArrayBuffer;
+  base64StringToUint8Array: (string: string) => Uint8Array;
+  utf8StringToUint8Array: (string: string) => Uint8Array;
+  uint8ArrayToUTF8: (uint: Uint8Array) => string;
+  base64ToHex: (base64String: string) => string;
+  hexToBase64: (hex: string) => string;
+}
+
+export class WebConverter implements Converter {
+  arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  };
+
+  base64StringToArrayBuffer = (string: string): ArrayBuffer => {
+    const base64 = atob(string);
+    const buffer = new ArrayBuffer(base64.length);
+    const bufferView = new Uint8Array(buffer);
+    for (let i = 0, base64Len = base64.length; i < base64Len; i++) {
+      bufferView[i] = base64.charCodeAt(i);
+    }
+    return buffer;
+  };
+
+  /**
+   * Convert a base64 encoded string into Uint8Array
+   * @param string The string that needs to be converted into an Uint8Array
+   * @returns A Uint8Array
+   */
+  base64StringToUint8Array = (string: string): Uint8Array =>
+    new Uint8Array(this.base64StringToArrayBuffer(string));
+
+  utf8StringToUint8Array = (string: string): Uint8Array => {
+    const result = [];
+    const size = string.length;
+
+    for (let index = 0; index < size; index++) {
+      let point = string.charCodeAt(index);
+
+      if (point >= 0xd800 && point <= 0xdbff && size > index + 1) {
+        const second = string.charCodeAt(index + 1);
+
+        if (second >= 0xdc00 && second <= 0xdfff) {
+          // https://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+          point = (point - 0xd800) * 0x400 + second - 0xdc00 + 0x10000;
+          index += 1;
+        }
+      }
+
+      // US-ASCII
+      if (point < 0x80) {
+        result.push(point);
+        continue;
+      }
+
+      // 2-byte UTF-8
+      if (point < 0x800) {
+        result.push((point >> 6) | 192);
+        result.push((point & 63) | 128);
+        continue;
+      }
+
+      // 3-byte UTF-8
+      if (point < 0xd800 || (point >= 0xe000 && point < 0x10000)) {
+        result.push((point >> 12) | 224);
+        result.push(((point >> 6) & 63) | 128);
+        result.push((point & 63) | 128);
+        continue;
+      }
+
+      // 4-byte UTF-8
+      if (point >= 0x10000 && point <= 0x10ffff) {
+        result.push((point >> 18) | 240);
+        result.push(((point >> 12) & 63) | 128);
+        result.push(((point >> 6) & 63) | 128);
+        result.push((point & 63) | 128);
+        continue;
+      }
+
+      // Invalid character
+      result.push(0xef, 0xbf, 0xbd);
+    }
+
+    return new Uint8Array(result);
+  };
+
+  /**
+   * Convert a base64 encoded Uint8Array into a UTF-8 encoded string
+   * @param uint The base64 encoded Uint8Array
+   * @returns The UTF-8 encoded string
+   */
+  uint8ArrayToUTF8 = (uint: Uint8Array): string => {
+    const decoder = new TextDecoder();
+    const str = decoder.decode(uint);
+    return Buffer.from(str, 'base64').toString('utf8');
+  };
+
+  base64ToHex = (base64String: string): string =>
+    Buffer.from(base64String, 'base64').toString('hex');
+
+  hexToBase64 = (hexString: string): string => Buffer.from(hexString, 'hex').toString('base64');
+}

@@ -1,0 +1,325 @@
+import { Buffer } from 'buffer/';
+import * as forge from 'node-forge';
+import { Converter } from './converter';
+
+/**
+ * node-forge does not have documentation on the types, look up the
+ * source code to find documentation https://github.com/digitalbazaar/forge/tree/main/lib
+ * Important: strings coming out of node-forge are binary-encoded!
+ */
+
+export const AES_BLOCKSIZE = 16;
+export const TAG_LENGTH = 16;
+export const KEY_LENGTH = 32;
+export const HYBRID_ENCRYPTION_VERSION_RECOVERY = 3;
+
+export class HybridEncrypter {
+  converter: Converter;
+
+  constructor(converter: Converter) {
+    this.converter = converter;
+  }
+
+  /**
+   * Encrypt a donation
+   * @param rec The base64 encoded symmetric recovery key
+   * @param plaintext The data which should be encrypted
+   * @param publicKey The public key of the donation target (in PEM format)
+   * @returns The base64 encoded ArrayBuffer and encrypted donation and information for recovery
+   */
+  encrypt = (rec: string, plaintext: string, publicKey: string): string => {
+    // Get version
+    const version = HYBRID_ENCRYPTION_VERSION_RECOVERY;
+
+    // Get data key (used to encrypt data which should be donated)
+    const dataKey = this.getDataKey();
+
+    // Encrypt data key with recovery key using AES GCM
+    const recovery = this.encryptWithRecoveryKey(rec, dataKey);
+
+    // Encrypt data key with the public key of the donation target using RSA OAEP
+    const target = this.encryptWithTargetKey(publicKey, dataKey);
+
+    // Encrypt donation
+    const donation = this.encryptDonation(plaintext, dataKey);
+
+    // Create buffer
+    const bufferLength =
+      1 +
+      recovery.iv.byteLength + // 16
+      1 +
+      recovery.encryptedDataKey.byteLength +
+      2 +
+      target.encryptedDataKey.byteLength +
+      donation.iv.byteLength + // 16
+      8 +
+      donation.encrypted.byteLength;
+
+    const buffer = new ArrayBuffer(bufferLength);
+    let dataView: DataView = new DataView(buffer);
+    let offset = 0;
+
+    // Write version (length 1)
+    dataView.setUint8(0, version);
+    offset++;
+
+    // Write recovery data
+    // - Write initialization vector (length 16)
+    [dataView, offset] = setUint8Array(dataView, offset, recovery.iv);
+    // - Write length of encrypted data key (length 1)
+    dataView.setUint8(offset, recovery.encryptedDataKey.byteLength);
+    offset += 1;
+    // - Write encrypted data key
+    [dataView, offset] = setUint8Array(dataView, offset, recovery.encryptedDataKey);
+
+    // Write target data
+    // - Write length of encrypted data key (length 2)
+    dataView.setUint16(offset, target.encryptedDataKey.byteLength, true);
+    offset += 2;
+    // - Write encrypted data key
+    [dataView, offset] = setUint8Array(dataView, offset, target.encryptedDataKey);
+
+    // Write donation
+    // - Write initialization vector (length 16)
+    [dataView, offset] = setUint8Array(dataView, offset, donation.iv);
+    // - Write length of encrypted donation (length 8)
+    // The format requires a Uint64, which is not supported by Javascript, therefore we
+    // are writing the information as 2 Uint32 entries. And since it should be written in accordance
+    // with little endian, we are writing a 32bit-length first and a 32-bit 0 after
+    dataView.setUint32(offset, donation.encrypted.byteLength, true);
+    dataView.setUint32(offset + 4, 0, true);
+    offset += 8;
+    // - Write encrypted donation
+    [dataView, offset] = setUint8Array(dataView, offset, new Uint8Array(donation.encrypted));
+
+    // Return buffer
+    return this.converter.arrayBufferToBase64(buffer);
+  };
+
+  /**
+   * Decrypt a donation
+   * @param rec The base64 encoded symmetric recovery key
+   * @param cipherText The encrypted donation
+   * @returns An string containing the decrypted donation
+   */
+  decrypt = (rec: string, cipherText: string): string => {
+    const cipher = this.converter.base64StringToArrayBuffer(cipherText);
+
+    // Create DataView for buffer
+    const dataView = new DataView(cipher);
+    // Initialize offset
+    let offset = 0;
+
+    // Extract version
+    const version = dataView.getUint8(offset);
+    if (version !== HYBRID_ENCRYPTION_VERSION_RECOVERY) {
+      throw new Error(
+        `Version mismatch: Only version ${HYBRID_ENCRYPTION_VERSION_RECOVERY} is supported`
+      );
+    }
+    offset++;
+
+    // Read recovery data
+    const recovery: {
+      iv?: Uint8Array<ArrayBuffer>;
+      encryptedDataKey?: Uint8Array<ArrayBuffer>;
+      encryptedDataKeyLength?: number;
+    } = {};
+    // - Read initialization vector (length 16)
+    recovery.iv = new Uint8Array(cipher.slice(offset, 16 + offset));
+    offset += 16;
+    // - Read length of encrypted data key (length 1)
+    recovery.encryptedDataKeyLength = dataView.getUint8(offset);
+    offset += 1;
+    // - Read encrypted data key
+    recovery.encryptedDataKey = new Uint8Array(
+      cipher.slice(offset, recovery.encryptedDataKeyLength + offset)
+    );
+    offset += recovery.encryptedDataKeyLength;
+
+    // Read target data
+    const target: { encryptedDataKey?: Uint8Array; encryptedDataKeyLength?: number } = {};
+    // - Read length of encrypted data key (length 2)
+    target.encryptedDataKeyLength = dataView.getUint16(offset, true);
+    offset += 2;
+    // - Read encrypted data key
+    target.encryptedDataKey = new Uint8Array(
+      cipher.slice(offset, target.encryptedDataKeyLength + offset)
+    );
+    offset += target.encryptedDataKeyLength;
+
+    // Read donation
+    const donation: {
+      iv?: Uint8Array<ArrayBuffer>;
+      encrypted?: Uint8Array<ArrayBuffer>;
+      encryptedDonationLength?: number;
+    } = {};
+    // - Read initialization vector (length 16)
+    donation.iv = new Uint8Array(cipher.slice(offset, 16 + offset));
+    offset += 16;
+    // - Read length of encrypted donation (length 8)
+    donation.encryptedDonationLength = dataView.getUint32(offset, true);
+    offset += 8;
+    // - Read encrypted donation
+    donation.encrypted = new Uint8Array(
+      cipher.slice(offset, donation.encryptedDonationLength + offset)
+    );
+    offset += donation.encryptedDonationLength;
+
+    // Decrypt data key using recover key
+    const decryptedDataKey = this.decryptWithRecoveryKey(
+      rec,
+      recovery.encryptedDataKey,
+      recovery.iv
+    );
+
+    // Note: Don't decrypt the target-encrypted data key since we don't have the private key to do so
+
+    // Decrypt the encrypted donation
+    const decryptedDonation = this.decryptDonation(
+      decryptedDataKey,
+      donation.encrypted,
+      donation.iv
+    );
+
+    // Return the Arraybuffeer as plain text
+    return this.converter.uint8ArrayToUTF8(decryptedDonation);
+  };
+
+  private getDataKey = (): string => {
+    // Generate random symmetric key
+    return forge.random.getBytesSync(KEY_LENGTH);
+  };
+
+  /**
+   * Encrypt the data key with a base64 encoded recovery key
+   * @param rec The base64 encoded symmetric recovery phrase
+   * @param dataKey The random data key
+   * @returns The encrypted data key, the used initialization vector
+   */
+  private encryptWithRecoveryKey = (
+    rec: string,
+    dataKey: string
+  ): { iv: Uint8Array; encryptedDataKey: Uint8Array } => {
+    const iv = forge.random.getBytesSync(AES_BLOCKSIZE);
+
+    const cipher = forge.cipher.createCipher('AES-CBC', forge.util.decode64(rec));
+    cipher.start({ iv });
+    cipher.update(forge.util.createBuffer(dataKey));
+    cipher.finish();
+    const encrypted = cipher.output.getBytes();
+
+    return {
+      iv: this.converter.utf8StringToUint8Array(iv),
+      encryptedDataKey: this.converter.utf8StringToUint8Array(encrypted),
+    };
+  };
+
+  /**
+   * Decrypt the data key using the base64 encoded symmetric recovery key and a given initialization vector
+   * @param rec The base64 encoded symmetric recovery key
+   * @param encryptedDataKey The encrypted data key
+   * @param iv The used initialization vector
+   * @returns The decrypted data key
+   */
+  private decryptWithRecoveryKey = (
+    rec: string,
+    encryptedDataKey: Uint8Array<ArrayBuffer>,
+    iv: Uint8Array<ArrayBuffer>
+  ): Uint8Array<ArrayBuffer> => {
+    const cipher = forge.cipher.createDecipher('AES-CBC', forge.util.decode64(rec));
+    cipher.start({ iv: forge.util.createBuffer(iv) });
+    cipher.update(forge.util.createBuffer(encryptedDataKey));
+    cipher.finish();
+    const encrypted = cipher.output.getBytes();
+    return this.converter.utf8StringToUint8Array(encrypted);
+  };
+
+  /**
+   * Encrypt data key with the public key of the donation target using RSA OAEP
+   * @param targetKey The public key of the donation target
+   * @param dataKey The random data key
+   * @returns The encrypted data key
+   */
+  private encryptWithTargetKey = (
+    targetKey: string,
+    dataKey: string
+  ): { encryptedDataKey: Uint8Array } => {
+    const publicKey = forge.pki.publicKeyFromPem(targetKey);
+    const enc = publicKey.encrypt(dataKey, 'RSA-OAEP', { md: forge.md.sha256.create() });
+    return { encryptedDataKey: this.converter.utf8StringToUint8Array(enc) };
+  };
+
+  /**
+   * Encrypt the stringified donation using the data key
+   * @param donation The stringified version of what should be donated
+   * @param dataKey The key to encrypt the donation with
+   * @returns The encrypted donation, the used initialization vector and the length of the encrypted donation
+   */
+  private encryptDonation = (
+    donation: string,
+    dataKey: string
+  ): { iv: Uint8Array; encrypted: ArrayBuffer } => {
+    try {
+      const iv = forge.random.getBytesSync(AES_BLOCKSIZE);
+
+      const cipher = forge.cipher.createCipher('AES-GCM', dataKey);
+      cipher.start({ iv: iv });
+      cipher.update(forge.util.createBuffer(this.converter.utf8StringToUint8Array(donation)));
+      cipher.finish();
+      const encrypted = cipher.output.getBytes();
+      const tag = cipher.mode.tag.getBytes();
+
+      return {
+        iv: this.converter.utf8StringToUint8Array(iv),
+        encrypted: Buffer.concat([
+          this.converter.utf8StringToUint8Array(encrypted),
+          this.converter.utf8StringToUint8Array(tag),
+        ]),
+      };
+    } catch (error) {
+      console.error(`[HybridEncrypter] encrypt: ${error}`);
+      return {} as any;
+    }
+  };
+
+  private decryptDonation = (
+    dataKey: Uint8Array<ArrayBuffer>,
+    encryptedDonation: Uint8Array<ArrayBuffer>,
+    iv: Uint8Array<ArrayBuffer>
+  ): Uint8Array<ArrayBuffer> => {
+    try {
+      const encryptedData = encryptedDonation.slice(0, -TAG_LENGTH);
+      const tag = encryptedDonation.slice(-TAG_LENGTH);
+      const cipher = forge.cipher.createDecipher('AES-GCM', forge.util.createBuffer(dataKey));
+      cipher.start({ iv: forge.util.createBuffer(iv), tag: forge.util.createBuffer(tag) });
+      cipher.update(forge.util.createBuffer(encryptedData));
+      const pass = cipher.finish();
+      if (pass) {
+        const decrypted = cipher.output.getBytes();
+        return this.converter.utf8StringToUint8Array(decrypted);
+      }
+      return new Uint8Array();
+    } catch (error) {
+      console.error(`[HybridEncrypter] decrypt: ${error}`);
+      return new Uint8Array();
+    }
+  };
+}
+/**
+ * Add values to a DataView at a certain position
+ * @param dataView The data view to which the values should be added
+ * @param offset The offset where the values should be added
+ * @param values The values that should be added
+ */
+const setUint8Array = (
+  dataView: DataView,
+  offset: number,
+  values: Uint8Array
+): [DataView, number] => {
+  for (const value of values) {
+    dataView.setUint8(offset, value);
+    offset++;
+  }
+  return [dataView, offset];
+};
