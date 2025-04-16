@@ -1,4 +1,3 @@
-import { ULIDtoUUID } from 'ulid-uuid-converter';
 import { blurDocument } from './blurring';
 import { DonationRecord, ProgramDonation, RecordState } from './types';
 
@@ -29,7 +28,7 @@ export const filterRecords = (
       return {
         document: blurredDocument,
         status: record.status,
-        id: ULIDtoUUID(record.id),
+        id: record.id,
       };
     });
 };

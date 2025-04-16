@@ -21,23 +21,17 @@ export class KeyHandler {
    * @returns All necessary program keys
    */
   async deriveProgramKeys(recoveryKey: Uint8Array, programName: string) {
-    console.log('rec', recoveryKey);
-    console.log('rec.string', recoveryKey.toString());
-    console.log('get private program key');
     // Generate private key, using the program name as a salt
     let privateProgramKey = await this.crypto.deriveEncryptionKey(recoveryKey, programName);
 
     // Check if the private key is valid. If it is invalid, use the private key as entropy to generate a new private key, again, using the program name as salt
     while (!secp256k1.utils.isValidPrivateKey(privateProgramKey)) {
-      console.log('get private program key again');
       privateProgramKey = await this.crypto.deriveEncryptionKey(privateProgramKey, programName);
     }
 
-    console.log('get public program key');
     // Get public key for the private key
     const publicProgramKey = this.extendPublicKey(secp256k1.getPublicKey(privateProgramKey, false));
 
-    console.log('get recovery key program');
     // Extend the recovery based on the 16 byte entropy to 32 bytes
     const recoveryKey32 = await this.crypto.deriveEncryptionKey(recoveryKey, 'recovery');
 
@@ -133,7 +127,7 @@ export class KeyHandler {
     });
 
     // Sign the message
-    const signature = this.sign(message + secret, priv);
+    const signature = await this.sign(message + secret, priv);
 
     const signedMessage = JSON.stringify({
       messageJSON: message,

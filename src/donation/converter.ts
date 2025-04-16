@@ -1,15 +1,98 @@
 import { Buffer } from 'buffer/';
 
+/**
+ * Converter inferface with functions that require some platform specific functions to implement
+ * Generally functions requiring either Buffer or Base64 methods provided by polyfills/replacement libs
+ */
 export interface Converter {
   arrayBufferToBase64: (buffer: ArrayBuffer) => string;
   base64StringToArrayBuffer: (string: string) => ArrayBuffer;
   base64StringToUint8Array: (string: string) => Uint8Array;
-  utf8StringToUint8Array: (string: string) => Uint8Array;
   uint8ArrayToUTF8: (uint: Uint8Array) => string;
   base64ToHex: (base64String: string) => string;
   hexToBase64: (hex: string) => string;
 }
 
+// ========================================
+// Non-Platform dependentUtil Functions
+// ========================================
+
+/**
+ * Convert an forge.Bytes string (binary encoded string) to Uint8Array
+ * @param forgeBytes String returned by forge methods
+ * @returns The Uint8Array of the input
+ */
+export const forgeBytesToUint8Array = (forgeBytes: string): Uint8Array => {
+  const buffer = new ArrayBuffer(forgeBytes.length);
+  const bufferView = new Uint8Array(buffer);
+  for (let i = 0, stringLen = forgeBytes.length; i < stringLen; i++) {
+    bufferView[i] = forgeBytes.charCodeAt(i);
+  }
+  return bufferView;
+};
+
+/**
+ * Convert an UTF-8 string into encoded Uint8Array.
+ * @param string The string that needs to be converted
+ * @returns The UTF-8 encoded Uint8Array of the input
+ */
+export const utf8StringToUint8Array = (string: string): Uint8Array => {
+  const result = [];
+  const size = string.length;
+
+  for (let index = 0; index < size; index++) {
+    let point = string.charCodeAt(index);
+
+    if (point >= 0xd800 && point <= 0xdbff && size > index + 1) {
+      const second = string.charCodeAt(index + 1);
+
+      if (second >= 0xdc00 && second <= 0xdfff) {
+        // https://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+        point = (point - 0xd800) * 0x400 + second - 0xdc00 + 0x10000;
+        index += 1;
+      }
+    }
+
+    // US-ASCII
+    if (point < 0x80) {
+      result.push(point);
+      continue;
+    }
+
+    // 2-byte UTF-8
+    if (point < 0x800) {
+      result.push((point >> 6) | 192);
+      result.push((point & 63) | 128);
+      continue;
+    }
+
+    // 3-byte UTF-8
+    if (point < 0xd800 || (point >= 0xe000 && point < 0x10000)) {
+      result.push((point >> 12) | 224);
+      result.push(((point >> 6) & 63) | 128);
+      result.push((point & 63) | 128);
+      continue;
+    }
+
+    // 4-byte UTF-8
+    if (point >= 0x10000 && point <= 0x10ffff) {
+      result.push((point >> 18) | 240);
+      result.push(((point >> 12) & 63) | 128);
+      result.push(((point >> 6) & 63) | 128);
+      result.push((point & 63) | 128);
+      continue;
+    }
+
+    // Invalid character
+    result.push(0xef, 0xbf, 0xbd);
+  }
+
+  return new Uint8Array(result);
+};
+
+/**
+ * Browser implementation of the Converter interface
+ */
 export class WebConverter implements Converter {
   arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
     let binary = '';
@@ -38,60 +121,6 @@ export class WebConverter implements Converter {
    */
   base64StringToUint8Array = (string: string): Uint8Array =>
     new Uint8Array(this.base64StringToArrayBuffer(string));
-
-  utf8StringToUint8Array = (string: string): Uint8Array => {
-    const result = [];
-    const size = string.length;
-
-    for (let index = 0; index < size; index++) {
-      let point = string.charCodeAt(index);
-
-      if (point >= 0xd800 && point <= 0xdbff && size > index + 1) {
-        const second = string.charCodeAt(index + 1);
-
-        if (second >= 0xdc00 && second <= 0xdfff) {
-          // https://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
-          point = (point - 0xd800) * 0x400 + second - 0xdc00 + 0x10000;
-          index += 1;
-        }
-      }
-
-      // US-ASCII
-      if (point < 0x80) {
-        result.push(point);
-        continue;
-      }
-
-      // 2-byte UTF-8
-      if (point < 0x800) {
-        result.push((point >> 6) | 192);
-        result.push((point & 63) | 128);
-        continue;
-      }
-
-      // 3-byte UTF-8
-      if (point < 0xd800 || (point >= 0xe000 && point < 0x10000)) {
-        result.push((point >> 12) | 224);
-        result.push(((point >> 6) & 63) | 128);
-        result.push((point & 63) | 128);
-        continue;
-      }
-
-      // 4-byte UTF-8
-      if (point >= 0x10000 && point <= 0x10ffff) {
-        result.push((point >> 18) | 240);
-        result.push(((point >> 12) & 63) | 128);
-        result.push(((point >> 6) & 63) | 128);
-        result.push((point & 63) | 128);
-        continue;
-      }
-
-      // Invalid character
-      result.push(0xef, 0xbf, 0xbd);
-    }
-
-    return new Uint8Array(result);
-  };
 
   /**
    * Convert a base64 encoded Uint8Array into a UTF-8 encoded string

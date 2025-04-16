@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer/';
 import * as forge from 'node-forge';
-import { Converter } from './converter';
+import { Converter, forgeBytesToUint8Array, utf8StringToUint8Array } from './converter';
 
 /**
  * node-forge does not have documentation on the types, look up the
@@ -74,6 +74,7 @@ export class HybridEncrypter {
 
     // Write target data
     // - Write length of encrypted data key (length 2)
+    console.log('bytelenght of encrypted data key', target.encryptedDataKey.byteLength);
     dataView.setUint16(offset, target.encryptedDataKey.byteLength, true);
     offset += 2;
     // - Write encrypted data key
@@ -210,8 +211,8 @@ export class HybridEncrypter {
     const encrypted = cipher.output.getBytes();
 
     return {
-      iv: this.converter.utf8StringToUint8Array(iv),
-      encryptedDataKey: this.converter.utf8StringToUint8Array(encrypted),
+      iv: forgeBytesToUint8Array(iv),
+      encryptedDataKey: forgeBytesToUint8Array(encrypted),
     };
   };
 
@@ -232,7 +233,7 @@ export class HybridEncrypter {
     cipher.update(forge.util.createBuffer(encryptedDataKey));
     cipher.finish();
     const encrypted = cipher.output.getBytes();
-    return this.converter.utf8StringToUint8Array(encrypted);
+    return forgeBytesToUint8Array(encrypted);
   };
 
   /**
@@ -247,7 +248,7 @@ export class HybridEncrypter {
   ): { encryptedDataKey: Uint8Array } => {
     const publicKey = forge.pki.publicKeyFromPem(targetKey);
     const enc = publicKey.encrypt(dataKey, 'RSA-OAEP', { md: forge.md.sha256.create() });
-    return { encryptedDataKey: this.converter.utf8StringToUint8Array(enc) };
+    return { encryptedDataKey: forgeBytesToUint8Array(enc) };
   };
 
   /**
@@ -265,17 +266,14 @@ export class HybridEncrypter {
 
       const cipher = forge.cipher.createCipher('AES-GCM', dataKey);
       cipher.start({ iv: iv });
-      cipher.update(forge.util.createBuffer(this.converter.utf8StringToUint8Array(donation)));
+      cipher.update(forge.util.createBuffer(utf8StringToUint8Array(donation)));
       cipher.finish();
       const encrypted = cipher.output.getBytes();
       const tag = cipher.mode.tag.getBytes();
 
       return {
-        iv: this.converter.utf8StringToUint8Array(iv),
-        encrypted: Buffer.concat([
-          this.converter.utf8StringToUint8Array(encrypted),
-          this.converter.utf8StringToUint8Array(tag),
-        ]),
+        iv: forgeBytesToUint8Array(iv),
+        encrypted: Buffer.concat([forgeBytesToUint8Array(encrypted), forgeBytesToUint8Array(tag)]),
       };
     } catch (error) {
       console.error(`[HybridEncrypter] encrypt: ${error}`);
@@ -297,7 +295,7 @@ export class HybridEncrypter {
       const pass = cipher.finish();
       if (pass) {
         const decrypted = cipher.output.getBytes();
-        return this.converter.utf8StringToUint8Array(decrypted);
+        return forgeBytesToUint8Array(decrypted);
       }
       return new Uint8Array();
     } catch (error) {

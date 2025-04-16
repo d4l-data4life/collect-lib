@@ -1,4 +1,3 @@
-import { UUIDtoULID } from 'ulid-uuid-converter';
 import { Converter } from './converter';
 import { CryptoModule } from './crypto';
 import { filterRecords, includedResearchSubjects } from './document';
@@ -219,6 +218,7 @@ export class DonationSDK implements SDKInterface {
         body: JSON.stringify(donations),
       });
     } catch (e) {
+      console.error(e);
       throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
     }
 
@@ -324,7 +324,7 @@ export class DonationSDK implements SDKInterface {
         .map(({ id, data }) => {
           return {
             document: JSON.parse(data),
-            id: UUIDtoULID(id),
+            id,
             status: RecordState.ACTIVE,
           };
         });
