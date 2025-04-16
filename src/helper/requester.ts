@@ -1,4 +1,18 @@
-import { RequesterArguments } from './types';
+interface RequesterHeaders {
+  [key: string]: string;
+}
+
+interface RequesterArguments {
+  uri: string;
+  authenticated?: boolean;
+  retry?: boolean;
+  method?: string;
+  contentType?: string;
+  sendLanguage?: boolean;
+  headers?: RequesterHeaders;
+  body?: any;
+  credentials?: 'omit' | 'same-origin' | 'include';
+}
 
 interface RequesterInterface {
   accessToken: Promise<string>;

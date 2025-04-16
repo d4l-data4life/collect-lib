@@ -6,29 +6,25 @@ import { Buffer } from 'buffer/';
  */
 export interface Converter {
   arrayBufferToBase64: (buffer: ArrayBuffer) => string;
-  base64StringToArrayBuffer: (string: string) => ArrayBuffer;
-  base64StringToUint8Array: (string: string) => Uint8Array;
+  base64ToArrayBuffer: (string: string) => ArrayBuffer;
+  uint8ArrayToBase64: (array: Uint8Array) => string;
+  base64ToUint8Array: (string: string) => Uint8Array;
   uint8ArrayToUTF8: (uint: Uint8Array) => string;
   base64ToHex: (base64String: string) => string;
   hexToBase64: (hex: string) => string;
 }
 
 // ========================================
-// Non-Platform dependentUtil Functions
+// #region Non-Platform dependentUtil Functions
 // ========================================
 
 /**
- * Convert an forge.Bytes string (binary encoded string) to Uint8Array
- * @param forgeBytes String returned by forge methods
+ * Convert a binary string (as returned by forge) to Uint8Array
+ * @param binaryString String returned by forge methods
  * @returns The Uint8Array of the input
  */
-export const forgeBytesToUint8Array = (forgeBytes: string): Uint8Array => {
-  const buffer = new ArrayBuffer(forgeBytes.length);
-  const bufferView = new Uint8Array(buffer);
-  for (let i = 0, stringLen = forgeBytes.length; i < stringLen; i++) {
-    bufferView[i] = forgeBytes.charCodeAt(i);
-  }
-  return bufferView;
+export const binaryStringToUint8Array = (binaryString: string): Uint8Array => {
+  return new Uint8Array(binaryString.split('').map((c) => c.charCodeAt(0)));
 };
 
 /**
@@ -36,7 +32,7 @@ export const forgeBytesToUint8Array = (forgeBytes: string): Uint8Array => {
  * @param string The string that needs to be converted
  * @returns The UTF-8 encoded Uint8Array of the input
  */
-export const utf8StringToUint8Array = (string: string): Uint8Array => {
+export const utf8ToUint8Array = (string: string): Uint8Array => {
   const result = [];
   const size = string.length;
 
@@ -89,6 +85,7 @@ export const utf8StringToUint8Array = (string: string): Uint8Array => {
 
   return new Uint8Array(result);
 };
+// #endregion
 
 /**
  * Browser implementation of the Converter interface
@@ -104,7 +101,7 @@ export class WebConverter implements Converter {
     return btoa(binary);
   };
 
-  base64StringToArrayBuffer = (string: string): ArrayBuffer => {
+  base64ToArrayBuffer = (string: string): ArrayBuffer => {
     const base64 = atob(string);
     const buffer = new ArrayBuffer(base64.length);
     const bufferView = new Uint8Array(buffer);
@@ -114,13 +111,18 @@ export class WebConverter implements Converter {
     return buffer;
   };
 
+  // convert Uint8Array to base64 string
+  uint8ArrayToBase64 = (array: Uint8Array): string => {
+    return btoa(String.fromCharCode(...array));
+  };
+
   /**
    * Convert a base64 encoded string into Uint8Array
    * @param string The string that needs to be converted into an Uint8Array
    * @returns A Uint8Array
    */
-  base64StringToUint8Array = (string: string): Uint8Array =>
-    new Uint8Array(this.base64StringToArrayBuffer(string));
+  base64ToUint8Array = (string: string): Uint8Array =>
+    new Uint8Array(this.base64ToArrayBuffer(string));
 
   /**
    * Convert a base64 encoded Uint8Array into a UTF-8 encoded string

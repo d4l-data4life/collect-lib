@@ -1,8 +1,10 @@
 import * as secpUtils from '@noble/curves/abstract/utils';
 import { secp256k1 } from '@noble/curves/secp256k1';
+import * as bip39 from '@scure/bip39';
 import { Buffer } from 'buffer/';
 import * as forge from 'node-forge';
-import { Converter } from './converter';
+import { Converter } from '../helper/converter';
+import wordlists, { WORDLIST_LANGUAGES, WordListLanguage } from '../helper/wordlists';
 import { CryptoModule } from './crypto';
 import { ERROR_MESSAGES } from './types';
 
@@ -13,6 +15,31 @@ export class KeyHandler {
     this.converter = converter;
     this.crypto = crypto;
   }
+
+  generateRecoveryKey(): Uint8Array {
+    return this.crypto.generateKey(16);
+  }
+
+  validateRecoveryKey = (recoveryKey: Uint8Array) => {
+    return recoveryKey.length === 16;
+  };
+
+  mnemonicToEntropy = (mnemonic: string, lng: string): Uint8Array => {
+    if (!WORDLIST_LANGUAGES.includes(lng as WordListLanguage)) {
+      lng = WORDLIST_LANGUAGES[0];
+    }
+    return bip39.mnemonicToEntropy(mnemonic, wordlists[lng as WordListLanguage]);
+  };
+
+  entropyToMnemonic = (entropy: Uint8Array | null, lng: string): string => {
+    if (!WORDLIST_LANGUAGES.includes(lng as WordListLanguage)) {
+      lng = WORDLIST_LANGUAGES[0];
+    }
+    if (entropy) {
+      return bip39.entropyToMnemonic(entropy, wordlists[lng as WordListLanguage]);
+    }
+    return '';
+  };
 
   /**
    * Derive all necessary program keys from the recovery phrase and the program name
@@ -38,7 +65,7 @@ export class KeyHandler {
     return {
       public: publicProgramKey,
       private: this.converter.hexToBase64(secpUtils.bytesToHex(privateProgramKey)),
-      recovery: this.converter.arrayBufferToBase64(recoveryKey32),
+      recovery: this.converter.uint8ArrayToBase64(recoveryKey32),
     };
   }
 
@@ -60,18 +87,14 @@ export class KeyHandler {
 
     return Buffer.concat([header, key]).toString('base64');
   };
+
   /**
    * Hash a message with SHA-256
    * @param message The message to hash
    * @returns The hashed message
    */
   hash = (message: string) => {
-    // TODO: does this work?
-    // const encoder = new TextEncoder();
-    // const data = encoder.encode(message);
     const hash = forge.md.sha256.create().update(message).digest();
-    // const hash = await crypto.subtle.digest('SHA-256', data);
-    // return secpUtils.bytesToHex(new Uint8Array(hash));
     return hash.toHex();
   };
 
@@ -104,63 +127,5 @@ export class KeyHandler {
   verify = async (message: string, signature: Uint8Array, pub: string): Promise<boolean> => {
     const sha256 = this.hash(message);
     return secp256k1.verify(signature, sha256, this.converter.base64ToHex(pub));
-  };
-
-  /**
-   * Create an authentication token which can be used to authenticate with the Donation API
-   * @param pub A public base64 encoded key - the donorId
-   * @param priv The corresponding base64 encoded private key
-   * @param token A unique token issued by the Donation API
-   * @param secret SELF_SIGN_SECRET configured for both UA and Donation Service
-   * @returns The authentication token that can be used to authenticate with the Donation API
-   */
-  createAuthToken = async (
-    pub: string,
-    priv: string,
-    token: string,
-    secret: string
-  ): Promise<string> => {
-    // Message that is used to authenticated the user
-    const message = JSON.stringify({
-      token,
-      donorID: pub,
-    });
-
-    // Sign the message
-    const signature = await this.sign(message + secret, priv);
-
-    const signedMessage = JSON.stringify({
-      messageJSON: message,
-      signature: this.converter.arrayBufferToBase64(signature as any),
-    });
-
-    // Transform the signed message to as base64 string to make is usable as a BEARER token
-    return Buffer.from(signedMessage).toString('base64');
-  };
-
-  /**
-   * Validate an authentication token which can be used to authenticated with the Donation API
-   * @param authToken The authentication token that can be used to authenticate with the Donation API
-   * @param token A unique token issued by the Donation API
-   * @param pub A public base64 encoded key - the donorId
-   * @returns True if the authentication token is valid. Otherwise, false.
-   */
-  validateAuthToken = async (authToken: string, token: string, pub: string): Promise<boolean> => {
-    // Get signature and message
-    const { signature, messageJSON: message }: { signature: string; messageJSON: string } =
-      JSON.parse(window.atob(authToken));
-
-    // Get the token
-    const { token: extractedToken } = JSON.parse(message);
-
-    // Validated the signature and signed message
-    const valid = await this.verify(
-      message,
-      this.converter.base64StringToUint8Array(signature),
-      pub
-    );
-
-    // Validate the token
-    return valid && extractedToken === token;
   };
 }

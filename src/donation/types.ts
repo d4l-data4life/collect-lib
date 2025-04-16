@@ -64,7 +64,7 @@ export type DonationRecord = {
 
 export type ProgramType = 'study' | 'diary' | 'sensor';
 
-export type Program = {
+export interface Program {
   name: string;
   tenantID: string;
   languages: string[];
@@ -72,32 +72,29 @@ export type Program = {
   donation: ProgramDonation;
   endDate?: string;
   phases: ProgramStep[][];
-};
+}
 
-export type ProgramDonation = {
+export interface ProgramDonation {
   consentKey?: string;
   delay: number;
   revocation: 'delete' | 'anonymize';
   anonymization?: ProgramAnonymization;
   target: string;
-};
+}
 
-export type ProgramStepType = 'consent' | 'token' | 'survey' | 'wearable' | 'display';
+export type ProgramStepType =
+  | 'consent'
+  | 'token'
+  | 'survey'
+  | 'display'
+  | 'eligibility'
+  | 'sensor'
+  | 'routine';
 
-export type ProgramStep = {
+export interface ProgramStep {
   type: ProgramStepType;
   required: boolean;
-};
-
-export type ProgramResource = {
-  url: string;
-  versions?: string[];
-  blur?: {
-    location?: string;
-    authored?: DateBlurringFunction;
-    items?: ItemBlurring[];
-  };
-};
+}
 
 export type ProgramAnonymization = {
   blur?: {
@@ -125,33 +122,6 @@ export type ItemBlurring = {
   params?: { [key in NumberBlurringParams]?: number | number[] };
 };
 
-export interface RequesterHeaders {
-  [key: string]: string;
-}
-
-export interface RequesterArguments {
-  uri: string;
-  authenticated?: boolean;
-  retry?: boolean;
-  method?: string;
-  contentType?: string;
-  sendLanguage?: boolean;
-  headers?: RequesterHeaders;
-  body?: any;
-  credentials?: 'omit' | 'same-origin' | 'include';
-}
-
-export interface RequesterInterface {
-  accessToken: Promise<string>;
-  requestAccessToken: () => Promise<string>;
-  resetAccessToken: () => void;
-  get: <T = unknown>(params: Omit<RequesterArguments, 'method'>) => Promise<[T, Headers]>;
-  post: <T = unknown>(params: Omit<RequesterArguments, 'method'>) => Promise<[T, Headers]>;
-  put: <T = unknown>(params: Omit<RequesterArguments, 'method'>) => Promise<[T, Headers]>;
-  del: <T = unknown>(params: Omit<RequesterArguments, 'method'>) => Promise<[T, Headers]>;
-  request: <T = unknown>(args: RequesterArguments) => Promise<[T, Headers]>;
-}
-
 export interface SDKInterface {
   /**
    * Create a donor identity for a study
@@ -164,26 +134,26 @@ export interface SDKInterface {
   /**
    * Register a donor identity for a program
    * @param recoveryKey The 16byte long recovery key (from the recovery phrase)
-   * @param programName The name of the program for which the registration should be done
+   * @param program The program for which the registration should be done
    * @param participationCode The optional participation code
    * @returns The newly created donor identity
    */
   register: (
     recoveryKey: Uint8Array,
-    programName: string,
+    program: Program,
     participationCode?: string
   ) => Promise<{ donorIdentity: DonorIdentity; subjectId: string }>;
 
   /**
    * Donate resources for a study
    * @param donorIdentity The donor identity for the study
-   * @param programName The name of the program for which the resources should be donated
+   * @param programName The program for which the resources should be donated
    * @param records The list of resources that should be donated
    * @returns True, if the donation was successful. Otherwise, false.
    */
   donate: (
     donorIdentity: DonorIdentity,
-    programName: string,
+    program: Program,
     records: { id: string; document: fhir5.Resource; status: RecordState }[]
   ) => Promise<boolean>;
 
@@ -207,8 +177,8 @@ export interface SDKInterface {
    */
   revoke: (
     donorIdentity: DonorIdentity,
-    programName: string,
-    records: { id: string; document: fhir5.Resource; status: RecordState }[] // Under normal circumstances this should only be a ResearchSubject
+    program: Program,
+    records: DonationRecord[] // Under normal circumstances this should only be a ResearchSubject
   ) => Promise<boolean>;
 }
 
