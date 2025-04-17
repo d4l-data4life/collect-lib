@@ -1,5 +1,5 @@
 {
-  "name": "@d4l/phoenix-lib",
+  "name": "@d4l/collect-lib",
   "version": "1.0.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -7,7 +7,7 @@
   "files": [
     "dist"
   ],
-  "repository": "https://github.com/gesundheitscloud/phoenix-lib.git",
+  "repository": "https://github.com/gesundheitscloud/collect-lib.git",
   "license": "SEE LICENSE IN LICENSE.md",
   "homepage": "https://www.d4l.io/",
   "scripts": {

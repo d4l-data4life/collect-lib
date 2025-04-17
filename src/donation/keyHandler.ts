@@ -4,12 +4,12 @@ import * as bip39 from '@scure/bip39';
 import { Buffer } from 'buffer/';
 import * as forge from 'node-forge';
 import { Converter } from '../helper/converter';
-import wordlists, { WORDLIST_LANGUAGES, WordListLanguage } from '../helper/wordlists';
+import { WORDLIST_LANGUAGES, WordListLanguage, wordlists } from '../helper/wordlists';
 import { CryptoModule } from './crypto';
 import { ERROR_MESSAGES } from './types';
 
 export class KeyHandler {
-  private converter;
+  private converter: Converter;
   private crypto: CryptoModule;
   constructor(converter: Converter, crypto: CryptoModule) {
     this.converter = converter;

@@ -2,10 +2,10 @@ import { ResearchSubjectProgressState, StudyNameSystem, TokenNamingSystem } from
 
 type ResearchSubjectProgress = {
   state: ResearchSubjectProgressState;
-  date: string;
+  date?: string;
 };
 
-export const generateResearchSubject = (
+export const generateFHIRResearchSubject = (
   programName: string,
   progress: ResearchSubjectProgress[],
   subject: string = 'anonymous'

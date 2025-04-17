@@ -2050,6 +2050,7 @@ const german = [
   'zwirn',
   'zyklus',
 ];
+
 export type WordListLanguage = 'de' | 'en';
 export const WORDLIST_LANGUAGES: WordListLanguage[] = ['de', 'en'];
 
@@ -2062,9 +2063,14 @@ export const getLanguageOfPassPhrase = (words: string[]): WordListLanguage | und
   return undefined;
 };
 
-const wordlists = {
+export const extractWordsFromRecoveryPhrase = (phrase: string): string[] =>
+  phrase
+    ?.trim()
+    .split(/\s/g)
+    .filter((word) => word.length > 2)
+    .map((word) => word.toLowerCase()) ?? [];
+
+export const wordlists = {
   en: wordlist,
   de: german,
 };
-
-export default wordlists;

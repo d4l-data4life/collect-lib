@@ -28,6 +28,15 @@ export const binaryStringToUint8Array = (binaryString: string): Uint8Array => {
 };
 
 /**
+ * Convert a binary string (as returned by forge) to Uint8Array
+ * @param array Uint8Array
+ * @returns The binary string representation of the input (as used by forge)
+ */
+export const uint8ArrayToBinaryString = (array: Uint8Array): string => {
+  return String.fromCharCode.apply(null, array as any);
+};
+
+/**
  * Convert an UTF-8 string into encoded Uint8Array.
  * @param string The string that needs to be converted
  * @returns The UTF-8 encoded Uint8Array of the input
