@@ -1,5 +1,7 @@
 import { RecursiveKeyOf, TranslatedString } from '.';
 
+export type ConsentTimes = { [key: string]: Date | null };
+
 export type ConsentName = 'main' | 'optional';
 export type Consent = {
   name: ConsentName;

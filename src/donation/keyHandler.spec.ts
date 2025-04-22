@@ -1,17 +1,19 @@
 import {
+  CryptoModule,
   KeyHandler,
   WebConverter,
   binaryStringToUint8Array,
   uint8ArrayToBinaryString,
-} from '../../src';
-import { WORDLIST_LANGUAGES, getLanguageOfPassPhrase } from '../../src/helper/wordlists';
+} from '..';
+import { WORDLIST_LANGUAGES, getLanguageOfPassPhrase } from '../helper/wordlists';
 
 // todo: node crypto for testing
+const dummyCrypto: CryptoModule = {} as any;
 
 describe('Recovery Phrase Functions', () => {
   const validLng = WORDLIST_LANGUAGES[1];
   const converter = new WebConverter();
-  const keyHandler = new KeyHandler(converter, cryptoModule);
+  const keyHandler = new KeyHandler(converter, dummyCrypto);
   const invalidLng = 'invalid-lang'; // A language code that is not in WORDLIST_LANGUAGES
 
   describe('generateRecoveryPhrase', () => {

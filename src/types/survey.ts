@@ -1,5 +1,9 @@
 import { RecursiveKeyOf, TranslatedString } from '.';
 
+export type Answer = string | string[];
+export type Answers = { [key: string]: Answer };
+export type MultiAnswers = { [key: string]: { date: Date | null; answers: Answers } };
+
 // ### Survey
 // Properties | Required | Type | Description
 export type Survey = {

@@ -1,6 +1,8 @@
 import { RecursiveKeyOf, TranslatedString } from '.';
 import { TaskFrequency } from './survey';
 
+export type RoutineTimes = { [key: string]: Date | null };
+
 // ### Routine
 // Properties | Required | Type | Description
 export type Routine = {

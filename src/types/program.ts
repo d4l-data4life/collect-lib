@@ -1,5 +1,13 @@
 import { ProgramDevice, RecursiveKeyOf, TranslatedString } from '.';
 
+export type SkippedStep = {
+  programName: string;
+  stepType: ProgramStepType;
+  stepInfo: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 // ### Program
 // Properties | Required | Type | Description
 export type Program = {
