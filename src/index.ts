@@ -7,6 +7,8 @@ export * from './helper/converter';
 export * from './helper/requester';
 export * from './helper/wordlists';
 
-export * from './fhir/constants';
 export * from './fhir/consent';
+export * from './fhir/constants';
 export * from './fhir/researchSubject';
+
+export * from './types';

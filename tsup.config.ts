@@ -8,6 +8,7 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: true,
+  platform: 'browser',
   // esbuildPlugins: [
   //   polyfillNode({
   //     globals: {

@@ -1,18 +1,12 @@
 import { Buffer } from 'buffer/';
 import { Converter } from '../helper/converter';
 import Requester from '../helper/requester';
+import { Program } from '../types';
 import { CryptoModule } from './crypto';
 import { filterRecords, includedResearchSubjects } from './document';
 import { HybridEncrypter } from './hybridEncryption';
 import { KeyHandler } from './keyHandler';
-import {
-  DonationRecord,
-  DonorIdentity,
-  ERROR_MESSAGES,
-  Program,
-  RecordState,
-  SDKInterface,
-} from './types';
+import { DonationRecord, DonorIdentity, ERROR_CODES, RecordState, SDKInterface } from './types';
 import { DONOR_IDENTITY_VERSION, isPrivateProgram, validateProgramName } from './utils';
 
 // export type GetProgramFn = (programName: string) => Promise<Program>;
@@ -21,7 +15,6 @@ export class DonationSDK implements SDKInterface {
   /**
    * Flag indicating if the SDK has been initialized
    */
-  private initialized = false;
   private selfSignSecret: string;
 
   /**
@@ -43,7 +36,6 @@ export class DonationSDK implements SDKInterface {
     this.hybridEncrypter = new HybridEncrypter(converter);
     this.keyHandler = new KeyHandler(converter, crypto);
     this.converter = converter;
-    this.initialized = true;
   }
 
   /**
@@ -58,7 +50,7 @@ export class DonationSDK implements SDKInterface {
       });
       return response[target].key;
     } catch {
-      throw new Error(ERROR_MESSAGES.NO_TARGET_KEY);
+      throw new Error(ERROR_CODES.NO_TARGET_KEY);
     }
   }
 
@@ -77,7 +69,7 @@ export class DonationSDK implements SDKInterface {
           uri: `/token`,
         });
       } catch (e) {
-        throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+        throw new Error(ERROR_CODES.INTERNAL_SERVER_ERROR);
       }
 
       // Create authentication token for Donation API
@@ -157,12 +149,17 @@ export class DonationSDK implements SDKInterface {
     return valid && extractedToken === token;
   };
 
-  /**
-   * Create a donor identity for a program
-   * @param recoveryKey The 16byte long recovery key (from the recovery phrase)
-   * @param programName The name of the program
-   * @returns A donor identity consisting of a private-public key pair and a recovery key
-   */
+  async donationServiceAvailable(): Promise<boolean> {
+    try {
+      await this.donationAPI.get({
+        uri: '/checks/readiness',
+      });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async createDonorIdentity(recoveryKey: Uint8Array, programName: string): Promise<DonorIdentity> {
     const keys = await this.keyHandler.deriveProgramKeys(recoveryKey, programName);
     return {
@@ -177,50 +174,46 @@ export class DonationSDK implements SDKInterface {
     };
   }
 
-  /**
-   * Register a donor identity for a program
-   * @param recoveryKey The 16byte long recovery key (from the recovery phrase)
-   * @param programName The name of the program for which the registration should be done
-   * @param participationCode The optional participation code
-   * @returns The newly created donor identity
-   */
   async register(
     recoveryKey: Uint8Array,
     program: Program,
     participationCode?: string
   ): Promise<{ donorIdentity: DonorIdentity; subjectId: string }> {
+    if (!(await this.donationServiceAvailable())) {
+      throw new Error(ERROR_CODES.NOT_ONLINE);
+    }
+
     // Validate the name of the program
     validateProgramName(program.name);
 
     // Check if program requires a code
     if (isPrivateProgram(program) && !participationCode) {
-      throw new Error(ERROR_MESSAGES.MISSING_PARTICIPATION_CODE);
+      throw new Error(ERROR_CODES.MISSING_PARTICIPATION_CODE);
     }
 
     // Create and register donor identity
-    // try {
-    // Create donor identity
-    const donorIdentity = await this.createDonorIdentity(recoveryKey, program.name);
-    const [subjectId] = await this.donationAPI.put<string>({
-      uri: '/register',
-      body: JSON.stringify({
-        programName: program.name,
-        donorID: donorIdentity.keys.pub,
-        ...(participationCode && { participantCode: participationCode }),
-      }),
-    });
-    return { donorIdentity, subjectId };
-    // } catch (error: any) {
-    //   console.error(new Error(`[Donation Service] ${error}`));
-    //   switch (error.status) {
-    //     case 409:
-    //       throw new Error(ERROR_MESSAGES.DONOR_ALREADY_REGISTERED); // The donor identity is already registered using a different participation code
-    //     case 500:
-    //       throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
-    //     default:
-    //       throw new Error(ERROR_MESSAGES.DONOR_REGISTRATION_FAILED); // Participation code doesn't exist
-    //   }
-    // }
+    try {
+      const donorIdentity = await this.createDonorIdentity(recoveryKey, program.name);
+      const [subjectId] = await this.donationAPI.put<string>({
+        uri: '/register',
+        body: JSON.stringify({
+          programName: program.name,
+          donorID: donorIdentity.keys.pub,
+          ...(participationCode && { participantCode: participationCode }),
+        }),
+      });
+      return { donorIdentity, subjectId };
+    } catch (error: any) {
+      console.error(new Error(`[Donation Service] ${error}`));
+      switch (error.status) {
+        case 409:
+          throw new Error(ERROR_CODES.DONOR_ALREADY_REGISTERED); // The donor identity is already registered using a different participation code
+        case 500:
+          throw new Error(ERROR_CODES.INTERNAL_SERVER_ERROR);
+        default:
+          throw new Error(ERROR_CODES.DONOR_REGISTRATION_FAILED); // Participation code doesn't exist
+      }
+    }
   }
 
   async donate(
@@ -231,14 +224,6 @@ export class DonationSDK implements SDKInterface {
     ////////
     // Check prerequisites
     ////////
-    if (!this.initialized) {
-      throw new Error(ERROR_MESSAGES.SDK_NOT_INITIALIZED);
-    }
-
-    if (!records || !records.length) {
-      throw new Error(ERROR_MESSAGES.NOT_ENOUGH_DOCUMENTS);
-    }
-
     // Validate the name of the program
     validateProgramName(program.name, donorIdentity);
 
@@ -275,7 +260,7 @@ export class DonationSDK implements SDKInterface {
       });
     } catch (e) {
       console.error(e);
-      throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+      throw new Error(ERROR_CODES.INTERNAL_SERVER_ERROR);
     }
 
     return true;
@@ -315,8 +300,8 @@ export class DonationSDK implements SDKInterface {
     ////////
     // Check prerequisites
     ////////
-    if (!this.initialized) {
-      throw new Error(ERROR_MESSAGES.SDK_NOT_INITIALIZED);
+    if (!(await this.donationServiceAvailable())) {
+      throw new Error(ERROR_CODES.NOT_ONLINE);
     }
 
     // Validate the name of the program
@@ -354,7 +339,7 @@ export class DonationSDK implements SDKInterface {
         offset += limit;
       }
     } catch (e) {
-      throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+      throw new Error(ERROR_CODES.INTERNAL_SERVER_ERROR);
     }
 
     ////////
@@ -382,7 +367,7 @@ export class DonationSDK implements SDKInterface {
           };
         });
     } catch {
-      throw new Error(ERROR_MESSAGES.RESTORE_DECRYPTION_FAILED);
+      throw new Error(ERROR_CODES.RESTORE_DECRYPTION_FAILED);
     }
 
     return documents;
@@ -396,12 +381,12 @@ export class DonationSDK implements SDKInterface {
     ////////
     // Check prerequisites
     ////////
-    if (!this.initialized) {
-      throw new Error(ERROR_MESSAGES.SDK_NOT_INITIALIZED);
+    if (!(await this.donationServiceAvailable())) {
+      throw new Error(ERROR_CODES.NOT_ONLINE);
     }
 
-    if (!records || !records.length) {
-      throw new Error(ERROR_MESSAGES.NOT_ENOUGH_DOCUMENTS);
+    if (!records?.length) {
+      throw new Error(ERROR_CODES.MISSING_RESEARCH_SUBJECT);
     }
 
     // Validate the name of the program with the donorIdentity
@@ -415,7 +400,7 @@ export class DonationSDK implements SDKInterface {
     );
 
     if (includedResearchSubjects(donatableRecords).length < 1) {
-      throw new Error(ERROR_MESSAGES.MISSING_RESEARCH_SUBJECT);
+      throw new Error(ERROR_CODES.MISSING_RESEARCH_SUBJECT);
     }
 
     ////////
@@ -437,12 +422,12 @@ export class DonationSDK implements SDKInterface {
 
     // Upload donations
     try {
-      await authenticatedDonationAPI.put<void>({
+      await authenticatedDonationAPI.post<void>({
         uri: `/revoke/${program.name}`,
         body: JSON.stringify(donations),
       });
     } catch (e) {
-      throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+      throw new Error(ERROR_CODES.INTERNAL_SERVER_ERROR);
     }
 
     return true;

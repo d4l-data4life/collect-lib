@@ -6,7 +6,7 @@ import * as forge from 'node-forge';
 import { Converter } from '../helper/converter';
 import { WORDLIST_LANGUAGES, WordListLanguage, wordlists } from '../helper/wordlists';
 import { CryptoModule } from './crypto';
-import { ERROR_MESSAGES } from './types';
+import { ERROR_CODES } from './types';
 
 export class KeyHandler {
   private converter: Converter;
@@ -113,7 +113,7 @@ export class KeyHandler {
         .toCompactRawBytes();
     } catch (e) {
       console.error(e);
-      throw new Error(ERROR_MESSAGES.COULD_NOT_SIGN);
+      throw new Error(ERROR_CODES.COULD_NOT_SIGN);
     }
   };
 

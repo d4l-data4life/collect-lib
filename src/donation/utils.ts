@@ -1,4 +1,4 @@
-import { DonorIdentity, ERROR_MESSAGES, Program } from './types';
+import { DonorIdentity, ERROR_CODES, Program } from './types';
 
 export const DONOR_IDENTITY_VERSION = 2;
 
@@ -26,10 +26,10 @@ export const isPrivateProgram = (program: Program): boolean => {
  */
 export const validateProgramName = (programName: string, donorIdentity?: DonorIdentity) => {
   if (!programName) {
-    throw new Error(ERROR_MESSAGES.PROGRAM_NO_STUDY_ID);
+    throw new Error(ERROR_CODES.PROGRAM_NO_STUDY_ID);
   }
 
   if (donorIdentity && programName !== donorIdentity.scope) {
-    throw new Error(ERROR_MESSAGES.STUDY_ID_DOES_NOT_MATCH_DONOR_IDENTITY);
+    throw new Error(ERROR_CODES.STUDY_ID_DOES_NOT_MATCH_DONOR_IDENTITY);
   }
 };

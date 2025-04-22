@@ -1,14 +1,6 @@
+import { Buffer } from 'buffer/';
+import { Consent } from '../types';
 import { ConsentNameSystem, ConsentVersionSystem } from './constants';
-
-export type TranslatedString = { [key: string]: string };
-export type Consent = {
-  name: string;
-  programName: string;
-  version: number;
-  text: TranslatedString;
-  title: TranslatedString;
-  published?: string;
-};
 
 export const generateFHIRConsent = (
   consent: Consent,

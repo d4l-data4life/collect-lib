@@ -1,5 +1,6 @@
+import { ProgramDonation } from '../types';
 import { blurDocument } from './blurring';
-import { DonationRecord, ProgramDonation, RecordState } from './types';
+import { DonationRecord, RecordState } from './types';
 
 export const StudyNameSystem = 'http://fhir.data4life.care/r5/CodeSystem/study-name';
 
