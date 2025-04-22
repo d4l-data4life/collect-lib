@@ -13,5 +13,6 @@ export * from './helper/eligibility';
 export * from './fhir/consent';
 export * from './fhir/constants';
 export * from './fhir/researchSubject';
+export * from './fhir/questionnaireResponse';
 
 export * from './types';

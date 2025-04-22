@@ -3,6 +3,7 @@ export * from './display';
 export * from './program';
 export * from './routine';
 export * from './survey';
+export * from './questionnaireResponse';
 
 export type TranslatedString = { [key: string]: string };
 
