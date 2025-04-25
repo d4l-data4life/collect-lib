@@ -28,21 +28,33 @@ export const SensorSettingsSystem = 'http://fhir.data4life.care/r5/CodeSystem/se
 export const CustomQuestionSystem = 'http://fhir.data4life.care/r5/CodeSystem/custom-question-class';
 export const CommunicationTypeSystem = 'http://fhir.data4life.care/r5/CodeSystem/communication-types';
 
-/**
- * See: https://build.fhir.org/valueset-research-subject-state.html
- */
-export enum ResearchSubjectProgressState {
-  CANDIDATE = 'candidate',
-  ELIGIBLE = 'eligible',
-  FOLLOW_UP = 'follow-up',
-  INELIGIBLE = 'ineligible',
-  NOT_REGISTERED = 'not-registered',
-  OFF_STUDY = 'off-study',
-  ON_STUDY = 'on-study',
-  ON_STUDY_INTERVENTION = 'on-study-intervention',
-  ON_STUDY_OBSERVATION = 'on-study-observation',
-  PENDING_ON_STUDY = 'pending-on-study',
-  POTENTIAL_CANDIDATE = 'potential-candidate',
-  SCREENING = 'screening',
-  WITHDRAWN = 'withdrawn',
-}
+export const DEVICE_LABEL_CODING = {
+  system: SensorSettingsSystem,
+  code: 'device_label',
+  display: 'Device label',
+};
+
+export const DEVICE_OUTPUT_RATE_CODING = {
+  system: 'urn:iso:std:iso:11073:10101',
+  code: '68320',
+  display: 'MDC_ATTR_SAMPLE_RATE',
+};
+
+export const DEVICE_SENSOR_DELAY_CODING = {
+  system: SensorSettingsSystem,
+  code: 'sensor_delay',
+  display: 'Sensor delay',
+};
+
+export const SIGNAL_DURATION_CODING = {
+  system: 'http://loinc.org',
+  code: '8838-5',
+  display: 'Observation duration',
+};
+
+export const ANDROID_SENSORS_CONSTANT_NAMES = [
+  'SENSOR_DELAY_FASTEST',
+  'SENSOR_DELAY_GAME',
+  'SENSOR_DELAY_UI',
+  'SENSOR_DELAY_NORMAL',
+];

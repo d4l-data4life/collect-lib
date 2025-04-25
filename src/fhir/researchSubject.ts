@@ -1,23 +1,19 @@
-import { ResearchSubjectProgressState, StudyNameSystem, TokenNamingSystem } from './constants';
-
-type ResearchSubjectProgress = {
-  state: ResearchSubjectProgressState;
-  date?: string;
-};
+import { ResearchSubject, ResearchSubjectProgress, ResearchSubjectProgressState } from '../types';
+import { StudyNameSystem, TokenNamingSystem } from './constants';
 
 export const generateFHIRResearchSubject = (
-  programName: string,
-  progress: ResearchSubjectProgress[],
-  subject: string = 'anonymous'
+  id: string,
+  { programName, subject, progress }: ResearchSubject
 ) => {
   const document: fhir5.ResearchSubject = {
+    id,
     resourceType: 'ResearchSubject',
     status: 'active',
     progress: progressToFHIR(progress),
     subject: {
       identifier: {
         system: TokenNamingSystem,
-        value: subject,
+        value: subject ?? 'anonymous',
       },
     },
     study: {

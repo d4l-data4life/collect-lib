@@ -1,4 +1,5 @@
 import { RecursiveKeyOf, TranslatedString } from '.';
+import { DEVICE_MOVELLA_PAYLOAD_MODES } from '../devices';
 import { TaskFrequency } from './survey';
 
 export type RoutineTimes = { [key: string]: Date | null };
@@ -25,8 +26,6 @@ export type Routine = {
 export type ProgramDevice = {
   // type | true | [ProgramDeviceType](#ProgramDeviceType) | Device identifier
   type: ProgramDeviceType;
-  // streamingMode | false | string | Device specific streaming mode to use for data types
-  streamingMode?: string;
   // dataTypes | true | [ProgramDevicesDataType](#ProgramDevicesDataType)[] | List of data types to collect
   dataTypes: ProgramDevicesDataType[];
   // labels | true | [ProgramDevicesLabel](#ProgramDevicesLabel)[] | List of labels
@@ -35,6 +34,8 @@ export type ProgramDevice = {
   outputRate?: number;
   // sensorDelay | false | number | Sensor delay as per Android constants https://developer.android.com/reference/android/hardware/SensorManager#SENSOR_DELAY_FASTEST
   sensorDelay?: number;
+  // streamingMode | false | string | Device specific streaming mode to use for data types
+  streamingMode?: DEVICE_MOVELLA_PAYLOAD_MODES;
   // clientID | false | string | ClientID required to request data via API
   clientID?: string;
 };
@@ -55,7 +56,7 @@ export type ProgramDevicesDataType =
   | 'freeAcceleration'
   | 'angularVelocity'
   | 'heartRate'
-  | 'heartRateVariability'
+  | 'hrv'
   | 'internal_gyroscope'
   | 'internal_accelerometer'
   | 'internal_magnetometer'

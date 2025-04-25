@@ -2,13 +2,15 @@ import { Buffer } from 'buffer/';
 import { Consent } from '../types';
 import { ConsentNameSystem, ConsentVersionSystem } from './constants';
 
-export const generateFHIRConsent = (
+export function generateFHIRConsent(
+  id: string,
   consent: Consent,
   decision: fhir5.Consent['decision'],
   start: string,
   end?: string
-): fhir5.Consent => {
+): fhir5.Consent {
   return {
+    id,
     resourceType: 'Consent',
     identifier: [
       {
@@ -34,4 +36,4 @@ export const generateFHIRConsent = (
     })),
     decision,
   };
-};
+}

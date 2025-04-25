@@ -1,6 +1,6 @@
 import { DateTime, DateTimeUnit } from 'luxon';
+import { DateBlurringFunction, ProgramAnonymization } from '../types';
 import { isQuestionnaireResponse, isResearchSubject } from './document';
-import { DateBlurringFunction, ProgramAnonymization } from './types';
 
 /**
  *

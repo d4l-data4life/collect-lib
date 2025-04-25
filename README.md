@@ -2,6 +2,34 @@
 
 Library for reusable functionality of collect (phoenix and research-studio)
 
+## Local Development
+
+### Phoenix
+
+For pure coding `yarn link ../collect-lib` works fine.
+For actually running the app while development we need a workaround:
+
+```
+yarn add ../collect-lib
+code ./node_modules/@d4l/collect-lib
+cd node_modules/@d4l/collect-lib
+yarn start
+```
+
+React-Native does not work with `yarn link`, because of some symlink issues down the line in metro/expo/whatever.
+To workaround we can install the dependency from local with `yarn add ../phoenix-lib`.
+This will install the library from the local source as a full copy, allowing each `yarn` call to get the recent build.
+From there we can cheat the system by opening the `collect-lib` from inside the `node_modules` of `phoenix` to then working in there.
+Then run `yarn start` to watch changes in the lib and build each time, which should then be picked up by the running UA.
+
+### Research Studio
+
+```
+npm link ../collect-lib
+```
+
+This generally works, but the hot reload doesn't like that the files vanish (on rebuild of the lib) and new builds don't seem to be picked up automatically.
+
 ## Types
 
 The type documentation is generated automatically from the `src/types` files.

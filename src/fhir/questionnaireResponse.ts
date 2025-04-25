@@ -1,21 +1,29 @@
-import { QuestionInputType, ReponseValue, QuestionnaireResponse } from '../types/questionnaireResponse';
+import {
+  QuestionInputType,
+  ReponseValue,
+  QuestionnaireResponse,
+} from '../types/questionnaireResponse';
 import { CustomExtensionDate, CustomExtensionStudyName } from './constants';
 
-export const generateFHIRResponse = ({
-  programName,
-  effectiveDate,
-  language,
-  questionnaire,
-  createdAt,
-  status,
-  answers,
-}: QuestionnaireResponse): fhir5.QuestionnaireResponse => {
+export const generateFHIRResponse = (
+  id: string,
+  {
+    programName,
+    effectiveDate,
+    language,
+    questionnaire,
+    createdAt,
+    status,
+    answers,
+  }: QuestionnaireResponse
+): fhir5.QuestionnaireResponse => {
   const extension: fhir5.Extension[] = [
     { url: CustomExtensionStudyName, valueString: programName },
     ...(effectiveDate ? [{ url: CustomExtensionDate, valueDate: effectiveDate }] : []),
   ];
 
   return {
+    id,
     resourceType: 'QuestionnaireResponse',
     language: language,
     questionnaire: `${questionnaire.url}|${questionnaire.version}`,

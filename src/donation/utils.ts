@@ -1,4 +1,5 @@
-import { DonorIdentity, ERROR_CODES, Program } from './types';
+import { Program } from '../types';
+import { DonorIdentity, ERROR_CODES } from './types';
 
 export const DONOR_IDENTITY_VERSION = 2;
 
