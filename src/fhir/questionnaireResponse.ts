@@ -5,7 +5,7 @@ import {
 } from '../types/questionnaireResponse';
 import { CustomExtensionDate, CustomExtensionStudyName } from './constants';
 
-export const generateFHIRResponse = (
+export function generateFHIRResponse(
   id: string,
   {
     programName,
@@ -16,7 +16,7 @@ export const generateFHIRResponse = (
     status,
     answers,
   }: QuestionnaireResponse
-): fhir5.QuestionnaireResponse => {
+): fhir5.QuestionnaireResponse {
   const extension: fhir5.Extension[] = [
     { url: CustomExtensionStudyName, valueString: programName },
     ...(effectiveDate ? [{ url: CustomExtensionDate, valueDate: effectiveDate }] : []),

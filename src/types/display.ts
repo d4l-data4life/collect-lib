@@ -31,3 +31,26 @@ export type DisplayContent = {
 };
 
 export type DisplayContentPath = RecursiveKeyOf<DisplayContent>;
+
+export interface SeenDisplay {
+  /**
+   * The name of the triggering display step
+   */
+  name: string;
+  /**
+   * Date at which the display was seen by the user
+   */
+  seenAt: string;
+  /**
+   * The app language at the point at which the user has seen the display
+   */
+  lng: 'de' | 'de';
+  /**
+   * The type of display
+   */
+  displayType: DisplayType;
+  /**
+   * If applicable, the content of the display
+   */
+  content?: DisplayContent;
+};

@@ -466,6 +466,9 @@ export class SurveyCondition implements Guard {
       return null;
     }
     const answerDate = DateTime.fromJSDate(date).plus(this.offset);
+    if (!answerDate.isValid) {
+      return null;
+    }
     return answerDate.toJSDate();
   }
 }

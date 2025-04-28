@@ -16,7 +16,10 @@ export * from './helper/wordlists';
 
 export * from './fhir/consent';
 export * from './fhir/constants';
+export * from './fhir/eligibilityScore';
 export * from './fhir/questionnaireResponse';
 export * from './fhir/recording';
 export * from './fhir/researchSubject';
+export * from './fhir/seenDisplay';
+export * from './fhir/tag';
 export * from './fhir/utils';

@@ -1,5 +1,6 @@
 export * from './consent';
 export * from './display';
+export * from './eligibilityScore';
 export * from './program';
 export * from './questionnaireResponse';
 export * from './recording';
@@ -7,6 +8,7 @@ export * from './recordingSignal';
 export * from './researchSubject';
 export * from './routine';
 export * from './survey';
+export * from './tag';
 
 export type TranslatedString = { [key: string]: string };
 

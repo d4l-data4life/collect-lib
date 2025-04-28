@@ -1,12 +1,7 @@
 import { Recording, RecordingSignal } from '../types';
 import { AppIDNamingSystem, RoutineIsPassiveExtension } from './constants';
 import { toFHIRBundleEntries } from './recordingSignal';
-import { generateUrn } from './utils';
-
-/**
- * Replaces {{program-name}} and {{fhir-base-host}} templates in the given string
- */
-export type StringTemplater = (template: string) => string;
+import { generateUrn, StringTemplater } from './utils';
 
 export type RecordingSignalWithId = RecordingSignal & { id: string };
 
