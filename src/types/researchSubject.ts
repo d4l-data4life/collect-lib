@@ -1,21 +1,20 @@
 /**
  * See: https://build.fhir.org/valueset-research-subject-state.html
  */
-export enum ResearchSubjectProgressState {
-  CANDIDATE = 'candidate',
-  ELIGIBLE = 'eligible',
-  FOLLOW_UP = 'follow-up',
-  INELIGIBLE = 'ineligible',
-  NOT_REGISTERED = 'not-registered',
-  OFF_STUDY = 'off-study',
-  ON_STUDY = 'on-study',
-  ON_STUDY_INTERVENTION = 'on-study-intervention',
-  ON_STUDY_OBSERVATION = 'on-study-observation',
-  PENDING_ON_STUDY = 'pending-on-study',
-  POTENTIAL_CANDIDATE = 'potential-candidate',
-  SCREENING = 'screening',
-  WITHDRAWN = 'withdrawn',
-}
+export type ResearchSubjectProgressState =
+  | 'candidate'
+  | 'eligible'
+  | 'follow-up'
+  | 'ineligible'
+  | 'not-registered'
+  | 'off-study'
+  | 'on-study'
+  | 'on-study-intervention'
+  | 'on-study-observation'
+  | 'pending-on-study'
+  | 'potential-candidate'
+  | 'screening'
+  | 'withdrawn';
 
 export type ResearchSubjectProgress = {
   state: ResearchSubjectProgressState;

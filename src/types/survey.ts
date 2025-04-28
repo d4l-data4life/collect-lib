@@ -67,18 +67,17 @@ export type ScoreThreshold = {
 
 // #### FrequencyType
 // Type | Description
-export enum FrequencyType {
+export type FrequencyType =
   // single | Occurs only once
-  Single = 'single',
+  | 'single'
   // daily | Occurs every day
-  Daily = 'daily',
+  | 'daily'
   // weekly | Occurs every Monday
-  Weekly = 'weekly',
+  | 'weekly'
   // monthly | Occurs every 1st of a month
-  Monthly = 'monthly',
+  | 'monthly'
   // onDemand | There is a button that allows you to add one at any point
-  OnDemand = 'onDemand',
-}
+  | 'onDemand';
 
 // #### SurveyContent
 // Properties | Required | Type | Description

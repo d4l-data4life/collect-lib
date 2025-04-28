@@ -17,10 +17,7 @@ export type DonationRecord = {
   status: RecordState;
 };
 
-export enum RecordState {
-  ACTIVE = 'Active',
-  DELETED = 'Deleted',
-}
+export type RecordState = 'Active' | 'Deleted';
 
 export interface SDKInterface {
   /**

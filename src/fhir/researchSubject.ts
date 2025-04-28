@@ -1,4 +1,4 @@
-import { ResearchSubject, ResearchSubjectProgress, ResearchSubjectProgressState } from '../types';
+import { ResearchSubject, ResearchSubjectProgress } from '../types';
 import { StudyNameSystem, TokenNamingSystem } from './constants';
 
 export const generateFHIRResearchSubject = (
@@ -54,7 +54,6 @@ const getPeriod = (progress: ResearchSubjectProgress[]): fhir5.Period => {
   const lastProgress = progress.at(-1);
   return {
     start: progress[0].date,
-    ...(lastProgress &&
-      lastProgress.state === ResearchSubjectProgressState.OFF_STUDY && { end: lastProgress.date }),
+    ...(lastProgress && lastProgress.state === 'off-study' && { end: lastProgress.date }),
   };
 };

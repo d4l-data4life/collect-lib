@@ -19,7 +19,7 @@ export const filterRecords = (
   return records
     .filter(
       (record) =>
-        record.status === RecordState.DELETED || isValidDocument(record.document, programName)
+        record.status === 'Deleted' || isValidDocument(record.document, programName)
     )
     .map((record) => {
       const blurredDocument = blurDocument(

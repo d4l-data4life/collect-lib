@@ -143,7 +143,7 @@ export type Threshold = {
   value: number;
 };
 
-export type ComparisonOperator = 'exists' | 'eq' | 'neq' | 'gt' | 'lt' | 'gteq' | 'lteq'
+export type ComparisonOperator = 'exists' | 'eq' | 'neq' | 'gt' | 'lt' | 'gteq' | 'lteq';
 
 // #### Sensor Step
 // Properties | Required | Type | Description
@@ -291,8 +291,4 @@ export type ProgramTag = {
   effectiveType: TagEffectiveType;
 };
 
-export enum TagEffectiveType {
-  DATE_TIME = 'dateTime',
-  PERIOD = 'period',
-  UNKNOWN = 'unknown',
-}
+export type TagEffectiveType = 'dateTime' | 'period' | 'unknown';

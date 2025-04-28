@@ -283,7 +283,7 @@ export class DonationSDK implements SDKInterface {
       const { id, document, status } = donatableRecord;
       const encryptedDocument = this.hybridEncrypter.encrypt(
         donorIdentity.keys.rec,
-        status === RecordState.DELETED ? '' : JSON.stringify(document),
+        status === 'Deleted' ? '' : JSON.stringify(document),
         key
       );
       return {
@@ -363,7 +363,7 @@ export class DonationSDK implements SDKInterface {
           return {
             document: JSON.parse(data),
             id,
-            status: RecordState.ACTIVE,
+            status: 'Active',
           };
         });
     } catch {
