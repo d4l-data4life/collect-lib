@@ -1,8 +1,9 @@
+import { Buffer } from 'buffer/';
 import { DisplayContentPath, SeenDisplay } from '../types';
 import { CommunicationTypeSystem } from './constants';
 import { capitalizeFirstLetter, getText } from './utils';
 
-export function generateFHIRSeenDisplay(seenDisplay: SeenDisplay): fhir5.Communication {
+export function generateFHIRSeenDisplay(id: string, seenDisplay: SeenDisplay): fhir5.Communication {
   const contentCodeableConcept: fhir5.CodeableConcept = {
     coding: [
       {
@@ -34,6 +35,7 @@ export function generateFHIRSeenDisplay(seenDisplay: SeenDisplay): fhir5.Communi
     : [{ contentCodeableConcept }];
 
   return {
+    id,
     resourceType: 'Communication',
     status: 'completed',
     received: seenDisplay.seenAt,

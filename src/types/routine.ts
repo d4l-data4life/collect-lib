@@ -47,7 +47,9 @@ export type ProgramDeviceType =
   | 'H10'
   | 'OH1'
   | 'INTERNAL'
-  | 'FITBIT';
+  | 'FITBIT'
+  | 'GalaxyWatch6'
+  | 'PixelWatch1';
 
 export type ProgramDevicesDataType =
   | 'distance'

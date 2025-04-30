@@ -44,7 +44,7 @@ export interface SeenDisplay {
   /**
    * The app language at the point at which the user has seen the display
    */
-  lng: 'de' | 'de';
+  lng: string;
   /**
    * The type of display
    */
@@ -53,4 +53,4 @@ export interface SeenDisplay {
    * If applicable, the content of the display
    */
   content?: DisplayContent;
-};
+}

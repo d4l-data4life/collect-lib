@@ -2,22 +2,33 @@ import { DEVICE_ANNOTATION_DATA_TYPE } from './annotations/types';
 
 // TODO: This shit needs to be consolidated with ProgramDevices
 // I wonder who had the grand idea to diverge here anyways
-export type DeviceConfig = BLEDeviceConfig | InternalDeviceConfig;
+export type DeviceConfig = BLEDeviceConfig | InternalDeviceConfig | APIDeviceConfig;
 
-export type BLEDeviceConfig = {
+export interface BaseDeviceConfig {
+  device: DEVICE_KEY;
+}
+
+export interface BLEDeviceConfig extends BaseDeviceConfig {
+  type: 'ble';
   device: DEVICE_KEY_BLE;
   dataTypes: DEVICE_ANNOTATION_DATA_TYPE[];
   labels?: BleDeviceMetaLabel[];
   outputRate?: number;
   sensorDelay?: number;
   streamingMode?: DEVICE_MOVELLA_PAYLOAD_MODES;
-};
+}
 
-export type InternalDeviceConfig = {
+export interface InternalDeviceConfig extends BaseDeviceConfig {
+  type: 'internal';
   device: DEVICE_KEY_INTERNAL;
   dataTypes: DEVICE_ANNOTATION_DATA_TYPE[];
-  labels?: BleDeviceMetaLabel[];
-};
+}
+
+export interface APIDeviceConfig extends BaseDeviceConfig {
+  type: 'api';
+  device: DEVICE_KEY_API;
+  dataTypes: DEVICE_SIGNAL_TYPE[];
+}
 
 export interface BleDeviceMetaLabel {
   device: string;

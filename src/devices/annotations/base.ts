@@ -1,4 +1,4 @@
-import { DEVICE_ANNOTATION_ITEM } from './types';
+import { DEVICE_ANNOTATION, DEVICE_ANNOTATION_ITEM } from './types';
 
 export const DEVICE_ANNOTATION_TIMESTAMP_SIZE = 6;
 export const DEVICE_ANNOTATION_TIMESTAMP_UNIT = 'ms';
@@ -86,3 +86,12 @@ export const DEVICE_ANNOTATION_ITEM_EGVS: DEVICE_ANNOTATION_ITEM = {
   littleEndian: true,
   unit: 'mg/dL',
 };
+
+export const DEVICE_ANNOTATION_ITEM_HEARTRATE: DEVICE_ANNOTATION_ITEM = {
+  type: 'heartRate',
+  size: 1,
+  format: 'unsignedInt',
+  unit: 'bpm',
+};
+
+export const DEVICE_ANNOTATION_HEARTRATE: DEVICE_ANNOTATION = [DEVICE_ANNOTATION_ITEM_HEARTRATE];
