@@ -14,6 +14,7 @@
     "start": "tsup --watch",
     "build": "tsup",
     "test": "jest",
+    "test:watch": "jest --watchAll",
     "readme:update": "npx tsx ./scripts/generateTypeDocs.ts"
   },
   "devDependencies": {

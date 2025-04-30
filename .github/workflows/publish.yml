@@ -13,9 +13,12 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - name: Install
-        run: npm ci
+        run: yarn
+
+      - name: Install
+        run: yarn build
 
       - name: Publish
-        run: cd dist && npm publish --access restricted && cd -
+        run: npm publish --access restricted
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

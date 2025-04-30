@@ -6,14 +6,21 @@ import {
   uint8ArrayToBinaryString,
 } from '..';
 import { WORDLIST_LANGUAGES, getLanguageOfPassPhrase } from '../helper/wordlists';
+import crypto from 'node:crypto';
 
-// todo: node crypto for testing
-const dummyCrypto: CryptoModule = {} as any;
+class NodeCrypto implements CryptoModule {
+  generateKey(size: number): Uint8Array {
+    return crypto.randomBytes(size);
+  }
+
+  deriveEncryptionKey = async (recoveryKey: Uint8Array, salt: string = 'phoenix') =>
+    Buffer.from(crypto.pbkdf2Sync(recoveryKey, salt, 100000, 32, 'SHA-256'));
+}
 
 describe('Recovery Phrase Functions', () => {
   const validLng = WORDLIST_LANGUAGES[1];
   const converter = new WebConverter();
-  const keyHandler = new KeyHandler(converter, dummyCrypto);
+  const keyHandler = new KeyHandler(converter, new NodeCrypto());
   const invalidLng = 'invalid-lang'; // A language code that is not in WORDLIST_LANGUAGES
 
   describe('generateRecoveryPhrase', () => {
