@@ -1,5 +1,6 @@
 name: Publish as npm module
 on:
+  workflow_dispatch:
   release:
     types: [published]
 
@@ -7,6 +8,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
