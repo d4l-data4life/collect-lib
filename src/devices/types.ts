@@ -1,7 +1,6 @@
 import { DEVICE_ANNOTATION_DATA_TYPE } from './annotations/types';
 
-// TODO: This shit needs to be consolidated with ProgramDevices
-// I wonder who had the grand idea to diverge here anyways
+// TODO: This should be consolidated with ProgramDevices
 export type DeviceConfig = BLEDeviceConfig | InternalDeviceConfig | APIDeviceConfig;
 
 export interface BaseDeviceConfig {

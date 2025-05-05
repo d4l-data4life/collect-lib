@@ -307,7 +307,6 @@ function toFHIRObservation(
       },
       ...[DEVICE_ANNOTATION_ITEM_UNIX_TIMESTAMP, ...annotation]
         .map(({ type }: DEVICE_ANNOTATION_ITEM) => type)
-        // .filter(filterDuplicates()) TODO: do we need this?
         .map((dataType) => {
           const segments = dataType
             .split(/([A-Z][^A-Z]*)/)
