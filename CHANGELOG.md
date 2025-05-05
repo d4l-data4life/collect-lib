@@ -9,10 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Program and Device type definitions
-- FHIR generation module
-- Donation SDK including encryption protocols
-
 ### Changed
 
 ### Deprecated
@@ -22,3 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.0.0] - 2025-05-05
+
+### Added
+
+- Program and Device type definitions
+- FHIR generation module
+- Donation SDK including encryption protocols
+
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.0.0...HEAD
+[v1.0.0]: https://github.com/gesundheitscloud/collect-lib/releases/tag/v1.0.0
