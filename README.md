@@ -4,6 +4,8 @@ Library for reusable functionality of collect (phoenix and research-studio)
 
 ## Local Development
 
+Build the app using `yarn build` or start development mode using `yarn start`
+
 ### Phoenix
 
 For pure coding `yarn link ../collect-lib` works fine.
@@ -217,23 +219,25 @@ Update the types by running `yarn run readme:update`.
 
 #### TaskFrequency
 
-| Properties   | Required | Type                            | Description                                                                                                                                                                                                                             |
-| ------------ | -------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| type         | true     | [FrequencyType](#FrequencyType) | Defines how often and when a questionnaire is triggered/added for the survey                                                                                                                                                            |
-| start        | true     | ISO 8601 date with timezone     | Determines the global starting date of the survey. The time component is also used for when the events should be available on the day they become available.                                                                            |
-| end          | false    | ISO 8601 date with timezone     | Determines the global ending date of the survey. When snapshotting this might be overwritten with the program end date if that is earlier.                                                                                              |
-| location     | false    | Timezone Location               | Determines the location for the defined date, so that timezone problems can be handled.                                                                                                                                                 |
-| factor       | false    | integer                         | For `daily`, `weekly` and `monthly` this factor is used to manipulate the cycle length, e.g. `daily` with a factor of 7 makes it a survey that is repeated every week, but doesn't necessarily start on monday.                         |
-| editDuration | false    | ISO 8601 duration string        | Enables editing events of this survey for the given duration.                                                                                                                                                                           |
-| skipFirst    | false    | boolean                         | Determines if the first iteration of the survey after subscription should be skipped. Skipping it means the questionnaire won't open in the middle of the window and instead at the start of the next full window. Defaults to `false`. |
+| Properties       | Required | Type                            | Description                                                                                                                                                                                                                             |
+| ---------------- | -------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| type             | true     | [FrequencyType](#FrequencyType) | Defines how often and when a questionnaire is triggered/added for the survey                                                                                                                                                            |
+| start            | true     | ISO 8601 date with timezone     | Determines the global starting date of the survey. The time component is also used for when the events should be available on the day they become available.                                                                            |
+| end              | false    | ISO 8601 date with timezone     | Determines the global ending date of the survey. When snapshotting this might be overwritten with the program end date if that is earlier.                                                                                              |
+| location         | false    | Timezone Location               | Determines the location for the defined date, so that timezone problems can be handled.                                                                                                                                                 |
+| factor           | false    | integer                         | For `daily`, `weekly` and `monthly` this factor is used to manipulate the cycle length, e.g. `daily` with a factor of 7 makes it a survey that is repeated every week, but doesn't necessarily start on monday.                         |
+| editDuration     | false    | ISO 8601 duration string        | Enables editing events of this survey for the given duration.                                                                                                                                                                           |
+| skipFirst        | false    | boolean                         | Determines if the first iteration of the survey after subscription should be skipped. Skipping it means the questionnaire won't open in the middle of the window and instead at the start of the next full window. Defaults to `false`. |
+| retainCTAs       | false    | number                          | Allows configuring that x amount of previous CTAs remain active on the todo screen.                                                                                                                                                     |
+| allowAddOnDemand | false    | boolean                         | If true allows the task to also be added at any point in time (on demand).                                                                                                                                                              |
 
 #### SurveyScoring
 
-| Properties       | Required | Type                                          | Description                                                                        |
-| ---------------- | -------- | --------------------------------------------- | ---------------------------------------------------------------------------------- |
-| scores           | true     | object                                        | Defines how the questions will be scored                                           |
-| scores.valueset  | false    | {valuesetURL: {answerCode: score}}            | For questions that use valuesets scores are assigned to each code of the valuesets |
-| scores.number    | false    | {linkId: [ScoreThreshold](#ScoreThreshold)[]} | For numeric questions we define scoring conditions per question                    |
+| Properties      | Required | Type                                          | Description                                                                        |
+| --------------- | -------- | --------------------------------------------- | ---------------------------------------------------------------------------------- |
+| scores          | true     | object                                        | Defines how the questions will be scored                                           |
+| scores.valueset | false    | {valuesetURL: {answerCode: score}}            | For questions that use valuesets scores are assigned to each code of the valuesets |
+| scores.number   | false    | {linkId: [ScoreThreshold](#ScoreThreshold)[]} | For numeric questions we define scoring conditions per question                    |
 
 #### ScoreThreshold
 
@@ -279,12 +283,13 @@ Update the types by running `yarn run readme:update`.
 | Properties    | Required | Type                                                | Description                                                                                                                       |
 | ------------- | -------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | type          | true     | [ProgramDeviceType](#ProgramDeviceType)             | Device identifier                                                                                                                 |
-| streamingMode | false    | string                                              | Device specific streaming mode to use for data types                                                                              |
 | dataTypes     | true     | [ProgramDevicesDataType](#ProgramDevicesDataType)[] | List of data types to collect                                                                                                     |
 | labels        | true     | [ProgramDevicesLabel](#ProgramDevicesLabel)[]       | List of labels                                                                                                                    |
 | outputRate    | false    | number                                              | Sampling rate in hz                                                                                                               |
 | sensorDelay   | false    | number                                              | Sensor delay as per Android constants https://developer.android.com/reference/android/hardware/SensorManager#SENSOR_DELAY_FASTEST |
+| streamingMode | false    | string                                              | Device specific streaming mode to use for data types                                                                              |
 | clientID      | false    | string                                              | ClientID required to request data via API                                                                                         |
+| clientTarget  | false    | `prod`/`sandbox`                                    | identifier which URL set to use for API communication. Defaults to prod if unset                                                  |
 
 #### RoutineContent
 
