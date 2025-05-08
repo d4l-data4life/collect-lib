@@ -28,7 +28,19 @@ export type DisplayContent = {
     // default.message | true | {[language]: text} | Display message in available languages
     message: TranslatedString;
   };
+  // blocks | false | DisplayContentBlock[] | Content blocks for the display
+  blocks?: DisplayContentBlock[];
 };
+
+// #### DisplayContentBlock
+// Properties | Required | Type | Description
+export type DisplayContentBlock = {
+  // image | false | string | Optional image for the content block
+  image?: string;
+  // text | true | {[language]: text} | Block text in available languages
+  text: TranslatedString;
+};
+
 
 export type DisplayContentPath = RecursiveKeyOf<DisplayContent>;
 
@@ -54,3 +66,12 @@ export interface SeenDisplay {
    */
   content?: DisplayContent;
 }
+
+export type DisplayPath =
+  | `content.${DisplayContentPath}`
+  | `content.blocks.${number}.image`
+  | `content.blocks.${number}.text`
+  | 'content.blocks'
+  | 'name'
+  | `frequency.${keyof TaskFrequency}`
+  | 'frequency';

@@ -13,6 +13,7 @@ For actually running the app while development we need a workaround:
 yarn add ../collect-lib
 code ./node_modules/@d4l/collect-lib
 cd node_modules/@d4l/collect-lib
+yarn
 yarn start
 ```
 
