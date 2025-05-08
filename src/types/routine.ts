@@ -38,7 +38,7 @@ export type ProgramDevice = {
   streamingMode?: DEVICE_MOVELLA_PAYLOAD_MODES;
   // clientID | false | string | ClientID required to request data via API
   clientID?: string;
-  // clientTarget | false | `prod`/`sandbox` | identifier which URL set to use for API communication. Defaults to prod if unset
+  // clientTarget | false | `prod`/`sandbox` | Identifier which URL set to use for API communication. Defaults to prod if unset
   clientTarget?: ProgramClientTarget;
 };
 

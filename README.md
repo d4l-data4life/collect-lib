@@ -289,7 +289,7 @@ Update the types by running `yarn run readme:update`.
 | sensorDelay   | false    | number                                              | Sensor delay as per Android constants https://developer.android.com/reference/android/hardware/SensorManager#SENSOR_DELAY_FASTEST |
 | streamingMode | false    | string                                              | Device specific streaming mode to use for data types                                                                              |
 | clientID      | false    | string                                              | ClientID required to request data via API                                                                                         |
-| clientTarget  | false    | `prod`/`sandbox`                                    | identifier which URL set to use for API communication. Defaults to prod if unset                                                  |
+| clientTarget  | false    | `prod`/`sandbox`                                    | Identifier which URL set to use for API communication. Defaults to prod if unset                                                  |
 
 #### RoutineContent
 
@@ -318,8 +318,16 @@ Update the types by running `yarn run readme:update`.
 
 #### DisplayContent
 
-| Properties      | Required | Type               | Description                                 |
-| --------------- | -------- | ------------------ | ------------------------------------------- |
-| default         | true     | object             | Default values for display texts and images |
-| default.title   | true     | {[language]: text} | Display title in available languages        |
-| default.message | true     | {[language]: text} | Display message in available languages      |
+| Properties      | Required | Type                  | Description                                 |
+| --------------- | -------- | --------------------- | ------------------------------------------- |
+| default         | true     | object                | Default values for display texts and images |
+| default.title   | true     | {[language]: text}    | Display title in available languages        |
+| default.message | true     | {[language]: text}    | Display message in available languages      |
+| blocks          | false    | DisplayContentBlock[] | Content blocks for the display              |
+
+#### DisplayContentBlock
+
+| Properties | Required | Type               | Description                          |
+| ---------- | -------- | ------------------ | ------------------------------------ |
+| image      | false    | string             | Optional image for the content block |
+| text       | true     | {[language]: text} | Block text in available languages    |
