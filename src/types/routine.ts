@@ -38,6 +38,8 @@ export type ProgramDevice = {
   streamingMode?: DEVICE_MOVELLA_PAYLOAD_MODES;
   // clientID | false | string | ClientID required to request data via API
   clientID?: string;
+  // clientTarget | false | `prod`/`sandbox` | Identifier which URL set to use for API communication. Defaults to prod if unset
+  clientTarget?: ProgramClientTarget;
 };
 
 export type ProgramDeviceType =
@@ -102,6 +104,8 @@ export type ProgramDevicesDataType =
   | 'respiratoryRate';
 
 export type ProgramDevicesLabel = { name: string } & TranslatedString;
+
+export type ProgramClientTarget = 'prod' | 'sandbox';
 
 // #### RoutineContent
 // Properties | Required | Type | Description

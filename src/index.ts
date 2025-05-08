@@ -23,3 +23,5 @@ export * from './fhir/researchSubject';
 export * from './fhir/seenDisplay';
 export * from './fhir/tag';
 export * from './fhir/utils';
+
+export * from './configuration/apis';
