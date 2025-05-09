@@ -1,7 +1,11 @@
 import { DEVICE_ANNOTATION_DATA_TYPE } from './annotations/types';
 
 // TODO: This should be consolidated with ProgramDevices
-export type DeviceConfig = BLEDeviceConfig | InternalDeviceConfig | APIDeviceConfig;
+export type DeviceConfig =
+  | BLEDeviceConfig
+  | InternalDeviceConfig
+  | APIDeviceConfig
+  | HealthFrameworkConfig;
 
 export interface BaseDeviceConfig {
   device: DEVICE_KEY;
@@ -29,6 +33,12 @@ export interface APIDeviceConfig extends BaseDeviceConfig {
   dataTypes: DEVICE_SIGNAL_TYPE[];
 }
 
+export interface HealthFrameworkConfig extends BaseDeviceConfig {
+  type: 'health_framework';
+  device: DEVICE_KEY_HEALTH_FRAMEWORK;
+  dataTypes: DEVICE_SIGNAL_TYPE[];
+}
+
 export interface BleDeviceMetaLabel {
   device: string;
   name: string;
@@ -36,7 +46,11 @@ export interface BleDeviceMetaLabel {
   en?: string;
 }
 
-export type DEVICE_KEY = DEVICE_KEY_BLE | DEVICE_KEY_API | DEVICE_KEY_INTERNAL;
+export type DEVICE_KEY =
+  | DEVICE_KEY_BLE
+  | DEVICE_KEY_API
+  | DEVICE_KEY_HEALTH_FRAMEWORK
+  | DEVICE_KEY_INTERNAL;
 
 export type DEVICE_KEY_BLE =
   | 'DOT'
@@ -55,6 +69,8 @@ export type DEVICE_KEY_API =
   | 'dexcom_g6'
   | 'dexcom_g6+'
   | 'dexcom_g7';
+
+export type DEVICE_KEY_HEALTH_FRAMEWORK = 'AppleHealth';
 
 export type DEVICE_KEY_INTERNAL =
   | 'INTERNAL'
@@ -87,4 +103,9 @@ export type DEVICE_SIGNAL_TYPE =
   | 'calories'
   | 'sleep'
   | 'skinTemperature'
-  | 'spo2';
+  | 'spo2'
+  // apple health types
+  | 'stepCount'
+  | 'walkingAndRunningDistance'
+  | 'activeEnergy'
+  | 'restingEnergy';

@@ -7,3 +7,4 @@ export * from './annotations/internal';
 export * from './annotations/movella';
 export * from './annotations/types';
 export * from './annotations/wearOS3';
+export * from './annotations/appleHealth';

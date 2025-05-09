@@ -77,6 +77,12 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   // | 'internal_magnetometer'
   // | 'internal_beacon_sensing';
 
+  // apple health types
+  | 'stepCount'
+  | 'walkingAndRunningDistance'
+  | 'activeEnergy'
+  | 'restingEnergy';
+
 export type DEVICE_ANNOTATION_DATA_FORMAT =
   | 'bitmask'
   | 'boolean'
