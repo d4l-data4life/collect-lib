@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Apple health kit data types and annotations.
+- Apple healthKit data types and annotations
 
 ### Changed
 
