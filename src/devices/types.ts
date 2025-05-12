@@ -5,7 +5,7 @@ export type DeviceConfig =
   | BLEDeviceConfig
   | InternalDeviceConfig
   | APIDeviceConfig
-  | HealthFrameworkConfig;
+  | SDKDeviceConfig;
 
 export interface BaseDeviceConfig {
   device: DEVICE_KEY;
@@ -33,9 +33,9 @@ export interface APIDeviceConfig extends BaseDeviceConfig {
   dataTypes: DEVICE_SIGNAL_TYPE[];
 }
 
-export interface HealthFrameworkConfig extends BaseDeviceConfig {
-  type: 'health_framework';
-  device: DEVICE_KEY_HEALTH_FRAMEWORK;
+export interface SDKDeviceConfig extends BaseDeviceConfig {
+  type: 'sdk';
+  device: DEVICE_KEY_SDK;
   dataTypes: DEVICE_SIGNAL_TYPE[];
 }
 
@@ -46,11 +46,7 @@ export interface BleDeviceMetaLabel {
   en?: string;
 }
 
-export type DEVICE_KEY =
-  | DEVICE_KEY_BLE
-  | DEVICE_KEY_API
-  | DEVICE_KEY_HEALTH_FRAMEWORK
-  | DEVICE_KEY_INTERNAL;
+export type DEVICE_KEY = DEVICE_KEY_BLE | DEVICE_KEY_API | DEVICE_KEY_SDK | DEVICE_KEY_INTERNAL;
 
 export type DEVICE_KEY_BLE =
   | 'DOT'
@@ -70,7 +66,7 @@ export type DEVICE_KEY_API =
   | 'dexcom_g6+'
   | 'dexcom_g7';
 
-export type DEVICE_KEY_HEALTH_FRAMEWORK = 'AppleHealth';
+export type DEVICE_KEY_SDK = 'AppleHealth';
 
 export type DEVICE_KEY_INTERNAL =
   | 'INTERNAL'
