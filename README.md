@@ -54,6 +54,7 @@ Update the types by running `yarn run readme:update`.
 | endDate     | false    | ISO 8601 date with timezone         | Date the program should finish for all users.                                                                                                                                              |
 | tags        | false    | [ProgramTag](#ProgramTag)[]         | List of supported tags including their configuration                                                                                                                                       |
 | publishedAt | true     | ISO 8601 date with timezone         | Date the program was published (used to determine program state).                                                                                                                          |
+| featured    | false    | boolean                             | Denotes if the program is featured in the app.                                                                                                                                             |
 
 ### ProgramSteps
 

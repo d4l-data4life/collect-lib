@@ -31,6 +31,8 @@ export type Program = {
   tags?: ProgramTag[];
   // publishedAt | true | ISO 8601 date with timezone | Date the program was published (used to determine program state).
   publishedAt?: string;
+  // featured | false | boolean | Denotes if the program is featured in the app.
+  featured?: boolean;
 };
 
 export type ProgramType = 'study' | 'sensor';
