@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `featured` flag to program
-
 ### Changed
 
 ### Deprecated
@@ -19,9 +17,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- FHIR representation of display labels in recording signals
-
 ### Security
+
+## [v1.1.1] - 2025-05-14
+
+### Added
+
+- `featured` flag to program
+
+### Fixed
+
+- FHIR representation of display labels in recording signals
 
 ## [v1.1.0] - 2025-05-08
 
@@ -37,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.1.1...HEAD
+[v1.1.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.1.0...v1.1.1
 [v1.1.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/gesundheitscloud/collect-lib/releases/tag/v1.0.0
