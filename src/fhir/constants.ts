@@ -10,8 +10,7 @@ export const MaxValueExtension = 'http://hl7.org/fhir/StructureDefinition/maxVal
 export const MinValueExtension = 'http://hl7.org/fhir/StructureDefinition/minValue';
 export const MinLengthExtension = 'http://hl7.org/fhir/StructureDefinition/minLength';
 export const QItemControlDefinition = 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl';
-export const RoutineIsPassiveExtension =
-  'http://fhir.data4life.care/StructureDefinition/is-passive-recording';
+export const RoutineIsPassiveExtension = 'http://fhir.data4life.care/StructureDefinition/is-passive-recording';
 // Naming Systems
 export const SignalIDSystem = 'http://fhir.data4life.care/r5/NamingSystem/app-signal-ids';
 export const AppIDNamingSystem = 'http://fhir.data4life.care/r5/NamingSystem/app-db-ids';
@@ -32,6 +31,12 @@ export const DEVICE_LABEL_CODING = {
   system: SensorSettingsSystem,
   code: 'device_label',
   display: 'Device label',
+};
+
+export const DEVICE_DISPLAY_LABEL_CODING = {
+  system: SensorSettingsSystem,
+  code: 'display_label',
+  display: 'Display Label',
 };
 
 export const DEVICE_OUTPUT_RATE_CODING = {
