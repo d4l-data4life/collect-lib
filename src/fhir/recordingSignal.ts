@@ -7,6 +7,7 @@ import { DEVICE_ANNOTATION_ITEM } from '../devices/annotations/types';
 import { RecordingSignal } from '../types';
 import {
   ANDROID_SENSORS_CONSTANT_NAMES,
+  DEVICE_DISPLAY_LABEL_CODING,
   DEVICE_LABEL_CODING,
   DEVICE_OUTPUT_RATE_CODING,
   DEVICE_SENSOR_DELAY_CODING,
@@ -254,7 +255,7 @@ function displayLabelToFHIR(
     resourceType: 'Observation',
     status: 'final',
     code: {
-      coding: [DEVICE_LABEL_CODING],
+      coding: [DEVICE_DISPLAY_LABEL_CODING],
     },
     subject: { reference },
     effectivePeriod,
