@@ -2,6 +2,7 @@ import { ObservationTypeSystem } from './constants';
 import { StringTemplater } from './utils';
 
 export function generateFHIREligibility(
+  id: string,
   surveyName: string,
   createdAt: string,
   value: number,
@@ -9,6 +10,7 @@ export function generateFHIREligibility(
   stringTemplater: StringTemplater
 ): fhir5.Observation {
   return {
+    id,
     resourceType: 'Observation',
     status: 'final',
     extension: [
