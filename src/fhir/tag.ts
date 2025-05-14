@@ -2,12 +2,14 @@ import { ObservationTypeSystem } from './constants';
 import { StringTemplater } from './utils';
 
 export function generateFHIRTag(
+  id: string,
   code: string,
   date: string,
   labels: { [key: string]: string },
   stringTemplater: StringTemplater
 ): fhir5.Observation {
   return {
+    id,
     resourceType: 'Observation',
     status: 'final',
     code: {
