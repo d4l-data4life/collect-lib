@@ -51,7 +51,8 @@ export type ProgramDeviceType =
   | 'INTERNAL'
   | 'FITBIT'
   | 'GalaxyWatch6'
-  | 'PixelWatch1';
+  | 'PixelWatch1'
+  | 'AppleHealth';
 
 export type ProgramDevicesDataType =
   | 'distance'
@@ -101,7 +102,11 @@ export type ProgramDevicesDataType =
   | 'steps'
   | 'calories'
   | 'sleep'
-  | 'respiratoryRate';
+  | 'respiratoryRate'
+  | 'stepCount'
+  | 'walkingAndRunningDistance'
+  | 'activeEnergy'
+  | 'restingEnergy';
 
 export type ProgramDevicesLabel = { name: string } & TranslatedString;
 
