@@ -20,7 +20,7 @@ yarn start
 ```
 
 React-Native does not work with `yarn link`, because of some symlink issues down the line in metro/expo/whatever.
-To workaround we can install the dependency from local with `yarn add ../phoenix-lib`.
+To workaround we can install the dependency from local with `yarn add ../collect-lib`.
 This will install the library from the local source as a full copy, allowing each `yarn` call to get the recent build.
 From there we can cheat the system by opening the `collect-lib` from inside the `node_modules` of `phoenix` to then working in there.
 Then run `yarn start` to watch changes in the lib and build each time, which should then be picked up by the running UA.

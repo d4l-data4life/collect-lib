@@ -35,5 +35,4 @@ export interface RecordingSignal {
   outputRate?: number;
   sensorDelay?: number;
   type?: DEVICE_SIGNAL_TYPE;
-  items?: RecordingSignalItem[];
 }
