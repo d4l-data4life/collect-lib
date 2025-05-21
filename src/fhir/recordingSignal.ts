@@ -17,11 +17,11 @@ import {
   SIGNAL_DURATION_CODING,
   SignalIDSystem,
 } from './constants';
-import { RecordingSignalWithIdAndItems } from './recording';
+import { RecordingSignalWithId } from './recording';
 import { generateUrn } from './utils';
 
 export function toFHIRBundleEntries(
-  signal: RecordingSignalWithIdAndItems
+  signal: RecordingSignalWithId
 ): fhir5.BundleEntry<fhir5.Device | fhir5.Observation | fhir5.DocumentReference>[] {
   const urn = generateUrn();
   const deviceUrn = generateUrn();
@@ -46,14 +46,14 @@ export function toFHIRBundleEntries(
 }
 
 function toFHIRDocumentReference(
-  signal: RecordingSignalWithIdAndItems,
+  signal: RecordingSignalWithId,
   deviceUrn: string
 ): fhir5.DocumentReference | undefined {
-  const { items, annotation, type, deviceKey, deviceFullName, deviceShortName, version } = signal;
+  const { data, annotation, type, deviceKey, deviceFullName, deviceShortName, version } = signal;
 
   const entrySize = annotation.reduce((sum: number, { size }: { size: number }) => sum + size, 0);
 
-  if (!items) {
+  if (!data) {
     console.error('[Recording Signal] Missing items for document reference');
     return undefined;
   }
@@ -80,7 +80,7 @@ function toFHIRDocumentReference(
       {
         attachment: {
           contentType: 'application/octet-stream',
-          data: items.toString('base64'),
+          data: data.toString('base64'),
         },
       },
     ],
@@ -258,7 +258,7 @@ function displayLabelToFHIR(
 }
 
 function toFHIRObservation(
-  signal: RecordingSignalWithIdAndItems,
+  signal: RecordingSignalWithId,
   documentReferenceUrn: string,
   deviceUrn: string
 ): fhir5.Observation {

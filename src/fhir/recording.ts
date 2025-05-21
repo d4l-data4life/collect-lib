@@ -3,15 +3,14 @@ import { AppIDNamingSystem, RoutineIsPassiveExtension } from './constants';
 import { toFHIRBundleEntries } from './recordingSignal';
 import { generateUrn, StringTemplater } from './utils';
 
-export type RecordingSignalWithIdAndItems = RecordingSignal & {
+export type RecordingSignalWithId = RecordingSignal & {
   id: string;
-  items: Buffer<ArrayBuffer> | undefined;
 };
 
 export function generateFHIRRecordingBundle(
   id: string,
   recording: Recording,
-  signals: RecordingSignalWithIdAndItems[],
+  signals: RecordingSignalWithId[],
   stringTemplater: StringTemplater
 ): fhir5.Bundle {
   const entries = signals.map((signal) => toFHIRBundleEntries(signal)).flat();
