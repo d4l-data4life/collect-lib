@@ -80,7 +80,7 @@ function toFHIRDocumentReference(
       {
         attachment: {
           contentType: 'application/octet-stream',
-          data: data.toString('base64'),
+          data: Buffer.from(data).toString('base64'),
         },
       },
     ],
