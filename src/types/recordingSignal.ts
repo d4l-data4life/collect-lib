@@ -1,7 +1,7 @@
 import { DEVICE_ANNOTATION } from '../devices/annotations/types';
 import { BleDeviceMetaLabel, DEVICE_KEY, DEVICE_SIGNAL_TYPE } from '../devices/types';
 
-export const RECORDING_SIGNAL_MODEL_CURRENT_VERSION = '0.0.8';
+export const RECORDING_SIGNAL_MODEL_CURRENT_VERSION = '1.0.0';
 
 export interface RecordingSignalItem {
   date: Date;
@@ -35,5 +35,5 @@ export interface RecordingSignal {
   outputRate?: number;
   sensorDelay?: number;
   type?: DEVICE_SIGNAL_TYPE;
-  items?: RecordingSignalItem[];
+  data?: ArrayBuffer;
 }

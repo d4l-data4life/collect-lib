@@ -3,7 +3,9 @@ import { AppIDNamingSystem, RoutineIsPassiveExtension } from './constants';
 import { toFHIRBundleEntries } from './recordingSignal';
 import { generateUrn, StringTemplater } from './utils';
 
-export type RecordingSignalWithId = RecordingSignal & { id: string };
+export type RecordingSignalWithId = RecordingSignal & {
+  id: string;
+};
 
 export function generateFHIRRecordingBundle(
   id: string,

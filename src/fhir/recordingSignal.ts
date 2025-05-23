@@ -46,23 +46,17 @@ export function toFHIRBundleEntries(
 }
 
 function toFHIRDocumentReference(
-  signal: RecordingSignal,
+  signal: RecordingSignalWithId,
   deviceUrn: string
 ): fhir5.DocumentReference | undefined {
-  const { items, annotation, type, deviceKey, deviceFullName, deviceShortName, version } = signal;
+  const { data, annotation, type, deviceKey, deviceFullName, deviceShortName, version } = signal;
 
   const entrySize = annotation.reduce((sum: number, { size }: { size: number }) => sum + size, 0);
 
-  if (!items) {
-    console.error('[Recording Signal] Missing data items for document reference');
+  if (!data) {
+    console.error('[Recording Signal] Missing data for document reference');
     return undefined;
   }
-
-  const data = items.flatMap((item) => {
-    const dateBuffer = Buffer.alloc(DEVICE_ANNOTATION_TIMESTAMP_SIZE);
-    dateBuffer.writeUIntLE(item.date.getTime(), 0, DEVICE_ANNOTATION_TIMESTAMP_SIZE);
-    return [...dateBuffer, ...item.value];
-  });
 
   return {
     resourceType: 'DocumentReference',

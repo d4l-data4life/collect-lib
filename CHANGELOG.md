@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- RecordingSignal to FHIR now takes the data buffer instead of an array of RecordingSignalItems
+
 ### Deprecated
 
 ### Removed
