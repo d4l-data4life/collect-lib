@@ -54,7 +54,7 @@ function toFHIRDocumentReference(
   const entrySize = annotation.reduce((sum: number, { size }: { size: number }) => sum + size, 0);
 
   if (!data) {
-    console.error('[Recording Signal] Missing items for document reference');
+    console.error('[Recording Signal] Missing data for document reference');
     return undefined;
   }
 
