@@ -8,22 +8,10 @@ Build the app using `yarn build` or start development mode using `yarn start`
 
 ### Phoenix
 
-For pure coding `yarn link ../collect-lib` works fine.
-For actually running the app while development we need a workaround:
-
-```
-yarn add ../collect-lib
-code ./node_modules/@d4l/collect-lib
-cd node_modules/@d4l/collect-lib
-yarn
-yarn start
-```
-
-React-Native does not work with `yarn link`, because of some symlink issues down the line in metro/expo/whatever.
-To workaround we can install the dependency from local with `yarn add ../collect-lib`.
-This will install the library from the local source as a full copy, allowing each `yarn` call to get the recent build.
-From there we can cheat the system by opening the `collect-lib` from inside the `node_modules` of `phoenix` to then working in there.
-Then run `yarn start` to watch changes in the lib and build each time, which should then be picked up by the running UA.
+For pure coding `yarn link ../collect-lib` works fine, but execution will not work because of symlink issues.
+Here we use the help of [yalc](https://github.com/wclr/yalc) (`npm -g install yalc`).
+First run `yalc publish` in `collect-lib`, then `yalc link @d4l/collect-lib` in `phoenix`.
+Then you can update the lib and then get it into the app with `yarn build && yalc push`
 
 ### Research Studio
 
@@ -31,7 +19,9 @@ Then run `yarn start` to watch changes in the lib and build each time, which sho
 npm link ../collect-lib
 ```
 
-This generally works, but the hot reload doesn't like that the files vanish (on rebuild of the lib) and new builds don't seem to be picked up automatically.
+This works for types and coding, even though it sometimes needs a reload.
+For execution stencil does not seem to pick up the new code, so that needs a restart every time.
+(`yalc` doesnt improve the behaviour either.)
 
 ## Types
 
