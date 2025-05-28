@@ -76,21 +76,21 @@ describe('input validation', () => {
 // GENERATION
 
 const generateMatches = () => {
-  const matches: { ULID: string; UUID: string; convertedULID: string }[] = [];
+  const matches: { index: number; ULID: string; UUID: string; convertedULID: string }[] = [];
 
-  for (let i = 0; i < 100; i++) {
+  for (let index = 0; index < 100; index++) {
     const ULID = generateULID();
     const UUID = ULIDtoUUID(ULID);
     const convertedULID = UUIDtoULID(UUID);
 
-    matches.push({ ULID, UUID, convertedULID: convertedULID });
+    matches.push({ index, ULID, UUID, convertedULID });
   }
 
   return matches;
 };
 
 describe('generate 100 ULIDs, convert them to UUIDs and then back to ULIDs', () => {
-  test.each(generateMatches())('$ULID -> $UUID -> $convertedULID', ({ ULID, convertedULID }) => {
+  test.each(generateMatches())('$index', ({ ULID, convertedULID }) => {
     expect(ULID).toBe(convertedULID);
   });
 });

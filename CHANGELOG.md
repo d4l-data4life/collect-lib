@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- heart rate variability: `DEVICE_SIGNAL_TYPE` renamed to `hrv` to fit to `ProgramDevicesDataType`
+
 ### Security
 
 ## [v1.3.0] - 2025-05-23
