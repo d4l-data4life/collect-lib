@@ -93,7 +93,7 @@ export type DEVICE_SIGNAL_TYPE =
   | 'magnetometer'
   | 'egvs'
   // Fitbit types
-  | 'heartRateVariability'
+  | 'hrv'
   | 'respiratoryRate'
   | 'steps'
   | 'calories'
