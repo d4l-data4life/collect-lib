@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Map from keys to devices and some data quantity types
+
 ### Changed
 
 ### Deprecated
