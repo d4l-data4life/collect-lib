@@ -126,7 +126,7 @@ export const DEVICE_KEY_TO_NAME: Record<DEVICE_KEY, DeviceName> = {
   dexcom_g6: { shortName: 'Dexcom G6', fullName: 'Dexcom G6' },
   'dexcom_g6+': { shortName: 'Dexcom G6+', fullName: 'Dexcom G6+' },
   dexcom_g7: { shortName: 'Dexcom G7', fullName: 'Dexcom G7' },
-  INTERNAL: { shortName: 'Internal', fullName: 'Internal Device' }, // THESE ARE MADE UP!
+  INTERNAL: { shortName: 'Internal', fullName: 'Internal Device' }, // Placeholder, there is no such device
   internal_accelerometer: {
     shortName: 'Internal Accelerometer',
     fullName: 'Internal Accelerometer',
@@ -136,6 +136,6 @@ export const DEVICE_KEY_TO_NAME: Record<DEVICE_KEY, DeviceName> = {
   internal_beacon_sensing: {
     shortName: 'Internal Beacon Sensing',
     fullName: 'Internal Beacon Sensing',
-  }, // THESE ARE MADE UP!
+  }, // Placeholder, there is no such device
   AppleHealth: { shortName: 'Apple HealthKit', fullName: 'Apple HealthKit' },
 };
