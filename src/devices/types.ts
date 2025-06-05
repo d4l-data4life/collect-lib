@@ -105,7 +105,6 @@ export type DEVICE_SIGNAL_TYPE =
   | 'walkingAndRunningDistance'
   | 'activeEnergy'
   | 'restingEnergy'
-  | 'spo2';
 
 export type DeviceName = {
   shortName: string;
