@@ -1,4 +1,9 @@
-import { RecursiveKeyOf, TranslatedString } from './index';
+import {
+  ProgramDevicesDataType,
+  ProgramDeviceType,
+  RecursiveKeyOf,
+  TranslatedString,
+} from './index';
 import { TaskFrequency } from './survey';
 
 // ### Display
@@ -30,6 +35,8 @@ export type DisplayContent = {
   };
   // blocks | false | DisplayContentBlock[] | Content blocks for the display
   blocks?: DisplayContentBlock[];
+  // charts | false | { [key in ProgramDeviceType]?: ProgramDevicesDataType[] } | List of devices and their data types that are relevant for the display
+  charts?: { [key in ProgramDeviceType]?: ProgramDevicesDataType[] };
 };
 
 // #### DisplayContentBlock
@@ -40,7 +47,6 @@ export type DisplayContentBlock = {
   // text | true | {[language]: text} | Block text in available languages
   text: TranslatedString;
 };
-
 
 export type DisplayContentPath = RecursiveKeyOf<DisplayContent>;
 
@@ -72,6 +78,7 @@ export type DisplayPath =
   | `content.blocks.${number}.image`
   | `content.blocks.${number}.text`
   | 'content.blocks'
+  | `content.charts.${ProgramDeviceType}`
   | 'name'
   | `frequency.${keyof TaskFrequency}`
   | 'frequency';
