@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Support for chart configuration on displays
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.5.0] - 2025-06-23
+
+### Added
+
+- Support for chart configuration on displays
 
 ## [v1.4.0] - 2025-06-11
 
@@ -75,7 +79,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.5.0...HEAD
+[v1.5.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.4.0...v1.5.0
 [v1.4.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.3.1...v1.4.0
 [v1.3.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.3.0...v1.3.1
 [v1.3.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.2.0...v1.3.0
