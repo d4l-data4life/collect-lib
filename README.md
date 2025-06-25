@@ -299,13 +299,14 @@ Update the types by running `yarn run readme:update`.
 
 ### Display
 
-| Properties  | Required | Type                              | Description                                                                      |
-| ----------- | -------- | --------------------------------- | -------------------------------------------------------------------------------- |
-| name        | true     | string                            | Primary identifier. Assumption: survey and display names are collectively unique |
-| programName | true     | string                            | The name of the program the display belongs to                                   |
-| displayType | true     | 'report' / 'recommendation'       | The type of the display (report or recommendation)                               |
-| frequency   | true     | [TaskFrequency](#TaskFrequency)   | Defines in which frequency the questionnaire occurs                              |
-| content     | true     | [DisplayContent](#DisplayContent) | Defines the texts, images and icons that need to be displayed for the display    |
+| Properties  | Required | Type                                                      | Description                                                                      |
+| ----------- | -------- | --------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| name        | true     | string                                                    | Primary identifier. Assumption: survey and display names are collectively unique |
+| programName | true     | string                                                    | The name of the program the display belongs to                                   |
+| displayType | true     | 'report' / 'recommendation'                               | The type of the display (report or recommendation)                               |
+| frequency   | true     | [TaskFrequency](#TaskFrequency)                           | Defines in which frequency the questionnaire occurs                              |
+| content     | true     | [DisplayContent](#DisplayContent)                         | Defines the texts, images and icons that need to be displayed for the display    |
+| charts      | false    | { [key in ProgramDeviceType]?: ProgramDevicesDataType[] } | List of devices and their data types that are relevant for the display           |
 
 #### DisplayContent
 

@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Move `charts` on level higher in `Display` type
+
 ### Deprecated
 
 ### Removed
