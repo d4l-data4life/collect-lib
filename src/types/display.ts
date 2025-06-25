@@ -19,6 +19,8 @@ export type Display = {
   frequency: TaskFrequency;
   // content | true | [DisplayContent](#DisplayContent) | Defines the texts, images and icons that need to be displayed for the display
   content: DisplayContent;
+  // charts | false | { [key in ProgramDeviceType]?: ProgramDevicesDataType[] } | List of devices and their data types that are relevant for the display
+  charts?: { [key in ProgramDeviceType]?: ProgramDevicesDataType[] };
 };
 
 export type DisplayType = 'report' | 'recommendation' | 'end-of-participation';
@@ -35,8 +37,6 @@ export type DisplayContent = {
   };
   // blocks | false | DisplayContentBlock[] | Content blocks for the display
   blocks?: DisplayContentBlock[];
-  // charts | false | { [key in ProgramDeviceType]?: ProgramDevicesDataType[] } | List of devices and their data types that are relevant for the display
-  charts?: { [key in ProgramDeviceType]?: ProgramDevicesDataType[] };
 };
 
 // #### DisplayContentBlock
@@ -78,7 +78,7 @@ export type DisplayPath =
   | `content.blocks.${number}.image`
   | `content.blocks.${number}.text`
   | 'content.blocks'
-  | `content.charts.${ProgramDeviceType}`
+  | `charts.${ProgramDeviceType}`
   | 'name'
   | `frequency.${keyof TaskFrequency}`
   | 'frequency';
