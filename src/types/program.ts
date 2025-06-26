@@ -32,7 +32,7 @@ export type Program = {
   // publishedAt | true | ISO 8601 date with timezone | Date the program was published (used to determine program state).
   publishedAt?: string;
   // featured | false | [ProgramFeatured](#ProgramFeatured) | Describes the featured state of the program.
-  featured: ProgramFeatured;
+  featured?: ProgramFeatured;
 };
 
 // #### ProgramFeatured
