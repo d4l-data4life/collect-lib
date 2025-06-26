@@ -280,9 +280,9 @@ export type ProgramContent = {
   title: TranslatedString;
   // description | true | {language: string} | Display description of the program.
   description: TranslatedString;
-  // contact | true | {language: string} | Contact information to display for the user.
-  contact: TranslatedString;
-  // image | false | string | Image of the program
+  // contact | true | ProgramContact | Contact information to display for the user.
+  contact: ProgramContact;
+  // image | false | data URI encoded svg | Image of the program
   image?: string;
   // institute | false | object | requires `name` if `image` is set
   institute?: {
@@ -304,6 +304,15 @@ export type ProgramContent = {
     include: TranslatedString;
     exclude: TranslatedString;
   };
+};
+
+export type ProgramContact = {
+  // information | true | TranslatedString | Contact information to display for the user.
+  information: TranslatedString;
+  // email | false | string | Email address to contact for questions.
+  email?: string;
+  // phone | false | string | Phone number to contact for questions.
+  phone?: string;
 };
 
 export type ProgramContentPath = RecursiveKeyOf<ProgramContent>;
