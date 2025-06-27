@@ -31,23 +31,29 @@ export type Program = {
   tags?: ProgramTag[];
   // publishedAt | true | ISO 8601 date with timezone | Date the program was published (used to determine program state).
   publishedAt?: string;
-  // featured | false | [ProgramFeatured](#ProgramFeatured) | Describes the featured state of the program.
-  featured?: ProgramFeatured;
+  // featured | true | [ProgramFeatured](#ProgramFeatured) | Describes the featured state of the program.
+  featured: ProgramFeatured;
 };
 
 // #### ProgramFeatured
 // Properties | Required | Type | Description
-type ProgramFeatured = {
+export type ProgramFeatured = {
+  // enabled | true | boolean | Denotes if the program is featured
+  enabled: boolean;
   // showProgramImage | false | boolean | Denotes if the program image should be shown
-  showProgramImage: boolean;
+  showProgramImage?: boolean;
   // showInstituteImage | false | boolean | Denotes if the institute image should be shown
-  showInstituteImage: boolean;
+  showInstituteImage?: boolean;
   // showContactInformation | false | boolean | Denotes if the contact information should be shown
-  showContactInformation: boolean;
+  showContactInformation?: boolean;
   // showSensors | false | boolean | Denotes if the sensors should be shown
-  showSensors: boolean;
-  // estimatedEffort | false | ISO 8601 duration string | The estimated effort for the program, e.g. `P1W` for one week or `P3D` for three days.
-  estimatedEffort?: string;
+  showSensors?: boolean;
+  // estimatedEffort | false | object | The estimated effort for the program
+  estimatedEffort?: {
+    amount: number;
+    unit: 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years';
+    per: 'day' | 'week' | 'month' | 'year';
+  };
 };
 
 export type ProgramType = 'study' | 'sensor';

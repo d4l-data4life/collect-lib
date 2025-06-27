@@ -44,17 +44,18 @@ Update the types by running `yarn run readme:update`.
 | endDate     | false    | ISO 8601 date with timezone         | Date the program should finish for all users.                                                                                                                                              |
 | tags        | false    | [ProgramTag](#ProgramTag)[]         | List of supported tags including their configuration                                                                                                                                       |
 | publishedAt | true     | ISO 8601 date with timezone         | Date the program was published (used to determine program state).                                                                                                                          |
-| featured    | false    | [ProgramFeatured](#ProgramFeatured) | Describes the featured state of the program.                                                                                                                                               |
+| featured    | true     | [ProgramFeatured](#ProgramFeatured) | Describes the featured state of the program.                                                                                                                                               |
 
 #### ProgramFeatured
 
-| Properties             | Required | Type                     | Description                                                                            |
-| ---------------------- | -------- | ------------------------ | -------------------------------------------------------------------------------------- |
-| showProgramImage       | false    | boolean                  | Denotes if the program image should be shown                                           |
-| showInstituteImage     | false    | boolean                  | Denotes if the institute image should be shown                                         |
-| showContactInformation | false    | boolean                  | Denotes if the contact information should be shown                                     |
-| showSensors            | false    | boolean                  | Denotes if the sensors should be shown                                                 |
-| estimatedEffort        | false    | ISO 8601 duration string | The estimated effort for the program, e.g. `P1W` for one week or `P3D` for three days. |
+| Properties             | Required | Type    | Description                                        |
+| ---------------------- | -------- | ------- | -------------------------------------------------- |
+| enabled                | true     | boolean | Denotes if the program is featured                 |
+| showProgramImage       | false    | boolean | Denotes if the program image should be shown       |
+| showInstituteImage     | false    | boolean | Denotes if the institute image should be shown     |
+| showContactInformation | false    | boolean | Denotes if the contact information should be shown |
+| showSensors            | false    | boolean | Denotes if the sensors should be shown             |
+| estimatedEffort        | false    | object  | The estimated effort for the program               |
 
 ### ProgramSteps
 
