@@ -284,10 +284,9 @@ export type ProgramContent = {
   contact: TranslatedString;
   // image | false | string | Image of the program
   image?: string;
+  // institute | false | object | requires `name`
   institute: {
-    // name | true | {language: string} | Name of the institute
     name: TranslatedString;
-    // image | false | string | Logo of the institute
     image?: string;
   };
   // privacyPolicy | false | object | requires `text`

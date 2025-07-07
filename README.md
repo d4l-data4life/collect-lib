@@ -197,8 +197,7 @@ Update the types by running `yarn run readme:update`.
 | description              | true     | {language: string} | Display description of the program.                      |
 | contact                  | true     | {language: string} | Contact information to display for the user.             |
 | image                    | false    | string             | Image of the program                                     |
-| name                     | true     | {language: string} | Name of the institute                                    |
-| image                    | false    | string             | Logo of the institute                                    |
+| institute                | false    | object             | requires `name`                                          |
 | privacyPolicy            | false    | object             | requires `text`                                          |
 | participationInformation | false    | object             | requires `text`                                          |
 | eligibility              | false    | object             | requires `title`, `description`, `include` and `exclude` |
