@@ -9,9 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Configuration for study landing page
-- Support for institution and program image
-
 ### Changed
 
 ### Deprecated
@@ -21,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.7.0] - 2025-07-07
+
+### Added
+
+- Configuration for study landing page
+- Support for institution and program image
 
 ## [v1.6.0] - 2025-06-25
 
@@ -94,7 +98,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.7.0...HEAD
+[v1.7.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.6.0...v1.7.0
 [v1.6.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.5.1...v1.6.0
 [v1.5.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.5.0...v1.5.1
 [v1.5.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.4.0...v1.5.0
