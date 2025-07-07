@@ -44,7 +44,18 @@ Update the types by running `yarn run readme:update`.
 | endDate     | false    | ISO 8601 date with timezone         | Date the program should finish for all users.                                                                                                                                              |
 | tags        | false    | [ProgramTag](#ProgramTag)[]         | List of supported tags including their configuration                                                                                                                                       |
 | publishedAt | true     | ISO 8601 date with timezone         | Date the program was published (used to determine program state).                                                                                                                          |
-| featured    | false    | boolean                             | Denotes if the program is featured in the app.                                                                                                                                             |
+| featured    | true     | [ProgramFeatured](#ProgramFeatured) | Describes the featured state of the program.                                                                                                                                               |
+
+#### ProgramFeatured
+
+| Properties             | Required | Type    | Description                                        |
+| ---------------------- | -------- | ------- | -------------------------------------------------- |
+| enabled                | true     | boolean | Denotes if the program is featured                 |
+| showProgramImage       | false    | boolean | Denotes if the program image should be shown       |
+| showInstituteImage     | false    | boolean | Denotes if the institute image should be shown     |
+| showContactInformation | false    | boolean | Denotes if the contact information should be shown |
+| showSensors            | false    | boolean | Denotes if the sensors should be shown             |
+| estimatedEffort        | false    | object  | The estimated effort for the program               |
 
 ### ProgramSteps
 
@@ -180,15 +191,16 @@ Update the types by running `yarn run readme:update`.
 
 #### ProgramContent
 
-| Properties               | Required | Type                 | Description                                              |
-| ------------------------ | -------- | -------------------- | -------------------------------------------------------- |
-| title                    | true     | {language: string}   | Display title of the program.                            |
-| description              | true     | {language: string}   | Display description of the program.                      |
-| contact                  | true     | {language: string}   | Contact information to display for the user.             |
-| image                    | false    | data URI encoded svg | Image of the program                                     |
-| privacyPolicy            | false    | object               | requires `text`                                          |
-| participationInformation | false    | object               | requires `text`                                          |
-| eligibility              | false    | object               | requires `title`, `description`, `include` and `exclude` |
+| Properties               | Required | Type               | Description                                              |
+| ------------------------ | -------- | ------------------ | -------------------------------------------------------- |
+| title                    | true     | {language: string} | Display title of the program.                            |
+| description              | true     | {language: string} | Display description of the program.                      |
+| contact                  | true     | {language: string} | Contact information to display for the user.             |
+| image                    | false    | string             | Image of the program                                     |
+| institute                | false    | object             | requires `name`                                          |
+| privacyPolicy            | false    | object             | requires `text`                                          |
+| participationInformation | false    | object             | requires `text`                                          |
+| eligibility              | false    | object             | requires `title`, `description`, `include` and `exclude` |
 
 #### ProgramTag
 

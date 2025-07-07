@@ -31,8 +31,29 @@ export type Program = {
   tags?: ProgramTag[];
   // publishedAt | true | ISO 8601 date with timezone | Date the program was published (used to determine program state).
   publishedAt?: string;
-  // featured | false | boolean | Denotes if the program is featured in the app.
-  featured?: boolean;
+  // featured | true | [ProgramFeatured](#ProgramFeatured) | Describes the featured state of the program.
+  featured: ProgramFeatured;
+};
+
+// #### ProgramFeatured
+// Properties | Required | Type | Description
+export type ProgramFeatured = {
+  // enabled | true | boolean | Denotes if the program is featured
+  enabled: boolean;
+  // showProgramImage | false | boolean | Denotes if the program image should be shown
+  showProgramImage?: boolean;
+  // showInstituteImage | false | boolean | Denotes if the institute image should be shown
+  showInstituteImage?: boolean;
+  // showContactInformation | false | boolean | Denotes if the contact information should be shown
+  showContactInformation?: boolean;
+  // showSensors | false | boolean | Denotes if the sensors should be shown
+  showSensors?: boolean;
+  // estimatedEffort | false | object | The estimated effort for the program
+  estimatedEffort?: {
+    amount: number;
+    unit: 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years';
+    per: 'day' | 'week' | 'month' | 'year';
+  };
 };
 
 export type ProgramType = 'study' | 'sensor';
@@ -261,8 +282,13 @@ export type ProgramContent = {
   description: TranslatedString;
   // contact | true | {language: string} | Contact information to display for the user.
   contact: TranslatedString;
-  // image | false | data URI encoded svg | Image of the program
+  // image | false | string | Image of the program
   image?: string;
+  // institute | false | object | requires `name`
+  institute: {
+    name: TranslatedString;
+    image?: string;
+  };
   // privacyPolicy | false | object | requires `text`
   privacyPolicy?: {
     text: TranslatedString;

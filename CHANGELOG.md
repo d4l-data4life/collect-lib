@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Configuration for study landing page
+- Support for institution and program image
+
 ### Changed
 
 ### Deprecated
