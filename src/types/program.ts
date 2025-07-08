@@ -284,9 +284,9 @@ export type ProgramContent = {
   contact: TranslatedString;
   // image | false | string | Image of the program
   image?: string;
-  // institute | false | object | requires `name`
-  institute: {
-    name: TranslatedString;
+  // institute | false | object | requires `name` if `image` is set
+  institute?: {
+    name?: TranslatedString;
     image?: string;
   };
   // privacyPolicy | false | object | requires `text`
