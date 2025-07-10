@@ -191,18 +191,19 @@ Update the types by running `yarn run readme:update`.
 
 #### ProgramContent
 
-| Properties               | Required | Type                 | Description                                              |
-| ------------------------ | -------- | -------------------- | -------------------------------------------------------- |
-| title                    | true     | {language: string}   | Display title of the program.                            |
-| description              | true     | {language: string}   | Display description of the program.                      |
-| contact                  | true     | ProgramContact       | Contact information to display for the user.             |
-| image                    | false    | data URI encoded svg | Image of the program                                     |
-| privacyPolicy            | false    | object               | requires `text`                                          |
-| participationInformation | false    | object               | requires `text`                                          |
-| eligibility              | false    | object               | requires `title`, `description`, `include` and `exclude` |
-| information              | true     | TranslatedString     | Contact information to display for the user.             |
-| email                    | false    | string               | Email address to contact for questions.                  |
-| phone                    | false    | string               | Phone number to contact for questions.                   |
+| Properties               | Required | Type               | Description                                              |
+| ------------------------ | -------- | ------------------ | -------------------------------------------------------- |
+| title                    | true     | {language: string} | Display title of the program.                            |
+| description              | true     | {language: string} | Display description of the program.                      |
+| contact                  | true     | {language: string} | Contact information to display for the user.             |
+| contactInfo              | true     | ProgramContact     | Contact information to display for the user.             |
+| image                    | false    | string             | Image of the program                                     |
+| institute                | false    | object             | requires `name` if `image` is set                        |
+| privacyPolicy            | false    | object             | requires `text`                                          |
+| participationInformation | false    | object             | requires `text`                                          |
+| eligibility              | false    | object             | requires `title`, `description`, `include` and `exclude` |
+| email                    | false    | string             | Email address to contact for questions.                  |
+| phone                    | false    | string             | Phone number to contact for questions.                   |
 
 #### ProgramTag
 
