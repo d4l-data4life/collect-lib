@@ -23,7 +23,7 @@ export type Program = {
   phases: ProgramStep[][];
   // donation | true | [ProgramDonation](#ProgramDonation) | Donation settings handle which resources are donated, where they are donated to, and how the donation is regulated
   donation: ProgramDonation;
-  // content | true | string | Contains all the relevant content properties of the program.
+  // content | true | [ProgramContent](#ProgramContent) | Contains all the relevant content properties of the program.
   content: ProgramContent;
   // endDate | false | ISO 8601 date with timezone | Date the program should finish for all users.
   endDate?: string;
@@ -282,7 +282,7 @@ export type ProgramContent = {
   description: TranslatedString;
   // contact | true | {language: string} | Contact information to display for the user.
   contact: TranslatedString;
-  // contactInfo | true | ProgramContact | Contact information to display for the user.
+  // contactInfo | true | [ProgramContact](#ProgramContact) | Contact information to display for the user.
   contactInfo: ProgramContact;
   // image | false | string | Image of the program
   image?: string;
@@ -308,6 +308,8 @@ export type ProgramContent = {
   };
 };
 
+// #### ProgramContact
+// Properties | Required | Type | Description
 export type ProgramContact = {
   // email | false | string | Email address to contact for questions.
   email?: string;
