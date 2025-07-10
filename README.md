@@ -40,7 +40,7 @@ Update the types by running `yarn run readme:update`.
 | type        | true     | `study` or `sensor`                 | `sensor` is the new research-studio type, `study` is from the study-builder (and older)                                                                                                    |
 | phases      | true     | [ProgramStep](#ProgramStep)[][]     | Defines the flow of the program as an array of `phases`. `phases` consist of arrays of `steps`. `phases` are worked through sequentially and `steps` within a single `phase` are parallel. |
 | donation    | true     | [ProgramDonation](#ProgramDonation) | Donation settings handle which resources are donated, where they are donated to, and how the donation is regulated                                                                         |
-| content     | true     | string                              | Contains all the relevant content properties of the program.                                                                                                                               |
+| content     | true     | [ProgramContent](#ProgramContent)   | Contains all the relevant content properties of the program.                                                                                                                               |
 | endDate     | false    | ISO 8601 date with timezone         | Date the program should finish for all users.                                                                                                                                              |
 | tags        | false    | [ProgramTag](#ProgramTag)[]         | List of supported tags including their configuration                                                                                                                                       |
 | publishedAt | true     | ISO 8601 date with timezone         | Date the program was published (used to determine program state).                                                                                                                          |
@@ -191,16 +191,24 @@ Update the types by running `yarn run readme:update`.
 
 #### ProgramContent
 
-| Properties               | Required | Type               | Description                                              |
-| ------------------------ | -------- | ------------------ | -------------------------------------------------------- |
-| title                    | true     | {language: string} | Display title of the program.                            |
-| description              | true     | {language: string} | Display description of the program.                      |
-| contact                  | true     | {language: string} | Contact information to display for the user.             |
-| image                    | false    | string             | Image of the program                                     |
-| institute                | false    | object             | requires `name` if `image` is set                        |
-| privacyPolicy            | false    | object             | requires `text`                                          |
-| participationInformation | false    | object             | requires `text`                                          |
-| eligibility              | false    | object             | requires `title`, `description`, `include` and `exclude` |
+| Properties               | Required | Type                              | Description                                              |
+| ------------------------ | -------- | --------------------------------- | -------------------------------------------------------- |
+| title                    | true     | {language: string}                | Display title of the program.                            |
+| description              | true     | {language: string}                | Display description of the program.                      |
+| contact                  | true     | {language: string}                | Contact information to display for the user.             |
+| contactInfo              | true     | [ProgramContact](#ProgramContact) | Contact information to display for the user.             |
+| image                    | false    | string                            | Image of the program                                     |
+| institute                | false    | object                            | requires `name` if `image` is set                        |
+| privacyPolicy            | false    | object                            | requires `text`                                          |
+| participationInformation | false    | object                            | requires `text`                                          |
+| eligibility              | false    | object                            | requires `title`, `description`, `include` and `exclude` |
+
+#### ProgramContact
+
+| Properties | Required | Type   | Description                             |
+| ---------- | -------- | ------ | --------------------------------------- |
+| email      | false    | string | Email address to contact for questions. |
+| phone      | false    | string | Phone number to contact for questions.  |
 
 #### ProgramTag
 
