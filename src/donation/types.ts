@@ -19,6 +19,8 @@ export type DonationRecord = {
 
 export type RecordState = 'Active' | 'Deleted';
 
+export type RestorationSize = { totalBytes: number; donations?: { id: string; bytes: number }[] };
+
 export interface SDKInterface {
   /**
    * Checks readiness state of donation service
@@ -58,6 +60,15 @@ export interface SDKInterface {
     program: Program,
     records: { id: string; document: fhir5.Resource; status: RecordState }[]
   ) => Promise<boolean>;
+
+  /**
+   * Get the total size of donations which can be restored for a specific program
+   * @param donorIdentity The identity of the donor to use
+   * @param programName The name of the program to get the size for
+   * @returns The total size of the donations and the size of each individual donation that can be restored
+   * @throws Error if the donation service is not available or if there is an internal server error
+   */
+  getRestorationSize(donorIdentity: DonorIdentity, programName: string): Promise<RestorationSize>;
 
   /**
    * Restore donations based on already made donations

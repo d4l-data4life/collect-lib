@@ -6,10 +6,15 @@ import { CryptoModule } from './crypto';
 import { filterRecords, includedResearchSubjects } from './document';
 import { HybridEncrypter } from './hybridEncryption';
 import { KeyHandler } from './keyHandler';
-import { DonationRecord, DonorIdentity, ERROR_CODES, RecordState, SDKInterface } from './types';
+import {
+  DonationRecord,
+  DonorIdentity,
+  ERROR_CODES,
+  RecordState,
+  RestorationSize,
+  SDKInterface,
+} from './types';
 import { DONOR_IDENTITY_VERSION, isPrivateProgram, validateProgramName } from './utils';
-
-// export type GetProgramFn = (programName: string) => Promise<Program>;
 
 export class DonationSDK implements SDKInterface {
   /**
@@ -291,6 +296,41 @@ export class DonationSDK implements SDKInterface {
         data: encryptedDocument,
       };
     });
+  }
+
+  /**
+   * Get the total size of donations which can be restored for a specific program
+   * @param donorIdentity The identity of the donor to use
+   * @param programName The name of the program to get the size for
+   * @returns The total size of the donations and the size of each individual donation that can be restored
+   * @throws Error if the donation service is not available or if there is an internal server error
+   */
+  async getRestorationSize(
+    donorIdentity: DonorIdentity,
+    programName: string
+  ): Promise<RestorationSize> {
+    ////////
+    // Check prerequisites
+    ////////
+    if (!(await this.donationServiceAvailable())) {
+      throw new Error(ERROR_CODES.NOT_ONLINE);
+    }
+
+    // Validate the name of the program
+    validateProgramName(programName, donorIdentity);
+
+    // Create authenticated Donation API requester
+    let authenticatedDonationAPI = await this.getAuthenticatedDonationAPI(donorIdentity);
+
+    // Retrieve size of donations
+    try {
+      const [response] = await authenticatedDonationAPI.get<RestorationSize>({
+        uri: `/donations/${programName}/size`,
+      });
+      return response;
+    } catch (e) {
+      throw new Error(ERROR_CODES.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async restore(

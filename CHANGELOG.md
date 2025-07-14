@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New function `getRestorationSize()` to get amount and size of donations which can be restored
+
 ### Changed
 
 ### Deprecated
