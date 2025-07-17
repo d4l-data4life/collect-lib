@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Displays correctly donate new block format
+
 ### Security
 
 ## [v1.9.0] - 2025-07-14
