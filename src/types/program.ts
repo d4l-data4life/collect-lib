@@ -283,7 +283,7 @@ export type ProgramContent = {
   // contact | true | {language: string} | Contact information to display for the user.
   contact: TranslatedString;
   // contactInfo | true | [ProgramContact](#ProgramContact) | Contact information to display for the user.
-  contactInfo: ProgramContact;
+  contactInfo?: ProgramContact;
   // image | false | string | Image of the program
   image?: string;
   // institute | false | object | requires `name` if `image` is set
