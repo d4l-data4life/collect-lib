@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Displays correctly donate new block format
-
 ### Security
+
+## [v1.10.0] - 2025-07-24
+
+### Fixed
+
+- Displays correctly donate new block format
 
 ## [v1.9.0] - 2025-07-14
 
@@ -118,7 +122,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.10.0...HEAD
+[v1.10.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.9.0...v1.10.0
 [v1.9.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.8.0...v1.9.0
 [v1.8.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.7.1...v1.8.0
 [v1.7.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.7.0...v1.7.1
