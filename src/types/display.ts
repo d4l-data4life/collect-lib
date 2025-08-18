@@ -73,12 +73,4 @@ export interface SeenDisplay {
   content?: DisplayContent;
 }
 
-export type DisplayPath =
-  | `content.${DisplayContentPath}`
-  | `content.blocks.${number}.image`
-  | `content.blocks.${number}.text`
-  | 'content.blocks'
-  | `charts.${ProgramDeviceType}`
-  | 'name'
-  | `frequency.${keyof TaskFrequency}`
-  | 'frequency';
+export type DisplayPath = RecursiveKeyOf<Display>
