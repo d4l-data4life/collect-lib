@@ -259,7 +259,7 @@ export class HybridEncrypter {
   private encryptDonation = (
     donation: string,
     dataKey: string
-  ): { iv: Uint8Array; encrypted: ArrayBuffer } => {
+  ): { iv: Uint8Array; encrypted: Uint8Array<ArrayBuffer> } => {
     try {
       const iv = forge.random.getBytesSync(AES_BLOCKSIZE);
 

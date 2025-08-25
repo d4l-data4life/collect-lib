@@ -23,7 +23,7 @@ export interface Converter {
  * @param binaryString String returned by forge methods
  * @returns The Uint8Array of the input
  */
-export const binaryStringToUint8Array = (binaryString: string): Uint8Array => {
+export const binaryStringToUint8Array = (binaryString: string): Uint8Array<ArrayBuffer> => {
   return new Uint8Array(binaryString.split('').map((c) => c.charCodeAt(0)));
 };
 
@@ -41,7 +41,7 @@ export const uint8ArrayToBinaryString = (array: Uint8Array): string => {
  * @param string The string that needs to be converted
  * @returns The UTF-8 encoded Uint8Array of the input
  */
-export const utf8ToUint8Array = (string: string): Uint8Array => {
+export const utf8ToUint8Array = (string: string): Uint8Array<ArrayBuffer> => {
   const result = [];
   const size = string.length;
 

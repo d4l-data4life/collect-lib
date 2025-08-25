@@ -126,6 +126,6 @@ export class KeyHandler {
    */
   verify = async (message: string, signature: Uint8Array, pub: string): Promise<boolean> => {
     const sha256 = this.hash(message);
-    return secp256k1.verify(signature, sha256, this.converter.base64ToHex(pub));
+    return secp256k1.verify(signature, sha256 as any, this.converter.base64ToHex(pub) as any);
   };
 }
