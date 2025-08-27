@@ -245,9 +245,9 @@ Update the types by running `yarn run readme:update`.
 
 #### TaskReminder
 
-| Properties | Required | Type                                    | Description                                                                                        |
-| ---------- | -------- | --------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| frequency  | false    | [ReminderFrequency](#ReminderFrequency) | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
+| Properties | Required | Type                                            | Description                                                                                        |
+| ---------- | -------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| frequency  | true     | [ReminderFrequencyType](#ReminderFrequencyType) | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
 
 #### SurveyScoring
 
@@ -275,12 +275,12 @@ Update the types by running `yarn run readme:update`.
 | monthly  | Occurs every 1st of a month                               |
 | onDemand | There is a button that allows you to add one at any point |
 
-#### ReminderFrequency
+#### ReminderFrequencyType
 
-| Type          | Description                                                                         |
-| ------------- | ----------------------------------------------------------------------------------- |
-| daily         | A reminder will be sent daily                                                       |
-| before-expiry | A reminder will be sent when the task is about to expire (last day it is available) |
+| Type         | Description                                                                         |
+| ------------ | ----------------------------------------------------------------------------------- |
+| daily        | A reminder will be sent daily                                                       |
+| beforeExpiry | A reminder will be sent when the task is about to expire (last day it is available) |
 
 #### SurveyContent
 
@@ -294,14 +294,15 @@ Update the types by running `yarn run readme:update`.
 
 ### Routine
 
-| Properties  | Required                 | Type                                | Description                                                                      |
-| ----------- | ------------------------ | ----------------------------------- | -------------------------------------------------------------------------------- |
-| name        | true                     | string                              | Primary identifier. Assumption: survey and routine names are collectively unique |
-| programName | true                     | string                              | The name of the program the routine belongs to                                   |
-| frequency   | true                     | [TaskFrequency](#TaskFrequency)     | Defines in which frequency the questionnaire occurs                              |
-| content     | true                     | [RoutineContent](#RoutineContent)   | Defines the texts, images and icons that need to be displayed for the routine    |
-| devices     | true                     | string[]                            | Lists the devices used in the routine                                            |
+| Properties  | Required                 | Type                                | Description                                                                                        |
+| ----------- | ------------------------ | ----------------------------------- | -------------------------------------------------------------------------------------------------- |
+| name        | true                     | string                              | Primary identifier. Assumption: survey and routine names are collectively unique                   |
+| programName | true                     | string                              | The name of the program the routine belongs to                                                     |
+| frequency   | true                     | [TaskFrequency](#TaskFrequency)     | Defines in which frequency the questionnaire occurs                                                |
+| content     | true                     | [RoutineContent](#RoutineContent)   | Defines the texts, images and icons that need to be displayed for the routine                      |
+| devices     | true                     | string[]                            | Lists the devices used in the routine                                                              |
 | duration    | ISO 8601 duration String | Defines the duration of the routine |
+| reminder    | false                    | [TaskReminder](#TaskReminder)       | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
 
 #### ProgramDevice
 

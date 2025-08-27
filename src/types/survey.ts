@@ -47,7 +47,7 @@ export type TaskFrequency = {
 // #### TaskReminder
 // Properties | Required | Type | Description
 export type TaskReminder = {
-  // frequency | false | [ReminderFrequencyType](#ReminderFrequencyType) | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)
+  // frequency | true | [ReminderFrequencyType](#ReminderFrequencyType) | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)
   frequency: ReminderFrequencyType;
 };
 
@@ -93,8 +93,8 @@ export type FrequencyType =
 export type ReminderFrequencyType =
   // daily | A reminder will be sent daily
   | 'daily'
-  // before-expiry | A reminder will be sent when the task is about to expire (last day it is available)
-  | 'before-expiry';
+  // beforeExpiry | A reminder will be sent when the task is about to expire (last day it is available)
+  | 'beforeExpiry';
 
 // #### SurveyContent
 // Properties | Required | Type | Description
