@@ -220,13 +220,14 @@ Update the types by running `yarn run readme:update`.
 
 ### Survey
 
-| Properties  | Required | Type                            | Description                                                                      |
-| ----------- | -------- | ------------------------------- | -------------------------------------------------------------------------------- |
-| name        | true     | string                          | Primary identifier. Assumption: survey and routine names are collectively unique |
-| programName | true     | string                          | The name of the program the survey belongs to                                    |
-| frequency   | true     | [TaskFrequency](#TaskFrequency) | Defines in which frequency the questionnaire occurs                              |
-| scoring     | true     | [SurveyScoring](#SurveyScoring) | Defines the texts, images and icons that need to be displayed for the survey     |
-| content     | true     | [SurveyContent](#SurveyContent) | Defines the texts, images and icons that need to be displayed for the survey     |
+| Properties  | Required | Type                            | Description                                                                                        |
+| ----------- | -------- | ------------------------------- | -------------------------------------------------------------------------------------------------- |
+| name        | true     | string                          | Primary identifier. Assumption: survey and routine names are collectively unique                   |
+| programName | true     | string                          | The name of the program the survey belongs to                                                      |
+| frequency   | true     | [TaskFrequency](#TaskFrequency) | Defines in which frequency the questionnaire occurs                                                |
+| scoring     | true     | [SurveyScoring](#SurveyScoring) | Defines the texts, images and icons that need to be displayed for the survey                       |
+| content     | true     | [SurveyContent](#SurveyContent) | Defines the texts, images and icons that need to be displayed for the survey                       |
+| reminder    | false    | [TaskReminder](#TaskReminder)   | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
 
 #### TaskFrequency
 
@@ -234,13 +235,19 @@ Update the types by running `yarn run readme:update`.
 | ---------------- | -------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | type             | true     | [FrequencyType](#FrequencyType) | Defines how often and when a questionnaire is triggered/added for the survey                                                                                                                                                            |
 | start            | true     | ISO 8601 date with timezone     | Determines the global starting date of the survey. The time component is also used for when the events should be available on the day they become available.                                                                            |
-| end              | false    | ISO 8601 date with timezone     | Determines the global ending date of the survey. When snapshotting this might be overwritten with the program end date if that is earlier.                                                                                              |
+| end              | false    | ISO 8601 date with timezone     | Determines the global ending date of the survey.                                                                                                                                                                                        |
 | location         | false    | Timezone Location               | Determines the location for the defined date, so that timezone problems can be handled.                                                                                                                                                 |
 | factor           | false    | integer                         | For `daily`, `weekly` and `monthly` this factor is used to manipulate the cycle length, e.g. `daily` with a factor of 7 makes it a survey that is repeated every week, but doesn't necessarily start on monday.                         |
 | editDuration     | false    | ISO 8601 duration string        | Enables editing events of this survey for the given duration.                                                                                                                                                                           |
 | skipFirst        | false    | boolean                         | Determines if the first iteration of the survey after subscription should be skipped. Skipping it means the questionnaire won't open in the middle of the window and instead at the start of the next full window. Defaults to `false`. |
 | retainCTAs       | false    | number                          | Allows configuring that x amount of previous CTAs remain active on the todo screen.                                                                                                                                                     |
 | allowAddOnDemand | false    | boolean                         | If true allows the task to also be added at any point in time (on demand).                                                                                                                                                              |
+
+#### TaskReminder
+
+| Properties | Required | Type                                            | Description                                                                                        |
+| ---------- | -------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| frequency  | true     | [ReminderFrequencyType](#ReminderFrequencyType) | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
 
 #### SurveyScoring
 
@@ -268,6 +275,13 @@ Update the types by running `yarn run readme:update`.
 | monthly  | Occurs every 1st of a month                               |
 | onDemand | There is a button that allows you to add one at any point |
 
+#### ReminderFrequencyType
+
+| Type         | Description                                                                         |
+| ------------ | ----------------------------------------------------------------------------------- |
+| daily        | A reminder will be sent daily                                                       |
+| beforeExpiry | A reminder will be sent when the task is about to expire (last day it is available) |
+
 #### SurveyContent
 
 | Properties          | Required | Type                 | Description                                |
@@ -280,14 +294,15 @@ Update the types by running `yarn run readme:update`.
 
 ### Routine
 
-| Properties  | Required                 | Type                                | Description                                                                      |
-| ----------- | ------------------------ | ----------------------------------- | -------------------------------------------------------------------------------- |
-| name        | true                     | string                              | Primary identifier. Assumption: survey and routine names are collectively unique |
-| programName | true                     | string                              | The name of the program the routine belongs to                                   |
-| frequency   | true                     | [TaskFrequency](#TaskFrequency)     | Defines in which frequency the questionnaire occurs                              |
-| content     | true                     | [RoutineContent](#RoutineContent)   | Defines the texts, images and icons that need to be displayed for the routine    |
-| devices     | true                     | string[]                            | Lists the devices used in the routine                                            |
+| Properties  | Required                 | Type                                | Description                                                                                        |
+| ----------- | ------------------------ | ----------------------------------- | -------------------------------------------------------------------------------------------------- |
+| name        | true                     | string                              | Primary identifier. Assumption: survey and routine names are collectively unique                   |
+| programName | true                     | string                              | The name of the program the routine belongs to                                                     |
+| frequency   | true                     | [TaskFrequency](#TaskFrequency)     | Defines in which frequency the questionnaire occurs                                                |
+| content     | true                     | [RoutineContent](#RoutineContent)   | Defines the texts, images and icons that need to be displayed for the routine                      |
+| devices     | true                     | string[]                            | Lists the devices used in the routine                                                              |
 | duration    | ISO 8601 duration String | Defines the duration of the routine |
+| reminder    | false                    | [TaskReminder](#TaskReminder)       | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
 
 #### ProgramDevice
 

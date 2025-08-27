@@ -17,6 +17,8 @@ export type Survey = {
   scoring?: SurveyScoring;
   // content | true | [SurveyContent](#SurveyContent) | Defines the texts, images and icons that need to be displayed for the survey
   content: SurveyContent;
+  // reminder | false | [TaskReminder](#TaskReminder) | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)
+  reminder?: TaskReminder;
 };
 
 // #### TaskFrequency
@@ -26,7 +28,7 @@ export type TaskFrequency = {
   type: FrequencyType;
   // start | true | ISO 8601 date with timezone | Determines the global starting date of the survey. The time component is also used for when the events should be available on the day they become available.
   start: string;
-  // end | false | ISO 8601 date with timezone | Determines the global ending date of the survey. When snapshotting this might be overwritten with the program end date if that is earlier.
+  // end | false | ISO 8601 date with timezone | Determines the global ending date of the survey.
   end?: string;
   // location | false | Timezone Location | Determines the location for the defined date, so that timezone problems can be handled.
   location?: string;
@@ -40,6 +42,13 @@ export type TaskFrequency = {
   retainCTAs?: number;
   // allowAddOnDemand | false | boolean | If true allows the task to also be added at any point in time (on demand).
   allowAddOnDemand?: boolean;
+};
+
+// #### TaskReminder
+// Properties | Required | Type | Description
+export type TaskReminder = {
+  // frequency | true | [ReminderFrequencyType](#ReminderFrequencyType) | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)
+  frequency: ReminderFrequencyType;
 };
 
 // #### SurveyScoring
@@ -78,6 +87,14 @@ export type FrequencyType =
   | 'monthly'
   // onDemand | There is a button that allows you to add one at any point
   | 'onDemand';
+
+// #### ReminderFrequencyType
+// Type | Description
+export type ReminderFrequencyType =
+  // daily | A reminder will be sent daily
+  | 'daily'
+  // beforeExpiry | A reminder will be sent when the task is about to expire (last day it is available)
+  | 'beforeExpiry';
 
 // #### SurveyContent
 // Properties | Required | Type | Description
