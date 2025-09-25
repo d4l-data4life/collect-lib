@@ -48,15 +48,15 @@ Update the types by running `yarn run readme:update`.
 
 #### ProgramFeatured
 
-| Properties             | Required | Type             | Description                                        |
-| ---------------------- | -------- | ---------------- | -------------------------------------------------- |
-| enabled                | true     | boolean          | Denotes if the program is featured                 |
-| showProgramImage       | false    | boolean          | Denotes if the program image should be shown       |
-| showInstituteImage     | false    | boolean          | Denotes if the institute image should be shown     |
-| showContactInformation | false    | boolean          | Denotes if the contact information should be shown |
-| showSensors            | false    | boolean          | Denotes if the sensors should be shown             |
-| estimatedEffort        | false    | object           | The estimated effort for the program               |
-| description            | true     | TranslatedString | Shown as short description in featured listing     |
+| Properties             | Required | Type             | Description                                                                      |
+| ---------------------- | -------- | ---------------- | -------------------------------------------------------------------------------- |
+| enabled                | true     | boolean          | Denotes if the program is featured                                               |
+| showProgramImage       | false    | boolean          | Denotes if the program image should be shown                                     |
+| showInstituteImage     | false    | boolean          | Denotes if the institute image should be shown                                   |
+| showContactInformation | false    | boolean          | Denotes if the contact information should be shown                               |
+| showSensors            | false    | boolean          | Denotes if the sensors should be shown                                           |
+| estimatedEffort        | false    | object           | The estimated effort for the program                                             |
+| description            | false    | TranslatedString | Shown as short description in featured listing (required if featured is enabled) |
 
 ### ProgramSteps
 
