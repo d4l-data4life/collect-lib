@@ -54,6 +54,8 @@ export type ProgramFeatured = {
     unit: 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years';
     per: 'day' | 'week' | 'month' | 'year';
   };
+  // description | false | TranslatedString | Shown as short description in featured listing (required if featured is enabled)
+  description?: TranslatedString;
 };
 
 export type ProgramType = 'study' | 'sensor';
