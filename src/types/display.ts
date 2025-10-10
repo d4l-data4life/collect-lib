@@ -60,6 +60,10 @@ export interface SeenDisplay {
    */
   seenAt: string;
   /**
+   * Date the display was created
+   */
+  effectiveDate: string;
+  /**
    * The app language at the point at which the user has seen the display
    */
   lng: string;

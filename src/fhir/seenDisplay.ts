@@ -48,6 +48,7 @@ export function generateFHIRSeenDisplay(id: string, seenDisplay: SeenDisplay): f
     id,
     resourceType: 'Communication',
     status: 'completed',
+    sent: seenDisplay.effectiveDate,
     received: seenDisplay.seenAt,
     basedOn: [{ reference: seenDisplay.name }],
     payload,
