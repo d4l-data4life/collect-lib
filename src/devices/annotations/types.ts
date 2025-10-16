@@ -80,8 +80,7 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   // Apple health types
   | 'stepCount'
   | 'walkingAndRunningDistance'
-  | 'activeEnergy'
-  | 'restingEnergy';
+  | 'activeEnergy';
 
 export type DEVICE_ANNOTATION_DATA_FORMAT =
   | 'bitmask'
