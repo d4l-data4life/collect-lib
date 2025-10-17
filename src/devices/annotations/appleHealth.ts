@@ -40,19 +40,6 @@ export const APPLE_HEALTH_ACTIVE_ENERGY_ANNOTATION: DEVICE_ANNOTATION = [
 ];
 // #endregion
 
-// #region Resting Energy
-export const APPLE_HEALTH_ANNOTATION_ITEM_RESTING_ENERGY: DEVICE_ANNOTATION_ITEM = {
-  type: 'restingEnergy',
-  size: 4,
-  format: 'float32',
-  littleEndian: true,
-};
-
-export const APPLE_HEALTH_RESTING_ENERGY_ANNOTATION: DEVICE_ANNOTATION = [
-  APPLE_HEALTH_ANNOTATION_ITEM_RESTING_ENERGY,
-];
-// #endregion
-
 // #region Signal Type Annotations
 export const APPLE_HEALTH_SIGNAL_TYPE_ANNOTATIONS: {
   [key in DEVICE_SIGNAL_TYPE]?: DEVICE_ANNOTATION;
@@ -60,6 +47,5 @@ export const APPLE_HEALTH_SIGNAL_TYPE_ANNOTATIONS: {
   stepCount: APPLE_HEALTH_STEP_COUNT_ANNOTATION,
   walkingAndRunningDistance: APPLE_HEALTH_WALKING_RUNNING_DISTANCE_ANNOTATION,
   activeEnergy: APPLE_HEALTH_ACTIVE_ENERGY_ANNOTATION,
-  restingEnergy: APPLE_HEALTH_RESTING_ENERGY_ANNOTATION,
 };
 // #endregion

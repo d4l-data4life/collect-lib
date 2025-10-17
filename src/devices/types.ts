@@ -103,8 +103,7 @@ export type DEVICE_SIGNAL_TYPE =
   // Apple health types
   | 'stepCount'
   | 'walkingAndRunningDistance'
-  | 'activeEnergy'
-  | 'restingEnergy';
+  | 'activeEnergy';
 
 export type DeviceName = {
   shortName: string;
