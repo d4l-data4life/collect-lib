@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- RecursiveKeyOf of array types including undefined
+
 ### Security
 
 ## [v1.14.0] - 2025-10-17
