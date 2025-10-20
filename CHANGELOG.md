@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- RecursiveKeyOf of array types including undefined
-
 ### Security
+
+## [v1.14.1] - 2025-10-20
+
+### Fixed
+
+- RecursiveKeyOf of array types including undefined
 
 ## [v1.14.0] - 2025-10-17
 
@@ -160,7 +164,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.14.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.14.1...HEAD
+[v1.14.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.14.0...v1.14.1
 [v1.14.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.13.0...v1.14.0
 [v1.13.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.12.0...v1.13.0
 [v1.12.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.11.0...v1.12.0
