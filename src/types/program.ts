@@ -33,6 +33,8 @@ export type Program = {
   publishedAt?: string;
   // featured | true | [ProgramFeatured](#ProgramFeatured) | Describes the featured state of the program.
   featured: ProgramFeatured;
+  // theme | false | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app
+  theme?: 'D4L' | 'GREEN' | 'PURPLE' | 'OLIVE' | 'BLUE';
 };
 
 // #### ProgramFeatured
