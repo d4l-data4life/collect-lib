@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Support for QuestionnaireScores
+
 ### Changed
+
+- Renamed EligibilityScore to QuestionnaireScore to cover more use cases
 
 ### Deprecated
 
