@@ -107,7 +107,8 @@ export type ProgramDevicesDataType =
   | 'respiratoryRate'
   | 'stepCount'
   | 'walkingAndRunningDistance'
-  | 'activeEnergy';
+  | 'activeEnergy'
+  | 'sleepAnalysis';
 
 export type ProgramDevicesLabel = { name: string } & TranslatedString;
 
