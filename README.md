@@ -16,12 +16,10 @@ Then you can update the lib and then get it into the app with `yarn build && yal
 ### Research Studio
 
 ```
-npm link ../collect-lib
+pnpm add file:../collect-lib
 ```
 
-This works for types and coding, even though it sometimes needs a reload.
-For execution stencil does not seem to pick up the new code, so that needs a restart every time.
-(`yalc` doesnt improve the behaviour either.)
+After every change in the library a `pnpm install` has to be triggered for the changes to take effect in RS.
 
 ## Types
 
@@ -230,6 +228,7 @@ Update the types by running `yarn run readme:update`.
 | scoring     | true     | [SurveyScoring](#SurveyScoring) | Defines the texts, images and icons that need to be displayed for the survey                       |
 | content     | true     | [SurveyContent](#SurveyContent) | Defines the texts, images and icons that need to be displayed for the survey                       |
 | reminder    | false    | [TaskReminder](#TaskReminder)   | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
+| template    | false    | string                          | Notes if a template was used (templated surveys don't allow questions to be changed)               |
 
 #### TaskFrequency
 

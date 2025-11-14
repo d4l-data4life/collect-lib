@@ -2,7 +2,7 @@ import { QuestionnaireScore } from '../types';
 import { ObservationTypeSystem } from './constants';
 import { StringTemplater } from './utils';
 
-export function generateQuestionnaireScore(
+export function generateFHIRQuestionnaireScore(
   id: string,
   data: QuestionnaireScore & { createdAt: string },
   stringTemplater: StringTemplater
