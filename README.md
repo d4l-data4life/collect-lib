@@ -220,15 +220,15 @@ Update the types by running `yarn run readme:update`.
 
 ### Survey
 
-| Properties  | Required | Type                            | Description                                                                                        |
-| ----------- | -------- | ------------------------------- | -------------------------------------------------------------------------------------------------- |
-| name        | true     | string                          | Primary identifier. Assumption: survey and routine names are collectively unique                   |
-| programName | true     | string                          | The name of the program the survey belongs to                                                      |
-| frequency   | true     | [TaskFrequency](#TaskFrequency) | Defines in which frequency the questionnaire occurs                                                |
-| scoring     | true     | [SurveyScoring](#SurveyScoring) | Defines the texts, images and icons that need to be displayed for the survey                       |
-| content     | true     | [SurveyContent](#SurveyContent) | Defines the texts, images and icons that need to be displayed for the survey                       |
-| reminder    | false    | [TaskReminder](#TaskReminder)   | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
-| template    | false    | string                          | Notes if a template was used (templated surveys don't allow questions to be changed)               |
+| Properties  | Required | Type                            | Description                                                                                             |
+| ----------- | -------- | ------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| name        | true     | string                          | Primary identifier. Assumption: survey and routine names are collectively unique                        |
+| programName | true     | string                          | The name of the program the survey belongs to                                                           |
+| frequency   | true     | [TaskFrequency](#TaskFrequency) | Defines in which frequency the questionnaire occurs                                                     |
+| scoring     | true     | [SurveyScoring](#SurveyScoring) | Defines the texts, images and icons that need to be displayed for the survey                            |
+| content     | true     | [SurveyContent](#SurveyContent) | Defines the texts, images and icons that need to be displayed for the survey                            |
+| reminder    | false    | [TaskReminder](#TaskReminder)   | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)      |
+| template    | false    | string                          | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed) |
 
 #### TaskFrequency
 

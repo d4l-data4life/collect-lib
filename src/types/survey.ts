@@ -19,7 +19,7 @@ export type Survey = {
   content: SurveyContent;
   // reminder | false | [TaskReminder](#TaskReminder) | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)
   reminder?: TaskReminder;
-  // template | false | string | Notes if a template was used (templated surveys don't allow questions to be changed)
+  // template | false | string | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed)
   template?: string;
 };
 
