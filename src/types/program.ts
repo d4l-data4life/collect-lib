@@ -25,8 +25,8 @@ export type Program = {
   donation: ProgramDonation;
   // content | true | [ProgramContent](#ProgramContent) | Contains all the relevant content properties of the program.
   content: ProgramContent;
-  // endDate | false | ISO 8601 date with timezone | Date the program should finish for all users.
-  endDate?: string;
+  // end | false | [ProgramEnd](#ProgramEnd) | Date and time the program should finish.
+  end?: ProgramEnd;
   // tags | false | [ProgramTag](#ProgramTag)[] | List of supported tags including their configuration
   tags?: ProgramTag[];
   // publishedAt | true | ISO 8601 date with timezone | Date the program was published (used to determine program state).
@@ -35,6 +35,15 @@ export type Program = {
   featured: ProgramFeatured;
   // theme | false | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app
   theme?: 'D4L' | 'GREEN' | 'PURPLE' | 'OLIVE' | 'BLUE';
+};
+
+// #### ProgramEnd
+// Properties | Required | Type | Description
+export type ProgramEnd = {
+  // date | true | ISO 8601 date with timezone | Date and time the program should finish.
+  date: string;
+  // location | false | Timezone Location | Determines the location for the defined date, so that timezone problems can be handled.
+  location?: string;
 };
 
 // #### ProgramFeatured
@@ -77,6 +86,10 @@ export type ProgramStepBase = {
   end?: StepCondition;
   // requiredCondition | false | [StepCondition](#StepCondition) | Defines condition that overwrites the required property with the evaluation result.
   requiredCondition?: StepCondition;
+  // title | false | TranslatedString | The title of the step
+  title?: TranslatedString;
+  // description | false | TranslatedString | The description of the step
+  description?: TranslatedString;
 };
 
 export type ProgramStepType =
