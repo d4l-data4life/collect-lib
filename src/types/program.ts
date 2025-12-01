@@ -86,10 +86,6 @@ export type ProgramStepBase = {
   end?: StepCondition;
   // requiredCondition | false | [StepCondition](#StepCondition) | Defines condition that overwrites the required property with the evaluation result.
   requiredCondition?: StepCondition;
-  // title | false | TranslatedString | The title of the step
-  title?: TranslatedString;
-  // description | false | TranslatedString | The description of the step
-  description?: TranslatedString;
 };
 
 export type ProgramStepType =

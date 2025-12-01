@@ -39,11 +39,18 @@ Update the types by running `yarn run readme:update`.
 | phases      | true     | [ProgramStep](#ProgramStep)[][]             | Defines the flow of the program as an array of `phases`. `phases` consist of arrays of `steps`. `phases` are worked through sequentially and `steps` within a single `phase` are parallel. |
 | donation    | true     | [ProgramDonation](#ProgramDonation)         | Donation settings handle which resources are donated, where they are donated to, and how the donation is regulated                                                                         |
 | content     | true     | [ProgramContent](#ProgramContent)           | Contains all the relevant content properties of the program.                                                                                                                               |
-| endDate     | false    | ISO 8601 date with timezone                 | Date the program should finish for all users.                                                                                                                                              |
+| end         | false    | [ProgramEnd](#ProgramEnd)                   | Date and time the program should finish.                                                                                                                                                   |
 | tags        | false    | [ProgramTag](#ProgramTag)[]                 | List of supported tags including their configuration                                                                                                                                       |
 | publishedAt | true     | ISO 8601 date with timezone                 | Date the program was published (used to determine program state).                                                                                                                          |
 | featured    | true     | [ProgramFeatured](#ProgramFeatured)         | Describes the featured state of the program.                                                                                                                                               |
 | theme       | false    | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app                                                                                                                                            |
+
+#### ProgramEnd
+
+| Properties | Required | Type                        | Description                                                                             |
+| ---------- | -------- | --------------------------- | --------------------------------------------------------------------------------------- |
+| date       | true     | ISO 8601 date with timezone | Date and time the program should finish.                                                |
+| location   | false    | Timezone Location           | Determines the location for the defined date, so that timezone problems can be handled. |
 
 #### ProgramFeatured
 
@@ -68,6 +75,8 @@ Update the types by running `yarn run readme:update`.
 | start             | false    | [StepCondition](#StepCondition) | Defines condition that starts the step. Using this condition with a survey means there will be an indiviual starting date for each user. |
 | end               | false    | [StepCondition](#StepCondition) | Defines condition that ends the step. Using this condition with a survey means there will be an indiviual ending date for each user.     |
 | requiredCondition | false    | [StepCondition](#StepCondition) | Defines condition that overwrites the required property with the evaluation result.                                                      |
+| title             | false    | TranslatedString                | The title of the step                                                                                                                    |
+| description       | false    | TranslatedString                | The description of the step                                                                                                              |
 
 #### Consent Step
 
