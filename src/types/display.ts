@@ -35,13 +35,13 @@ export type DisplayContent = {
     // default.message | true | {[language]: text} | Display message in available languages
     message: TranslatedString;
   };
-  // blocks | false | DisplayContentBlock[] | Content blocks for the display
-  blocks?: DisplayContentBlock[];
+  // blocks | false | [ContentBlock](#ContentBlock)[] | Content blocks for the display
+  blocks?: ContentBlock[];
 };
 
-// #### DisplayContentBlock
+// #### ContentBlock
 // Properties | Required | Type | Description
-export type DisplayContentBlock = {
+export type ContentBlock = {
   // image | false | string | Optional image for the content block
   image?: string;
   // text | true | {[language]: text} | Block text in available languages

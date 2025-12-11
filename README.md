@@ -346,14 +346,14 @@ Update the types by running `yarn run readme:update`.
 
 #### DisplayContent
 
-| Properties      | Required | Type                  | Description                                 |
-| --------------- | -------- | --------------------- | ------------------------------------------- |
-| default         | true     | object                | Default values for display texts and images |
-| default.title   | true     | {[language]: text}    | Display title in available languages        |
-| default.message | true     | {[language]: text}    | Display message in available languages      |
-| blocks          | false    | DisplayContentBlock[] | Content blocks for the display              |
+| Properties      | Required | Type                            | Description                                 |
+| --------------- | -------- | ------------------------------- | ------------------------------------------- |
+| default         | true     | object                          | Default values for display texts and images |
+| default.title   | true     | {[language]: text}              | Display title in available languages        |
+| default.message | true     | {[language]: text}              | Display message in available languages      |
+| blocks          | false    | [ContentBlock](#ContentBlock)[] | Content blocks for the display              |
 
-#### DisplayContentBlock
+#### ContentBlock
 
 | Properties | Required | Type               | Description                          |
 | ---------- | -------- | ------------------ | ------------------------------------ |

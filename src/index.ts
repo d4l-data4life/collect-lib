@@ -1,5 +1,6 @@
 export * from './devices';
 export * from './types';
+export * from './fhir';
 
 export * from './donation/crypto';
 export * from './donation/keyHandler';
@@ -13,15 +14,5 @@ export * from './helper/guard';
 export * from './helper/requester';
 export * from './helper/ulid';
 export * from './helper/wordlists';
-
-export * from './fhir/consent';
-export * from './fhir/constants';
-export * from './fhir/questionnaireScore';
-export * from './fhir/questionnaireResponse';
-export * from './fhir/recording';
-export * from './fhir/researchSubject';
-export * from './fhir/seenDisplay';
-export * from './fhir/tag';
-export * from './fhir/utils';
 
 export * from './configuration/apis';
