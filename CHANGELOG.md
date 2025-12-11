@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Handling of device registration for push notifications
+- Fetching of response objects
+- Types and FHIR conversion for Messages
+
 ### Changed
 
 ### Deprecated
