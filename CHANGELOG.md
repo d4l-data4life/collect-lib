@@ -9,10 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Handling of device registration for push notifications
-- Fetching of response objects
-- Types and FHIR conversion for Messages
-
 ### Changed
 
 ### Deprecated
@@ -22,6 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.19.0] - 2025-12-11
+
+### Added
+
+- Handling of device registration for push notifications
+- Fetching of response objects
+- Types and FHIR conversion for Messages
 
 ## [v1.18.0] - 2025-11-14
 
@@ -200,7 +204,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.18.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.19.0...HEAD
+[v1.19.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.18.0...v1.19.0
 [v1.18.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.17.0...v1.18.0
 [v1.17.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.16.0...v1.17.0
 [v1.16.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.15.0...v1.16.0
