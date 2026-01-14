@@ -42,7 +42,7 @@ export function get(obj: Record<string, any>, path: string): string | undefined 
  * @returns An object which contains the elements from the array indexed by _keyField_
  */
 export const indexArrayBy = <T extends Record<string, any>, K extends keyof T>(
-  array: T[] = [],
+  array: T[] | undefined= [],
   keyField: K
 ): Record<T[K], T> =>
   array.reduce(
