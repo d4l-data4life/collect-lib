@@ -34,3 +34,15 @@ export function get(obj: Record<string, any>, path: string): string | undefined 
   const value = path.split('.').reduce((o, p) => o?.[p], obj);
   return typeof value === 'string' ? value : undefined;
 }
+
+/**
+ * Create an index map out of an array
+ * @param array     Any array that contains objects
+ * @param keyField  The key which is used to index
+ * @returns An object which contains the elements from the array index by _keyField_
+ */
+export const indexArrayBy = (array: any[], keyField: string) =>
+  array?.reduce((obj: any, item: any) => {
+    obj[item[keyField]] = item;
+    return obj;
+  }, {}) ?? {};

@@ -1,6 +1,6 @@
-import { QuestionnaireScore } from '../types';
+import { QuestionnaireScore, SurveyScoring } from '../types';
 import { ObservationTypeSystem } from './constants';
-import { StringTemplater } from './utils';
+import { indexArrayBy, StringTemplater } from './utils';
 
 export function generateFHIRQuestionnaireScore(
   id: string,
@@ -70,4 +70,74 @@ export function generateFHIRQuestionnaireScore(
       },
     ],
   };
+}
+
+type Range = { min: number; max: number };
+export function calculateQuestionnaireScoreRange(
+  questionnaire: fhir5.Questionnaire,
+  scoring: SurveyScoring | undefined
+): Range {
+  if (!scoring) {
+    return { min: 0, max: 0 };
+  }
+  let min = 0;
+  let max = 0;
+
+  const valueSets: { [key: string]: fhir5.ValueSet } = indexArrayBy(
+    questionnaire.contained || [],
+    'id'
+  );
+
+  for (const item of questionnaire.item || []) {
+    const itemRange = calculateScoreRangeForItem(item, valueSets, scoring);
+    min += itemRange.min;
+    max += itemRange.max;
+  }
+
+  return { min, max };
+}
+
+type ScoringSystemMap = { [key: string]: { [key: string]: number } };
+export function calculateScoreRangeForItem(
+  item: fhir5.QuestionnaireItem,
+  valueSets: { [key: string]: fhir5.ValueSet },
+  scoring: SurveyScoring
+): Range {
+  let min = 0;
+  let max = 0;
+  if (item.item && item.item.length > 0) {
+    for (const subItem of item.item) {
+      const itemRange = calculateScoreRangeForItem(subItem, valueSets, scoring);
+      min += itemRange.min;
+      max += itemRange.max;
+    }
+  }
+  if (item.answerValueSet) {
+    const valueSet = valueSets[item.answerValueSet.replace('#', '')];
+    if (valueSet !== undefined) {
+      const scoringSystems: ScoringSystemMap = scoring.scores?.valueset || {};
+      min = Math.min(
+        ...(valueSet.expansion?.contains || []).map((containedOption) => {
+          const scoreValues = Object.values(scoringSystems[containedOption.system as string] || []);
+          return Math.min(...(scoreValues ?? []));
+        })
+      );
+      max = Math.max(
+        ...(valueSet.expansion?.contains || []).map((containedOption) => {
+          const scoreValues = Object.values(scoringSystems[containedOption.system as string] || []);
+          return Math.max(...(scoreValues ?? []));
+        })
+      );
+    }
+  }
+  if (item.type === 'decimal' || item.type === 'integer') {
+    const scoringNumbers = scoring.scores?.number || {};
+    const threshold = scoringNumbers[item.linkId || ''];
+    if (threshold) {
+      const scores = threshold.map((t) => t.score);
+      min += Math.min(...scores);
+      max += Math.max(...scores);
+    }
+  }
+  return { min, max };
 }
