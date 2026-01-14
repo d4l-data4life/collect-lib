@@ -8,6 +8,10 @@ export interface QuestionnaireScore {
    */
   value: number;
   /**
+   * The minimum score
+   */
+  min: number;
+  /**
    * The maximum score
    */
   max: number;

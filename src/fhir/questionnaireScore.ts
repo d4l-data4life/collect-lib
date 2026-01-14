@@ -7,7 +7,7 @@ export function generateFHIRQuestionnaireScore(
   data: QuestionnaireScore & { createdAt: string },
   stringTemplater: StringTemplater
 ): fhir5.Observation {
-  const { questionnaireName, createdAt, value, max, derivedFrom } = data;
+  const { questionnaireName, createdAt, value, min, max, derivedFrom } = data;
 
   return {
     id,
@@ -62,7 +62,7 @@ export function generateFHIRQuestionnaireScore(
     referenceRange: [
       {
         low: {
-          value: 0,
+          value: min,
         },
         high: {
           value: max,
