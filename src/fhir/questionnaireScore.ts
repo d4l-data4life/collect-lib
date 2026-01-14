@@ -73,71 +73,90 @@ export function generateFHIRQuestionnaireScore(
 }
 
 type Range = { min: number; max: number };
+
 export function calculateQuestionnaireScoreRange(
   questionnaire: fhir5.Questionnaire,
   scoring: SurveyScoring | undefined
 ): Range {
-  if (!scoring) {
+  if (!scoring || !questionnaire.item?.length) {
     return { min: 0, max: 0 };
   }
-  let min = 0;
-  let max = 0;
 
   const valueSets: { [key: string]: fhir5.ValueSet } = indexArrayBy(
     questionnaire.contained || [],
     'id'
   );
 
-  for (const item of questionnaire.item || []) {
-    const itemRange = calculateScoreRangeForItem(item, valueSets, scoring);
-    min += itemRange.min;
-    max += itemRange.max;
-  }
-
-  return { min, max };
+  return questionnaire.item.reduce(
+    (acc, curr) => {
+      const { min, max } = calculateScoreRangeForItem(curr, valueSets, scoring);
+      return { min: acc.min + min, max: acc.max + max };
+    },
+    { min: 0, max: 0 }
+  );
 }
 
-type ScoringSystemMap = { [key: string]: { [key: string]: number } };
 export function calculateScoreRangeForItem(
   item: fhir5.QuestionnaireItem,
   valueSets: { [key: string]: fhir5.ValueSet },
   scoring: SurveyScoring
 ): Range {
-  let min = 0;
-  let max = 0;
   if (item.item && item.item.length > 0) {
-    for (const subItem of item.item) {
-      const itemRange = calculateScoreRangeForItem(subItem, valueSets, scoring);
-      min += itemRange.min;
-      max += itemRange.max;
-    }
+    return item.item.reduce(
+      (acc, curr) => {
+        const { min, max } = calculateScoreRangeForItem(curr, valueSets, scoring);
+        return { min: acc.min + min, max: acc.max + max };
+      },
+      { min: 0, max: 0 }
+    );
   }
+  if (item.type === 'coding') {
+    return calculateValueSetScore(item, valueSets, scoring);
+  }
+  if (item.type === 'decimal' || item.type === 'integer') {
+    return calculateNumericScore(item, valueSets, scoring);
+  }
+  return { min: 0, max: 0 };
+}
+
+function calculateValueSetScore(
+  item: fhir5.QuestionnaireItem,
+  valueSets: { [key: string]: fhir5.ValueSet },
+  scoring: SurveyScoring
+): Range {
   if (item.answerValueSet) {
     const valueSet = valueSets[item.answerValueSet.replace('#', '')];
     if (valueSet !== undefined) {
-      const scoringSystems: ScoringSystemMap = scoring.scores?.valueset || {};
-      min = Math.min(
+      const scoringSystems: { [key: string]: { [key: string]: number } } =
+        scoring.scores?.valueset ?? {};
+      const min = Math.min(
         ...(valueSet.expansion?.contains || []).map((containedOption) => {
           const scoreValues = Object.values(scoringSystems[containedOption.system as string] || []);
           return Math.min(...(scoreValues ?? []));
         })
       );
-      max = Math.max(
+      const max = Math.max(
         ...(valueSet.expansion?.contains || []).map((containedOption) => {
           const scoreValues = Object.values(scoringSystems[containedOption.system as string] || []);
           return Math.max(...(scoreValues ?? []));
         })
       );
+      return { min, max };
     }
   }
-  if (item.type === 'decimal' || item.type === 'integer') {
-    const scoringNumbers = scoring.scores?.number || {};
-    const threshold = scoringNumbers[item.linkId || ''];
-    if (threshold) {
-      const scores = threshold.map((t) => t.score);
-      min += Math.min(...scores);
-      max += Math.max(...scores);
-    }
+  return { min: 0, max: 0 };
+}
+
+function calculateNumericScore(
+  item: fhir5.QuestionnaireItem,
+  valueSets: { [key: string]: fhir5.ValueSet },
+  scoring: SurveyScoring
+): Range {
+  const scoringNumbers = scoring.scores?.number ?? {};
+  const threshold = scoringNumbers[item.linkId || ''];
+  if (threshold) {
+    const scores = threshold.map((t) => t.score);
+    return { min: Math.min(...scores), max: Math.max(...scores) };
   }
-  return { min, max };
+  return { min: 0, max: 0 };
 }

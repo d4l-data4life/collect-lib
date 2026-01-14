@@ -27,6 +27,7 @@ describe('calculateScoreRangeForItem', () => {
   it('works for valueSet', () => {
     const expected = { min: 0, max: 4 };
     const item: fhir5.QuestionnaireItem = {
+      type: 'coding',
       answerValueSet: '#1',
     } as fhir5.QuestionnaireItem;
     const valueSets: { [key: string]: fhir5.ValueSet } = {
