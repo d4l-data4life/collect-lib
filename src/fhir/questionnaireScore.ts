@@ -83,7 +83,7 @@ export function calculateQuestionnaireScoreRange(
   }
 
   const valueSets: { [key: string]: fhir5.ValueSet } = indexArrayBy(
-    questionnaire.contained || [],
+    (questionnaire.contained as fhir5.ValueSet[]) || [],
     'id'
   );
 
