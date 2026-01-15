@@ -114,7 +114,7 @@ export function calculateScoreRangeForItem(
     return calculateValueSetScore(item, valueSets, scoring);
   }
   if (item.type === 'decimal' || item.type === 'integer') {
-    return calculateNumericScore(item, valueSets, scoring);
+    return calculateNumericScore(item, scoring);
   }
   return { min: 0, max: 0 };
 }
@@ -124,34 +124,33 @@ function calculateValueSetScore(
   valueSets: { [key: string]: fhir5.ValueSet },
   scoring: SurveyScoring
 ): Range {
-  if (item.answerValueSet) {
-    const valueSet = valueSets[item.answerValueSet.replace('#', '')];
-    if (valueSet !== undefined) {
-      const scoringSystems: { [key: string]: { [key: string]: number } } =
-        scoring.scores?.valueset ?? {};
-      const min = Math.min(
-        ...(valueSet.expansion?.contains || []).map((containedOption) => {
-          const scoreValues = Object.values(scoringSystems[containedOption.system as string] || []);
-          return Math.min(...(scoreValues ?? []));
-        })
-      );
-      const max = Math.max(
-        ...(valueSet.expansion?.contains || []).map((containedOption) => {
-          const scoreValues = Object.values(scoringSystems[containedOption.system as string] || []);
-          return Math.max(...(scoreValues ?? []));
-        })
-      );
-      return { min, max };
-    }
+  if (!item.answerValueSet) {
+    return { min: 0, max: 0 };
   }
-  return { min: 0, max: 0 };
+
+  const valueSet = valueSets[item.answerValueSet.replace('#', '')];
+  if (valueSet === undefined) {
+    return { min: 0, max: 0 };
+  }
+
+  const uniqueCodesystems = (valueSet.expansion?.contains || []).reduce<string[]>(
+    (acc, { system }) => {
+      if (system && !acc.includes(system)) {
+        acc.push(system);
+      }
+      return acc;
+    },
+    []
+  );
+  const scoringSystems = scoring.scores?.valueset ?? {};
+  const possibleValues = uniqueCodesystems.flatMap((system) => {
+    return Object.values(scoringSystems[system] ?? {});
+  });
+
+  return { min: Math.min(...possibleValues), max: Math.max(...possibleValues) };
 }
 
-function calculateNumericScore(
-  item: fhir5.QuestionnaireItem,
-  valueSets: { [key: string]: fhir5.ValueSet },
-  scoring: SurveyScoring
-): Range {
+function calculateNumericScore(item: fhir5.QuestionnaireItem, scoring: SurveyScoring): Range {
   const scoringNumbers = scoring.scores?.number ?? {};
   const threshold = scoringNumbers[item.linkId || ''];
   if (threshold) {
