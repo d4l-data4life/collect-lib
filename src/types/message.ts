@@ -19,7 +19,7 @@ export interface Message {
   updatedAt?: string;
   // sentAt | false | string | ISO Date string when the message was sent
   sentAt?: string;
-};
+}
 
 export type MessagePath = RecursiveKeyOf<Message>;
 
@@ -30,7 +30,6 @@ export interface MessageRecipient {
   sentAt?: string;
   pushedAt?: string;
   readAt?: string;
-
 }
 
 export interface SeenMessage {
