@@ -1,6 +1,7 @@
 export * from './devices';
 export * from './types';
 export * from './fhir';
+export * from './timefuncs';
 
 export * from './donation/crypto';
 export * from './donation/keyHandler';
