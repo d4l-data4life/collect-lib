@@ -58,14 +58,12 @@ export const overwriteTime = (
 
 /**
  * Converts a ISO 8601 timestamp string to a Date ignoring the timezone
+ * Uses luxon for date parsing (allows setting default timezone in tests)
  * @param input
  * @returns timestamp without timezone information
  */
-export const timezonelessDate = (input: string): Date | undefined => {
+export const timezonelessDate = (input: string): Date => {
   const test = DateTime.fromISO(input);
-  if (test.isValid) {
-    undefined;
-  }
   const timezoneIndex = input.search(/[+-]\d{2}:\d{2}|Z$/);
   if (timezoneIndex > 0) {
     const withoutTimezone = input.substring(0, timezoneIndex);

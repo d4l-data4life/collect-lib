@@ -1,6 +1,6 @@
 import { addDays } from 'date-fns';
 import { Settings } from 'luxon';
-import { DayFuncs, MonthFuncs, WeekFuncs } from './timefuncs';
+import { getTimeFuncs, TimeFuncs } from './timefuncs';
 
 const NY = 'America/New_York';
 const BLN = 'Europe/Berlin';
@@ -105,18 +105,14 @@ const twoMonthsWindowNY = {
 };
 
 describe('timeFuncs', () => {
-  beforeAll(() => {
-    Settings.defaultZone = BLN;
-  });
-
-  afterEach(() => {
+  beforeEach(() => {
     Settings.defaultZone = BLN;
   });
 
   describe('dayFuncs', () => {
-    let dayFuncs: DayFuncs;
-    beforeAll(() => {
-      dayFuncs = new DayFuncs({ start: frequencyStart });
+    let dayFuncs: TimeFuncs;
+    beforeEach(() => {
+      dayFuncs = getTimeFuncs({ start: frequencyStart, type: 'daily' }, null);
     });
 
     describe('add', () => {
@@ -153,17 +149,29 @@ describe('timeFuncs', () => {
       it('works', () => {
         expect(dayFuncs.window(baseDate)).toEqual(dayWindow);
       });
+
+      it('works with overwritten startDate', () => {
+        dayFuncs = getTimeFuncs({ start: frequencyStart, type: 'daily' }, baseDate);
+        expect(dayFuncs.window(baseDate)).toEqual(dayWindow);
+      });
+
       it('works for NY location', () => {
         Settings.defaultZone = NY;
         expect(dayFuncs.window(new Date(baseDateNY))).toEqual(dayWindowNY);
+      });
+
+      it('works with overwritten startDate for NY location', () => {
+        Settings.defaultZone = NY;
+        dayFuncs = getTimeFuncs({ start: frequencyStart, type: 'daily' }, new Date(baseDateNY));
+        expect(dayFuncs.window(baseDate)).toEqual(dayWindowNY);
       });
     });
   });
 
   describe('dayFuncs with factor', () => {
-    let dayFuncs: DayFuncs;
-    beforeAll(() => {
-      dayFuncs = new DayFuncs({ factor: 3, start: frequencyStart.toString() });
+    let dayFuncs: TimeFuncs;
+    beforeEach(() => {
+      dayFuncs = getTimeFuncs({ factor: 3, start: frequencyStart, type: 'daily' }, null);
     });
 
     describe('add', () => {
@@ -199,17 +207,38 @@ describe('timeFuncs', () => {
       it('works', () => {
         expect(dayFuncs.window(addDays(baseDate, 1))).toEqual(threeDaysWindow);
       });
+
+      it('works with overwritten startDate', () => {
+        dayFuncs = getTimeFuncs({ factor: 3, start: frequencyStart, type: 'daily' }, baseDate);
+        expect(dayFuncs.window(baseDate)).toEqual({
+          start: new Date('2020-07-01T10:00:00.000+02:00'),
+          end: new Date('2020-07-03T23:59:59.999+02:00'),
+        });
+      });
+
       it('works for NY location', () => {
         Settings.defaultZone = NY;
         expect(dayFuncs.window(addDays(baseDate, 1))).toEqual(threeDaysWindowNY);
+      });
+
+      it('works with overwritten startDate for NY location', () => {
+        Settings.defaultZone = NY;
+        dayFuncs = getTimeFuncs(
+          { factor: 3, start: frequencyStart, type: 'daily' },
+          new Date(baseDateNY)
+        );
+        expect(dayFuncs.window(baseDate)).toEqual({
+          start: new Date('2020-07-01T10:00:00.000-04:00'),
+          end: new Date('2020-07-03T23:59:59.999-04:00'),
+        });
       });
     });
   });
 
   describe('weekFuncs', () => {
-    let weekFuncs: WeekFuncs;
-    beforeAll(() => {
-      weekFuncs = new WeekFuncs({ start: frequencyStart });
+    let weekFuncs: TimeFuncs;
+    beforeEach(() => {
+      weekFuncs = getTimeFuncs({ start: frequencyStart, type: 'weekly' }, null);
     });
 
     describe('add', () => {
@@ -252,8 +281,19 @@ describe('timeFuncs', () => {
         expect(weekFuncs.window(baseDate)).toEqual(weekWindow);
       });
 
+      it('works with overwritten startDate', () => {
+        weekFuncs = getTimeFuncs({ start: frequencyStart, type: 'weekly' }, baseDate);
+        expect(weekFuncs.window(baseDate)).toEqual(weekWindow);
+      });
+
       it('works for NY location', () => {
         Settings.defaultZone = NY;
+        expect(weekFuncs.window(baseDate)).toEqual(weekWindowNY);
+      });
+
+      it('works with overwritten startDate for NY location', () => {
+        Settings.defaultZone = NY;
+        weekFuncs = getTimeFuncs({ start: frequencyStart, type: 'weekly' }, baseDate);
         expect(weekFuncs.window(baseDate)).toEqual(weekWindowNY);
       });
 
@@ -273,9 +313,9 @@ describe('timeFuncs', () => {
   });
 
   describe('weekFuncs with factor', () => {
-    let weekFuncs: WeekFuncs;
-    beforeAll(() => {
-      weekFuncs = new WeekFuncs({ factor: 2, start: frequencyStart });
+    let weekFuncs: TimeFuncs;
+    beforeEach(() => {
+      weekFuncs = getTimeFuncs({ factor: 2, start: frequencyStart, type: 'weekly' }, null);
     });
 
     describe('add', () => {
@@ -317,8 +357,19 @@ describe('timeFuncs', () => {
         expect(weekFuncs.window(baseDate)).toEqual(twoWeekWindow);
       });
 
+      it('works with overwritten startDate', () => {
+        weekFuncs = getTimeFuncs({ factor: 2, start: frequencyStart, type: 'weekly' }, baseDate);
+        expect(weekFuncs.window(baseDate)).toEqual(twoWeekWindow);
+      });
+
       it('works for NY location', () => {
         Settings.defaultZone = NY;
+        expect(weekFuncs.window(baseDate)).toEqual(twoWeekWindowNY);
+      });
+
+      it('works with overwritten startDate for NY location', () => {
+        Settings.defaultZone = NY;
+        weekFuncs = getTimeFuncs({ factor: 2, start: frequencyStart, type: 'weekly' }, baseDate);
         expect(weekFuncs.window(baseDate)).toEqual(twoWeekWindowNY);
       });
 
@@ -342,9 +393,9 @@ describe('timeFuncs', () => {
   });
 
   describe('monthFuncs', () => {
-    let monthFuncs: MonthFuncs;
+    let monthFuncs: TimeFuncs;
     beforeAll(() => {
-      monthFuncs = new MonthFuncs({ start: frequencyStart });
+      monthFuncs = getTimeFuncs({ start: frequencyStart, type: 'monthly' }, null);
     });
 
     describe('add', () => {
@@ -389,9 +440,9 @@ describe('timeFuncs', () => {
   });
 
   describe('monthFuncs with factor', () => {
-    let monthFuncs: MonthFuncs;
+    let monthFuncs: TimeFuncs;
     beforeAll(() => {
-      monthFuncs = new MonthFuncs({ factor: 2, start: frequencyStart });
+      monthFuncs = getTimeFuncs({ factor: 2, start: frequencyStart, type: 'monthly' }, null);
     });
 
     describe('add', () => {

@@ -76,7 +76,7 @@ export abstract class TimeFuncs {
 
 const dayFormat = (date: Date): string => DateTime.fromJSDate(date).toFormat('yyyy-MM-dd');
 
-export class DayFuncs extends TimeFuncs {
+class DayFuncs extends TimeFuncs {
   unit = 'day' as DateTimeUnit;
   addFunc = (base: Date, x: number): Date => DateTime.fromJSDate(base).plus({ days: x }).toJSDate();
   diffFunc = (later: Date, earlier: Date): number =>
@@ -84,7 +84,7 @@ export class DayFuncs extends TimeFuncs {
   formatFunc = dayFormat;
 }
 
-export class WeekFuncs extends TimeFuncs {
+class WeekFuncs extends TimeFuncs {
   unit = 'week' as DateTimeUnit;
   addFunc = (base: Date, x: number): Date =>
     DateTime.fromJSDate(base).plus({ weeks: x }).toJSDate();
@@ -97,7 +97,7 @@ export class WeekFuncs extends TimeFuncs {
   }
 }
 
-export class MonthFuncs extends TimeFuncs {
+class MonthFuncs extends TimeFuncs {
   unit = 'month' as DateTimeUnit;
   addFunc = (base: Date, x: number): Date =>
     DateTime.fromJSDate(base).plus({ months: x }).toJSDate();
@@ -121,10 +121,12 @@ type FrequencySubset = {
  */
 export const getTimeFuncs = (parameters: FrequencySubset, startDate: Date | null): TimeFuncs => {
   const { type } = parameters;
-  const params = startDate
+  const overrideStart = overwriteTime(startDate, parameters.start);
+  const params = overrideStart
     ? {
         ...parameters,
-        start: overwriteTime(startDate, parameters.start)?.toISOString(),
+        // Use DateTime ISO string to retain proper time when converting to ISO (JS date automatically converts to UTC)
+        start: DateTime.fromJSDate(overrideStart).toISO() ?? parameters.start,
       }
     : parameters;
   switch (type) {
