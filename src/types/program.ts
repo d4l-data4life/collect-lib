@@ -252,8 +252,6 @@ export type ProgramDonation = {
 export type ProgramAnonymization = {
   // blur | false | object | The set of blurring settings that should be applied to the resource.
   blur?: {
-    // blur.location | true | string | The timezone location of the resource, e.g `"Europe/Berlin"`.
-    location: string;
     // blur.authored | false | [DateBlurringFunction](#DateBlurringFunction) | The name of the default blurring function which is used to blur the authored timestamp of every QuestionnaireResponse.
     authored?: DateBlurringFunction;
     // blur.authored | false | [DateBlurringFunction](#DateBlurringFunction) | The name of the default blurring function which is used to blur the period start and end of every ResearchSubject.
