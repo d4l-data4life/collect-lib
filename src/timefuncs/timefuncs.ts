@@ -7,6 +7,9 @@ export type TimeWindow = {
   end: Date;
 };
 
+/**
+ * Abstract class for functions to manipulate time based on a given window size
+ */
 export abstract class TimeFuncs {
   abstract unit: DateTimeUnit;
   public factor: number = 1;
