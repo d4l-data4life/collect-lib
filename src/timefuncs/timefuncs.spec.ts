@@ -112,7 +112,7 @@ describe('timeFuncs', () => {
   describe('dayFuncs', () => {
     let dayFuncs: TimeFuncs;
     beforeEach(() => {
-      dayFuncs = getTimeFuncs({ start: frequencyStart, type: 'daily' }, null);
+      dayFuncs = getTimeFuncs({ start: frequencyStart, type: 'daily' });
     });
 
     describe('add', () => {
@@ -171,7 +171,7 @@ describe('timeFuncs', () => {
   describe('dayFuncs with factor', () => {
     let dayFuncs: TimeFuncs;
     beforeEach(() => {
-      dayFuncs = getTimeFuncs({ factor: 3, start: frequencyStart, type: 'daily' }, null);
+      dayFuncs = getTimeFuncs({ factor: 3, start: frequencyStart, type: 'daily' });
     });
 
     describe('add', () => {
@@ -238,7 +238,7 @@ describe('timeFuncs', () => {
   describe('weekFuncs', () => {
     let weekFuncs: TimeFuncs;
     beforeEach(() => {
-      weekFuncs = getTimeFuncs({ start: frequencyStart, type: 'weekly' }, null);
+      weekFuncs = getTimeFuncs({ start: frequencyStart, type: 'weekly' });
     });
 
     describe('add', () => {
@@ -315,7 +315,7 @@ describe('timeFuncs', () => {
   describe('weekFuncs with factor', () => {
     let weekFuncs: TimeFuncs;
     beforeEach(() => {
-      weekFuncs = getTimeFuncs({ factor: 2, start: frequencyStart, type: 'weekly' }, null);
+      weekFuncs = getTimeFuncs({ factor: 2, start: frequencyStart, type: 'weekly' });
     });
 
     describe('add', () => {
@@ -395,7 +395,7 @@ describe('timeFuncs', () => {
   describe('monthFuncs', () => {
     let monthFuncs: TimeFuncs;
     beforeAll(() => {
-      monthFuncs = getTimeFuncs({ start: frequencyStart, type: 'monthly' }, null);
+      monthFuncs = getTimeFuncs({ start: frequencyStart, type: 'monthly' });
     });
 
     describe('add', () => {
@@ -442,7 +442,7 @@ describe('timeFuncs', () => {
   describe('monthFuncs with factor', () => {
     let monthFuncs: TimeFuncs;
     beforeAll(() => {
-      monthFuncs = getTimeFuncs({ factor: 2, start: frequencyStart, type: 'monthly' }, null);
+      monthFuncs = getTimeFuncs({ factor: 2, start: frequencyStart, type: 'monthly' });
     });
 
     describe('add', () => {

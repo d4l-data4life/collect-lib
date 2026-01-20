@@ -38,13 +38,13 @@ export const isBeforeStartDate = (start: string | Date | undefined, date: Date) 
 export const overwriteTime = (
   date: Date | null | undefined,
   timeComponent: string | undefined
-): Date | null => {
+): Date | undefined => {
   if (!date || !timeComponent) {
-    return null;
+    return undefined;
   }
   const baseDate = timezonelessDate(timeComponent);
   if (!baseDate) {
-    return null;
+    return undefined;
   }
   const baseLuxon = DateTime.fromJSDate(baseDate);
   const startLuxon = DateTime.fromJSDate(date);

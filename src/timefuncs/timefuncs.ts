@@ -119,7 +119,7 @@ type FrequencySubset = {
  * @param startDate startDate as a means to overwrite frequency information
  * @returns
  */
-export const getTimeFuncs = (parameters: FrequencySubset, startDate: Date | null): TimeFuncs => {
+export const getTimeFuncs = (parameters: FrequencySubset, startDate?: Date): TimeFuncs => {
   const { type } = parameters;
   const overrideStart = overwriteTime(startDate, parameters.start);
   const params = overrideStart
