@@ -9,21 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Min field to QuestionnaireScore
-- Function to calculate possible questionnaire score range
-- TimeFuncs (handler for different frequency types)
-
 ### Changed
 
 ### Deprecated
 
 ### Removed
 
-- Location in study definitions
-
 ### Fixed
 
 ### Security
+
+## [v1.20.0] - 2026-01-21
+
+### Added
+
+- Min field to QuestionnaireScore
+- Function to calculate possible questionnaire score range
+- TimeFuncs (handler for different frequency types)
+
+### Removed
+
+- Location in study definitions
 
 ## [v1.19.0] - 2025-12-11
 
@@ -210,7 +216,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.19.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.20.0...HEAD
+[v1.20.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.19.0...v1.20.0
 [v1.19.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.18.0...v1.19.0
 [v1.18.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.17.0...v1.18.0
 [v1.17.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.16.0...v1.17.0
