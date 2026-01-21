@@ -11,12 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Min field to QuestionnaireScore
 - Function to calculate possible questionnaire score range
+- TimeFuncs (handler for different frequency types)
 
 ### Changed
 
 ### Deprecated
 
 ### Removed
+
+- Location in study definitions
 
 ### Fixed
 

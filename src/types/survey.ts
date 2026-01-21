@@ -32,8 +32,6 @@ export type TaskFrequency = {
   start: string;
   // end | false | ISO 8601 date with timezone | Determines the global ending date of the survey.
   end?: string;
-  // location | false | Timezone Location | Determines the location for the defined date, so that timezone problems can be handled.
-  location?: string;
   // factor | false | integer | For `daily`, `weekly` and `monthly` this factor is used to manipulate the cycle length, e.g. `daily` with a factor of 7 makes it a survey that is repeated every week, but doesn't necessarily start on monday.
   factor?: number;
   // editDuration | false | ISO 8601 duration string | Enables editing events of this survey for the given duration.
