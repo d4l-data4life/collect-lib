@@ -6,7 +6,7 @@ import { dayFormat, overwriteTime } from './utils';
  * Returns the timeFuncs for the given parameters.
  * Can be used with task.frequency and an optional overwrite for the startDate
  * @param parameters subset of task frequency
- * @param startDate startDate as a means to overwrite frequency information
+ * @param startDate startDate as a means to overwrite date part of the frequency start
  * @returns
  */
 export const getTimeFuncs = (parameters: FrequencySubset, startDate?: Date): TimeFuncs => {
@@ -44,7 +44,7 @@ export abstract class TimeFuncs {
       if (parameters.factor !== undefined && parameters.factor > 1) {
         this.factor = parameters.factor;
       }
-      if (parameters?.start) {
+      if (parameters?.start && DateTime.fromISO(parameters.start).isValid) {
         this.start = parameters.start;
       }
     }
