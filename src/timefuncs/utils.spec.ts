@@ -1,5 +1,11 @@
 import { Settings } from 'luxon';
-import { isBeforeStartDate, isNotAfterEndDate, isNotBeforeStartDate, overwriteTime, timezonelessDate } from './utils';
+import {
+  isBeforeStartDate,
+  isNotAfterEndDate,
+  isNotBeforeStartDate,
+  overwriteTime,
+  timezonelessDate,
+} from './utils';
 
 const NY = 'America/New_York';
 const BLN = 'Europe/Berlin';
@@ -56,6 +62,10 @@ describe('isBeforeStartDate', () => {
 });
 
 describe('timezonelessDate', () => {
+  beforeEach(() => {
+    Settings.defaultZone = BLN;
+  });
+
   it('works with UTC timestamp', () => {
     const input = '2021-03-01T10:00:00.000Z';
     const result = timezonelessDate(input);
