@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon';
 
+export const dayFormat = (date: Date): string => DateTime.fromJSDate(date).toFormat('yyyy-MM-dd');
+
 /**
  * Checks if the given date is not after the effective end date
  * @param effectiveEndDate

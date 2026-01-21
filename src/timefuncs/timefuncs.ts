@@ -1,10 +1,34 @@
 import { DateTime, DateTimeUnit } from 'luxon';
-import { FrequencyType } from '../types';
-import { overwriteTime } from './utils';
+import { FrequencySubset, TimeWindow } from './types';
+import { dayFormat, overwriteTime } from './utils';
 
-export type TimeWindow = {
-  start: Date;
-  end: Date;
+/**
+ * Returns the timeFuncs for the given parameters.
+ * Can be used with task.frequency and an optional overwrite for the startDate
+ * @param parameters subset of task frequency
+ * @param startDate startDate as a means to overwrite frequency information
+ * @returns
+ */
+export const getTimeFuncs = (parameters: FrequencySubset, startDate?: Date): TimeFuncs => {
+  const { type } = parameters;
+  const overrideStart = overwriteTime(startDate, parameters.start);
+  const params = overrideStart
+    ? {
+        ...parameters,
+        // Use DateTime ISO string to retain proper time when converting to ISO (JS date automatically converts to UTC)
+        start: DateTime.fromJSDate(overrideStart).toISO() ?? parameters.start,
+      }
+    : parameters;
+  switch (type) {
+    case 'daily':
+      return new DayFuncs(params);
+    case 'weekly':
+      return new WeekFuncs(params);
+    case 'monthly':
+      return new MonthFuncs(params);
+    default:
+      return new DayFuncs(params);
+  }
 };
 
 /**
@@ -17,8 +41,8 @@ export abstract class TimeFuncs {
 
   constructor(parameters?: { factor?: number; start?: string }) {
     if (parameters) {
-      if (parameters.factor ? parameters.factor > 1 : false) {
-        this.factor = parameters.factor!;
+      if (parameters.factor !== undefined && parameters.factor > 1) {
+        this.factor = parameters.factor;
       }
       if (parameters?.start) {
         this.start = parameters.start;
@@ -74,8 +98,6 @@ export abstract class TimeFuncs {
   }
 }
 
-const dayFormat = (date: Date): string => DateTime.fromJSDate(date).toFormat('yyyy-MM-dd');
-
 class DayFuncs extends TimeFuncs {
   unit = 'day' as DateTimeUnit;
   addFunc = (base: Date, x: number): Date => DateTime.fromJSDate(base).plus({ days: x }).toJSDate();
@@ -105,38 +127,3 @@ class MonthFuncs extends TimeFuncs {
     DateTime.fromJSDate(later).diff(DateTime.fromJSDate(earlier), 'months').months;
   formatFunc = (date: Date) => DateTime.fromJSDate(date).toFormat('yyyy-MM');
 }
-
-type FrequencySubset = {
-  factor?: number;
-  start?: string;
-  type: FrequencyType;
-};
-
-/**
- * Returns the timeFuncs for the given parameters.
- * Can be used with task.frequency and an optional overwrite for the startDate
- * @param parameters subset of task frequency
- * @param startDate startDate as a means to overwrite frequency information
- * @returns
- */
-export const getTimeFuncs = (parameters: FrequencySubset, startDate?: Date): TimeFuncs => {
-  const { type } = parameters;
-  const overrideStart = overwriteTime(startDate, parameters.start);
-  const params = overrideStart
-    ? {
-        ...parameters,
-        // Use DateTime ISO string to retain proper time when converting to ISO (JS date automatically converts to UTC)
-        start: DateTime.fromJSDate(overrideStart).toISO() ?? parameters.start,
-      }
-    : parameters;
-  switch (type) {
-    case 'daily':
-      return new DayFuncs(params);
-    case 'weekly':
-      return new WeekFuncs(params);
-    case 'monthly':
-      return new MonthFuncs(params);
-    default:
-      return new DayFuncs(params);
-  }
-};

@@ -5,11 +5,7 @@ const NY = 'America/New_York';
 const BLN = 'Europe/Berlin';
 
 describe('overwriteTime', () => {
-  beforeAll(() => {
-    Settings.defaultZone = BLN;
-  });
-
-  afterEach(() => {
+  beforeEach(() => {
     Settings.defaultZone = BLN;
   });
 
