@@ -147,6 +147,10 @@ function calculateValueSetScore(
     return Object.values(scoringSystems[system] ?? {});
   });
 
+  if(possibleValues.length === 0) {
+    return { min: 0, max: 0 };
+  }
+
   return { min: Math.min(...possibleValues), max: Math.max(...possibleValues) };
 }
 
