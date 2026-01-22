@@ -263,6 +263,338 @@ export const ociRTestQuestionnaire: fhir5.Questionnaire = {
   ],
 };
 
+export const phq9Scoring: SurveyScoring = {
+  scores: {
+    valueset: {
+      'http://fhir.data4life.care/r5/CodeSystem/phq-occurrence': {
+        'not-at-all': 0,
+        'several-days': 1,
+        'more-than-half-the-days': 2,
+        'nearly-every-day': 3,
+      },
+    },
+  },
+};
+
+export const phq9Questionnaire: fhir5.Questionnaire = {
+  contact: [
+    {
+      name: 'D4L data4life gGmbH',
+      telecom: [
+        {
+          system: 'url',
+          value: 'https://www.data4life.care',
+        },
+      ],
+    },
+  ],
+  contained: [
+    {
+      compose: {
+        include: [
+          {
+            concept: [
+              {
+                code: 'not-at-all',
+              },
+              {
+                code: 'several-days',
+              },
+              {
+                code: 'more-than-half-the-days',
+              },
+              {
+                code: 'nearly-every-day',
+              },
+            ],
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-occurrence',
+          },
+        ],
+      },
+      contact: [
+        {
+          name: 'D4L data4life gGmbH',
+          telecom: [
+            {
+              system: 'url',
+              value: 'https://www.data4life.care',
+            },
+          ],
+        },
+      ],
+      expansion: {
+        contains: [
+          {
+            code: 'not-at-all',
+            display: 'Not at all',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-occurrence',
+          },
+          {
+            code: 'several-days',
+            display: 'Several Days',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-occurrence',
+          },
+          {
+            code: 'more-than-half-the-days',
+            display: 'More than half the days',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-occurrence',
+          },
+          {
+            code: 'nearly-every-day',
+            display: 'Nearly every day',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-occurrence',
+          },
+        ],
+        identifier: 'ff69b13c-2ab0-48c4-b78b-095c131d1d8d',
+        parameter: [
+          {
+            name: 'displayLanguage',
+            valueCode: 'en',
+          },
+        ],
+        timestamp: '2025-11-17T08:28:37Z',
+      },
+      id: '0',
+      language: 'en',
+      name: 'phq-occurrence-scale',
+      publisher: 'D4L data4life gGmbH',
+      resourceType: 'ValueSet',
+      status: 'active',
+      url: 'http://fhir.data4life.care/r5/phq/ValueSet/phq-occurrence-scale',
+    },
+    {
+      compose: {
+        include: [
+          {
+            concept: [
+              {
+                code: 'not-difficult-at-all',
+              },
+              {
+                code: 'somewhat-difficult',
+              },
+              {
+                code: 'very-difficult',
+              },
+              {
+                code: 'extremely-difficult',
+              },
+            ],
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+        ],
+      },
+      contact: [
+        {
+          name: 'D4L data4life gGmbH',
+          telecom: [
+            {
+              system: 'url',
+              value: 'https://www.data4life.care',
+            },
+          ],
+        },
+      ],
+      expansion: {
+        contains: [
+          {
+            code: 'not-difficult-at-all',
+            display: 'Not difficult at all',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+          {
+            code: 'somewhat-difficult',
+            display: 'Somewhat difficult',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+          {
+            code: 'very-difficult',
+            display: 'Very difficult',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+          {
+            code: 'extremely-difficult',
+            display: 'Extremely difficult',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+        ],
+        identifier: 'f8e94a06-290f-4d42-a5c0-6d66bfeee512',
+        parameter: [
+          {
+            name: 'displayLanguage',
+            valueCode: 'en',
+          },
+        ],
+        timestamp: '2025-11-17T09:06:02Z',
+      },
+      id: '1',
+      language: 'en',
+      name: 'phq-difficulty-scale',
+      publisher: 'D4L data4life gGmbH',
+      resourceType: 'ValueSet',
+      status: 'active',
+      url: 'http://fhir.data4life.care/r5/phq/ValueSet/phq-difficulty-scale',
+    },
+  ],
+  date: '2025-11-17T08:28:28Z',
+  item: [
+    {
+      answerValueSet: '#0',
+      linkId: 'interest',
+      required: true,
+      text: 'Over the last 2 weeks, how often have you been bothered by:\nLittle interest or pleasure in doing things?',
+      type: 'coding',
+    },
+    {
+      answerValueSet: '#0',
+      linkId: 'depressed',
+      required: true,
+      text: 'Over the last 2 weeks, how often have you been bothered by:\nFeeling down, depressed, or hopeless?',
+      type: 'coding',
+    },
+    {
+      answerValueSet: '#0',
+      linkId: 'sleeping',
+      required: true,
+      text: 'Over the last 2 weeks, how often have you been bothered by:\nTrouble falling or staying asleep, or sleeping too much?',
+      type: 'coding',
+    },
+    {
+      answerValueSet: '#0',
+      linkId: 'tired',
+      required: true,
+      text: 'Over the last 2 weeks, how often have you been bothered by:\nFeeling tired or having little energy?',
+      type: 'coding',
+    },
+    {
+      answerValueSet: '#0',
+      linkId: 'appetite',
+      required: true,
+      text: 'Over the last 2 weeks, how often have you been bothered by:\nPoor appetite or overeating?',
+      type: 'coding',
+    },
+    {
+      answerValueSet: '#0',
+      linkId: 'self-doubt',
+      required: true,
+      text: 'Over the last 2 weeks, how often have you been bothered by:\nFeeling bad about yourself - or that you are a failure or have let yourself or your family down?',
+      type: 'coding',
+    },
+    {
+      answerValueSet: '#0',
+      linkId: 'concentration',
+      required: true,
+      text: 'Over the last 2 weeks, how often have you been bothered by:\nTrouble concentrating on things, such as reading the newspaper or watching television?',
+      type: 'coding',
+    },
+    {
+      answerValueSet: '#0',
+      linkId: 'speed',
+      required: true,
+      text: 'Over the last 2 weeks, how often have you been bothered by:\nMoving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual?',
+      type: 'coding',
+    },
+    {
+      answerValueSet: '#0',
+      linkId: 'self-harm',
+      required: true,
+      text: 'Over the last 2 weeks, how often have you been bothered by:\nThoughts that you would be better off dead or of hurting yourself in some way?',
+      type: 'coding',
+    },
+    {
+      answerValueSet: '#1',
+      linkId: 'difficulty',
+      required: true,
+      text: 'If you checked off any problems, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people?',
+      type: 'coding',
+      enableBehavior: 'any',
+      enableWhen: [
+        {
+          answerCoding: {
+            code: 'not-at-all',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+          operator: '!=',
+          question: 'interest',
+        },
+        {
+          answerCoding: {
+            code: 'not-at-all',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+          operator: '!=',
+          question: 'depressed',
+        },
+        {
+          answerCoding: {
+            code: 'not-at-all',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+          operator: '!=',
+          question: 'sleeping',
+        },
+        {
+          answerCoding: {
+            code: 'not-at-all',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+          operator: '!=',
+          question: 'tired',
+        },
+        {
+          answerCoding: {
+            code: 'not-at-all',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+          operator: '!=',
+          question: 'appetite',
+        },
+        {
+          answerCoding: {
+            code: 'not-at-all',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+          operator: '!=',
+          question: 'self-doubt',
+        },
+        {
+          answerCoding: {
+            code: 'not-at-all',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+          operator: '!=',
+          question: 'concentration',
+        },
+        {
+          answerCoding: {
+            code: 'not-at-all',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+          operator: '!=',
+          question: 'speed',
+        },
+        {
+          answerCoding: {
+            code: 'not-at-all',
+            system: 'http://fhir.data4life.care/r5/CodeSystem/phq-difficulty',
+          },
+          operator: '!=',
+          question: 'self-harm',
+        },
+      ],
+    },
+  ],
+  language: 'en',
+  name: 'phq-9',
+  publisher: 'D4L data4life gGmbH',
+  resourceType: 'Questionnaire',
+  status: 'active',
+  subjectType: ['Patient'],
+  title: 'PHQ-9',
+  url: 'http://fhir.data4life.care/r5/phq/Questionnaire/phq-9',
+  version: '1.0.0',
+};
+
 export function generateContains(
   system: string,
   codes: string[]

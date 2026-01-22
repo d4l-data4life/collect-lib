@@ -3,7 +3,14 @@ import {
   calculateQuestionnaireScoreRange,
   calculateScoreRangeForItem,
 } from '../questionnaireScore';
-import { generateContains, negativeScoring, ociRScoring, ociRTestQuestionnaire } from './fixtures';
+import {
+  generateContains,
+  negativeScoring,
+  ociRScoring,
+  ociRTestQuestionnaire,
+  phq9Questionnaire,
+  phq9Scoring,
+} from './fixtures';
 
 describe('calculateQuestionnaireScoreRange', () => {
   it('works as expected', () => {
@@ -18,6 +25,14 @@ describe('calculateQuestionnaireScoreRange', () => {
     const expected = { min: -36, max: 36 };
 
     const result = calculateQuestionnaireScoreRange(ociRTestQuestionnaire, negativeScoring);
+
+    expect(result).toEqual(expected);
+  });
+
+  it('works with unscored question', () => {
+    const expected = { min: 0, max: 27 };
+
+    const result = calculateQuestionnaireScoreRange(phq9Questionnaire, phq9Scoring);
 
     expect(result).toEqual(expected);
   });
