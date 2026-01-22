@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- QuestionnaireScore range calculation with unscored question
-
 ### Security
+
+## [v1.20.1] - 2026-01-22
+
+### Fixed
+
+- QuestionnaireScore range calculation with unscored question
 
 ## [v1.20.0] - 2026-01-21
 
@@ -218,7 +222,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.20.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.20.1...HEAD
+[v1.20.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.20.0...v1.20.1
 [v1.20.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.19.0...v1.20.0
 [v1.19.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.18.0...v1.19.0
 [v1.18.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.17.0...v1.18.0
