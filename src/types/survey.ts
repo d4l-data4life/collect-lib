@@ -21,6 +21,8 @@ export type Survey = {
   reminder?: TaskReminder;
   // template | false | string | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed)
   template?: string;
+  // publishedAt | true | ISO 8601 date with timezone | Date the survey was published.
+  publishedAt?: string;
 };
 
 // #### TaskFrequency
@@ -54,6 +56,8 @@ export type TaskReminder = {
 // #### SurveyScoring
 // Properties | Required | Type | Description
 export type SurveyScoring = {
+  // eligibility | false | boolean | Indicates if the scoring is suitable for eligibility.
+  eligibility?: boolean;
   // scores | true | object | Defines how the questions will be scored
   scores: {
     // scores.valueset | false | {valuesetURL: {answerCode: score}} | For questions that use valuesets scores are assigned to each code of the valuesets

@@ -228,6 +228,7 @@ Update the types by running `yarn run readme:update`.
 | content     | true     | [SurveyContent](#SurveyContent) | Defines the texts, images and icons that need to be displayed for the survey                            |
 | reminder    | false    | [TaskReminder](#TaskReminder)   | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)      |
 | template    | false    | string                          | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed) |
+| publishedAt | true     | ISO 8601 date with timezone     | Date the survey was published.                                                                          |
 
 #### TaskFrequency
 
@@ -252,6 +253,7 @@ Update the types by running `yarn run readme:update`.
 
 | Properties      | Required | Type                                          | Description                                                                        |
 | --------------- | -------- | --------------------------------------------- | ---------------------------------------------------------------------------------- |
+| eligibility     | false    | boolean                                       | Indicates if the scoring is suitable for eligibility.                              |
 | scores          | true     | object                                        | Defines how the questions will be scored                                           |
 | scores.valueset | false    | {valuesetURL: {answerCode: score}}            | For questions that use valuesets scores are assigned to each code of the valuesets |
 | scores.number   | false    | {linkId: [ScoreThreshold](#ScoreThreshold)[]} | For numeric questions we define scoring conditions per question                    |
@@ -302,6 +304,7 @@ Update the types by running `yarn run readme:update`.
 | devices     | true                     | string[]                            | Lists the devices used in the routine                                                              |
 | duration    | ISO 8601 duration String | Defines the duration of the routine |
 | reminder    | false                    | [TaskReminder](#TaskReminder)       | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
+| publishedAt | true                     | ISO 8601 date with timezone         | Date the routine was published.                                                                    |
 
 #### ProgramDevice
 
@@ -341,6 +344,7 @@ Update the types by running `yarn run readme:update`.
 | frequency   | true     | [TaskFrequency](#TaskFrequency)                           | Defines in which frequency the questionnaire occurs                              |
 | content     | true     | [DisplayContent](#DisplayContent)                         | Defines the texts, images and icons that need to be displayed for the display    |
 | charts      | false    | { [key in ProgramDeviceType]?: ProgramDevicesDataType[] } | List of devices and their data types that are relevant for the display           |
+| publishedAt | true     | ISO 8601 date with timezone                               | Date the display was published.                                                  |
 
 #### DisplayContent
 
