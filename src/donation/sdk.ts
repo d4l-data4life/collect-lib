@@ -509,7 +509,7 @@ export class DonationSDK implements SDKInterface {
           limit: number;
           offset: number;
         }>({
-          uri: `/responses/${programName}?limit=${limit}&offset=${offset}&updatedAfter=${updatedAfter}`,
+          uri: `/responses/${programName}?limit=${limit}&offset=${offset}&updatedAfter=${encodeURIComponent(updatedAfter)}`,
         });
 
         limit = response.limit;
