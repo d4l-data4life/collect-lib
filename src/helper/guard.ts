@@ -5,6 +5,7 @@ import {
   ConditionSorting,
   ConsentTimes,
   MultiAnswers,
+  ResponseTimes,
   RoutineTimes,
   StepCondition,
 } from '../types';
@@ -30,7 +31,8 @@ export interface Guard {
   getFulfillmentDate(
     multiAnswers: MultiAnswers,
     consentTimes?: ConsentTimes,
-    routineTimes?: RoutineTimes
+    routineTimes?: RoutineTimes,
+    responseTimes?: ResponseTimes
   ): Date | null;
 }
 
@@ -506,6 +508,40 @@ export class RoutineCondition implements Guard {
   }
 }
 
+/**
+ * Checks if a response of a certain name was received
+ */
+export class ResponseCondition implements Guard {
+  responseName: string;
+  offset: Duration = Duration.fromObject({});
+
+  constructor(responseName: string, offset?: string) {
+    this.responseName = responseName;
+    if (offset) {
+      const parsedOffset = Duration.fromISO(offset);
+      parsedOffset.isValid && (this.offset = parsedOffset);
+    }
+  }
+
+  evaluate(_answers: Answers) {
+    // stub
+    return true;
+  }
+
+  getFulfillmentDate(
+    _multiAnswers: MultiAnswers,
+    _consentTimes: ConsentTimes,
+    _routineTimes: RoutineTimes,
+    responseTimes: ResponseTimes
+  ) {
+    if (!responseTimes?.[this.responseName]) {
+      return null;
+    }
+
+    return DateTime.fromJSDate(responseTimes[this.responseName]!).plus(this.offset).toJSDate();
+  }
+}
+
 export const generateQuestionGuard = (
   enableWhen: fhir5.QuestionnaireItemEnableWhen[] | undefined,
   enableBehavior: fhir5.QuestionnaireItem['enableBehavior']
@@ -542,11 +578,12 @@ export const generateQuestionGuard = (
 
 export const generateStepGuard = (
   cond: StepCondition
-): { guard: Guard; surveyNames: string[]; routineNames: string[]; consentKeys: string[] } => {
+): { guard: Guard; surveyNames: string[]; routineNames: string[]; consentKeys: string[]; responseNames: string[] } => {
   const guards = [];
   let surveyNames: string[] = [];
   let routineNames: string[] = [];
   let consentKeys: string[] = [];
+  let responseNames: string[] = [];
   if (cond.items) {
     for (const condition of cond.items) {
       const {
@@ -554,15 +591,18 @@ export const generateStepGuard = (
         surveyNames: nestedIds,
         routineNames: nestedRoutineNames,
         consentKeys: nestedKeys,
+        responseNames: nestedResponseNames,
       } = generateStepGuard(condition);
       guards.push(guard);
       surveyNames.push(...nestedIds);
       routineNames.push(...nestedRoutineNames);
       consentKeys.push(...nestedKeys);
+      responseNames.push(...nestedResponseNames);
     }
     surveyNames = [...new Set(surveyNames)];
     routineNames = [...new Set(routineNames)];
     consentKeys = [...new Set(consentKeys)];
+    responseNames = [...new Set(responseNames)];
   }
   switch (cond.type) {
     case 'question':
@@ -579,6 +619,7 @@ export const generateStepGuard = (
             surveyNames: [cond.surveyName!],
             routineNames: [],
             consentKeys: [],
+            responseNames: [],
           };
         case 'date':
           return {
@@ -586,6 +627,7 @@ export const generateStepGuard = (
             surveyNames: [cond.surveyName!],
             routineNames: [],
             consentKeys: [],
+            responseNames: [],
           };
         default:
           console.warn(`[Step Guard Generation] Unknown question type: "${cond.questionType}"`);
@@ -594,6 +636,7 @@ export const generateStepGuard = (
             surveyNames: [cond.surveyName!],
             routineNames: [],
             consentKeys: [],
+            responseNames: [],
           };
       }
     case 'and':
@@ -602,6 +645,7 @@ export const generateStepGuard = (
         surveyNames: surveyNames,
         routineNames,
         consentKeys,
+        responseNames
       };
     case 'or':
       return {
@@ -609,6 +653,7 @@ export const generateStepGuard = (
         surveyNames: surveyNames,
         routineNames,
         consentKeys,
+        responseNames
       };
     case 'offset':
       const {
@@ -616,12 +661,14 @@ export const generateStepGuard = (
         surveyNames: offsetSurveyNames,
         routineNames: offsetRoutineNames,
         consentKeys: offsetConsentKeys,
+        responseNames: offsetResponseNames
       } = generateStepGuard(cond.item!);
       return {
         guard: new Offset(offsetGuard, cond.offset),
         surveyNames: [...offsetSurveyNames],
         routineNames: [...offsetRoutineNames],
         consentKeys: [...offsetConsentKeys],
+        responseNames: [...offsetResponseNames]
       };
     case 'consent':
       return {
@@ -629,6 +676,7 @@ export const generateStepGuard = (
         surveyNames: [],
         routineNames: [],
         consentKeys: [cond.consentKey!],
+        responseNames: [],
       };
     case 'survey':
       return {
@@ -636,6 +684,7 @@ export const generateStepGuard = (
         surveyNames: [cond.surveyName!],
         routineNames: [],
         consentKeys: [],
+        responseNames: [],
       };
     case 'routine':
       return {
@@ -643,6 +692,15 @@ export const generateStepGuard = (
         surveyNames: [],
         routineNames: [cond.routineName!],
         consentKeys: [],
+        responseNames: [],
+      };
+    case 'response':
+      return {
+        guard: new ResponseCondition(cond.responseName!, cond.offset),
+        surveyNames: [],
+        routineNames: [],
+        consentKeys: [],
+        responseNames: [cond.responseName!],
       };
     default:
       console.warn(`[Step Guard Generation] Unknown condition type: "${cond.type}"`);
@@ -651,6 +709,7 @@ export const generateStepGuard = (
         surveyNames: [],
         routineNames: [],
         consentKeys: [],
+        responseNames: [],
       };
   }
 };

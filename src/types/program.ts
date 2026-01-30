@@ -208,6 +208,8 @@ export type StepCondition = {
   sorting?: ConditionSorting;
   // consentKey | false | string | Required for condition type `consent`. Reference to the consent that must have been granted to fulfill the condition.
   consentKey?: string;
+  // responseName | false | string | Required for condition type `response`. Reference to the response that must have been received to fulfill the condition.
+  responseName?: string;
 };
 
 // #### ConditionType
@@ -226,7 +228,9 @@ export type ConditionType =
   // offset | Condition that adds a date offset to the fulfillment date of the given subcondition
   | 'offset'
   // consent | Condition that require a specific consent to be given
-  | 'consent';
+  | 'consent'
+  // response | Condition that require a specific response to be received
+  | 'response';
 
 export type ConditionQuestionType = 'coding' | 'date';
 export type ConditionOperatorType = fhir5.QuestionnaireItemEnableWhen['operator'];

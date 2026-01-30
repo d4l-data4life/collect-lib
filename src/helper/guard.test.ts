@@ -10,6 +10,7 @@ import {
   ExistsCondition,
   Guard,
   Offset,
+  ResponseCondition,
   RoutineCondition,
   SurveyCondition,
   YearCondition,
@@ -862,6 +863,48 @@ describe('Guard', () => {
     });
   });
 
+  describe('ResponseCondition', () => {
+    const responseDate = new Date();
+
+    it('can be constructed', () => {
+      expect(new ResponseCondition('response1')).toBeTruthy();
+      expect(new ResponseCondition('response1', 'P7W')).toBeTruthy();
+    });
+
+    describe('getFulfillmentDate', () => {
+      it('returns null if there is no recording for the routine', () => {
+        const condition = new ResponseCondition('response1');
+        expect(condition.getFulfillmentDate({}, {}, {}, { response1: null })).toBe(null);
+      });
+
+      it('returns null if there is a recording for a different routine', () => {
+        const condition = new ResponseCondition('response1');
+        expect(condition.getFulfillmentDate({}, {}, {}, { response2: responseDate })).toBe(null);
+      });
+
+      it('returns date of recording if offset was not given', () => {
+        const condition = new ResponseCondition('response1');
+        expect(condition.getFulfillmentDate({}, {}, {}, { response1: responseDate })).toEqual(
+          responseDate
+        );
+      });
+
+      it('adds/subtracts offset to/from date of recording if given', () => {
+        const futureCondition = new ResponseCondition('response1', 'P3D');
+        const expectedFutureDate = addDays(responseDate, 3);
+        expect(futureCondition.getFulfillmentDate({}, {}, {}, { response1: responseDate })).toEqual(
+          expectedFutureDate
+        );
+
+        const pastCondition = new ResponseCondition('response1', '-P9W');
+        const expectedPastDate = addWeeks(responseDate, -9);
+        expect(pastCondition.getFulfillmentDate({}, {}, {}, { response1: responseDate })).toEqual(
+          expectedPastDate
+        );
+      });
+    });
+  });
+
   describe('generateStepGuard', () => {
     const codingCondition: StepCondition = {
       linkID: 'A1',
@@ -1016,6 +1059,18 @@ describe('Guard', () => {
       const { guard, routineNames } = generateStepGuard(routineCondition);
       expect(guard).toEqual(expected);
       expect(routineNames).toEqual(['routine1']);
+    });
+
+    it('works for response conditions', () => {
+      const responseCondition: StepCondition = {
+        type: 'response',
+        responseName: 'response1',
+        offset: 'P5Y',
+      };
+      const expected: Guard = new ResponseCondition('response1', 'P5Y');
+      const { guard, responseNames } = generateStepGuard(responseCondition);
+      expect(guard).toEqual(expected);
+      expect(responseNames).toEqual(['response1']);
     });
   });
 });
