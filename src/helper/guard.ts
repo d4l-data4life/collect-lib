@@ -11,6 +11,21 @@ import {
 } from '../types';
 import { stringToDate, stringToYear } from './datetime';
 
+export type GuardParameters = {
+  multiAnswers?: MultiAnswers;
+  consentTimes?: ConsentTimes;
+  routineTimes?: RoutineTimes;
+  responseTimes?: ResponseTimes;
+};
+
+export type GuardContext = {
+  guard: Guard;
+  surveyNames?: string[];
+  routineNames?: string[];
+  consentKeys?: string[];
+  responseNames?: string[];
+};
+
 /**
  * Checks if a given condition is fulfilled by evaluating the answers of a questionnaire response.
  */
@@ -24,16 +39,9 @@ export interface Guard {
    * Evaluates if the guard is fulfilled and returns since when it counts as fulfilled.
    * Returns null if it is not fulfilled
    * Requires surveyName to be defined to use the correct answers for evaluation.
-   * @param multiAnswers Dictionary of surveyName -> Answers, date of the response
-   * @param consentTimes Dictionary of consentKey -> date of the given consent (or null)
-   * @param routineTimes Dictionary of routine names -> date when the last recording for the routine was done (or null)
+   * @param params map of parameters to calculate fulfillment
    */
-  getFulfillmentDate(
-    multiAnswers: MultiAnswers,
-    consentTimes?: ConsentTimes,
-    routineTimes?: RoutineTimes,
-    responseTimes?: ResponseTimes
-  ): Date | null;
+  getFulfillmentDate(params: GuardParameters): Date | null;
 }
 
 const evaluateOperator = <T>(value: T, operator: ConditionOperatorType, operand: T): boolean => {
@@ -105,8 +113,9 @@ export class DateCondition implements Guard {
 
     return evaluateOperator(has.getTime(), operator, operand.getTime());
   }
-  getFulfillmentDate(multiAnswers: MultiAnswers): Date | null {
-    if (this.surveyName) {
+  getFulfillmentDate(params: GuardParameters): Date | null {
+    const { multiAnswers } = params;
+    if (this.surveyName && multiAnswers !== undefined) {
       const answer = multiAnswers[this.surveyName].answers[this.questionID];
       if (answer && !Array.isArray(answer)) {
         const jsDate = new Date(answer);
@@ -161,7 +170,7 @@ export class YearCondition implements Guard {
 
     return evaluateOperator(has, operator, operand);
   }
-  getFulfillmentDate(_multiAnswers: MultiAnswers): Date | null {
+  getFulfillmentDate(_params: GuardParameters): Date | null {
     return null;
   }
 }
@@ -226,8 +235,9 @@ export class AnswerCodeCondition implements Guard {
       }
     }
   }
-  getFulfillmentDate(multiAnswers: MultiAnswers): Date | null {
-    if (!this.surveyName) {
+  getFulfillmentDate(params: GuardParameters): Date | null {
+    const { multiAnswers } = params;
+    if (!this.surveyName || multiAnswers === undefined) {
       return null;
     }
     let fulfilled = this.evaluate(multiAnswers[this.surveyName].answers);
@@ -271,7 +281,7 @@ export class DecimalCondition implements Guard {
 
     return evaluateOperator(has, operator, operand);
   }
-  getFulfillmentDate(_multiAnswers: MultiAnswers): Date | null {
+  getFulfillmentDate(_params: GuardParameters): Date | null {
     return null;
   }
 }
@@ -287,7 +297,7 @@ export class ExistsCondition implements Guard {
 
     return !!answers[questionID];
   }
-  getFulfillmentDate(_multiAnswers: MultiAnswers): Date | null {
+  getFulfillmentDate(_params: GuardParameters): Date | null {
     return null;
   }
 }
@@ -303,7 +313,7 @@ export class BoolCondition implements Guard {
   evaluate(_answers: Answers): boolean {
     return this.condition;
   }
-  getFulfillmentDate(_multiAnswers: MultiAnswers): Date | null {
+  getFulfillmentDate(_params: GuardParameters): Date | null {
     return this.condition ? new Date() : null;
   }
 }
@@ -336,10 +346,10 @@ export class Conjunction implements Guard {
     }
     return true;
   }
-  getFulfillmentDate(multiAnswers: MultiAnswers, consentTimes?: ConsentTimes): Date | null {
+  getFulfillmentDate(params: GuardParameters): Date | null {
     let fulfillmentDates: Date[] = [];
     for (const condition of this.conditions) {
-      const fulfillmentDate = condition.getFulfillmentDate(multiAnswers, consentTimes);
+      const fulfillmentDate = condition.getFulfillmentDate(params);
       if (!fulfillmentDate) {
         return null;
       }
@@ -372,10 +382,10 @@ export class Disjunction implements Guard {
     }
     return false;
   }
-  getFulfillmentDate(multiAnswers: MultiAnswers, consentTimes?: ConsentTimes): Date | null {
+  getFulfillmentDate(params: GuardParameters): Date | null {
     let fulfillmentDates: Date[] = [];
     for (const condition of this.conditions) {
-      const fulfillmentDate = condition.getFulfillmentDate(multiAnswers, consentTimes);
+      const fulfillmentDate = condition.getFulfillmentDate(params);
       if (fulfillmentDate) {
         fulfillmentDates.push(fulfillmentDate);
       }
@@ -407,8 +417,8 @@ export class Offset implements Guard {
   evaluate(answers: Answers): boolean {
     return this.condition.evaluate(answers);
   }
-  getFulfillmentDate(multiAnswers: MultiAnswers, consentTimes?: ConsentTimes): Date | null {
-    const fulfillmentDate = this.condition.getFulfillmentDate(multiAnswers, consentTimes);
+  getFulfillmentDate(params: GuardParameters): Date | null {
+    const fulfillmentDate = this.condition.getFulfillmentDate(params);
     if (fulfillmentDate && !isNaN(fulfillmentDate?.getTime())) {
       const answerDate = DateTime.fromJSDate(fulfillmentDate).plus(this.offset);
       return answerDate.toJSDate();
@@ -434,7 +444,8 @@ export class ConsentCondition implements Guard {
     return true;
   }
 
-  getFulfillmentDate(_multiAnswers: MultiAnswers, consentTimes: ConsentTimes) {
+  getFulfillmentDate(params: GuardParameters): Date | null {
+    const { consentTimes } = params;
     if (!consentTimes?.[this.consentKey]) {
       return null;
     }
@@ -462,7 +473,11 @@ export class SurveyCondition implements Guard {
     // stub
     return true;
   }
-  getFulfillmentDate(multiAnswers: MultiAnswers): Date | null {
+  getFulfillmentDate(params: GuardParameters): Date | null {
+    const { multiAnswers } = params;
+    if (!multiAnswers?.[this.surveyName]) {
+      return null;
+    }
     const date = multiAnswers[this.surveyName].date;
     if (!date) {
       return null;
@@ -495,11 +510,8 @@ export class RoutineCondition implements Guard {
     return true;
   }
 
-  getFulfillmentDate(
-    _multiAnswers: MultiAnswers,
-    _consentTimes: ConsentTimes,
-    routineTimes: RoutineTimes
-  ) {
+  getFulfillmentDate(params: GuardParameters): Date | null {
+    const { routineTimes } = params;
     if (!routineTimes?.[this.routineName]) {
       return null;
     }
@@ -528,12 +540,8 @@ export class ResponseCondition implements Guard {
     return true;
   }
 
-  getFulfillmentDate(
-    _multiAnswers: MultiAnswers,
-    _consentTimes: ConsentTimes,
-    _routineTimes: RoutineTimes,
-    responseTimes: ResponseTimes
-  ) {
+  getFulfillmentDate(params: GuardParameters): Date | null {
+    const { responseTimes } = params;
     if (!responseTimes?.[this.responseName]) {
       return null;
     }
@@ -576,10 +584,8 @@ export const generateQuestionGuard = (
   return enableBehavior === 'all' ? new Conjunction(guards) : new Disjunction(guards);
 };
 
-export const generateStepGuard = (
-  cond: StepCondition
-): { guard: Guard; surveyNames: string[]; routineNames: string[]; consentKeys: string[]; responseNames: string[] } => {
-  const guards = [];
+export const generateStepGuard = (cond: StepCondition): GuardContext => {
+  const guards: Guard[] = [];
   let surveyNames: string[] = [];
   let routineNames: string[] = [];
   let consentKeys: string[] = [];
@@ -594,10 +600,10 @@ export const generateStepGuard = (
         responseNames: nestedResponseNames,
       } = generateStepGuard(condition);
       guards.push(guard);
-      surveyNames.push(...nestedIds);
-      routineNames.push(...nestedRoutineNames);
-      consentKeys.push(...nestedKeys);
-      responseNames.push(...nestedResponseNames);
+      surveyNames.push(...(nestedIds || []));
+      routineNames.push(...(nestedRoutineNames || []));
+      consentKeys.push(...(nestedKeys || []));
+      responseNames.push(...(nestedResponseNames || []));
     }
     surveyNames = [...new Set(surveyNames)];
     routineNames = [...new Set(routineNames)];
@@ -617,43 +623,34 @@ export const generateStepGuard = (
               cond.offset
             ),
             surveyNames: [cond.surveyName!],
-            routineNames: [],
-            consentKeys: [],
-            responseNames: [],
           };
         case 'date':
           return {
             guard: newStepDateCondtion(cond.linkID!, cond.surveyName!, cond.offset),
             surveyNames: [cond.surveyName!],
-            routineNames: [],
-            consentKeys: [],
-            responseNames: [],
           };
         default:
           console.warn(`[Step Guard Generation] Unknown question type: "${cond.questionType}"`);
           return {
             guard: new BoolCondition(false),
             surveyNames: [cond.surveyName!],
-            routineNames: [],
-            consentKeys: [],
-            responseNames: [],
           };
       }
     case 'and':
       return {
         guard: new Conjunction(guards, cond.sorting),
-        surveyNames: surveyNames,
+        surveyNames,
         routineNames,
         consentKeys,
-        responseNames
+        responseNames,
       };
     case 'or':
       return {
         guard: new Disjunction(guards, cond.sorting),
-        surveyNames: surveyNames,
+        surveyNames,
         routineNames,
         consentKeys,
-        responseNames
+        responseNames,
       };
     case 'offset':
       const {
@@ -661,55 +658,39 @@ export const generateStepGuard = (
         surveyNames: offsetSurveyNames,
         routineNames: offsetRoutineNames,
         consentKeys: offsetConsentKeys,
-        responseNames: offsetResponseNames
+        responseNames: offsetResponseNames,
       } = generateStepGuard(cond.item!);
       return {
         guard: new Offset(offsetGuard, cond.offset),
-        surveyNames: [...offsetSurveyNames],
-        routineNames: [...offsetRoutineNames],
-        consentKeys: [...offsetConsentKeys],
-        responseNames: [...offsetResponseNames]
+        surveyNames: [...(offsetSurveyNames || [])],
+        routineNames: [...(offsetRoutineNames || [])],
+        consentKeys: [...(offsetConsentKeys || [])],
+        responseNames: [...(offsetResponseNames || [])],
       };
     case 'consent':
       return {
         guard: new ConsentCondition(cond.consentKey!, cond.offset),
-        surveyNames: [],
-        routineNames: [],
         consentKeys: [cond.consentKey!],
-        responseNames: [],
       };
     case 'survey':
       return {
         guard: new SurveyCondition(cond.surveyName!, cond.offset),
         surveyNames: [cond.surveyName!],
-        routineNames: [],
-        consentKeys: [],
-        responseNames: [],
       };
     case 'routine':
       return {
         guard: new RoutineCondition(cond.routineName!, cond.offset),
-        surveyNames: [],
         routineNames: [cond.routineName!],
-        consentKeys: [],
-        responseNames: [],
       };
     case 'response':
       return {
         guard: new ResponseCondition(cond.responseName!, cond.offset),
-        surveyNames: [],
-        routineNames: [],
-        consentKeys: [],
         responseNames: [cond.responseName!],
       };
     default:
       console.warn(`[Step Guard Generation] Unknown condition type: "${cond.type}"`);
       return {
         guard: new BoolCondition(false),
-        surveyNames: [],
-        routineNames: [],
-        consentKeys: [],
-        responseNames: [],
       };
   }
 };

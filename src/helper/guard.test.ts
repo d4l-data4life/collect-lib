@@ -1,4 +1,5 @@
 import { addDays, addWeeks } from 'date-fns';
+import { StepCondition } from '../types';
 import {
   AnswerCodeCondition,
   BoolCondition,
@@ -17,11 +18,10 @@ import {
   generateStepGuard,
   newStepDateCondtion,
 } from './guard';
-import { StepCondition } from '../types';
 
 const trueCondition = new BoolCondition(true);
 const falseCondition = new BoolCondition(false);
-``
+``;
 const firstDate = new Date('2020-07-01T10:00:00.000+02:00');
 
 describe('Guard', () => {
@@ -227,32 +227,32 @@ describe('Guard', () => {
     describe('getFulfillmentDate', () => {
       it('returns the answer date', () => {
         const condition = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(new Date('2020-07-01'));
+        const multiAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(new Date('2020-07-01'));
       });
 
       it('works with offset', () => {
         const condition = newStepDateCondtion('D1', 'survey1', 'P1M');
-        const mAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(new Date('2020-08-01'));
+        const multiAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(new Date('2020-08-01'));
       });
 
       it('works with negative offset', () => {
         const condition = newStepDateCondtion('D1', 'survey1', '-P1M');
-        const mAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(new Date('2020-06-01'));
+        const multiAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(new Date('2020-06-01'));
       });
 
       it('returns null without answer date', () => {
         const condition = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { D2: '2020-07-01' }, date: null } };
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        const multiAnswers = { survey1: { answers: { D2: '2020-07-01' }, date: null } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
 
       it('returns null for non date answer', () => {
         const condition = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { D1: 'keks' }, date: null } };
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        const multiAnswers = { survey1: { answers: { D1: 'keks' }, date: null } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
     });
   });
@@ -397,26 +397,26 @@ describe('Guard', () => {
     describe('getFulfillmentDate', () => {
       it('works for fulfilled condition', () => {
         const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(firstDate);
       });
 
       it('works for fulfilled condition with offset', () => {
         const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1', 'P1W');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(addWeeks(firstDate, 1));
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(addWeeks(firstDate, 1));
       });
 
       it('works for fulfilled condition with negative offset', () => {
         const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1', '-P2W');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(addWeeks(firstDate, -2));
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(addWeeks(firstDate, -2));
       });
 
       it('works for failed condition', () => {
         const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'no' }, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        const multiAnswers = { survey1: { answers: { Q0: 'no' }, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
     });
   });
@@ -585,40 +585,48 @@ describe('Guard', () => {
 
       it('works with single condition', () => {
         const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
-        expect(new Conjunction([condition]).getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        expect(new Conjunction([condition]).getFulfillmentDate({ multiAnswers })).toEqual(
+          firstDate
+        );
       });
 
       it('works with fulfilled answer condition', () => {
         const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
         const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate } };
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Conjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(new Date('2020-09-01'));
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(new Date('2020-09-01'));
       });
 
       it('works with fulfilled answer condition when sorting for earliest', () => {
         const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
         const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate } };
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Conjunction([answerCondition, dateConditionA], 'earliest');
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(firstDate);
       });
 
       it('works with false coding condition (returns null)', () => {
         const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
         const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'no', D1: '2020-09-01' }, date: firstDate } };
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'no', D1: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Conjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
 
       it('works with fulfilled answer condition and no date answer (returns null)', () => {
         const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
         const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
         const condition = new Conjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
     });
   });
@@ -669,48 +677,60 @@ describe('Guard', () => {
 
       it('works with single condition', () => {
         const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
-        expect(new Disjunction([answerCondition]).getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        expect(new Disjunction([answerCondition]).getFulfillmentDate({ multiAnswers })).toEqual(
+          firstDate
+        );
       });
 
       it('works with fulfilled answer condition', () => {
         const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
         const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate } };
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Disjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(firstDate);
       });
 
       it('works with fulfilled answer condition when sorting for latest', () => {
         const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
         const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate } };
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Disjunction([answerCondition, dateConditionA], 'latest');
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(new Date('2020-09-01'));
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(new Date('2020-09-01'));
       });
 
       it('works with false coding condition', () => {
         const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
         const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'no', D1: '2020-09-01' }, date: firstDate } };
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'no', D1: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Disjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(new Date('2020-09-01'));
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(new Date('2020-09-01'));
       });
 
       it('works with fulfilled answer condition and no date answer', () => {
         const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
         const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes', D2: '2020-09-01' }, date: firstDate } };
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'yes', D2: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Disjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(firstDate);
       });
 
       it('works with two unfulfilled conditions', () => {
         const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
         const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'no', D2: '2020-09-01' }, date: firstDate } };
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'no', D2: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Disjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
     });
   });
@@ -727,22 +747,26 @@ describe('Guard', () => {
     describe('getFulfillmentDate', () => {
       it('works with fulfilled Answer Condition', () => {
         const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
         const expectedDate = addDays(firstDate, 2);
-        expect(new Offset(condition, 'P2D').getFulfillmentDate(mAnswers)).toEqual(expectedDate);
+        expect(new Offset(condition, 'P2D').getFulfillmentDate({ multiAnswers })).toEqual(
+          expectedDate
+        );
       });
 
       it('return null for unfulfilled Condition', () => {
         const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'no' }, date: firstDate } };
-        expect(new Offset(condition, 'P2D').getFulfillmentDate(mAnswers)).toBeNull();
+        const multiAnswers = { survey1: { answers: { Q0: 'no' }, date: firstDate } };
+        expect(new Offset(condition, 'P2D').getFulfillmentDate({ multiAnswers })).toBeNull();
       });
 
       it('works with DateCondition', () => {
         const condition = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
+        const multiAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
         const expectedDate = addWeeks(new Date('2020-07-01'), 2);
-        expect(new Offset(condition, 'P2W').getFulfillmentDate(mAnswers)).toEqual(expectedDate);
+        expect(new Offset(condition, 'P2W').getFulfillmentDate({ multiAnswers })).toEqual(
+          expectedDate
+        );
       });
     });
   });
@@ -758,33 +782,35 @@ describe('Guard', () => {
     describe('getFulfillmentDate', () => {
       it('returns null if consent was not granted', () => {
         const condition = new ConsentCondition('foo.consent');
-        expect(condition.getFulfillmentDate({}, { 'foo.consent': null })).toBe(null);
+        expect(condition.getFulfillmentDate({ consentTimes: { 'foo.consent': null } })).toBe(null);
       });
 
       it('returns null if different consent was granted', () => {
         const condition = new ConsentCondition('foo.consent');
-        expect(condition.getFulfillmentDate({}, { 'foo.bar': consentDate })).toBe(null);
+        expect(condition.getFulfillmentDate({ consentTimes: { 'foo.bar': consentDate } })).toBe(
+          null
+        );
       });
 
       it('returns date of consent if offset was not given', () => {
         const condition = new ConsentCondition('foo.consent');
-        expect(condition.getFulfillmentDate({}, { 'foo.consent': consentDate })).toEqual(
-          consentDate
-        );
+        expect(
+          condition.getFulfillmentDate({ consentTimes: { 'foo.consent': consentDate } })
+        ).toEqual(consentDate);
       });
 
       it('adds/subtracts offset to/from date of consent if given', () => {
         const futureCondition = new ConsentCondition('foo.consent', 'P3D');
         const expectedFutureDate = addDays(consentDate, 3);
-        expect(futureCondition.getFulfillmentDate({}, { 'foo.consent': consentDate })).toEqual(
-          expectedFutureDate
-        );
+        expect(
+          futureCondition.getFulfillmentDate({ consentTimes: { 'foo.consent': consentDate } })
+        ).toEqual(expectedFutureDate);
 
         const pastCondition = new ConsentCondition('foo.consent', '-P9W');
         const expectedPastDate = addWeeks(consentDate, -9);
-        expect(pastCondition.getFulfillmentDate({}, { 'foo.consent': consentDate })).toEqual(
-          expectedPastDate
-        );
+        expect(
+          pastCondition.getFulfillmentDate({ consentTimes: { 'foo.consent': consentDate } })
+        ).toEqual(expectedPastDate);
       });
     });
   });
@@ -797,26 +823,26 @@ describe('Guard', () => {
     describe('getFulfillmentDate', () => {
       it('works for answered survey', () => {
         const condition = new SurveyCondition('survey1');
-        const mAnswers = { survey1: { answers: {}, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        const multiAnswers = { survey1: { answers: {}, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(firstDate);
       });
 
       it('works for answered survey with offset', () => {
         const condition = new SurveyCondition('survey1', 'P1W');
-        const mAnswers = { survey1: { answers: {}, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(addWeeks(firstDate, 1));
+        const multiAnswers = { survey1: { answers: {}, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(addWeeks(firstDate, 1));
       });
 
       it('works for answered with negative offset', () => {
         const condition = new SurveyCondition('survey1', '-P2W');
-        const mAnswers = { survey1: { answers: {}, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(addWeeks(firstDate, -2));
+        const multiAnswers = { survey1: { answers: {}, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(addWeeks(firstDate, -2));
       });
 
       it('works for not answered survey', () => {
         const condition = new SurveyCondition('survey1');
-        const mAnswers = { survey1: { answers: {}, date: null } };
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        const multiAnswers = { survey1: { answers: {}, date: null } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
     });
   });
@@ -832,17 +858,19 @@ describe('Guard', () => {
     describe('getFulfillmentDate', () => {
       it('returns null if there is no recording for the routine', () => {
         const condition = new RoutineCondition('routine1');
-        expect(condition.getFulfillmentDate({}, {}, { routine1: null })).toBe(null);
+        expect(condition.getFulfillmentDate({ routineTimes: { routine1: null } })).toBe(null);
       });
 
       it('returns null if there is a recording for a different routine', () => {
         const condition = new RoutineCondition('routine1');
-        expect(condition.getFulfillmentDate({}, {}, { routine2: recordingDate })).toBe(null);
+        expect(condition.getFulfillmentDate({ routineTimes: { routine2: recordingDate } })).toBe(
+          null
+        );
       });
 
       it('returns date of recording if offset was not given', () => {
         const condition = new RoutineCondition('routine1');
-        expect(condition.getFulfillmentDate({}, {}, { routine1: recordingDate })).toEqual(
+        expect(condition.getFulfillmentDate({ routineTimes: { routine1: recordingDate } })).toEqual(
           recordingDate
         );
       });
@@ -850,15 +878,15 @@ describe('Guard', () => {
       it('adds/subtracts offset to/from date of recording if given', () => {
         const futureCondition = new RoutineCondition('routine1', 'P3D');
         const expectedFutureDate = addDays(recordingDate, 3);
-        expect(futureCondition.getFulfillmentDate({}, {}, { routine1: recordingDate })).toEqual(
-          expectedFutureDate
-        );
+        expect(
+          futureCondition.getFulfillmentDate({ routineTimes: { routine1: recordingDate } })
+        ).toEqual(expectedFutureDate);
 
         const pastCondition = new RoutineCondition('routine1', '-P9W');
         const expectedPastDate = addWeeks(recordingDate, -9);
-        expect(pastCondition.getFulfillmentDate({}, {}, { routine1: recordingDate })).toEqual(
-          expectedPastDate
-        );
+        expect(
+          pastCondition.getFulfillmentDate({ routineTimes: { routine1: recordingDate } })
+        ).toEqual(expectedPastDate);
       });
     });
   });
@@ -874,33 +902,35 @@ describe('Guard', () => {
     describe('getFulfillmentDate', () => {
       it('returns null if there is no recording for the routine', () => {
         const condition = new ResponseCondition('response1');
-        expect(condition.getFulfillmentDate({}, {}, {}, { response1: null })).toBe(null);
+        expect(condition.getFulfillmentDate({ responseTimes: { response1: null } })).toBe(null);
       });
 
       it('returns null if there is a recording for a different routine', () => {
         const condition = new ResponseCondition('response1');
-        expect(condition.getFulfillmentDate({}, {}, {}, { response2: responseDate })).toBe(null);
+        expect(condition.getFulfillmentDate({ responseTimes: { response2: responseDate } })).toBe(
+          null
+        );
       });
 
       it('returns date of recording if offset was not given', () => {
         const condition = new ResponseCondition('response1');
-        expect(condition.getFulfillmentDate({}, {}, {}, { response1: responseDate })).toEqual(
-          responseDate
-        );
+        expect(
+          condition.getFulfillmentDate({ responseTimes: { response1: responseDate } })
+        ).toEqual(responseDate);
       });
 
       it('adds/subtracts offset to/from date of recording if given', () => {
         const futureCondition = new ResponseCondition('response1', 'P3D');
         const expectedFutureDate = addDays(responseDate, 3);
-        expect(futureCondition.getFulfillmentDate({}, {}, {}, { response1: responseDate })).toEqual(
-          expectedFutureDate
-        );
+        expect(
+          futureCondition.getFulfillmentDate({ responseTimes: { response1: responseDate } })
+        ).toEqual(expectedFutureDate);
 
         const pastCondition = new ResponseCondition('response1', '-P9W');
         const expectedPastDate = addWeeks(responseDate, -9);
-        expect(pastCondition.getFulfillmentDate({}, {}, {}, { response1: responseDate })).toEqual(
-          expectedPastDate
-        );
+        expect(
+          pastCondition.getFulfillmentDate({ responseTimes: { response1: responseDate } })
+        ).toEqual(expectedPastDate);
       });
     });
   });
