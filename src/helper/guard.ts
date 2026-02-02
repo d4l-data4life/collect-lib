@@ -556,9 +556,14 @@ export class ResponseGuard implements Guard {
  */
 export class DateGuard implements Guard {
   date: Date;
+  offset: Duration = Duration.fromObject({});
 
-  constructor(date: string) {
+  constructor(date: string, offset?: string) {
     this.date = new Date(date);
+    if (offset) {
+      const parsedOffset = Duration.fromISO(offset);
+      parsedOffset.isValid && (this.offset = parsedOffset);
+    }
   }
 
   evaluate(_answers: Answers) {
@@ -567,7 +572,7 @@ export class DateGuard implements Guard {
   }
 
   getFulfillmentDate(_params: GuardParameters): Date | null {
-    return this.date;
+    return DateTime.fromJSDate(this.date).plus(this.offset).toJSDate();
   }
 }
 

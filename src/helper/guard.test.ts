@@ -26,7 +26,7 @@ const falseCondition = new BoolGuard(false);
 const firstDate = new Date('2020-07-01T10:00:00.000+02:00');
 
 describe('Guard', () => {
-  describe('YearCondition', () => {
+  describe('YearGuard', () => {
     const operand = '2001';
     const yearQuestion = 'year-question';
 
@@ -126,7 +126,7 @@ describe('Guard', () => {
     });
   });
 
-  describe('DateCondition', () => {
+  describe('AnswerDateGuard', () => {
     const operand = '2001-05-04';
     const dateQuestion = 'date-question';
 
@@ -258,7 +258,7 @@ describe('Guard', () => {
     });
   });
 
-  describe('AnswerCodeCondition', () => {
+  describe('AnswerCodeGuard', () => {
     const operand = 'operand';
     const answerCodingQuestion = 'answer-coding-question';
 
@@ -418,7 +418,7 @@ describe('Guard', () => {
     });
   });
 
-  describe('DecimalCondition', () => {
+  describe('DecimalGuard', () => {
     const operand = 5.5;
     const decimalQuestion = 'decimal-question';
 
@@ -518,7 +518,7 @@ describe('Guard', () => {
     });
   });
 
-  describe('ExistsCondition', () => {
+  describe('ExistsGuard', () => {
     const existsQuestion = 'exists-question';
 
     it('can be constructed', () => {
@@ -766,7 +766,7 @@ describe('Guard', () => {
     });
   });
 
-  describe('ConsentCondition', () => {
+  describe('ConsentGuard', () => {
     const consentDate = new Date();
 
     it('can be constructed', () => {
@@ -810,7 +810,7 @@ describe('Guard', () => {
     });
   });
 
-  describe('SurveyCondition', () => {
+  describe('SurveyGuard', () => {
     it('can be constructed', () => {
       expect(new SurveyGuard('survey1')).toBeTruthy();
     });
@@ -842,7 +842,7 @@ describe('Guard', () => {
     });
   });
 
-  describe('RoutineCondition', () => {
+  describe('RoutineGuard', () => {
     const recordingDate = new Date();
 
     it('can be constructed', () => {
@@ -886,7 +886,7 @@ describe('Guard', () => {
     });
   });
 
-  describe('ResponseCondition', () => {
+  describe('ResponseGuard', () => {
     const responseDate = new Date();
 
     it('can be constructed', () => {
@@ -926,6 +926,35 @@ describe('Guard', () => {
         expect(
           pastCondition.getFulfillmentDate({ responseTimes: { response1: responseDate } })
         ).toEqual(expectedPastDate);
+      });
+    });
+  });
+
+  describe('DateGuard', () => {
+    it('can be constructed', () => {
+      expect(new DateGuard('2025-10-14')).toBeTruthy();
+      expect(new DateGuard('2025-10-14', 'P7W')).toBeTruthy();
+    });
+
+    describe('getFulfillmentDate', () => {
+      it('returns the date', () => {
+        const condition = new DateGuard('2025-10-14');
+        expect(condition.getFulfillmentDate({})).toStrictEqual(new Date('2025-10-14'));
+      });
+
+      it('returns null if there is no valid date', () => {
+        const condition = new ResponseGuard('keks');
+        expect(condition.getFulfillmentDate({})).toBe(null);
+      });
+
+      it('adds/subtracts offset to/from date if given', () => {
+        const futureCondition = new DateGuard('2025-10-14', 'P3D');
+        const expectedFutureDate = addDays(new Date('2025-10-14'), 3);
+        expect(futureCondition.getFulfillmentDate({})).toStrictEqual(expectedFutureDate);
+
+        const pastCondition = new DateGuard('2025-10-14', '-P9W');
+        const expectedPastDate = addWeeks(new Date('2025-10-14'), -9);
+        expect(pastCondition.getFulfillmentDate({})).toStrictEqual(expectedPastDate);
       });
     });
   });
