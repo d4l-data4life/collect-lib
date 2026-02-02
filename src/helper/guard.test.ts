@@ -1099,13 +1099,13 @@ describe('Guard', () => {
     });
 
     it('works for date conditions', () => {
-      const date = '2025-10-14T09:00:00.000Z';
+      const date = '2025-10-14';
       const dateCondition: StepCondition = {
         type: 'date',
         date: date,
       };
       const expected: Guard = new DateGuard(date);
-      const { guard, responseNames } = generateStepGuard(dateCondition);
+      const { guard } = generateStepGuard(dateCondition);
       expect(guard).toEqual(expected);
     });
   });

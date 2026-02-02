@@ -208,7 +208,7 @@ export type StepConditionBase = {
 export type DateCondition = StepConditionBase & {
   // type | true | `date` | Condition that requires a date to have passed
   type: 'date';
-  // date | true | string | Timestamp that needs to be passed for the condition to be true.
+  // date | true | string (YYYY-MM-DD) | Timestamp that needs to be passed for the condition to be true.
   date: string;
 };
 
