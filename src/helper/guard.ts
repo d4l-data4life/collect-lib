@@ -70,7 +70,7 @@ const evaluateOperator = <T>(value: T, operator: ConditionOperatorType, operand:
  * For questionnaires returns the evaluation of <answer> <operator> <operand>.
  * For steps returns the <answer>+<offset> of the answer
  */
-export class DateCondition implements Guard {
+export class AnswerDateCondition implements Guard {
   surveyName?: string;
   questionID: string;
   operand?: Date;
@@ -137,7 +137,8 @@ export const newStepDateCondtion = (
   questionID: string,
   surveyName: string,
   offset?: string
-): DateCondition => new DateCondition(questionID, 'irrelevant', 'exists', surveyName, offset);
+): AnswerDateCondition =>
+  new AnswerDateCondition(questionID, 'irrelevant', 'exists', surveyName, offset);
 
 /**
  * Assumption: Year answers in the questionnaire are formatted like this: YYYY
@@ -550,6 +551,26 @@ export class ResponseCondition implements Guard {
   }
 }
 
+/**
+ * Checks if a given date has passed
+ */
+export class DateCondition implements Guard {
+  date: Date;
+
+  constructor(date: string) {
+    this.date = new Date(date);
+  }
+
+  evaluate(_answers: Answers) {
+    // stub
+    return true;
+  }
+
+  getFulfillmentDate(_params: GuardParameters): Date | null {
+    return this.date;
+  }
+}
+
 export const generateQuestionGuard = (
   enableWhen: fhir5.QuestionnaireItemEnableWhen[] | undefined,
   enableBehavior: fhir5.QuestionnaireItem['enableBehavior']
@@ -565,7 +586,9 @@ export const generateQuestionGuard = (
     } else if (condition.answerDate && condition.answerDate.length === 4) {
       guards.push(new YearCondition(condition.question, condition.answerDate, condition.operator));
     } else if (condition.answerDate) {
-      guards.push(new DateCondition(condition.question, condition.answerDate, condition.operator));
+      guards.push(
+        new AnswerDateCondition(condition.question, condition.answerDate, condition.operator)
+      );
     } else if (condition.answerCoding) {
       guards.push(
         new AnswerCodeCondition(
@@ -687,6 +710,8 @@ export const generateStepGuard = (cond: StepCondition): GuardContext => {
         guard: new ResponseCondition(cond.responseName!, cond.offset),
         responseNames: [cond.responseName!],
       };
+    case 'date':
+      return { guard: new DateCondition(cond.date!) };
     default:
       console.warn(`[Step Guard Generation] Unknown condition type: "${cond.type}"`);
       return {

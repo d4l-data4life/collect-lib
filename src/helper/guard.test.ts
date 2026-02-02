@@ -5,7 +5,7 @@ import {
   BoolCondition,
   Conjunction,
   ConsentCondition,
-  DateCondition,
+  AnswerDateCondition,
   DecimalCondition,
   Disjunction,
   ExistsCondition,
@@ -17,6 +17,7 @@ import {
   YearCondition,
   generateStepGuard,
   newStepDateCondtion,
+  DateCondition,
 } from './guard';
 
 const trueCondition = new BoolCondition(true);
@@ -130,96 +131,98 @@ describe('Guard', () => {
     const dateQuestion = 'date-question';
 
     it('can be constructed', () => {
-      expect(new DateCondition(dateQuestion, operand, '!=')).toBeTruthy();
-      expect(new DateCondition(dateQuestion, operand, '<')).toBeTruthy();
-      expect(new DateCondition(dateQuestion, operand, '<=')).toBeTruthy();
-      expect(new DateCondition(dateQuestion, operand, '=')).toBeTruthy();
-      expect(new DateCondition(dateQuestion, operand, '>')).toBeTruthy();
-      expect(new DateCondition(dateQuestion, operand, '>=')).toBeTruthy();
-      expect(new DateCondition(dateQuestion, operand, 'exists')).toBeTruthy();
+      expect(new AnswerDateCondition(dateQuestion, operand, '!=')).toBeTruthy();
+      expect(new AnswerDateCondition(dateQuestion, operand, '<')).toBeTruthy();
+      expect(new AnswerDateCondition(dateQuestion, operand, '<=')).toBeTruthy();
+      expect(new AnswerDateCondition(dateQuestion, operand, '=')).toBeTruthy();
+      expect(new AnswerDateCondition(dateQuestion, operand, '>')).toBeTruthy();
+      expect(new AnswerDateCondition(dateQuestion, operand, '>=')).toBeTruthy();
+      expect(new AnswerDateCondition(dateQuestion, operand, 'exists')).toBeTruthy();
     });
 
     it('can be constructed with faulty values and not break', () => {
-      expect(new DateCondition(dateQuestion, 9999 as unknown as string, 'exists')).toBeTruthy();
+      expect(
+        new AnswerDateCondition(dateQuestion, 9999 as unknown as string, 'exists')
+      ).toBeTruthy();
     });
 
     describe('evaluates', () => {
       it('with an invalid "operand" (not a date)', () => {
-        const condition = new DateCondition(dateQuestion, 'not-a-date', '!=');
+        const condition = new AnswerDateCondition(dateQuestion, 'not-a-date', '!=');
         expect(condition.evaluate({})).toBeFalsy();
       });
 
       it('with no answers', () => {
-        const condition = new DateCondition(dateQuestion, operand, '!=');
+        const condition = new AnswerDateCondition(dateQuestion, operand, '!=');
         expect(condition.evaluate({})).toBeFalsy();
       });
 
       it('with an array of answers', () => {
-        const condition = new DateCondition(dateQuestion, operand, '!=');
+        const condition = new AnswerDateCondition(dateQuestion, operand, '!=');
         expect(condition.evaluate({ [dateQuestion]: ['2001-04-21', 'not-a-date'] })).toBeFalsy();
       });
 
       it('with an invalid answer', () => {
-        const condition = new DateCondition(dateQuestion, operand, '!=');
+        const condition = new AnswerDateCondition(dateQuestion, operand, '!=');
         expect(condition.evaluate({ [dateQuestion]: 'not-a-date' })).toBeFalsy();
       });
 
       it('with the "!=" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, '!=');
+        const case1 = new AnswerDateCondition(dateQuestion, operand, '!=');
         expect(case1.evaluate({ [dateQuestion]: '2002-03-01' })).toBeTruthy();
-        const case2 = new DateCondition(dateQuestion, operand, '!=');
+        const case2 = new AnswerDateCondition(dateQuestion, operand, '!=');
         expect(case2.evaluate({ [dateQuestion]: '2001-05-04' })).toBeFalsy();
       });
 
       it('with the "<" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, '<');
+        const case1 = new AnswerDateCondition(dateQuestion, operand, '<');
         expect(case1.evaluate({ [dateQuestion]: '2001-05-03' })).toBeTruthy();
-        const case2 = new DateCondition(dateQuestion, operand, '<');
+        const case2 = new AnswerDateCondition(dateQuestion, operand, '<');
         expect(case2.evaluate({ [dateQuestion]: '2001-05-04' })).toBeFalsy();
-        const case3 = new DateCondition(dateQuestion, operand, '<');
+        const case3 = new AnswerDateCondition(dateQuestion, operand, '<');
         expect(case3.evaluate({ [dateQuestion]: '2012-05-04' })).toBeFalsy();
       });
 
       it('with the "<=" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, '<=');
+        const case1 = new AnswerDateCondition(dateQuestion, operand, '<=');
         expect(case1.evaluate({ [dateQuestion]: '1990-05-04' })).toBeTruthy();
-        const case2 = new DateCondition(dateQuestion, operand, '<=');
+        const case2 = new AnswerDateCondition(dateQuestion, operand, '<=');
         expect(case2.evaluate({ [dateQuestion]: '2001-05-04' })).toBeTruthy();
-        const case3 = new DateCondition(dateQuestion, operand, '<=');
+        const case3 = new AnswerDateCondition(dateQuestion, operand, '<=');
         expect(case3.evaluate({ [dateQuestion]: '2001-05-06' })).toBeFalsy();
       });
 
       it('with the "=" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, '=');
+        const case1 = new AnswerDateCondition(dateQuestion, operand, '=');
         expect(case1.evaluate({ [dateQuestion]: '2001-05-03' })).toBeFalsy();
-        const case2 = new DateCondition(dateQuestion, operand, '=');
+        const case2 = new AnswerDateCondition(dateQuestion, operand, '=');
         expect(case2.evaluate({ [dateQuestion]: '2001-05-04' })).toBeTruthy();
-        const case3 = new DateCondition(dateQuestion, operand, '=');
+        const case3 = new AnswerDateCondition(dateQuestion, operand, '=');
         expect(case3.evaluate({ [dateQuestion]: '2001-06-04' })).toBeFalsy();
       });
 
       it('with the ">" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, '>');
+        const case1 = new AnswerDateCondition(dateQuestion, operand, '>');
         expect(case1.evaluate({ [dateQuestion]: '2001-01-03' })).toBeFalsy();
-        const case2 = new DateCondition(dateQuestion, operand, '>');
+        const case2 = new AnswerDateCondition(dateQuestion, operand, '>');
         expect(case2.evaluate({ [dateQuestion]: '2001-05-04' })).toBeFalsy();
-        const case3 = new DateCondition(dateQuestion, operand, '>');
+        const case3 = new AnswerDateCondition(dateQuestion, operand, '>');
         expect(case3.evaluate({ [dateQuestion]: '2099-05-04' })).toBeTruthy();
       });
 
       it('with the ">=" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, '>=');
+        const case1 = new AnswerDateCondition(dateQuestion, operand, '>=');
         expect(case1.evaluate({ [dateQuestion]: '2000-05-04' })).toBeFalsy();
-        const case2 = new DateCondition(dateQuestion, operand, '>=');
+        const case2 = new AnswerDateCondition(dateQuestion, operand, '>=');
         expect(case2.evaluate({ [dateQuestion]: '2001-05-04' })).toBeTruthy();
-        const case3 = new DateCondition(dateQuestion, operand, '>=');
+        const case3 = new AnswerDateCondition(dateQuestion, operand, '>=');
         expect(case3.evaluate({ [dateQuestion]: '2001-11-04' })).toBeTruthy();
       });
 
       it('with the "exists" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, 'exists');
+        const case1 = new AnswerDateCondition(dateQuestion, operand, 'exists');
         expect(case1.evaluate({ [dateQuestion]: '1991-08-26' })).toBeTruthy();
-        const case2 = new DateCondition(dateQuestion, operand, 'exists');
+        const case2 = new AnswerDateCondition(dateQuestion, operand, 'exists');
         expect(case2.evaluate({})).toBeFalsy();
       });
     });
@@ -541,7 +544,7 @@ describe('Guard', () => {
 
   describe('Conjunction', () => {
     const yearCondition = new YearCondition('year-question', '2001', '=');
-    const dateCondition = new DateCondition('date-question', '2001-01-01', '<');
+    const dateCondition = new AnswerDateCondition('date-question', '2001-01-01', '<');
 
     it('can be constructed', () => {
       expect(new Conjunction([yearCondition, dateCondition])).toBeTruthy();
@@ -633,7 +636,7 @@ describe('Guard', () => {
 
   describe('Disjunction', () => {
     const yearCondition = new YearCondition('year-question', '2001', '=');
-    const dateCondition = new DateCondition('date-question', '2001-01-01', '<');
+    const dateCondition = new AnswerDateCondition('date-question', '2001-01-01', '<');
 
     it('can be constructed', () => {
       expect(new Disjunction([yearCondition, dateCondition])).toBeTruthy();
@@ -1101,6 +1104,17 @@ describe('Guard', () => {
       const { guard, responseNames } = generateStepGuard(responseCondition);
       expect(guard).toEqual(expected);
       expect(responseNames).toEqual(['response1']);
+    });
+
+    it('works for date conditions', () => {
+      const date = '2025-10-14T09:00:00.000Z';
+      const dateCondition: StepCondition = {
+        type: 'date',
+        date: date,
+      };
+      const expected: Guard = new DateCondition(date);
+      const { guard, responseNames } = generateStepGuard(dateCondition);
+      expect(guard).toEqual(expected);
     });
   });
 });

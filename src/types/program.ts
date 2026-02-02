@@ -210,11 +210,15 @@ export type StepCondition = {
   consentKey?: string;
   // responseName | false | string | Required for condition type `response`. Reference to the response that must have been received to fulfill the condition.
   responseName?: string;
+  // date | false | string | Required for condition type `date`. Timestamp that needs to be passed for the condition to be true.
+  date?: string;
 };
 
 // #### ConditionType
 // Type | Description
 export type ConditionType =
+  // date | Condition that requires a date to have passed
+  | 'date'
   // question | Condition that requires a specific answer from a previous survey
   | 'question'
   // survey | Condition that requires a previous survey to have been completed

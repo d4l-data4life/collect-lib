@@ -11,8 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - PublishedAt date to tasks
 - Eligbility property to survey scoring
+- Response and Date conditions
 
 ### Changed
+
+- Guard signature
 
 ### Deprecated
 
