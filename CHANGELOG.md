@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Guard signature
+- Split StepCondition into specific subtypes
+- Refactored Guards and their usage according to new types
 
 ### Deprecated
 

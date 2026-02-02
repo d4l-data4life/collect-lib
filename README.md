@@ -132,32 +132,91 @@ Update the types by running `yarn run readme:update`.
 
 ### StepCondition
 
-| Properties   | Required | Type                                | Description                                                                                                                                                                                                                                         |
-| ------------ | -------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| type         | true     | [ConditionType](#ConditionType)     | Type of the condition (determines which other attributes are applicable)                                                                                                                                                                            |
-| surveyName   | false    | string                              | required for condition type `survey` and `question`                                                                                                                                                                                                 |
-| routineName  | false    | string                              | required for condition type `routine`                                                                                                                                                                                                               |
-| linkID       | false    | string                              | required for condition type `question`                                                                                                                                                                                                              |
-| questionType | false    | `coding`, `date`                    | required for condition type `question` - defines the data type of the referred to question                                                                                                                                                          |
-| operand      | false    | string                              | required for condition type `question` (unless operator is `exists`). Used as `<answer>` `<operator>` `<operand>`.                                                                                                                                  |
-| operator     | false    | `exists`,`=`,`!=`,`>`,`<`,`>=`,`<=` | Required for condition type `question`. Used as `<answer>` `<operator>` `<operand>`.                                                                                                                                                                |
-| offset       | false    | ISO 8601 duration string            | Defines the offset between the answer date and the current date. For question type `coding` only impacts the start/end date calculation. For type `offset` impacts the `item`. For type `consent`, this is applied to the date of the consent grant |
-| item         | false    | StepCondition                       | Required for condition type `not` and `offset`.                                                                                                                                                                                                     |
-| items        | false    | StepCondition[]                     | Required for condition type `and` and `or`. List of conditions that are combined with the respective operator.                                                                                                                                      |
-| sorting      | false    | `earliest`, `latest`                | Used for condition type `and` and `or`. Determines which resulting dates of the items gets picked. Defaults to `earliest` for `or` and `latest` for `and`.                                                                                          |
-| consentKey   | false    | string                              | Required for condition type `consent`. Reference to the consent that must have been granted to fulfill the condition.                                                                                                                               |
+#### Base
 
-#### ConditionType
+| Properties | Required | Type                            | Description                                                                   |
+| ---------- | -------- | ------------------------------- | ----------------------------------------------------------------------------- |
+| type       | true     | [ConditionType](#ConditionType) | Type of the condition (determines which other attributes are applicable)      |
+| offset     | false    | ISO 8601 duration string        | Adds additional offset duration to conditions outcome. (e.g. x plus two days) |
 
-| Type     | Description                                                                         |
-| -------- | ----------------------------------------------------------------------------------- |
-| question | Condition that requires a specific answer from a previous survey                    |
-| survey   | Condition that requires a previous survey to have been completed                    |
-| routine  | Condition that requires a previous routine to have been completed                   |
-| and      | Condition that requires all subconditions to be fulfilled                           |
-| or       | Condition that requires one subcondition to be fulfilled                            |
-| offset   | Condition that adds a date offset to the fulfillment date of the given subcondition |
-| consent  | Condition that require a specific consent to be given                               |
+#### DateCondition
+
+| Properties | Required | Type   | Description                                                     |
+| ---------- | -------- | ------ | --------------------------------------------------------------- |
+| type       | true     | `date` | Condition that requires a date to have passed                   |
+| date       | true     | string | Timestamp that needs to be passed for the condition to be true. |
+
+#### QuestionCondition
+
+| Properties   | Required | Type                                | Description                                                                     |
+| ------------ | -------- | ----------------------------------- | ------------------------------------------------------------------------------- |
+| type         | true     | `question`                          | Condition that requires a specific answer from a previous survey                |
+| questionType | true     | `coding`                            | Condition that uses authored date of the response fulfilling the code condition |
+| surveyName   | true     | string                              | Identifier of the survey                                                        |
+| linkID       | true     | string                              | Identifier of the question                                                      |
+| operand      | false    | string                              | (unless operator is `exists`). Used as `<answer>` `<operator>` `<operand>`.     |
+| operator     | true     | `exists`,`=`,`!=`,`>`,`<`,`>=`,`<=` | Used as `<answer>` `<operator>` `<operand>`.                                    |
+
+#### QuestionCondition
+
+| Properties   | Required | Type       | Description                                                           |
+| ------------ | -------- | ---------- | --------------------------------------------------------------------- |
+| type         | true     | `question` | Condition that requires a specific answer from a previous survey      |
+| questionType | true     | `date`     | Condition that uses the answer of a date question as fulfillment date |
+| surveyName   | true     | string     | Identifier of the survey                                              |
+| linkID       | true     | string     | Identifier of the question                                            |
+
+#### SurveyCondition
+
+| Properties | Required | Type     | Description                                                      |
+| ---------- | -------- | -------- | ---------------------------------------------------------------- |
+| type       | true     | `survey` | Condition that requires a previous survey to have been completed |
+| surveyName | true     | string   | Identifier of the survey                                         |
+
+#### RoutineCondition
+
+| Properties  | Required | Type      | Description                                                       |
+| ----------- | -------- | --------- | ----------------------------------------------------------------- |
+| type        | true     | `routine` | Condition that requires a previous routine to have been completed |
+| routineName | true     | string    | Identifier of the routine                                         |
+
+#### ConsentCondition
+
+| Properties | Required | Type      | Description                                                                    |
+| ---------- | -------- | --------- | ------------------------------------------------------------------------------ |
+| type       | true     | `consent` | Condition that require a specific consent to be given                          |
+| consentKey | true     | string    | Reference to the consent that must have been granted to fulfill the condition. |
+
+#### ResponseCondition
+
+| Properties   | Required | Type       | Description                                                                      |
+| ------------ | -------- | ---------- | -------------------------------------------------------------------------------- |
+| type         | true     | `response` | Condition that require a specific response to be received                        |
+| responseName | true     | string     | Reference to the response that must have been received to fulfill the condition. |
+
+#### AndCondition
+
+| Properties | Required | Type                 | Description                                                                      |
+| ---------- | -------- | -------------------- | -------------------------------------------------------------------------------- |
+| type       | true     | `and`                | Condition that requires all subconditions to be fulfilled                        |
+| items      | true     | StepCondition[]      | List of conditions that must all be fulfilled.                                   |
+| sorting    | false    | `earliest`, `latest` | Determines which resulting dates of the items gets picked. Defaults to `latest`. |
+
+#### OrCondition
+
+| Properties | Required | Type                 | Description                                                                        |
+| ---------- | -------- | -------------------- | ---------------------------------------------------------------------------------- |
+| type       | true     | `or`                 | Condition that requires one subcondition to be fulfilled                           |
+| items      | true     | StepCondition[]      | List of conditions where at least one must be fulfilled.                           |
+| sorting    | false    | `earliest`, `latest` | Determines which resulting dates of the items gets picked. Defaults to `earliest`. |
+
+#### OffsetCondition
+
+| Properties | Required | Type                     | Description                                                                         |
+| ---------- | -------- | ------------------------ | ----------------------------------------------------------------------------------- |
+| type       | true     | `offset`                 | Condition that adds a date offset to the fulfillment date of the given subcondition |
+| offset     | true     | ISO 8601 duration string | Impacts the `item`. For type `offset` impacts the `item`.                           |
+| item       | true     | StepCondition            | Condition to apply the additional offset to.                                        |
 
 ### ProgramDonation
 
