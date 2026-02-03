@@ -9,13 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- PublishedAt date to tasks
+- Eligbility property to survey scoring
+- Response and Date conditions
+- Notification type
+
 ### Changed
+
+- Split StepCondition into specific subtypes
+- Refactored Guards and their usage according to new types
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- Date parameter not being encoded for fetching responses
 
 ### Security
 
