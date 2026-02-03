@@ -29,7 +29,7 @@ export type Program = {
   endDate?: string;
   // tags | false | [ProgramTag](#ProgramTag)[] | List of supported tags including their configuration
   tags?: ProgramTag[];
-  // publishedAt | true | ISO 8601 date with timezone | Date the program was published (used to determine program state).
+  // publishedAt | false | ISO 8601 date with timezone | Date the program was published (used to determine program state).
   publishedAt?: string;
   // featured | true | [ProgramFeatured](#ProgramFeatured) | Describes the featured state of the program.
   featured: ProgramFeatured;
@@ -305,7 +305,7 @@ export type OrCondition = StepConditionBase & {
 export type OffsetCondition = StepConditionBase & {
   // type | true | `offset` | Condition that adds a date offset to the fulfillment date of the given subcondition
   type: 'offset';
-  // offset | true | ISO 8601 duration string | Impacts the `item`. For type `offset` impacts the `item`.
+  // offset | true | ISO 8601 duration string | Offset as duration, can be negative.
   offset: string;
   // item | true | StepCondition | Condition to apply the additional offset to.
   item: StepCondition;

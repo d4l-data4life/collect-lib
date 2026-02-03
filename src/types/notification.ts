@@ -5,7 +5,7 @@ export interface Notification {
   name: string;
   // programName | true | string | The name of the program the notification belongs to
   programName: string;
-  // recipients | true | string[] | List of subject Ids to receive the notification
+  // recipients | false | string[] | List of subject Ids to receive the notification. Empty means everyone.
   recipients?: string[];
   // notificationKey | true | string | notification key to be displayed by device
   notificationKey: string;

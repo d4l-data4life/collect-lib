@@ -21,7 +21,7 @@ export type Survey = {
   reminder?: TaskReminder;
   // template | false | string | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed)
   template?: string;
-  // publishedAt | true | ISO 8601 date with timezone | Date the survey was published.
+  // publishedAt | false | ISO 8601 date with timezone | Date the survey was published.
   publishedAt?: string;
 };
 

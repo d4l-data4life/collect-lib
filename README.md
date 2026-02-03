@@ -41,7 +41,7 @@ Update the types by running `yarn run readme:update`.
 | content     | true     | [ProgramContent](#ProgramContent)           | Contains all the relevant content properties of the program.                                                                                                                               |
 | endDate     | false    | ISO 8601 date with timezone                 | Date the program should finish for all users.                                                                                                                                              |
 | tags        | false    | [ProgramTag](#ProgramTag)[]                 | List of supported tags including their configuration                                                                                                                                       |
-| publishedAt | true     | ISO 8601 date with timezone                 | Date the program was published (used to determine program state).                                                                                                                          |
+| publishedAt | false    | ISO 8601 date with timezone                 | Date the program was published (used to determine program state).                                                                                                                          |
 | featured    | true     | [ProgramFeatured](#ProgramFeatured)         | Describes the featured state of the program.                                                                                                                                               |
 | theme       | false    | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app                                                                                                                                            |
 
@@ -141,10 +141,10 @@ Update the types by running `yarn run readme:update`.
 
 #### DateCondition
 
-| Properties | Required | Type   | Description                                                     |
-| ---------- | -------- | ------ | --------------------------------------------------------------- |
-| type       | true     | `date` | Condition that requires a date to have passed                   |
-| date       | true     | string | Timestamp that needs to be passed for the condition to be true. |
+| Properties | Required | Type                | Description                                                     |
+| ---------- | -------- | ------------------- | --------------------------------------------------------------- |
+| type       | true     | `date`              | Condition that requires a date to have passed                   |
+| date       | true     | string (YYYY-MM-DD) | Timestamp that needs to be passed for the condition to be true. |
 
 #### QuestionCondition
 
@@ -215,7 +215,7 @@ Update the types by running `yarn run readme:update`.
 | Properties | Required | Type                     | Description                                                                         |
 | ---------- | -------- | ------------------------ | ----------------------------------------------------------------------------------- |
 | type       | true     | `offset`                 | Condition that adds a date offset to the fulfillment date of the given subcondition |
-| offset     | true     | ISO 8601 duration string | Impacts the `item`. For type `offset` impacts the `item`.                           |
+| offset     | true     | ISO 8601 duration string | Offset as duration, can be negative.                                                |
 | item       | true     | StepCondition            | Condition to apply the additional offset to.                                        |
 
 ### ProgramDonation
@@ -287,7 +287,7 @@ Update the types by running `yarn run readme:update`.
 | content     | true     | [SurveyContent](#SurveyContent) | Defines the texts, images and icons that need to be displayed for the survey                            |
 | reminder    | false    | [TaskReminder](#TaskReminder)   | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)      |
 | template    | false    | string                          | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed) |
-| publishedAt | true     | ISO 8601 date with timezone     | Date the survey was published.                                                                          |
+| publishedAt | false    | ISO 8601 date with timezone     | Date the survey was published.                                                                          |
 
 #### TaskFrequency
 
@@ -363,7 +363,7 @@ Update the types by running `yarn run readme:update`.
 | devices     | true                     | string[]                            | Lists the devices used in the routine                                                              |
 | duration    | ISO 8601 duration String | Defines the duration of the routine |
 | reminder    | false                    | [TaskReminder](#TaskReminder)       | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
-| publishedAt | true                     | ISO 8601 date with timezone         | Date the routine was published.                                                                    |
+| publishedAt | false                    | ISO 8601 date with timezone         | Date the routine was published.                                                                    |
 
 #### ProgramDevice
 
@@ -403,7 +403,7 @@ Update the types by running `yarn run readme:update`.
 | frequency   | true     | [TaskFrequency](#TaskFrequency)                           | Defines in which frequency the questionnaire occurs                              |
 | content     | true     | [DisplayContent](#DisplayContent)                         | Defines the texts, images and icons that need to be displayed for the display    |
 | charts      | false    | { [key in ProgramDeviceType]?: ProgramDevicesDataType[] } | List of devices and their data types that are relevant for the display           |
-| publishedAt | true     | ISO 8601 date with timezone                               | Date the display was published.                                                  |
+| publishedAt | false    | ISO 8601 date with timezone                               | Date the display was published.                                                  |
 
 #### DisplayContent
 
