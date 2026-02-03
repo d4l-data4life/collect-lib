@@ -18,3 +18,12 @@ export interface Notification {
 }
 
 export type ResponseTimes = { [key: string]: Date | null };
+
+export interface NotificationRecipient {
+  notificationName: string;
+  programName: string;
+  subjectID: string;
+  sentAt?: string;
+  pushedAt?: string;
+  readAt?: string;
+}
