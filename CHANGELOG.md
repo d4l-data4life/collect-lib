@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Date parameter not being encoded for fetching responses
+
 ### Security
 
 ## [v1.20.1] - 2026-01-22
