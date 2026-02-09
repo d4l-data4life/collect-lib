@@ -56,7 +56,8 @@ export type ProgramDeviceType =
   | 'FITBIT'
   | 'GalaxyWatch6'
   | 'PixelWatch1'
-  | 'AppleHealth';
+  | 'AppleHealth'
+  | 'HealthConnect';
 
 export type ProgramDevicesDataType =
   | 'distance'

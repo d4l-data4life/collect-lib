@@ -58,8 +58,10 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'walkingAndRunningDistance'
   | 'activeEnergy'
   | 'sleepState'
+  // Health Connect types
+  | 'sleepStage'
 
-  // // Special case for Fitbit & Apple health -> we configure sleep but it then actually uses (sleepLevel for fitbit and sleepState for Apple health) and duration
+  // // Special case for Fitbit, Apple health & Health Connect -> we configure sleep but it then actually uses (sleepLevel for fitbit, sleepState for Apple health, sleepStage for Health Connect) and duration
   // | 'sleep'
 
   // unused for now but essential not to break the PAMS service compatibility

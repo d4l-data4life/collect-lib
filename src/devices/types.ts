@@ -66,7 +66,7 @@ export type DEVICE_KEY_API =
   | 'dexcom_g6+'
   | 'dexcom_g7';
 
-export type DEVICE_KEY_SDK = 'AppleHealth';
+export type DEVICE_KEY_SDK = 'AppleHealth' | 'HealthConnect';
 
 export type DEVICE_KEY_INTERNAL =
   | 'INTERNAL'
@@ -138,4 +138,5 @@ export const DEVICE_KEY_TO_NAME: Record<DEVICE_KEY, DeviceName> = {
     fullName: 'Internal Beacon Sensing',
   }, // Placeholder, there is no such device
   AppleHealth: { shortName: 'Apple HealthKit', fullName: 'Apple HealthKit' },
+  HealthConnect: { shortName: 'Health Connect', fullName: 'Android Health Connect' },
 };

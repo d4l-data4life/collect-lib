@@ -22,6 +22,7 @@ export function toDeviceConfig(devices: ProgramDevice[]): DeviceConfig[] {
             dataTypes: device.dataTypes as DEVICE_SIGNAL_TYPE[],
           };
         case 'AppleHealth':
+        case 'HealthConnect':
           return {
             type: 'sdk',
             device: device.type,
