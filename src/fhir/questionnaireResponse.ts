@@ -93,6 +93,7 @@ export const toQuestionnaireResponseItem = (answer: {
       };
     case 'string':
     case 'text':
+    case 'geo-location':
       return {
         linkId: answer.id,
         text: answer.text,
