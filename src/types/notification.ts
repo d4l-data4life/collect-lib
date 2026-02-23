@@ -7,6 +7,8 @@ export interface Notification {
   programName: string;
   // recipients | false | string[] | List of subject Ids to receive the notification. Empty means everyone.
   recipients?: string[];
+  // fileName | false | string | File used to upload recipients.
+  fileName?: string;
   // notificationKey | true | string | notification key to be displayed by device
   notificationKey: string;
   // createdAt | false | string | ISO Date string when the notification was created
