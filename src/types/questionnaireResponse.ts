@@ -32,4 +32,5 @@ export type QuestionInputType =
   | 'scale-ordinal'
   | 'scale-numeric'
   | 'string'
-  | 'text';
+  | 'text'
+  | 'geo-location';
