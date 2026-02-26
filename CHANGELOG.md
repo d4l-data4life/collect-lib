@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `geo-location` input type
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.23.0] - 2026-02-26
+
+### Added
+
+- `geo-location` input type
 
 ## [v1.22.1] - 2026-02-23
 
@@ -254,7 +258,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.22.1...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.23.0...HEAD
+[v1.23.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.22.1...v1.23.0
 [v1.22.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.22.0...v1.22.1
 [v1.22.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.21.0...v1.22.0
 [v1.21.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.20.1...v1.21.0
