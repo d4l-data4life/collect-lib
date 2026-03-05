@@ -15,5 +15,6 @@ export * from './helper/guard';
 export * from './helper/requester';
 export * from './helper/ulid';
 export * from './helper/wordlists';
+export * from './helper/question';
 
 export * from './configuration/apis';
