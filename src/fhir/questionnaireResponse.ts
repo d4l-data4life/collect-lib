@@ -1,6 +1,6 @@
 import {
   QuestionInputType,
-  ReponseValue,
+  ResponseValue,
   QuestionnaireResponse,
 } from '../types/questionnaireResponse';
 import { CustomExtensionDate, CustomExtensionStudyName } from './constants';
@@ -32,23 +32,39 @@ export function generateFHIRResponse(
     status,
     item: answers.map((answer) => toQuestionnaireResponseItem(answer)),
   };
-};
+}
 
 export const toQuestionnaireResponseItem = (answer: {
   id: string;
   type: QuestionInputType;
-  response: ReponseValue | ReponseValue[];
+  response: ResponseValue | ResponseValue[];
   text: string;
 }): fhir5.QuestionnaireResponseItem => {
   const response = answer.response;
+
   if (Array.isArray(response)) {
-    return {
-      linkId: answer.id,
-      text: answer.text,
-      answer: response.map((r: ReponseValue) => ({
-        valueCoding: { system: r.system, code: r.value, display: r?.display },
-      })),
-    };
+    switch (answer.type) {
+      case 'multi-select':
+        return {
+          linkId: answer.id,
+          text: answer.text,
+          answer: response.map((r: ResponseValue) => ({
+            valueCoding: { system: r.system, code: r.value, display: r?.display },
+          })),
+        };
+      case 'list':
+        return {
+          linkId: answer.id,
+          text: answer.text,
+          answer: response.map((r: ResponseValue) => ({
+            valueString: r.value,
+          })),
+        };
+      default:
+        return {
+          linkId: answer.id,
+        };
+    }
   }
 
   switch (answer.type) {
