@@ -4,7 +4,7 @@ export interface QuestionnaireResponse {
   answers: {
     id: string;
     type: QuestionInputType;
-    response: ReponseValue | ReponseValue[];
+    response: ResponseValue | ResponseValue[];
     text: string;
   }[];
   questionnaire: {
@@ -21,7 +21,7 @@ export interface QuestionnaireResponse {
   isSkipped?: boolean;
 }
 
-export type ReponseValue = { value: string; system?: string; display?: string };
+export type ResponseValue = { value: string; system?: string; display?: string };
 
 export type QuestionInputType =
   | 'decimal'
@@ -33,4 +33,5 @@ export type QuestionInputType =
   | 'scale-numeric'
   | 'string'
   | 'text'
-  | 'geo-location';
+  | 'geo-location'
+  | 'list';
