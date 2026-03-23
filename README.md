@@ -278,16 +278,17 @@ Update the types by running `yarn run readme:update`.
 
 ### Survey
 
-| Properties  | Required | Type                            | Description                                                                                             |
-| ----------- | -------- | ------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| name        | true     | string                          | Primary identifier. Assumption: survey and routine names are collectively unique                        |
-| programName | true     | string                          | The name of the program the survey belongs to                                                           |
-| frequency   | true     | [TaskFrequency](#TaskFrequency) | Defines in which frequency the questionnaire occurs                                                     |
-| scoring     | true     | [SurveyScoring](#SurveyScoring) | Defines the texts, images and icons that need to be displayed for the survey                            |
-| content     | true     | [SurveyContent](#SurveyContent) | Defines the texts, images and icons that need to be displayed for the survey                            |
-| reminder    | false    | [TaskReminder](#TaskReminder)   | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)      |
-| template    | false    | string                          | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed) |
-| publishedAt | false    | ISO 8601 date with timezone     | Date the survey was published.                                                                          |
+| Properties  | Required | Type                                | Description                                                                                                           |
+| ----------- | -------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| name        | true     | string                              | Primary identifier. Assumption: survey and routine names are collectively unique                                      |
+| programName | true     | string                              | The name of the program the survey belongs to                                                                         |
+| frequency   | true     | [TaskFrequency](#TaskFrequency)     | Defines in which frequency the questionnaire occurs                                                                   |
+| scoring     | true     | [SurveyScoring](#SurveyScoring)     | Defines the texts, images and icons that need to be displayed for the survey                                          |
+| content     | true     | [SurveyContent](#SurveyContent)     | Defines the texts, images and icons that need to be displayed for the survey                                          |
+| reminder    | false    | [TaskReminder](#TaskReminder)       | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)                    |
+| template    | false    | string                              | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed)               |
+| publishedAt | false    | ISO 8601 date with timezone         | Date the survey was published.                                                                                        |
+| multiplex   | false    | [SurveyMultiplex](#SurveyMultiplex) | Configures that this survey will be answered multiple times per window based on the answers of another questionnaire. |
 
 #### TaskFrequency
 
@@ -351,6 +352,14 @@ Update the types by running `yarn run readme:update`.
 | default.description | false    | {[language]: text}   | Survey description in available languages  |
 | default.image       | false    | data URI encoded svg | Survey image in html usable format         |
 | default.icon        | false    | data URI encoded svg | Survey icon in html usable format          |
+
+#### SurveyMultiplex
+
+| Properties    | Required | Type     | Description                                                                              |
+| ------------- | -------- | -------- | ---------------------------------------------------------------------------------------- |
+| questionnaire | true     | string   | Name of the questionnaires the multiplexing is based on.                                 |
+| linkIds       | true     | string[] | List of question linkds. Answers to these questions will be used to fill the placeholder |
+| placeholder   | true     | string   | Placeholder text to be replaced with answers from the specified linkIds                  |
 
 ### Routine
 

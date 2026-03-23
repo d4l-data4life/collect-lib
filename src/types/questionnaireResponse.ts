@@ -19,9 +19,20 @@ export interface QuestionnaireResponse {
    */
   effectiveDate?: string;
   isSkipped?: boolean;
+  context?: ResponseContext;
 }
 
 export type ResponseValue = { value: string; system?: string; display?: string };
+/**
+ * Context for the questionnaire response, which can be used to provide dynamic content in the questionnaire.
+ *
+ * This is a map of placeholder keys to their values. Questions in a questionnaire can reference these context values
+ * using the syntax {{key}}. For example, if the context contains { "name": "Alice" }, a question could include
+ * the text "Hello {{name}}!" which would be rendered as "Hello Alice!".
+ */
+export type ResponseContext = {
+  [key: string]: string;
+};
 
 export type QuestionInputType =
   | 'decimal'
