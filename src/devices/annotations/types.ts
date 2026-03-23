@@ -53,6 +53,16 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'hrv'
   | 'calories'
   | 'steps'
+  // Apple health types
+  | 'stepCount'
+  | 'walkingAndRunningDistance'
+  | 'activeEnergy'
+  | 'sleepState'
+  // Health Connect types
+  | 'sleepStage'
+
+  // // Special case for Fitbit, Apple health & Health Connect -> we configure sleep but it then actually uses (sleepLevel for fitbit, sleepState for Apple health, sleepStage for Health Connect) and duration
+  // | 'sleep'
 
   // unused for now but essential not to break the PAMS service compatibility
   | 'normalWalkingEnergyExpenditure'
@@ -67,21 +77,13 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'maximumMetabolicEquivalent'
   | 'averageMetabolicEquivalent'
   | 'durationOfNormalWalkingEpisodes'
-  | 'durationOfIntensityWalkingEpisodes'
+  | 'durationOfIntensityWalkingEpisodes';
 
-  // // Special case for Fitbit -> we configure sleep but it then actually uses sleepLevel and duration
-  // | 'sleep'
-  // // Special cases for Internal -> we configure which devices
-  // | 'internal_gyroscope'
-  // | 'internal_accelerometer'
-  // | 'internal_magnetometer'
-  // | 'internal_beacon_sensing';
-
-  // Apple health types
-  | 'stepCount'
-  | 'walkingAndRunningDistance'
-  | 'activeEnergy'
-  | 'restingEnergy';
+// // Special cases for Internal -> we configure which devices
+// | 'internal_gyroscope'
+// | 'internal_accelerometer'
+// | 'internal_magnetometer'
+// | 'internal_beacon_sensing';
 
 export type DEVICE_ANNOTATION_DATA_FORMAT =
   | 'bitmask'

@@ -21,6 +21,8 @@ export type Display = {
   content: DisplayContent;
   // charts | false | { [key in ProgramDeviceType]?: ProgramDevicesDataType[] } | List of devices and their data types that are relevant for the display
   charts?: { [key in ProgramDeviceType]?: ProgramDevicesDataType[] };
+  // publishedAt | false | ISO 8601 date with timezone | Date the display was published.
+  publishedAt?: string;
 };
 
 export type DisplayType = 'report' | 'recommendation' | 'end-of-participation';
@@ -35,13 +37,13 @@ export type DisplayContent = {
     // default.message | true | {[language]: text} | Display message in available languages
     message: TranslatedString;
   };
-  // blocks | false | DisplayContentBlock[] | Content blocks for the display
-  blocks?: DisplayContentBlock[];
+  // blocks | false | [ContentBlock](#ContentBlock)[] | Content blocks for the display
+  blocks?: ContentBlock[];
 };
 
-// #### DisplayContentBlock
+// #### ContentBlock
 // Properties | Required | Type | Description
-export type DisplayContentBlock = {
+export type ContentBlock = {
   // image | false | string | Optional image for the content block
   image?: string;
   // text | true | {[language]: text} | Block text in available languages
@@ -60,6 +62,10 @@ export interface SeenDisplay {
    */
   seenAt: string;
   /**
+   * Date the display was created
+   */
+  effectiveDate: string;
+  /**
    * The app language at the point at which the user has seen the display
    */
   lng: string;
@@ -73,12 +79,4 @@ export interface SeenDisplay {
   content?: DisplayContent;
 }
 
-export type DisplayPath =
-  | `content.${DisplayContentPath}`
-  | `content.blocks.${number}.image`
-  | `content.blocks.${number}.text`
-  | 'content.blocks'
-  | `charts.${ProgramDeviceType}`
-  | 'name'
-  | `frequency.${keyof TaskFrequency}`
-  | 'frequency';
+export type DisplayPath = RecursiveKeyOf<Display>;

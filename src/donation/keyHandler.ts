@@ -3,7 +3,7 @@ import { secp256k1 } from '@noble/curves/secp256k1';
 import * as bip39 from '@scure/bip39';
 import { Buffer } from 'buffer/';
 import * as forge from 'node-forge';
-import { Converter } from '../helper/converter';
+import { binaryStringToUint8Array, Converter } from '../helper/converter';
 import { WORDLIST_LANGUAGES, WordListLanguage, wordlists } from '../helper/wordlists';
 import { CryptoModule } from './crypto';
 import { ERROR_CODES } from './types';
@@ -93,7 +93,7 @@ export class KeyHandler {
    * @param message The message to hash
    * @returns The hashed message
    */
-  hash = (message: string) => {
+  hash = (message: string): string => {
     const hash = forge.md.sha256.create().update(message).digest();
     return hash.toHex();
   };
@@ -126,6 +126,10 @@ export class KeyHandler {
    */
   verify = async (message: string, signature: Uint8Array, pub: string): Promise<boolean> => {
     const sha256 = this.hash(message);
-    return secp256k1.verify(signature, sha256, this.converter.base64ToHex(pub));
+    return secp256k1.verify(
+      signature,
+      binaryStringToUint8Array(sha256),
+      this.converter.base64ToUint8Array(pub)
+    );
   };
 }

@@ -16,12 +16,10 @@ Then you can update the lib and then get it into the app with `yarn build && yal
 ### Research Studio
 
 ```
-npm link ../collect-lib
+pnpm add file:../collect-lib
 ```
 
-This works for types and coding, even though it sometimes needs a reload.
-For execution stencil does not seem to pick up the new code, so that needs a restart every time.
-(`yalc` doesnt improve the behaviour either.)
+After every change in the library a `pnpm install` has to be triggered for the changes to take effect in RS.
 
 ## Types
 
@@ -32,30 +30,32 @@ Update the types by running `yarn run readme:update`.
 
 ### Program
 
-| Properties  | Required | Type                                | Description                                                                                                                                                                                |
-| ----------- | -------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| name        | true     | string                              | Name of the program used as primary identifier                                                                                                                                             |
-| tenantID    | true     | string                              | Tenant the program belongs to                                                                                                                                                              |
-| languages   | true     | string[]                            | Language codes that the program is available in. Example: `['en', 'de']`                                                                                                                   |
-| type        | true     | `study` or `sensor`                 | `sensor` is the new research-studio type, `study` is from the study-builder (and older)                                                                                                    |
-| phases      | true     | [ProgramStep](#ProgramStep)[][]     | Defines the flow of the program as an array of `phases`. `phases` consist of arrays of `steps`. `phases` are worked through sequentially and `steps` within a single `phase` are parallel. |
-| donation    | true     | [ProgramDonation](#ProgramDonation) | Donation settings handle which resources are donated, where they are donated to, and how the donation is regulated                                                                         |
-| content     | true     | [ProgramContent](#ProgramContent)   | Contains all the relevant content properties of the program.                                                                                                                               |
-| endDate     | false    | ISO 8601 date with timezone         | Date the program should finish for all users.                                                                                                                                              |
-| tags        | false    | [ProgramTag](#ProgramTag)[]         | List of supported tags including their configuration                                                                                                                                       |
-| publishedAt | true     | ISO 8601 date with timezone         | Date the program was published (used to determine program state).                                                                                                                          |
-| featured    | true     | [ProgramFeatured](#ProgramFeatured) | Describes the featured state of the program.                                                                                                                                               |
+| Properties  | Required | Type                                        | Description                                                                                                                                                                                |
+| ----------- | -------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| name        | true     | string                                      | Name of the program used as primary identifier                                                                                                                                             |
+| tenantID    | true     | string                                      | Tenant the program belongs to                                                                                                                                                              |
+| languages   | true     | string[]                                    | Language codes that the program is available in. Example: `['en', 'de']`                                                                                                                   |
+| type        | true     | `study` or `sensor`                         | `sensor` is the new research-studio type, `study` is from the study-builder (and older)                                                                                                    |
+| phases      | true     | [ProgramStep](#ProgramStep)[][]             | Defines the flow of the program as an array of `phases`. `phases` consist of arrays of `steps`. `phases` are worked through sequentially and `steps` within a single `phase` are parallel. |
+| donation    | true     | [ProgramDonation](#ProgramDonation)         | Donation settings handle which resources are donated, where they are donated to, and how the donation is regulated                                                                         |
+| content     | true     | [ProgramContent](#ProgramContent)           | Contains all the relevant content properties of the program.                                                                                                                               |
+| endDate     | false    | ISO 8601 date with timezone                 | Date the program should finish for all users.                                                                                                                                              |
+| tags        | false    | [ProgramTag](#ProgramTag)[]                 | List of supported tags including their configuration                                                                                                                                       |
+| publishedAt | false    | ISO 8601 date with timezone                 | Date the program was published (used to determine program state).                                                                                                                          |
+| featured    | true     | [ProgramFeatured](#ProgramFeatured)         | Describes the featured state of the program.                                                                                                                                               |
+| theme       | false    | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app                                                                                                                                            |
 
 #### ProgramFeatured
 
-| Properties             | Required | Type    | Description                                        |
-| ---------------------- | -------- | ------- | -------------------------------------------------- |
-| enabled                | true     | boolean | Denotes if the program is featured                 |
-| showProgramImage       | false    | boolean | Denotes if the program image should be shown       |
-| showInstituteImage     | false    | boolean | Denotes if the institute image should be shown     |
-| showContactInformation | false    | boolean | Denotes if the contact information should be shown |
-| showSensors            | false    | boolean | Denotes if the sensors should be shown             |
-| estimatedEffort        | false    | object  | The estimated effort for the program               |
+| Properties             | Required | Type             | Description                                                                      |
+| ---------------------- | -------- | ---------------- | -------------------------------------------------------------------------------- |
+| enabled                | true     | boolean          | Denotes if the program is featured                                               |
+| showProgramImage       | false    | boolean          | Denotes if the program image should be shown                                     |
+| showInstituteImage     | false    | boolean          | Denotes if the institute image should be shown                                   |
+| showContactInformation | false    | boolean          | Denotes if the contact information should be shown                               |
+| showSensors            | false    | boolean          | Denotes if the sensors should be shown                                           |
+| estimatedEffort        | false    | object           | The estimated effort for the program                                             |
+| description            | false    | TranslatedString | Shown as short description in featured listing (required if featured is enabled) |
 
 ### ProgramSteps
 
@@ -132,32 +132,91 @@ Update the types by running `yarn run readme:update`.
 
 ### StepCondition
 
-| Properties   | Required | Type                                | Description                                                                                                                                                                                                                                         |
-| ------------ | -------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| type         | true     | [ConditionType](#ConditionType)     | Type of the condition (determines which other attributes are applicable)                                                                                                                                                                            |
-| surveyName   | false    | string                              | required for condition type `survey` and `question`                                                                                                                                                                                                 |
-| routineName  | false    | string                              | required for condition type `routine`                                                                                                                                                                                                               |
-| linkID       | false    | string                              | required for condition type `question`                                                                                                                                                                                                              |
-| questionType | false    | `coding`, `date`                    | required for condition type `question` - defines the data type of the referred to question                                                                                                                                                          |
-| operand      | false    | string                              | required for condition type `question` (unless operator is `exists`). Used as `<answer>` `<operator>` `<operand>`.                                                                                                                                  |
-| operator     | false    | `exists`,`=`,`!=`,`>`,`<`,`>=`,`<=` | Required for condition type `question`. Used as `<answer>` `<operator>` `<operand>`.                                                                                                                                                                |
-| offset       | false    | ISO 8601 duration string            | Defines the offset between the answer date and the current date. For question type `coding` only impacts the start/end date calculation. For type `offset` impacts the `item`. For type `consent`, this is applied to the date of the consent grant |
-| item         | false    | StepCondition                       | Required for condition type `not` and `offset`.                                                                                                                                                                                                     |
-| items        | false    | StepCondition[]                     | Required for condition type `and` and `or`. List of conditions that are combined with the respective operator.                                                                                                                                      |
-| sorting      | false    | `earliest`, `latest`                | Used for condition type `and` and `or`. Determines which resulting dates of the items gets picked. Defaults to `earliest` for `or` and `latest` for `and`.                                                                                          |
-| consentKey   | false    | string                              | Required for condition type `consent`. Reference to the consent that must have been granted to fulfill the condition.                                                                                                                               |
+#### Base
 
-#### ConditionType
+| Properties | Required | Type                            | Description                                                                   |
+| ---------- | -------- | ------------------------------- | ----------------------------------------------------------------------------- |
+| type       | true     | [ConditionType](#ConditionType) | Type of the condition (determines which other attributes are applicable)      |
+| offset     | false    | ISO 8601 duration string        | Adds additional offset duration to conditions outcome. (e.g. x plus two days) |
 
-| Type     | Description                                                                         |
-| -------- | ----------------------------------------------------------------------------------- |
-| question | Condition that requires a specific answer from a previous survey                    |
-| survey   | Condition that requires a previous survey to have been completed                    |
-| routine  | Condition that requires a previous routine to have been completed                   |
-| and      | Condition that requires all subconditions to be fulfilled                           |
-| or       | Condition that requires one subcondition to be fulfilled                            |
-| offset   | Condition that adds a date offset to the fulfillment date of the given subcondition |
-| consent  | Condition that require a specific consent to be given                               |
+#### DateCondition
+
+| Properties | Required | Type                | Description                                                     |
+| ---------- | -------- | ------------------- | --------------------------------------------------------------- |
+| type       | true     | `date`              | Condition that requires a date to have passed                   |
+| date       | true     | string (YYYY-MM-DD) | Timestamp that needs to be passed for the condition to be true. |
+
+#### QuestionCondition
+
+| Properties   | Required | Type                                | Description                                                                     |
+| ------------ | -------- | ----------------------------------- | ------------------------------------------------------------------------------- |
+| type         | true     | `question`                          | Condition that requires a specific answer from a previous survey                |
+| questionType | true     | `coding`                            | Condition that uses authored date of the response fulfilling the code condition |
+| surveyName   | true     | string                              | Identifier of the survey                                                        |
+| linkID       | true     | string                              | Identifier of the question                                                      |
+| operand      | false    | string                              | (unless operator is `exists`). Used as `<answer>` `<operator>` `<operand>`.     |
+| operator     | true     | `exists`,`=`,`!=`,`>`,`<`,`>=`,`<=` | Used as `<answer>` `<operator>` `<operand>`.                                    |
+
+#### QuestionCondition
+
+| Properties   | Required | Type       | Description                                                           |
+| ------------ | -------- | ---------- | --------------------------------------------------------------------- |
+| type         | true     | `question` | Condition that requires a specific answer from a previous survey      |
+| questionType | true     | `date`     | Condition that uses the answer of a date question as fulfillment date |
+| surveyName   | true     | string     | Identifier of the survey                                              |
+| linkID       | true     | string     | Identifier of the question                                            |
+
+#### SurveyCondition
+
+| Properties | Required | Type     | Description                                                      |
+| ---------- | -------- | -------- | ---------------------------------------------------------------- |
+| type       | true     | `survey` | Condition that requires a previous survey to have been completed |
+| surveyName | true     | string   | Identifier of the survey                                         |
+
+#### RoutineCondition
+
+| Properties  | Required | Type      | Description                                                       |
+| ----------- | -------- | --------- | ----------------------------------------------------------------- |
+| type        | true     | `routine` | Condition that requires a previous routine to have been completed |
+| routineName | true     | string    | Identifier of the routine                                         |
+
+#### ConsentCondition
+
+| Properties | Required | Type      | Description                                                                    |
+| ---------- | -------- | --------- | ------------------------------------------------------------------------------ |
+| type       | true     | `consent` | Condition that require a specific consent to be given                          |
+| consentKey | true     | string    | Reference to the consent that must have been granted to fulfill the condition. |
+
+#### ResponseCondition
+
+| Properties   | Required | Type       | Description                                                                      |
+| ------------ | -------- | ---------- | -------------------------------------------------------------------------------- |
+| type         | true     | `response` | Condition that require a specific response to be received                        |
+| responseName | true     | string     | Reference to the response that must have been received to fulfill the condition. |
+
+#### AndCondition
+
+| Properties | Required | Type                 | Description                                                                      |
+| ---------- | -------- | -------------------- | -------------------------------------------------------------------------------- |
+| type       | true     | `and`                | Condition that requires all subconditions to be fulfilled                        |
+| items      | true     | StepCondition[]      | List of conditions that must all be fulfilled.                                   |
+| sorting    | false    | `earliest`, `latest` | Determines which resulting dates of the items gets picked. Defaults to `latest`. |
+
+#### OrCondition
+
+| Properties | Required | Type                 | Description                                                                        |
+| ---------- | -------- | -------------------- | ---------------------------------------------------------------------------------- |
+| type       | true     | `or`                 | Condition that requires one subcondition to be fulfilled                           |
+| items      | true     | StepCondition[]      | List of conditions where at least one must be fulfilled.                           |
+| sorting    | false    | `earliest`, `latest` | Determines which resulting dates of the items gets picked. Defaults to `earliest`. |
+
+#### OffsetCondition
+
+| Properties | Required | Type                     | Description                                                                         |
+| ---------- | -------- | ------------------------ | ----------------------------------------------------------------------------------- |
+| type       | true     | `offset`                 | Condition that adds a date offset to the fulfillment date of the given subcondition |
+| offset     | true     | ISO 8601 duration string | Offset as duration, can be negative.                                                |
+| item       | true     | StepCondition            | Condition to apply the additional offset to.                                        |
 
 ### ProgramDonation
 
@@ -174,7 +233,6 @@ Update the types by running `yarn run readme:update`.
 | Properties    | Required | Type                                          | Description                                                                                                            |
 | ------------- | -------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | blur          | false    | object                                        | The set of blurring settings that should be applied to the resource.                                                   |
-| blur.location | true     | string                                        | The timezone location of the resource, e.g `"Europe/Berlin"`.                                                          |
 | blur.authored | false    | [DateBlurringFunction](#DateBlurringFunction) | The name of the default blurring function which is used to blur the authored timestamp of every QuestionnaireResponse. |
 | blur.authored | false    | [DateBlurringFunction](#DateBlurringFunction) | The name of the default blurring function which is used to blur the period start and end of every ResearchSubject.     |
 
@@ -220,13 +278,17 @@ Update the types by running `yarn run readme:update`.
 
 ### Survey
 
-| Properties  | Required | Type                            | Description                                                                      |
-| ----------- | -------- | ------------------------------- | -------------------------------------------------------------------------------- |
-| name        | true     | string                          | Primary identifier. Assumption: survey and routine names are collectively unique |
-| programName | true     | string                          | The name of the program the survey belongs to                                    |
-| frequency   | true     | [TaskFrequency](#TaskFrequency) | Defines in which frequency the questionnaire occurs                              |
-| scoring     | true     | [SurveyScoring](#SurveyScoring) | Defines the texts, images and icons that need to be displayed for the survey     |
-| content     | true     | [SurveyContent](#SurveyContent) | Defines the texts, images and icons that need to be displayed for the survey     |
+| Properties  | Required | Type                                | Description                                                                                                           |
+| ----------- | -------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| name        | true     | string                              | Primary identifier. Assumption: survey and routine names are collectively unique                                      |
+| programName | true     | string                              | The name of the program the survey belongs to                                                                         |
+| frequency   | true     | [TaskFrequency](#TaskFrequency)     | Defines in which frequency the questionnaire occurs                                                                   |
+| scoring     | true     | [SurveyScoring](#SurveyScoring)     | Defines the texts, images and icons that need to be displayed for the survey                                          |
+| content     | true     | [SurveyContent](#SurveyContent)     | Defines the texts, images and icons that need to be displayed for the survey                                          |
+| reminder    | false    | [TaskReminder](#TaskReminder)       | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)                    |
+| template    | false    | string                              | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed)               |
+| publishedAt | false    | ISO 8601 date with timezone         | Date the survey was published.                                                                                        |
+| multiplex   | false    | [SurveyMultiplex](#SurveyMultiplex) | Configures that this survey will be answered multiple times per window based on the answers of another questionnaire. |
 
 #### TaskFrequency
 
@@ -234,18 +296,24 @@ Update the types by running `yarn run readme:update`.
 | ---------------- | -------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | type             | true     | [FrequencyType](#FrequencyType) | Defines how often and when a questionnaire is triggered/added for the survey                                                                                                                                                            |
 | start            | true     | ISO 8601 date with timezone     | Determines the global starting date of the survey. The time component is also used for when the events should be available on the day they become available.                                                                            |
-| end              | false    | ISO 8601 date with timezone     | Determines the global ending date of the survey. When snapshotting this might be overwritten with the program end date if that is earlier.                                                                                              |
-| location         | false    | Timezone Location               | Determines the location for the defined date, so that timezone problems can be handled.                                                                                                                                                 |
+| end              | false    | ISO 8601 date with timezone     | Determines the global ending date of the survey.                                                                                                                                                                                        |
 | factor           | false    | integer                         | For `daily`, `weekly` and `monthly` this factor is used to manipulate the cycle length, e.g. `daily` with a factor of 7 makes it a survey that is repeated every week, but doesn't necessarily start on monday.                         |
 | editDuration     | false    | ISO 8601 duration string        | Enables editing events of this survey for the given duration.                                                                                                                                                                           |
 | skipFirst        | false    | boolean                         | Determines if the first iteration of the survey after subscription should be skipped. Skipping it means the questionnaire won't open in the middle of the window and instead at the start of the next full window. Defaults to `false`. |
 | retainCTAs       | false    | number                          | Allows configuring that x amount of previous CTAs remain active on the todo screen.                                                                                                                                                     |
 | allowAddOnDemand | false    | boolean                         | If true allows the task to also be added at any point in time (on demand).                                                                                                                                                              |
 
+#### TaskReminder
+
+| Properties | Required | Type                                            | Description                                                                                        |
+| ---------- | -------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| frequency  | true     | [ReminderFrequencyType](#ReminderFrequencyType) | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
+
 #### SurveyScoring
 
 | Properties      | Required | Type                                          | Description                                                                        |
 | --------------- | -------- | --------------------------------------------- | ---------------------------------------------------------------------------------- |
+| eligibility     | false    | boolean                                       | Indicates if the scoring is suitable for eligibility.                              |
 | scores          | true     | object                                        | Defines how the questions will be scored                                           |
 | scores.valueset | false    | {valuesetURL: {answerCode: score}}            | For questions that use valuesets scores are assigned to each code of the valuesets |
 | scores.number   | false    | {linkId: [ScoreThreshold](#ScoreThreshold)[]} | For numeric questions we define scoring conditions per question                    |
@@ -268,6 +336,13 @@ Update the types by running `yarn run readme:update`.
 | monthly  | Occurs every 1st of a month                               |
 | onDemand | There is a button that allows you to add one at any point |
 
+#### ReminderFrequencyType
+
+| Type         | Description                                                                         |
+| ------------ | ----------------------------------------------------------------------------------- |
+| daily        | A reminder will be sent daily                                                       |
+| beforeExpiry | A reminder will be sent when the task is about to expire (last day it is available) |
+
 #### SurveyContent
 
 | Properties          | Required | Type                 | Description                                |
@@ -278,16 +353,26 @@ Update the types by running `yarn run readme:update`.
 | default.image       | false    | data URI encoded svg | Survey image in html usable format         |
 | default.icon        | false    | data URI encoded svg | Survey icon in html usable format          |
 
+#### SurveyMultiplex
+
+| Properties    | Required | Type     | Description                                                                              |
+| ------------- | -------- | -------- | ---------------------------------------------------------------------------------------- |
+| questionnaire | true     | string   | Name of the questionnaires the multiplexing is based on.                                 |
+| linkIds       | true     | string[] | List of question linkds. Answers to these questions will be used to fill the placeholder |
+| placeholder   | true     | string   | Placeholder text to be replaced with answers from the specified linkIds                  |
+
 ### Routine
 
-| Properties  | Required                 | Type                                | Description                                                                      |
-| ----------- | ------------------------ | ----------------------------------- | -------------------------------------------------------------------------------- |
-| name        | true                     | string                              | Primary identifier. Assumption: survey and routine names are collectively unique |
-| programName | true                     | string                              | The name of the program the routine belongs to                                   |
-| frequency   | true                     | [TaskFrequency](#TaskFrequency)     | Defines in which frequency the questionnaire occurs                              |
-| content     | true                     | [RoutineContent](#RoutineContent)   | Defines the texts, images and icons that need to be displayed for the routine    |
-| devices     | true                     | string[]                            | Lists the devices used in the routine                                            |
+| Properties  | Required                 | Type                                | Description                                                                                        |
+| ----------- | ------------------------ | ----------------------------------- | -------------------------------------------------------------------------------------------------- |
+| name        | true                     | string                              | Primary identifier. Assumption: survey and routine names are collectively unique                   |
+| programName | true                     | string                              | The name of the program the routine belongs to                                                     |
+| frequency   | true                     | [TaskFrequency](#TaskFrequency)     | Defines in which frequency the questionnaire occurs                                                |
+| content     | true                     | [RoutineContent](#RoutineContent)   | Defines the texts, images and icons that need to be displayed for the routine                      |
+| devices     | true                     | string[]                            | Lists the devices used in the routine                                                              |
 | duration    | ISO 8601 duration String | Defines the duration of the routine |
+| reminder    | false                    | [TaskReminder](#TaskReminder)       | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
+| publishedAt | false                    | ISO 8601 date with timezone         | Date the routine was published.                                                                    |
 
 #### ProgramDevice
 
@@ -327,17 +412,18 @@ Update the types by running `yarn run readme:update`.
 | frequency   | true     | [TaskFrequency](#TaskFrequency)                           | Defines in which frequency the questionnaire occurs                              |
 | content     | true     | [DisplayContent](#DisplayContent)                         | Defines the texts, images and icons that need to be displayed for the display    |
 | charts      | false    | { [key in ProgramDeviceType]?: ProgramDevicesDataType[] } | List of devices and their data types that are relevant for the display           |
+| publishedAt | false    | ISO 8601 date with timezone                               | Date the display was published.                                                  |
 
 #### DisplayContent
 
-| Properties      | Required | Type                  | Description                                 |
-| --------------- | -------- | --------------------- | ------------------------------------------- |
-| default         | true     | object                | Default values for display texts and images |
-| default.title   | true     | {[language]: text}    | Display title in available languages        |
-| default.message | true     | {[language]: text}    | Display message in available languages      |
-| blocks          | false    | DisplayContentBlock[] | Content blocks for the display              |
+| Properties      | Required | Type                            | Description                                 |
+| --------------- | -------- | ------------------------------- | ------------------------------------------- |
+| default         | true     | object                          | Default values for display texts and images |
+| default.title   | true     | {[language]: text}              | Display title in available languages        |
+| default.message | true     | {[language]: text}              | Display message in available languages      |
+| blocks          | false    | [ContentBlock](#ContentBlock)[] | Content blocks for the display              |
 
-#### DisplayContentBlock
+#### ContentBlock
 
 | Properties | Required | Type               | Description                          |
 | ---------- | -------- | ------------------ | ------------------------------------ |

@@ -5,6 +5,7 @@ export const SliderStepSizeExtension = 'http://fhir.data4life.care/StructureDefi
 export const RelativeMinValueExtension = 'http://fhir.data4life.care/StructureDefinition/relative-min-value';
 export const RelativeMaxValueExtension = 'http://fhir.data4life.care/StructureDefinition/relative-max-value';
 export const CustomExtensionStudyName = 'http://fhir.data4life.care/StructureDefinition/study-name';
+export const CustomExtensionContextValue = 'http://fhir.data4life.care/StructureDefinition/context-value';
 export const CustomExtensionDate = 'http://fhir.data4life.care/StructureDefinition/effective-date';
 export const MaxValueExtension = 'http://hl7.org/fhir/StructureDefinition/maxValue';
 export const MinValueExtension = 'http://hl7.org/fhir/StructureDefinition/minValue';

@@ -6,10 +6,16 @@ import { CryptoModule } from './crypto';
 import { filterRecords, includedResearchSubjects } from './document';
 import { HybridEncrypter } from './hybridEncryption';
 import { KeyHandler } from './keyHandler';
-import { DonationRecord, DonorIdentity, ERROR_CODES, RecordState, SDKInterface } from './types';
+import {
+  DonationRecord,
+  DonorIdentity,
+  ERROR_CODES,
+  RecordState,
+  ResponseMinimal,
+  RestorationSize,
+  SDKInterface,
+} from './types';
 import { DONOR_IDENTITY_VERSION, isPrivateProgram, validateProgramName } from './utils';
-
-// export type GetProgramFn = (programName: string) => Promise<Program>;
 
 export class DonationSDK implements SDKInterface {
   /**
@@ -293,6 +299,41 @@ export class DonationSDK implements SDKInterface {
     });
   }
 
+  /**
+   * Get the total size of donations which can be restored for a specific program
+   * @param donorIdentity The identity of the donor to use
+   * @param programName The name of the program to get the size for
+   * @returns The total size of the donations and the size of each individual donation that can be restored
+   * @throws Error if the donation service is not available or if there is an internal server error
+   */
+  async getRestorationSize(
+    donorIdentity: DonorIdentity,
+    programName: string
+  ): Promise<RestorationSize> {
+    ////////
+    // Check prerequisites
+    ////////
+    if (!(await this.donationServiceAvailable())) {
+      throw new Error(ERROR_CODES.NOT_ONLINE);
+    }
+
+    // Validate the name of the program
+    validateProgramName(programName, donorIdentity);
+
+    // Create authenticated Donation API requester
+    let authenticatedDonationAPI = await this.getAuthenticatedDonationAPI(donorIdentity);
+
+    // Retrieve size of donations
+    try {
+      const [response] = await authenticatedDonationAPI.get<RestorationSize>({
+        uri: `/donations/${programName}/size`,
+      });
+      return response;
+    } catch (e) {
+      throw new Error(ERROR_CODES.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async restore(
     donorIdentity: DonorIdentity,
     programName: string
@@ -425,6 +466,121 @@ export class DonationSDK implements SDKInterface {
       await authenticatedDonationAPI.post<void>({
         uri: `/revoke/${program.name}`,
         body: JSON.stringify(donations),
+      });
+    } catch (e) {
+      throw new Error(ERROR_CODES.INTERNAL_SERVER_ERROR);
+    }
+
+    return true;
+  }
+
+  async getResponses(
+    donorIdentity: DonorIdentity,
+    programName: string,
+    updatedAfter: string = ''
+  ): Promise<ResponseMinimal[]> {
+    ////////
+    // Check prerequisites
+    ////////
+    if (!(await this.donationServiceAvailable())) {
+      throw new Error(ERROR_CODES.NOT_ONLINE);
+    }
+
+    // Validate the name of the program
+    validateProgramName(programName, donorIdentity);
+
+    ////////
+    // Retrieve responses
+    ////////
+
+    // Create authenticated Donation API requester
+    let authenticatedDonationAPI = await this.getAuthenticatedDonationAPI(donorIdentity);
+
+    // Retrieve responses
+    let responses: ResponseMinimal[] = [];
+    try {
+      let limit = 100;
+      let offset = 0;
+      let hasMore = true;
+
+      while (hasMore) {
+        const [response, _] = await authenticatedDonationAPI.get<{
+          responses: ResponseMinimal[];
+          limit: number;
+          offset: number;
+        }>({
+          uri: `/responses/${programName}?limit=${limit}&offset=${offset}&updatedAfter=${encodeURIComponent(updatedAfter)}`,
+        });
+
+        limit = response.limit;
+        responses = [...responses, ...response.responses];
+        hasMore = response.responses.length >= limit;
+        offset += limit;
+      }
+    } catch (e) {
+      throw new Error(ERROR_CODES.INTERNAL_SERVER_ERROR);
+    }
+
+    return responses;
+  }
+
+  async registerDevice(
+    donorIdentity: DonorIdentity,
+    program: Program,
+    deviceToken: string
+  ): Promise<boolean> {
+    ////////
+    // Check prerequisites
+    ////////
+    if (!(await this.donationServiceAvailable())) {
+      throw new Error(ERROR_CODES.NOT_ONLINE);
+    }
+
+    // Validate the name of the program
+    validateProgramName(program.name, donorIdentity);
+
+    ////////
+    // Register device
+    ////////
+
+    // Create authenticated Donation API requester
+    let authenticatedDonationAPI = await this.getAuthenticatedDonationAPI(donorIdentity);
+
+    // Register device
+    try {
+      await authenticatedDonationAPI.put<void>({
+        uri: `/devices/${program.name}`,
+        body: JSON.stringify({ deviceToken }),
+      });
+    } catch (e) {
+      throw new Error(ERROR_CODES.INTERNAL_SERVER_ERROR);
+    }
+
+    return true;
+  }
+
+  async unregisterDevice(donorIdentity: DonorIdentity, program: Program): Promise<boolean> {
+    ////////
+    // Check prerequisites
+    ////////
+    if (!(await this.donationServiceAvailable())) {
+      throw new Error(ERROR_CODES.NOT_ONLINE);
+    }
+
+    // Validate the name of the program
+    validateProgramName(program.name, donorIdentity);
+
+    ////////
+    // Register device
+    ////////
+
+    // Create authenticated Donation API requester
+    let authenticatedDonationAPI = await this.getAuthenticatedDonationAPI(donorIdentity);
+
+    // Register device
+    try {
+      await authenticatedDonationAPI.del<void>({
+        uri: `/devices/${program.name}`,
       });
     } catch (e) {
       throw new Error(ERROR_CODES.INTERNAL_SERVER_ERROR);

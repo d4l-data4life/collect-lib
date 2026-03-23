@@ -1,6 +1,8 @@
 export * from './consent';
 export * from './display';
-export * from './eligibilityScore';
+export * from './message';
+export * from './notification';
+export * from './questionnaireScore';
 export * from './program';
 export * from './questionnaireResponse';
 export * from './recording';
@@ -23,8 +25,10 @@ type RecursiveKeyOfInner<TObj extends object> = {
   [TKey in keyof TObj & (string | number)]: RecursiveKeyOfHandleValue<TObj[TKey], `.${TKey}`>;
 }[keyof TObj & (string | number)];
 
-type RecursiveKeyOfHandleValue<TValue, Text extends string> = TValue extends any[]
-  ? Text
-  : TValue extends object
-    ? Text | `${Text}${RecursiveKeyOfInner<TValue>}`
-    : Text;
+type RecursiveKeyOfHandleValue<TValue, Text extends string> = TValue extends Function
+  ? never
+  : TValue extends any[]
+    ? Text | `${Text}.${number}` | `${Text}.${number}${RecursiveKeyOfInner<TValue[0]>}`
+    : TValue extends object
+      ? Text | `${Text}${RecursiveKeyOfInner<TValue>}`
+      : Text;

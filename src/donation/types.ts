@@ -19,6 +19,15 @@ export type DonationRecord = {
 
 export type RecordState = 'Active' | 'Deleted';
 
+export type RestorationSize = { totalBytes: number; donations?: { id: string; bytes: number }[] };
+
+export type ResponseMinimal = {
+  id: string;
+  resourceType: string;
+  version: number;
+  [key: string]: any;
+};
+
 export interface SDKInterface {
   /**
    * Checks readiness state of donation service
@@ -36,7 +45,7 @@ export interface SDKInterface {
   /**
    * Register a donor identity for a program
    * @param recoveryKey The 16byte long recovery key (from the recovery phrase)
-   * @param programName The name of the program for which the registration should be done
+   * @param program The program for which the registration should be done
    * @param participationCode The optional participation code
    * @returns The newly created donor identity
    */
@@ -49,7 +58,7 @@ export interface SDKInterface {
   /**
    * Donate resources for a study
    * @param donorIdentity The donor identity for the study
-   * @param programName The program for which the resources should be donated
+   * @param program The program for which the resources should be donated
    * @param records The list of resources that should be donated
    * @returns True, if the donation was successful. Otherwise, false.
    */
@@ -58,6 +67,15 @@ export interface SDKInterface {
     program: Program,
     records: { id: string; document: fhir5.Resource; status: RecordState }[]
   ) => Promise<boolean>;
+
+  /**
+   * Get the total size of donations which can be restored for a specific program
+   * @param donorIdentity The identity of the donor to use
+   * @param programName The name of the program to get the size for
+   * @returns The total size of the donations and the size of each individual donation that can be restored
+   * @throws Error if the donation service is not available or if there is an internal server error
+   */
+  getRestorationSize(donorIdentity: DonorIdentity, programName: string): Promise<RestorationSize>;
 
   /**
    * Restore donations based on already made donations
@@ -82,6 +100,35 @@ export interface SDKInterface {
     program: Program,
     records: DonationRecord[] // Under normal circumstances this should only be a ResearchSubject
   ) => Promise<boolean>;
+
+  /**
+   * Register device for push notifications
+   * @param donorIdentity The donor identity for the study
+   * @param program The program for which the device should be registered
+   * @param deviceToken The device token for push notifications
+   * @returns True, if the registration was successful. Otherwise, false.
+   */
+  registerDevice: (
+    donorIdentity: DonorIdentity,
+    program: Program,
+    deviceToken: string
+  ) => Promise<boolean>;
+
+  /**
+   * Unregister device for push notifications
+   * @param donorIdentity The donor identity for the study
+   * @param program The program for which the device should be unregistered
+   * @returns True, if the device was removed successfully. Otherwise, false.
+   */
+  unregisterDevice: (donorIdentity: DonorIdentity, program: Program) => Promise<boolean>;
+
+  /**
+   * Get responses left for participant in a study
+   * @param donorIdentity The donor identity for the study
+   * @param programName The name of the program for which the responses should be gotten
+   * @returns The list of resources that were left for the participant
+   */
+  getResponses: (donorIdentity: DonorIdentity, programName: string) => Promise<fhir5.Resource[]>;
 }
 
 export enum ERROR_CODES {

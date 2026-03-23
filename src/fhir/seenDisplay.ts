@@ -13,6 +13,18 @@ export function generateFHIRSeenDisplay(id: string, seenDisplay: SeenDisplay): f
       },
     ],
   };
+  const hasBlocks = seenDisplay.content?.blocks && seenDisplay.content.blocks.length > 0;
+
+  let contentData;
+  if (hasBlocks) {
+    contentData = JSON.stringify(seenDisplay.content!.blocks!);
+  } else {
+    contentData = getText<DisplayContentPath>(
+      seenDisplay.content,
+      'default.message',
+      seenDisplay.lng
+    );
+  }
 
   const payload: fhir5.Communication['payload'] = seenDisplay.content
     ? [
@@ -25,9 +37,7 @@ export function generateFHIRSeenDisplay(id: string, seenDisplay: SeenDisplay): f
               'default.title',
               seenDisplay.lng
             ),
-            data: Buffer.from(
-              getText<DisplayContentPath>(seenDisplay.content, 'default.message', seenDisplay.lng)
-            ).toString('base64'),
+            data: Buffer.from(contentData).toString('base64'),
           },
           contentCodeableConcept,
         },
@@ -38,6 +48,7 @@ export function generateFHIRSeenDisplay(id: string, seenDisplay: SeenDisplay): f
     id,
     resourceType: 'Communication',
     status: 'completed',
+    sent: seenDisplay.effectiveDate,
     received: seenDisplay.seenAt,
     basedOn: [{ reference: seenDisplay.name }],
     payload,
