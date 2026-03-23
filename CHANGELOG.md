@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `multiplex` attribute to survey
+- `context` to questionnaire response
+
 ### Changed
 
 ### Deprecated
@@ -18,6 +21,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.25.0] - 2026-03-13
+
+### Added
+
+- `list` question type
+
+## [v1.24.0] - 2026-03-05
+
+### Added
+
+- Helpers for multi/single select "other" option
+
+## [v1.23.0] - 2026-02-26
+
+### Added
+
+- `geo-location` input type
+
+## [v1.22.1] - 2026-02-23
+
+### Added
+
+- optional fileName property to message and notification
+
+## [v1.22.0] - 2026-02-09
+
+### Added
+
+- Support for Android Health Connect
+
+## [v1.21.0] - 2026-02-03
+
+### Added
+
+- PublishedAt date to tasks
+- Eligbility property to survey scoring
+- Response and Date conditions
+- Notification type
+
+### Changed
+
+- Split StepCondition into specific subtypes
+- Refactored Guards and their usage according to new types
+
+### Fixed
+
+- Date parameter not being encoded for fetching responses
+
+## [v1.20.1] - 2026-01-22
+
+### Fixed
+
+- QuestionnaireScore range calculation with unscored question
+
+## [v1.20.0] - 2026-01-21
+
+### Added
+
+- Min field to QuestionnaireScore
+- Function to calculate possible questionnaire score range
+- TimeFuncs (handler for different frequency types)
+
+### Removed
+
+- Location in study definitions
 
 ## [v1.19.0] - 2025-12-11
 
@@ -204,7 +273,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.19.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.25.0...HEAD
+[v1.25.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.24.0...v1.25.0
+[v1.24.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.23.0...v1.24.0
+[v1.23.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.22.1...v1.23.0
+[v1.22.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.22.0...v1.22.1
+[v1.22.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.21.0...v1.22.0
+[v1.21.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.20.1...v1.21.0
+[v1.20.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.20.0...v1.20.1
+[v1.20.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.19.0...v1.20.0
 [v1.19.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.18.0...v1.19.0
 [v1.18.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.17.0...v1.18.0
 [v1.17.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.16.0...v1.17.0

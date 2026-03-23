@@ -1,6 +1,7 @@
 export * from './consent';
 export * from './display';
 export * from './message';
+export * from './notification';
 export * from './questionnaireScore';
 export * from './program';
 export * from './questionnaireResponse';

@@ -1,298 +1,296 @@
 import { addDays, addWeeks } from 'date-fns';
+import { StepCondition } from '../types';
 import {
-  AnswerCodeCondition,
-  BoolCondition,
+  AnswerCodeGuard,
+  AnswerDateGuard,
+  BoolGuard,
   Conjunction,
-  ConsentCondition,
-  DateCondition,
-  DecimalCondition,
+  ConsentGuard,
+  DateGuard,
+  DecimalGuard,
   Disjunction,
-  ExistsCondition,
+  ExistsGuard,
   Guard,
   Offset,
-  RoutineCondition,
-  SurveyCondition,
-  YearCondition,
+  ResponseGuard,
+  RoutineGuard,
+  SurveyGuard,
+  YearGuard,
   generateStepGuard,
-  newStepDateCondtion,
+  newStepDateGuard,
 } from './guard';
-import { StepCondition } from '../types';
 
-const trueCondition = new BoolCondition(true);
-const falseCondition = new BoolCondition(false);
-``
+const trueCondition = new BoolGuard(true);
+const falseCondition = new BoolGuard(false);
+``;
 const firstDate = new Date('2020-07-01T10:00:00.000+02:00');
 
 describe('Guard', () => {
-  describe('YearCondition', () => {
+  describe('YearGuard', () => {
     const operand = '2001';
     const yearQuestion = 'year-question';
 
     it('can be constructed', () => {
-      expect(new YearCondition(yearQuestion, operand, '!=')).toBeTruthy();
-      expect(new YearCondition(yearQuestion, operand, '<')).toBeTruthy();
-      expect(new YearCondition(yearQuestion, operand, '<=')).toBeTruthy();
-      expect(new YearCondition(yearQuestion, operand, '=')).toBeTruthy();
-      expect(new YearCondition(yearQuestion, operand, '>')).toBeTruthy();
-      expect(new YearCondition(yearQuestion, operand, '>=')).toBeTruthy();
-      expect(new YearCondition(yearQuestion, operand, 'exists')).toBeTruthy();
+      expect(new YearGuard(yearQuestion, operand, '!=')).toBeTruthy();
+      expect(new YearGuard(yearQuestion, operand, '<')).toBeTruthy();
+      expect(new YearGuard(yearQuestion, operand, '<=')).toBeTruthy();
+      expect(new YearGuard(yearQuestion, operand, '=')).toBeTruthy();
+      expect(new YearGuard(yearQuestion, operand, '>')).toBeTruthy();
+      expect(new YearGuard(yearQuestion, operand, '>=')).toBeTruthy();
+      expect(new YearGuard(yearQuestion, operand, 'exists')).toBeTruthy();
     });
 
     it('can be constructed with faulty values and not break', () => {
-      expect(new YearCondition(yearQuestion, 9999 as unknown as string, 'exists')).toBeTruthy();
+      expect(new YearGuard(yearQuestion, 9999 as unknown as string, 'exists')).toBeTruthy();
     });
 
     describe('evaluates', () => {
       it('with an invalid "operand" (not a year)', () => {
-        const condition = new YearCondition(yearQuestion, 'not-a-year', '!=');
+        const condition = new YearGuard(yearQuestion, 'not-a-year', '!=');
         expect(condition.evaluate({})).toBeFalsy();
       });
 
       it('with no answers', () => {
-        const condition = new YearCondition(yearQuestion, operand, '!=');
+        const condition = new YearGuard(yearQuestion, operand, '!=');
         expect(condition.evaluate({})).toBeFalsy();
       });
 
       it('with an array of answers', () => {
-        const condition = new YearCondition(yearQuestion, operand, '!=');
+        const condition = new YearGuard(yearQuestion, operand, '!=');
         expect(condition.evaluate({ [yearQuestion]: ['2001', 'not-a-year'] })).toBeFalsy();
       });
 
       it('with an invalid answer', () => {
-        const condition = new YearCondition(yearQuestion, operand, '!=');
+        const condition = new YearGuard(yearQuestion, operand, '!=');
         expect(condition.evaluate({ [yearQuestion]: 'not-a-year' })).toBeFalsy();
       });
 
       it('with the "!=" operator ', () => {
-        const case1 = new YearCondition(yearQuestion, operand, '!=');
+        const case1 = new YearGuard(yearQuestion, operand, '!=');
         expect(case1.evaluate({ [yearQuestion]: '2002' })).toBeTruthy();
-        const case2 = new YearCondition(yearQuestion, operand, '!=');
+        const case2 = new YearGuard(yearQuestion, operand, '!=');
         expect(case2.evaluate({ [yearQuestion]: '2001' })).toBeFalsy();
       });
 
       it('with the "<" operator ', () => {
-        const case1 = new YearCondition(yearQuestion, operand, '<');
+        const case1 = new YearGuard(yearQuestion, operand, '<');
         expect(case1.evaluate({ [yearQuestion]: '1999' })).toBeTruthy();
-        const case2 = new YearCondition(yearQuestion, operand, '<');
+        const case2 = new YearGuard(yearQuestion, operand, '<');
         expect(case2.evaluate({ [yearQuestion]: '2001' })).toBeFalsy();
-        const case3 = new YearCondition(yearQuestion, operand, '<');
+        const case3 = new YearGuard(yearQuestion, operand, '<');
         expect(case3.evaluate({ [yearQuestion]: '2002' })).toBeFalsy();
       });
 
       it('with the "<=" operator ', () => {
-        const case1 = new YearCondition(yearQuestion, operand, '<=');
+        const case1 = new YearGuard(yearQuestion, operand, '<=');
         expect(case1.evaluate({ [yearQuestion]: '1999' })).toBeTruthy();
-        const case2 = new YearCondition(yearQuestion, operand, '<=');
+        const case2 = new YearGuard(yearQuestion, operand, '<=');
         expect(case2.evaluate({ [yearQuestion]: '2001' })).toBeTruthy();
-        const case3 = new YearCondition(yearQuestion, operand, '<=');
+        const case3 = new YearGuard(yearQuestion, operand, '<=');
         expect(case3.evaluate({ [yearQuestion]: '2002' })).toBeFalsy();
       });
 
       it('with the "=" operator ', () => {
-        const case1 = new YearCondition(yearQuestion, operand, '=');
+        const case1 = new YearGuard(yearQuestion, operand, '=');
         expect(case1.evaluate({ [yearQuestion]: '1999' })).toBeFalsy();
-        const case2 = new YearCondition(yearQuestion, operand, '=');
+        const case2 = new YearGuard(yearQuestion, operand, '=');
         expect(case2.evaluate({ [yearQuestion]: '2001' })).toBeTruthy();
-        const case3 = new YearCondition(yearQuestion, operand, '=');
+        const case3 = new YearGuard(yearQuestion, operand, '=');
         expect(case3.evaluate({ [yearQuestion]: '2002' })).toBeFalsy();
       });
 
       it('with the ">" operator ', () => {
-        const case1 = new YearCondition(yearQuestion, operand, '>');
+        const case1 = new YearGuard(yearQuestion, operand, '>');
         expect(case1.evaluate({ [yearQuestion]: '1999' })).toBeFalsy();
-        const case2 = new YearCondition(yearQuestion, operand, '>');
+        const case2 = new YearGuard(yearQuestion, operand, '>');
         expect(case2.evaluate({ [yearQuestion]: '2001' })).toBeFalsy();
-        const case3 = new YearCondition(yearQuestion, operand, '>');
+        const case3 = new YearGuard(yearQuestion, operand, '>');
         expect(case3.evaluate({ [yearQuestion]: '2002' })).toBeTruthy();
       });
 
       it('with the ">=" operator ', () => {
-        const case1 = new YearCondition(yearQuestion, operand, '>=');
+        const case1 = new YearGuard(yearQuestion, operand, '>=');
         expect(case1.evaluate({ [yearQuestion]: '1999' })).toBeFalsy();
-        const case2 = new YearCondition(yearQuestion, operand, '>=');
+        const case2 = new YearGuard(yearQuestion, operand, '>=');
         expect(case2.evaluate({ [yearQuestion]: '2001' })).toBeTruthy();
-        const case3 = new YearCondition(yearQuestion, operand, '>=');
+        const case3 = new YearGuard(yearQuestion, operand, '>=');
         expect(case3.evaluate({ [yearQuestion]: '2002' })).toBeTruthy();
       });
 
       it('with the "exists" operator ', () => {
-        const case1 = new YearCondition(yearQuestion, operand, 'exists');
+        const case1 = new YearGuard(yearQuestion, operand, 'exists');
         expect(case1.evaluate({ [yearQuestion]: '1999' })).toBeTruthy();
-        const case2 = new YearCondition(yearQuestion, operand, 'exists');
+        const case2 = new YearGuard(yearQuestion, operand, 'exists');
         expect(case2.evaluate({})).toBeFalsy();
       });
     });
   });
 
-  describe('DateCondition', () => {
+  describe('AnswerDateGuard', () => {
     const operand = '2001-05-04';
     const dateQuestion = 'date-question';
 
     it('can be constructed', () => {
-      expect(new DateCondition(dateQuestion, operand, '!=')).toBeTruthy();
-      expect(new DateCondition(dateQuestion, operand, '<')).toBeTruthy();
-      expect(new DateCondition(dateQuestion, operand, '<=')).toBeTruthy();
-      expect(new DateCondition(dateQuestion, operand, '=')).toBeTruthy();
-      expect(new DateCondition(dateQuestion, operand, '>')).toBeTruthy();
-      expect(new DateCondition(dateQuestion, operand, '>=')).toBeTruthy();
-      expect(new DateCondition(dateQuestion, operand, 'exists')).toBeTruthy();
+      expect(new AnswerDateGuard(dateQuestion, operand, '!=')).toBeTruthy();
+      expect(new AnswerDateGuard(dateQuestion, operand, '<')).toBeTruthy();
+      expect(new AnswerDateGuard(dateQuestion, operand, '<=')).toBeTruthy();
+      expect(new AnswerDateGuard(dateQuestion, operand, '=')).toBeTruthy();
+      expect(new AnswerDateGuard(dateQuestion, operand, '>')).toBeTruthy();
+      expect(new AnswerDateGuard(dateQuestion, operand, '>=')).toBeTruthy();
+      expect(new AnswerDateGuard(dateQuestion, operand, 'exists')).toBeTruthy();
     });
 
     it('can be constructed with faulty values and not break', () => {
-      expect(new DateCondition(dateQuestion, 9999 as unknown as string, 'exists')).toBeTruthy();
+      expect(new AnswerDateGuard(dateQuestion, 9999 as unknown as string, 'exists')).toBeTruthy();
     });
 
     describe('evaluates', () => {
       it('with an invalid "operand" (not a date)', () => {
-        const condition = new DateCondition(dateQuestion, 'not-a-date', '!=');
+        const condition = new AnswerDateGuard(dateQuestion, 'not-a-date', '!=');
         expect(condition.evaluate({})).toBeFalsy();
       });
 
       it('with no answers', () => {
-        const condition = new DateCondition(dateQuestion, operand, '!=');
+        const condition = new AnswerDateGuard(dateQuestion, operand, '!=');
         expect(condition.evaluate({})).toBeFalsy();
       });
 
       it('with an array of answers', () => {
-        const condition = new DateCondition(dateQuestion, operand, '!=');
+        const condition = new AnswerDateGuard(dateQuestion, operand, '!=');
         expect(condition.evaluate({ [dateQuestion]: ['2001-04-21', 'not-a-date'] })).toBeFalsy();
       });
 
       it('with an invalid answer', () => {
-        const condition = new DateCondition(dateQuestion, operand, '!=');
+        const condition = new AnswerDateGuard(dateQuestion, operand, '!=');
         expect(condition.evaluate({ [dateQuestion]: 'not-a-date' })).toBeFalsy();
       });
 
       it('with the "!=" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, '!=');
+        const case1 = new AnswerDateGuard(dateQuestion, operand, '!=');
         expect(case1.evaluate({ [dateQuestion]: '2002-03-01' })).toBeTruthy();
-        const case2 = new DateCondition(dateQuestion, operand, '!=');
+        const case2 = new AnswerDateGuard(dateQuestion, operand, '!=');
         expect(case2.evaluate({ [dateQuestion]: '2001-05-04' })).toBeFalsy();
       });
 
       it('with the "<" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, '<');
+        const case1 = new AnswerDateGuard(dateQuestion, operand, '<');
         expect(case1.evaluate({ [dateQuestion]: '2001-05-03' })).toBeTruthy();
-        const case2 = new DateCondition(dateQuestion, operand, '<');
+        const case2 = new AnswerDateGuard(dateQuestion, operand, '<');
         expect(case2.evaluate({ [dateQuestion]: '2001-05-04' })).toBeFalsy();
-        const case3 = new DateCondition(dateQuestion, operand, '<');
+        const case3 = new AnswerDateGuard(dateQuestion, operand, '<');
         expect(case3.evaluate({ [dateQuestion]: '2012-05-04' })).toBeFalsy();
       });
 
       it('with the "<=" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, '<=');
+        const case1 = new AnswerDateGuard(dateQuestion, operand, '<=');
         expect(case1.evaluate({ [dateQuestion]: '1990-05-04' })).toBeTruthy();
-        const case2 = new DateCondition(dateQuestion, operand, '<=');
+        const case2 = new AnswerDateGuard(dateQuestion, operand, '<=');
         expect(case2.evaluate({ [dateQuestion]: '2001-05-04' })).toBeTruthy();
-        const case3 = new DateCondition(dateQuestion, operand, '<=');
+        const case3 = new AnswerDateGuard(dateQuestion, operand, '<=');
         expect(case3.evaluate({ [dateQuestion]: '2001-05-06' })).toBeFalsy();
       });
 
       it('with the "=" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, '=');
+        const case1 = new AnswerDateGuard(dateQuestion, operand, '=');
         expect(case1.evaluate({ [dateQuestion]: '2001-05-03' })).toBeFalsy();
-        const case2 = new DateCondition(dateQuestion, operand, '=');
+        const case2 = new AnswerDateGuard(dateQuestion, operand, '=');
         expect(case2.evaluate({ [dateQuestion]: '2001-05-04' })).toBeTruthy();
-        const case3 = new DateCondition(dateQuestion, operand, '=');
+        const case3 = new AnswerDateGuard(dateQuestion, operand, '=');
         expect(case3.evaluate({ [dateQuestion]: '2001-06-04' })).toBeFalsy();
       });
 
       it('with the ">" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, '>');
+        const case1 = new AnswerDateGuard(dateQuestion, operand, '>');
         expect(case1.evaluate({ [dateQuestion]: '2001-01-03' })).toBeFalsy();
-        const case2 = new DateCondition(dateQuestion, operand, '>');
+        const case2 = new AnswerDateGuard(dateQuestion, operand, '>');
         expect(case2.evaluate({ [dateQuestion]: '2001-05-04' })).toBeFalsy();
-        const case3 = new DateCondition(dateQuestion, operand, '>');
+        const case3 = new AnswerDateGuard(dateQuestion, operand, '>');
         expect(case3.evaluate({ [dateQuestion]: '2099-05-04' })).toBeTruthy();
       });
 
       it('with the ">=" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, '>=');
+        const case1 = new AnswerDateGuard(dateQuestion, operand, '>=');
         expect(case1.evaluate({ [dateQuestion]: '2000-05-04' })).toBeFalsy();
-        const case2 = new DateCondition(dateQuestion, operand, '>=');
+        const case2 = new AnswerDateGuard(dateQuestion, operand, '>=');
         expect(case2.evaluate({ [dateQuestion]: '2001-05-04' })).toBeTruthy();
-        const case3 = new DateCondition(dateQuestion, operand, '>=');
+        const case3 = new AnswerDateGuard(dateQuestion, operand, '>=');
         expect(case3.evaluate({ [dateQuestion]: '2001-11-04' })).toBeTruthy();
       });
 
       it('with the "exists" operator ', () => {
-        const case1 = new DateCondition(dateQuestion, operand, 'exists');
+        const case1 = new AnswerDateGuard(dateQuestion, operand, 'exists');
         expect(case1.evaluate({ [dateQuestion]: '1991-08-26' })).toBeTruthy();
-        const case2 = new DateCondition(dateQuestion, operand, 'exists');
+        const case2 = new AnswerDateGuard(dateQuestion, operand, 'exists');
         expect(case2.evaluate({})).toBeFalsy();
       });
     });
 
     describe('getFulfillmentDate', () => {
       it('returns the answer date', () => {
-        const condition = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(new Date('2020-07-01'));
+        const condition = newStepDateGuard('D1', 'survey1');
+        const multiAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(new Date('2020-07-01'));
       });
 
       it('works with offset', () => {
-        const condition = newStepDateCondtion('D1', 'survey1', 'P1M');
-        const mAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(new Date('2020-08-01'));
+        const condition = newStepDateGuard('D1', 'survey1', 'P1M');
+        const multiAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(new Date('2020-08-01'));
       });
 
       it('works with negative offset', () => {
-        const condition = newStepDateCondtion('D1', 'survey1', '-P1M');
-        const mAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(new Date('2020-06-01'));
+        const condition = newStepDateGuard('D1', 'survey1', '-P1M');
+        const multiAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(new Date('2020-06-01'));
       });
 
       it('returns null without answer date', () => {
-        const condition = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { D2: '2020-07-01' }, date: null } };
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        const condition = newStepDateGuard('D1', 'survey1');
+        const multiAnswers = { survey1: { answers: { D2: '2020-07-01' }, date: null } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
 
       it('returns null for non date answer', () => {
-        const condition = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { D1: 'keks' }, date: null } };
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        const condition = newStepDateGuard('D1', 'survey1');
+        const multiAnswers = { survey1: { answers: { D1: 'keks' }, date: null } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
     });
   });
 
-  describe('AnswerCodeCondition', () => {
+  describe('AnswerCodeGuard', () => {
     const operand = 'operand';
     const answerCodingQuestion = 'answer-coding-question';
 
     it('can be constructed', () => {
-      expect(new AnswerCodeCondition(answerCodingQuestion, operand, '!=')).toBeTruthy();
-      expect(new AnswerCodeCondition(answerCodingQuestion, operand, '<')).toBeTruthy();
-      expect(new AnswerCodeCondition(answerCodingQuestion, operand, '<=')).toBeTruthy();
-      expect(new AnswerCodeCondition(answerCodingQuestion, operand, '=')).toBeTruthy();
-      expect(new AnswerCodeCondition(answerCodingQuestion, operand, '>')).toBeTruthy();
-      expect(new AnswerCodeCondition(answerCodingQuestion, operand, '>=')).toBeTruthy();
-      expect(new AnswerCodeCondition(answerCodingQuestion, operand, 'exists')).toBeTruthy();
+      expect(new AnswerCodeGuard(answerCodingQuestion, '!=', operand)).toBeTruthy();
+      expect(new AnswerCodeGuard(answerCodingQuestion, '<', operand)).toBeTruthy();
+      expect(new AnswerCodeGuard(answerCodingQuestion, '<=', operand)).toBeTruthy();
+      expect(new AnswerCodeGuard(answerCodingQuestion, '=', operand)).toBeTruthy();
+      expect(new AnswerCodeGuard(answerCodingQuestion, '>', operand)).toBeTruthy();
+      expect(new AnswerCodeGuard(answerCodingQuestion, '>=', operand)).toBeTruthy();
+      expect(new AnswerCodeGuard(answerCodingQuestion, 'exists', operand)).toBeTruthy();
     });
 
     it('can be constructed with faulty values and not break', () => {
       expect(
-        new AnswerCodeCondition(answerCodingQuestion, 1 as unknown as string, 'exists')
+        new AnswerCodeGuard(answerCodingQuestion, 'exists', 1 as unknown as string)
       ).toBeTruthy();
     });
 
     describe('evaluates', () => {
       it('with an invalid "operand" (missing code)', () => {
-        const condition = new AnswerCodeCondition(
-          answerCodingQuestion,
-          undefined as unknown as string,
-          '!='
-        );
+        const condition = new AnswerCodeGuard(answerCodingQuestion, '!=', undefined);
         expect(condition.evaluate({})).toBeFalsy();
       });
 
       it('with no answers', () => {
-        const condition = new AnswerCodeCondition(answerCodingQuestion, operand, '!=');
+        const condition = new AnswerCodeGuard(answerCodingQuestion, '!=', operand);
         expect(condition.evaluate({})).toBeFalsy();
       });
 
       it('with an invalid answer', () => {
-        const condition = new AnswerCodeCondition(answerCodingQuestion, operand, '!=');
+        const condition = new AnswerCodeGuard(answerCodingQuestion, '!=', operand);
         expect(
           condition.evaluate({ [answerCodingQuestion]: undefined as unknown as string })
         ).toBeFalsy();
@@ -300,94 +298,94 @@ describe('Guard', () => {
 
       describe('single-select answers', () => {
         it('with the "!=" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, '!=');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, '!=', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: 'not-expected' })).toBeTruthy();
-          const case2 = new AnswerCodeCondition(answerCodingQuestion, operand, '!=');
+          const case2 = new AnswerCodeGuard(answerCodingQuestion, '!=', operand);
           expect(case2.evaluate({ [answerCodingQuestion]: operand })).toBeFalsy();
         });
 
         // Defaults to `false` because the values are not comparable using this operator
         it('with the "<" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, '<');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, '<', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: operand })).toBeFalsy();
         });
 
         // Defaults to `false` because the values are not comparable using this operator
         it('with the "<=" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, '<=');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, '<=', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: operand })).toBeFalsy();
         });
 
         it('with the "=" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, '=');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, '=', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: 'not-expected' })).toBeFalsy();
-          const case2 = new AnswerCodeCondition(answerCodingQuestion, operand, '=');
+          const case2 = new AnswerCodeGuard(answerCodingQuestion, '=', operand);
           expect(case2.evaluate({ [answerCodingQuestion]: operand })).toBeTruthy();
         });
 
         // Defaults to `false` because the values are not comparable using this operator
         it('with the ">" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, '>');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, '>', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: operand })).toBeFalsy();
         });
 
         // Defaults to `false` because the values are not comparable using this operator
         it('with the ">=" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, '>=');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, '>=', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: operand })).toBeFalsy();
         });
 
         it('with the "exists" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, 'exists');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, 'exists', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: 'whatever' })).toBeTruthy();
-          const case2 = new AnswerCodeCondition(answerCodingQuestion, operand, 'exists');
+          const case2 = new AnswerCodeGuard(answerCodingQuestion, 'exists', operand);
           expect(case2.evaluate({})).toBeFalsy();
         });
       });
 
       describe('multi-select answers', () => {
         it('with the "!=" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, '!=');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, '!=', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: [operand, 'not-operand'] })).toBeFalsy();
-          const case2 = new AnswerCodeCondition(answerCodingQuestion, operand, '!=');
+          const case2 = new AnswerCodeGuard(answerCodingQuestion, '!=', operand);
           expect(case2.evaluate({ [answerCodingQuestion]: ['not-operand'] })).toBeTruthy();
         });
 
         // Defaults to `false` because the values are not comparable using this operator
         it('with the "<" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, '<');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, '<', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: [operand] })).toBeFalsy();
         });
 
         // Defaults to `false` because the values are not comparable using this operator
         it('with the "<=" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, '<=');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, '<=', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: [operand] })).toBeFalsy();
         });
 
         it('with the "=" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, '=');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, '=', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: ['not-operand'] })).toBeFalsy();
-          const case2 = new AnswerCodeCondition(answerCodingQuestion, operand, '=');
+          const case2 = new AnswerCodeGuard(answerCodingQuestion, '=', operand);
           expect(case2.evaluate({ [answerCodingQuestion]: ['not-operand', operand] })).toBeTruthy();
         });
 
         // Defaults to `false` because the values are not comparable using this operator
         it('with the ">" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, '>');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, '>', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: [operand] })).toBeFalsy();
         });
 
         // Defaults to `false` because the values are not comparable using this operator
         it('with the ">=" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, '>=');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, '>=', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: [operand] })).toBeFalsy();
         });
 
         it('with the "exists" operator ', () => {
-          const case1 = new AnswerCodeCondition(answerCodingQuestion, operand, 'exists');
+          const case1 = new AnswerCodeGuard(answerCodingQuestion, 'exists', operand);
           expect(case1.evaluate({ [answerCodingQuestion]: ['whatever'] })).toBeTruthy();
-          const case2 = new AnswerCodeCondition(answerCodingQuestion, operand, 'exists');
+          const case2 = new AnswerCodeGuard(answerCodingQuestion, 'exists', operand);
           expect(case2.evaluate({})).toBeFalsy();
         });
       });
@@ -395,143 +393,141 @@ describe('Guard', () => {
 
     describe('getFulfillmentDate', () => {
       it('works for fulfilled condition', () => {
-        const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        const condition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(firstDate);
       });
 
       it('works for fulfilled condition with offset', () => {
-        const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1', 'P1W');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(addWeeks(firstDate, 1));
+        const condition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1', 'P1W');
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(addWeeks(firstDate, 1));
       });
 
       it('works for fulfilled condition with negative offset', () => {
-        const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1', '-P2W');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(addWeeks(firstDate, -2));
+        const condition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1', '-P2W');
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(addWeeks(firstDate, -2));
       });
 
       it('works for failed condition', () => {
-        const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'no' }, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        const condition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const multiAnswers = { survey1: { answers: { Q0: 'no' }, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
     });
   });
 
-  describe('DecimalCondition', () => {
+  describe('DecimalGuard', () => {
     const operand = 5.5;
     const decimalQuestion = 'decimal-question';
 
     it('can be constructed', () => {
-      expect(new DecimalCondition(decimalQuestion, operand, '!=')).toBeTruthy();
-      expect(new DecimalCondition(decimalQuestion, operand, '<')).toBeTruthy();
-      expect(new DecimalCondition(decimalQuestion, operand, '<=')).toBeTruthy();
-      expect(new DecimalCondition(decimalQuestion, operand, '=')).toBeTruthy();
-      expect(new DecimalCondition(decimalQuestion, operand, '>')).toBeTruthy();
-      expect(new DecimalCondition(decimalQuestion, operand, '>=')).toBeTruthy();
-      expect(new DecimalCondition(decimalQuestion, operand, 'exists')).toBeTruthy();
+      expect(new DecimalGuard(decimalQuestion, operand, '!=')).toBeTruthy();
+      expect(new DecimalGuard(decimalQuestion, operand, '<')).toBeTruthy();
+      expect(new DecimalGuard(decimalQuestion, operand, '<=')).toBeTruthy();
+      expect(new DecimalGuard(decimalQuestion, operand, '=')).toBeTruthy();
+      expect(new DecimalGuard(decimalQuestion, operand, '>')).toBeTruthy();
+      expect(new DecimalGuard(decimalQuestion, operand, '>=')).toBeTruthy();
+      expect(new DecimalGuard(decimalQuestion, operand, 'exists')).toBeTruthy();
     });
 
     it('can be constructed with faulty values and not break', () => {
-      expect(
-        new DecimalCondition(decimalQuestion, '9999' as unknown as number, 'exists')
-      ).toBeTruthy();
+      expect(new DecimalGuard(decimalQuestion, '9999' as unknown as number, 'exists')).toBeTruthy();
     });
 
     describe('evaluates', () => {
       it('with an invalid "operand" (not a number)', () => {
-        const condition = new DecimalCondition(decimalQuestion, '9999' as unknown as number, '!=');
+        const condition = new DecimalGuard(decimalQuestion, '9999' as unknown as number, '!=');
         expect(condition.evaluate({})).toBeFalsy();
       });
 
       it('with no answers', () => {
-        const condition = new DecimalCondition(decimalQuestion, operand, '!=');
+        const condition = new DecimalGuard(decimalQuestion, operand, '!=');
         expect(condition.evaluate({})).toBeFalsy();
       });
 
       it('with an array of answers', () => {
-        const condition = new DecimalCondition(decimalQuestion, operand, '!=');
+        const condition = new DecimalGuard(decimalQuestion, operand, '!=');
         expect(condition.evaluate({ [decimalQuestion]: ['10.3', 'not-a-number'] })).toBeFalsy();
       });
 
       it('with an invalid answer', () => {
-        const condition = new DecimalCondition(decimalQuestion, operand, '!=');
+        const condition = new DecimalGuard(decimalQuestion, operand, '!=');
         expect(condition.evaluate({ [decimalQuestion]: 'not-a-number' })).toBeFalsy();
       });
 
       it('with the "!=" operator ', () => {
-        const case1 = new DecimalCondition(decimalQuestion, operand, '!=');
+        const case1 = new DecimalGuard(decimalQuestion, operand, '!=');
         expect(case1.evaluate({ [decimalQuestion]: '10.4' })).toBeTruthy();
-        const case2 = new DecimalCondition(decimalQuestion, operand, '!=');
+        const case2 = new DecimalGuard(decimalQuestion, operand, '!=');
         expect(case2.evaluate({ [decimalQuestion]: '5.5' })).toBeFalsy();
       });
 
       it('with the "<" operator ', () => {
-        const case1 = new DecimalCondition(decimalQuestion, operand, '<');
+        const case1 = new DecimalGuard(decimalQuestion, operand, '<');
         expect(case1.evaluate({ [decimalQuestion]: '3' })).toBeTruthy();
-        const case2 = new DecimalCondition(decimalQuestion, operand, '<');
+        const case2 = new DecimalGuard(decimalQuestion, operand, '<');
         expect(case2.evaluate({ [decimalQuestion]: '5.5' })).toBeFalsy();
-        const case3 = new DecimalCondition(decimalQuestion, operand, '<');
+        const case3 = new DecimalGuard(decimalQuestion, operand, '<');
         expect(case3.evaluate({ [decimalQuestion]: '10000.3' })).toBeFalsy();
       });
 
       it('with the "<=" operator ', () => {
-        const case1 = new DecimalCondition(decimalQuestion, operand, '<=');
+        const case1 = new DecimalGuard(decimalQuestion, operand, '<=');
         expect(case1.evaluate({ [decimalQuestion]: '3' })).toBeTruthy();
-        const case2 = new DecimalCondition(decimalQuestion, operand, '<=');
+        const case2 = new DecimalGuard(decimalQuestion, operand, '<=');
         expect(case2.evaluate({ [decimalQuestion]: '5.5' })).toBeTruthy();
-        const case3 = new DecimalCondition(decimalQuestion, operand, '<=');
+        const case3 = new DecimalGuard(decimalQuestion, operand, '<=');
         expect(case3.evaluate({ [decimalQuestion]: '5.500002' })).toBeFalsy();
       });
 
       it('with the "=" operator ', () => {
-        const case1 = new DecimalCondition(decimalQuestion, operand, '=');
+        const case1 = new DecimalGuard(decimalQuestion, operand, '=');
         expect(case1.evaluate({ [decimalQuestion]: '4.5' })).toBeFalsy();
-        const case2 = new DecimalCondition(decimalQuestion, operand, '=');
+        const case2 = new DecimalGuard(decimalQuestion, operand, '=');
         expect(case2.evaluate({ [decimalQuestion]: '5.5' })).toBeTruthy();
-        const case3 = new DecimalCondition(decimalQuestion, operand, '=');
+        const case3 = new DecimalGuard(decimalQuestion, operand, '=');
         expect(case3.evaluate({ [decimalQuestion]: '-5.5' })).toBeFalsy();
       });
 
       it('with the ">" operator ', () => {
-        const case1 = new DecimalCondition(decimalQuestion, operand, '>');
+        const case1 = new DecimalGuard(decimalQuestion, operand, '>');
         expect(case1.evaluate({ [decimalQuestion]: '0' })).toBeFalsy();
-        const case2 = new DecimalCondition(decimalQuestion, operand, '>');
+        const case2 = new DecimalGuard(decimalQuestion, operand, '>');
         expect(case2.evaluate({ [decimalQuestion]: '5.5' })).toBeFalsy();
-        const case3 = new DecimalCondition(decimalQuestion, operand, '>');
+        const case3 = new DecimalGuard(decimalQuestion, operand, '>');
         expect(case3.evaluate({ [decimalQuestion]: '5.50000001' })).toBeTruthy();
       });
 
       it('with the ">=" operator ', () => {
-        const case1 = new DecimalCondition(decimalQuestion, operand, '>=');
+        const case1 = new DecimalGuard(decimalQuestion, operand, '>=');
         expect(case1.evaluate({ [decimalQuestion]: '1.420817' })).toBeFalsy();
-        const case2 = new DecimalCondition(decimalQuestion, operand, '>=');
+        const case2 = new DecimalGuard(decimalQuestion, operand, '>=');
         expect(case2.evaluate({ [decimalQuestion]: '5.5' })).toBeTruthy();
-        const case3 = new DecimalCondition(decimalQuestion, operand, '>=');
+        const case3 = new DecimalGuard(decimalQuestion, operand, '>=');
         expect(case3.evaluate({ [decimalQuestion]: '871.176196' })).toBeTruthy();
       });
 
       it('with the "exists" operator ', () => {
-        const case1 = new DecimalCondition(decimalQuestion, operand, 'exists');
+        const case1 = new DecimalGuard(decimalQuestion, operand, 'exists');
         expect(case1.evaluate({ [decimalQuestion]: '3.1415' })).toBeTruthy();
-        const case2 = new DecimalCondition(decimalQuestion, operand, 'exists');
+        const case2 = new DecimalGuard(decimalQuestion, operand, 'exists');
         expect(case2.evaluate({})).toBeFalsy();
       });
     });
   });
 
-  describe('ExistsCondition', () => {
+  describe('ExistsGuard', () => {
     const existsQuestion = 'exists-question';
 
     it('can be constructed', () => {
-      expect(new ExistsCondition(existsQuestion)).toBeTruthy();
+      expect(new ExistsGuard(existsQuestion)).toBeTruthy();
     });
 
     describe('evaluates', () => {
       it('with the "exists" operator ', () => {
-        const case1 = new ExistsCondition(existsQuestion);
+        const case1 = new ExistsGuard(existsQuestion);
         expect(case1.evaluate({ [existsQuestion]: '0' })).toBeTruthy();
         expect(case1.evaluate({})).toBeFalsy();
       });
@@ -539,8 +535,8 @@ describe('Guard', () => {
   });
 
   describe('Conjunction', () => {
-    const yearCondition = new YearCondition('year-question', '2001', '=');
-    const dateCondition = new DateCondition('date-question', '2001-01-01', '<');
+    const yearCondition = new YearGuard('year-question', '2001', '=');
+    const dateCondition = new AnswerDateGuard('date-question', '2001-01-01', '<');
 
     it('can be constructed', () => {
       expect(new Conjunction([yearCondition, dateCondition])).toBeTruthy();
@@ -583,48 +579,56 @@ describe('Guard', () => {
       });
 
       it('works with single condition', () => {
-        const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
-        expect(new Conjunction([condition]).getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        const condition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        expect(new Conjunction([condition]).getFulfillmentDate({ multiAnswers })).toEqual(
+          firstDate
+        );
       });
 
       it('works with fulfilled answer condition', () => {
-        const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate } };
+        const answerCondition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const dateConditionA = newStepDateGuard('D1', 'survey1');
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Conjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(new Date('2020-09-01'));
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(new Date('2020-09-01'));
       });
 
       it('works with fulfilled answer condition when sorting for earliest', () => {
-        const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate } };
+        const answerCondition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const dateConditionA = newStepDateGuard('D1', 'survey1');
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Conjunction([answerCondition, dateConditionA], 'earliest');
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(firstDate);
       });
 
       it('works with false coding condition (returns null)', () => {
-        const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'no', D1: '2020-09-01' }, date: firstDate } };
+        const answerCondition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const dateConditionA = newStepDateGuard('D1', 'survey1');
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'no', D1: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Conjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
 
       it('works with fulfilled answer condition and no date answer (returns null)', () => {
-        const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        const answerCondition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const dateConditionA = newStepDateGuard('D1', 'survey1');
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
         const condition = new Conjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
     });
   });
 
   describe('Disjunction', () => {
-    const yearCondition = new YearCondition('year-question', '2001', '=');
-    const dateCondition = new DateCondition('date-question', '2001-01-01', '<');
+    const yearCondition = new YearGuard('year-question', '2001', '=');
+    const dateCondition = new AnswerDateGuard('date-question', '2001-01-01', '<');
 
     it('can be constructed', () => {
       expect(new Disjunction([yearCondition, dateCondition])).toBeTruthy();
@@ -667,49 +671,61 @@ describe('Guard', () => {
       });
 
       it('works with single condition', () => {
-        const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
-        expect(new Disjunction([answerCondition]).getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        const answerCondition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        expect(new Disjunction([answerCondition]).getFulfillmentDate({ multiAnswers })).toEqual(
+          firstDate
+        );
       });
 
       it('works with fulfilled answer condition', () => {
-        const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate } };
+        const answerCondition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const dateConditionA = newStepDateGuard('D1', 'survey1');
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Disjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(firstDate);
       });
 
       it('works with fulfilled answer condition when sorting for latest', () => {
-        const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate } };
+        const answerCondition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const dateConditionA = newStepDateGuard('D1', 'survey1');
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'yes', D1: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Disjunction([answerCondition, dateConditionA], 'latest');
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(new Date('2020-09-01'));
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(new Date('2020-09-01'));
       });
 
       it('works with false coding condition', () => {
-        const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'no', D1: '2020-09-01' }, date: firstDate } };
+        const answerCondition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const dateConditionA = newStepDateGuard('D1', 'survey1');
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'no', D1: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Disjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(new Date('2020-09-01'));
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(new Date('2020-09-01'));
       });
 
       it('works with fulfilled answer condition and no date answer', () => {
-        const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes', D2: '2020-09-01' }, date: firstDate } };
+        const answerCondition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const dateConditionA = newStepDateGuard('D1', 'survey1');
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'yes', D2: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Disjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(firstDate);
       });
 
       it('works with two unfulfilled conditions', () => {
-        const answerCondition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const dateConditionA = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'no', D2: '2020-09-01' }, date: firstDate } };
+        const answerCondition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const dateConditionA = newStepDateGuard('D1', 'survey1');
+        const multiAnswers = {
+          survey1: { answers: { Q0: 'no', D2: '2020-09-01' }, date: firstDate },
+        };
         const condition = new Disjunction([answerCondition, dateConditionA]);
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
     });
   });
@@ -725,139 +741,220 @@ describe('Guard', () => {
     });
     describe('getFulfillmentDate', () => {
       it('works with fulfilled Answer Condition', () => {
-        const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
+        const condition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
         const expectedDate = addDays(firstDate, 2);
-        expect(new Offset(condition, 'P2D').getFulfillmentDate(mAnswers)).toEqual(expectedDate);
+        expect(new Offset(condition, 'P2D').getFulfillmentDate({ multiAnswers })).toEqual(
+          expectedDate
+        );
       });
 
       it('return null for unfulfilled Condition', () => {
-        const condition = new AnswerCodeCondition('Q0', 'yes', '=', 'survey1');
-        const mAnswers = { survey1: { answers: { Q0: 'no' }, date: firstDate } };
-        expect(new Offset(condition, 'P2D').getFulfillmentDate(mAnswers)).toBeNull();
+        const condition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
+        const multiAnswers = { survey1: { answers: { Q0: 'no' }, date: firstDate } };
+        expect(new Offset(condition, 'P2D').getFulfillmentDate({ multiAnswers })).toBeNull();
       });
 
       it('works with DateCondition', () => {
-        const condition = newStepDateCondtion('D1', 'survey1');
-        const mAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
+        const condition = newStepDateGuard('D1', 'survey1');
+        const multiAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
         const expectedDate = addWeeks(new Date('2020-07-01'), 2);
-        expect(new Offset(condition, 'P2W').getFulfillmentDate(mAnswers)).toEqual(expectedDate);
+        expect(new Offset(condition, 'P2W').getFulfillmentDate({ multiAnswers })).toEqual(
+          expectedDate
+        );
       });
     });
   });
 
-  describe('ConsentCondition', () => {
+  describe('ConsentGuard', () => {
     const consentDate = new Date();
 
     it('can be constructed', () => {
-      expect(new ConsentCondition('foo.consent')).toBeTruthy();
-      expect(new ConsentCondition('foo.consent', 'P7W')).toBeTruthy();
+      expect(new ConsentGuard('foo.consent')).toBeTruthy();
+      expect(new ConsentGuard('foo.consent', 'P7W')).toBeTruthy();
     });
 
     describe('getFulfillmentDate', () => {
       it('returns null if consent was not granted', () => {
-        const condition = new ConsentCondition('foo.consent');
-        expect(condition.getFulfillmentDate({}, { 'foo.consent': null })).toBe(null);
+        const condition = new ConsentGuard('foo.consent');
+        expect(condition.getFulfillmentDate({ consentTimes: { 'foo.consent': null } })).toBe(null);
       });
 
       it('returns null if different consent was granted', () => {
-        const condition = new ConsentCondition('foo.consent');
-        expect(condition.getFulfillmentDate({}, { 'foo.bar': consentDate })).toBe(null);
+        const condition = new ConsentGuard('foo.consent');
+        expect(condition.getFulfillmentDate({ consentTimes: { 'foo.bar': consentDate } })).toBe(
+          null
+        );
       });
 
       it('returns date of consent if offset was not given', () => {
-        const condition = new ConsentCondition('foo.consent');
-        expect(condition.getFulfillmentDate({}, { 'foo.consent': consentDate })).toEqual(
-          consentDate
-        );
+        const condition = new ConsentGuard('foo.consent');
+        expect(
+          condition.getFulfillmentDate({ consentTimes: { 'foo.consent': consentDate } })
+        ).toEqual(consentDate);
       });
 
       it('adds/subtracts offset to/from date of consent if given', () => {
-        const futureCondition = new ConsentCondition('foo.consent', 'P3D');
+        const futureCondition = new ConsentGuard('foo.consent', 'P3D');
         const expectedFutureDate = addDays(consentDate, 3);
-        expect(futureCondition.getFulfillmentDate({}, { 'foo.consent': consentDate })).toEqual(
-          expectedFutureDate
-        );
+        expect(
+          futureCondition.getFulfillmentDate({ consentTimes: { 'foo.consent': consentDate } })
+        ).toEqual(expectedFutureDate);
 
-        const pastCondition = new ConsentCondition('foo.consent', '-P9W');
+        const pastCondition = new ConsentGuard('foo.consent', '-P9W');
         const expectedPastDate = addWeeks(consentDate, -9);
-        expect(pastCondition.getFulfillmentDate({}, { 'foo.consent': consentDate })).toEqual(
-          expectedPastDate
-        );
+        expect(
+          pastCondition.getFulfillmentDate({ consentTimes: { 'foo.consent': consentDate } })
+        ).toEqual(expectedPastDate);
       });
     });
   });
 
-  describe('SurveyCondition', () => {
+  describe('SurveyGuard', () => {
     it('can be constructed', () => {
-      expect(new SurveyCondition('survey1')).toBeTruthy();
+      expect(new SurveyGuard('survey1')).toBeTruthy();
     });
 
     describe('getFulfillmentDate', () => {
       it('works for answered survey', () => {
-        const condition = new SurveyCondition('survey1');
-        const mAnswers = { survey1: { answers: {}, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(firstDate);
+        const condition = new SurveyGuard('survey1');
+        const multiAnswers = { survey1: { answers: {}, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(firstDate);
       });
 
       it('works for answered survey with offset', () => {
-        const condition = new SurveyCondition('survey1', 'P1W');
-        const mAnswers = { survey1: { answers: {}, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(addWeeks(firstDate, 1));
+        const condition = new SurveyGuard('survey1', 'P1W');
+        const multiAnswers = { survey1: { answers: {}, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(addWeeks(firstDate, 1));
       });
 
       it('works for answered with negative offset', () => {
-        const condition = new SurveyCondition('survey1', '-P2W');
-        const mAnswers = { survey1: { answers: {}, date: firstDate } };
-        expect(condition.getFulfillmentDate(mAnswers)).toEqual(addWeeks(firstDate, -2));
+        const condition = new SurveyGuard('survey1', '-P2W');
+        const multiAnswers = { survey1: { answers: {}, date: firstDate } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toEqual(addWeeks(firstDate, -2));
       });
 
       it('works for not answered survey', () => {
-        const condition = new SurveyCondition('survey1');
-        const mAnswers = { survey1: { answers: {}, date: null } };
-        expect(condition.getFulfillmentDate(mAnswers)).toBeNull();
+        const condition = new SurveyGuard('survey1');
+        const multiAnswers = { survey1: { answers: {}, date: null } };
+        expect(condition.getFulfillmentDate({ multiAnswers })).toBeNull();
       });
     });
   });
 
-  describe('RoutineCondition', () => {
+  describe('RoutineGuard', () => {
     const recordingDate = new Date();
 
     it('can be constructed', () => {
-      expect(new RoutineCondition('routine1')).toBeTruthy();
-      expect(new RoutineCondition('routine1', 'P7W')).toBeTruthy();
+      expect(new RoutineGuard('routine1')).toBeTruthy();
+      expect(new RoutineGuard('routine1', 'P7W')).toBeTruthy();
     });
 
     describe('getFulfillmentDate', () => {
       it('returns null if there is no recording for the routine', () => {
-        const condition = new RoutineCondition('routine1');
-        expect(condition.getFulfillmentDate({}, {}, { routine1: null })).toBe(null);
+        const condition = new RoutineGuard('routine1');
+        expect(condition.getFulfillmentDate({ routineTimes: { routine1: null } })).toBe(null);
       });
 
       it('returns null if there is a recording for a different routine', () => {
-        const condition = new RoutineCondition('routine1');
-        expect(condition.getFulfillmentDate({}, {}, { routine2: recordingDate })).toBe(null);
+        const condition = new RoutineGuard('routine1');
+        expect(condition.getFulfillmentDate({ routineTimes: { routine2: recordingDate } })).toBe(
+          null
+        );
       });
 
       it('returns date of recording if offset was not given', () => {
-        const condition = new RoutineCondition('routine1');
-        expect(condition.getFulfillmentDate({}, {}, { routine1: recordingDate })).toEqual(
+        const condition = new RoutineGuard('routine1');
+        expect(condition.getFulfillmentDate({ routineTimes: { routine1: recordingDate } })).toEqual(
           recordingDate
         );
       });
 
       it('adds/subtracts offset to/from date of recording if given', () => {
-        const futureCondition = new RoutineCondition('routine1', 'P3D');
+        const futureCondition = new RoutineGuard('routine1', 'P3D');
         const expectedFutureDate = addDays(recordingDate, 3);
-        expect(futureCondition.getFulfillmentDate({}, {}, { routine1: recordingDate })).toEqual(
-          expectedFutureDate
-        );
+        expect(
+          futureCondition.getFulfillmentDate({ routineTimes: { routine1: recordingDate } })
+        ).toEqual(expectedFutureDate);
 
-        const pastCondition = new RoutineCondition('routine1', '-P9W');
+        const pastCondition = new RoutineGuard('routine1', '-P9W');
         const expectedPastDate = addWeeks(recordingDate, -9);
-        expect(pastCondition.getFulfillmentDate({}, {}, { routine1: recordingDate })).toEqual(
-          expectedPastDate
+        expect(
+          pastCondition.getFulfillmentDate({ routineTimes: { routine1: recordingDate } })
+        ).toEqual(expectedPastDate);
+      });
+    });
+  });
+
+  describe('ResponseGuard', () => {
+    const responseDate = new Date();
+
+    it('can be constructed', () => {
+      expect(new ResponseGuard('response1')).toBeTruthy();
+      expect(new ResponseGuard('response1', 'P7W')).toBeTruthy();
+    });
+
+    describe('getFulfillmentDate', () => {
+      it('returns null if there is no recording for the routine', () => {
+        const condition = new ResponseGuard('response1');
+        expect(condition.getFulfillmentDate({ responseTimes: { response1: null } })).toBe(null);
+      });
+
+      it('returns null if there is a recording for a different routine', () => {
+        const condition = new ResponseGuard('response1');
+        expect(condition.getFulfillmentDate({ responseTimes: { response2: responseDate } })).toBe(
+          null
         );
+      });
+
+      it('returns date of recording if offset was not given', () => {
+        const condition = new ResponseGuard('response1');
+        expect(
+          condition.getFulfillmentDate({ responseTimes: { response1: responseDate } })
+        ).toEqual(responseDate);
+      });
+
+      it('adds/subtracts offset to/from date of recording if given', () => {
+        const futureCondition = new ResponseGuard('response1', 'P3D');
+        const expectedFutureDate = addDays(responseDate, 3);
+        expect(
+          futureCondition.getFulfillmentDate({ responseTimes: { response1: responseDate } })
+        ).toEqual(expectedFutureDate);
+
+        const pastCondition = new ResponseGuard('response1', '-P9W');
+        const expectedPastDate = addWeeks(responseDate, -9);
+        expect(
+          pastCondition.getFulfillmentDate({ responseTimes: { response1: responseDate } })
+        ).toEqual(expectedPastDate);
+      });
+    });
+  });
+
+  describe('DateGuard', () => {
+    it('can be constructed', () => {
+      expect(new DateGuard('2025-10-14')).toBeTruthy();
+      expect(new DateGuard('2025-10-14', 'P7W')).toBeTruthy();
+    });
+
+    describe('getFulfillmentDate', () => {
+      it('returns the date', () => {
+        const condition = new DateGuard('2025-10-14');
+        expect(condition.getFulfillmentDate({})).toStrictEqual(new Date('2025-10-14'));
+      });
+
+      it('returns null if there is no valid date', () => {
+        const condition = new ResponseGuard('keks');
+        expect(condition.getFulfillmentDate({})).toBe(null);
+      });
+
+      it('adds/subtracts offset to/from date if given', () => {
+        const futureCondition = new DateGuard('2025-10-14', 'P3D');
+        const expectedFutureDate = addDays(new Date('2025-10-14'), 3);
+        expect(futureCondition.getFulfillmentDate({})).toStrictEqual(expectedFutureDate);
+
+        const pastCondition = new DateGuard('2025-10-14', '-P9W');
+        const expectedPastDate = addWeeks(new Date('2025-10-14'), -9);
+        expect(pastCondition.getFulfillmentDate({})).toStrictEqual(expectedPastDate);
       });
     });
   });
@@ -871,14 +968,14 @@ describe('Guard', () => {
       operand: 'yes',
       operator: '=',
     };
-    const expectedCoding: Guard = new AnswerCodeCondition('A1', 'yes', '=', 'survey1');
+    const expectedCoding: Guard = new AnswerCodeGuard('A1', '=', 'yes', 'survey1');
     const dateCondition: StepCondition = {
       linkID: 'B2',
       surveyName: 'survey2',
       type: 'question',
       questionType: 'date',
     };
-    const expectedDate: Guard = newStepDateCondtion('B2', 'survey2');
+    const expectedDate: Guard = newStepDateGuard('B2', 'survey2');
 
     it('works for a single Coding condition', () => {
       let { guard, surveyNames } = generateStepGuard(codingCondition);
@@ -956,7 +1053,7 @@ describe('Guard', () => {
         consentKey: 'foo.bar',
         offset: 'P5Y',
       };
-      const expected: Guard = new ConsentCondition('foo.bar', 'P5Y');
+      const expected: Guard = new ConsentGuard('foo.bar', 'P5Y');
       const { guard, consentKeys } = generateStepGuard(consentCondition);
       expect(guard).toEqual(expected);
       expect(consentKeys).toEqual(['foo.bar']);
@@ -968,7 +1065,7 @@ describe('Guard', () => {
         surveyName: 'survey1',
         offset: 'P5Y',
       };
-      const expected: Guard = new SurveyCondition('survey1', 'P5Y');
+      const expected: Guard = new SurveyGuard('survey1', 'P5Y');
       const { guard, surveyNames } = generateStepGuard(surveyCondition);
       expect(guard).toEqual(expected);
       expect(surveyNames).toEqual(['survey1']);
@@ -1012,10 +1109,33 @@ describe('Guard', () => {
         routineName: 'routine1',
         offset: 'P5Y',
       };
-      const expected: Guard = new RoutineCondition('routine1', 'P5Y');
+      const expected: Guard = new RoutineGuard('routine1', 'P5Y');
       const { guard, routineNames } = generateStepGuard(routineCondition);
       expect(guard).toEqual(expected);
       expect(routineNames).toEqual(['routine1']);
+    });
+
+    it('works for response conditions', () => {
+      const responseCondition: StepCondition = {
+        type: 'response',
+        responseName: 'response1',
+        offset: 'P5Y',
+      };
+      const expected: Guard = new ResponseGuard('response1', 'P5Y');
+      const { guard, responseNames } = generateStepGuard(responseCondition);
+      expect(guard).toEqual(expected);
+      expect(responseNames).toEqual(['response1']);
+    });
+
+    it('works for date conditions', () => {
+      const date = '2025-10-14';
+      const dateCondition: StepCondition = {
+        type: 'date',
+        date: date,
+      };
+      const expected: Guard = new DateGuard(date);
+      const { guard } = generateStepGuard(dateCondition);
+      expect(guard).toEqual(expected);
     });
   });
 });

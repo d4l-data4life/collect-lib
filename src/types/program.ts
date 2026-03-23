@@ -29,7 +29,7 @@ export type Program = {
   endDate?: string;
   // tags | false | [ProgramTag](#ProgramTag)[] | List of supported tags including their configuration
   tags?: ProgramTag[];
-  // publishedAt | true | ISO 8601 date with timezone | Date the program was published (used to determine program state).
+  // publishedAt | false | ISO 8601 date with timezone | Date the program was published (used to determine program state).
   publishedAt?: string;
   // featured | true | [ProgramFeatured](#ProgramFeatured) | Describes the featured state of the program.
   featured: ProgramFeatured;
@@ -182,51 +182,145 @@ export type ProgramSensorStep = ProgramStepBase & {
 };
 
 // ### StepCondition
+export type StepCondition =
+  | DateCondition
+  | CodeQuestionCondition
+  | DateQuestionCondition
+  | SurveyCondition
+  | RoutineCondition
+  | ConsentCondition
+  | ResponseCondition
+  | AndCondition
+  | OrCondition
+  | OffsetCondition;
+
+// #### Base
 // Properties | Required | Type | Description
-export type StepCondition = {
+export type StepConditionBase = {
   // type | true | [ConditionType](#ConditionType) | Type of the condition (determines which other attributes are applicable)
   type: ConditionType;
-  // surveyName | false | string | required for condition type `survey` and `question`
-  surveyName?: string;
-  // routineName | false | string | required for condition type `routine`
-  routineName?: string;
-  // linkID | false | string | required for condition type `question`
-  linkID?: string;
-  // questionType | false | `coding`, `date` | required for condition type `question` - defines the data type of the referred to question
-  questionType?: ConditionQuestionType;
-  // operand | false | string | required for condition type `question` (unless operator is `exists`). Used as `<answer>` `<operator>` `<operand>`.
-  operand?: string;
-  // operator | false | `exists`,`=`,`!=`,`>`,`<`,`>=`,`<=` | Required for condition type `question`. Used as `<answer>` `<operator>` `<operand>`.
-  operator?: ConditionOperatorType;
-  // offset | false | ISO 8601 duration string | Defines the offset between the answer date and the current date. For question type `coding` only impacts the start/end date calculation. For type `offset` impacts the `item`. For type `consent`, this is applied to the date of the consent grant
+  // offset | false | ISO 8601 duration string | Adds additional offset duration to conditions outcome. (e.g. x plus two days)
   offset?: string;
-  // item | false | StepCondition | Required for condition type `not` and `offset`.
-  item?: StepCondition;
-  // items | false | StepCondition[] | Required for condition type `and` and `or`. List of conditions that are combined with the respective operator.
-  items?: StepCondition[];
-  // sorting | false | `earliest`, `latest` | Used for condition type `and` and `or`. Determines which resulting dates of the items gets picked. Defaults to `earliest` for `or` and `latest` for `and`.
-  sorting?: ConditionSorting;
-  // consentKey | false | string | Required for condition type `consent`. Reference to the consent that must have been granted to fulfill the condition.
-  consentKey?: string;
 };
 
-// #### ConditionType
-// Type | Description
+// #### DateCondition
+// Properties | Required | Type | Description
+export type DateCondition = StepConditionBase & {
+  // type | true | `date` | Condition that requires a date to have passed
+  type: 'date';
+  // date | true | string (YYYY-MM-DD) | Timestamp that needs to be passed for the condition to be true.
+  date: string;
+};
+
+// #### QuestionCondition
+// Properties | Required | Type | Description
+export type CodeQuestionCondition = StepConditionBase & {
+  // type | true | `question` | Condition that requires a specific answer from a previous survey
+  type: 'question';
+  // questionType | true | `coding` | Condition that uses authored date of the response fulfilling the code condition
+  questionType: 'coding';
+  // surveyName | true | string | Identifier of the survey
+  surveyName: string;
+  // linkID | true | string | Identifier of the question
+  linkID: string;
+  // operand | false | string | (unless operator is `exists`). Used as `<answer>` `<operator>` `<operand>`.
+  operand?: string;
+  // operator | true | `exists`,`=`,`!=`,`>`,`<`,`>=`,`<=` | Used as `<answer>` `<operator>` `<operand>`.
+  operator: ConditionOperatorType;
+};
+
+// #### QuestionCondition
+// Properties | Required | Type | Description
+export type DateQuestionCondition = StepConditionBase & {
+  // type | true | `question` | Condition that requires a specific answer from a previous survey
+  type: 'question';
+  // questionType | true | `date` | Condition that uses the answer of a date question as fulfillment date
+  questionType: 'date';
+  // surveyName | true | string | Identifier of the survey
+  surveyName: string;
+  // linkID | true | string | Identifier of the question
+  linkID: string;
+};
+
+// #### SurveyCondition
+// Properties | Required | Type | Description
+export type SurveyCondition = StepConditionBase & {
+  // type | true | `survey` | Condition that requires a previous survey to have been completed
+  type: 'survey';
+  // surveyName | true | string | Identifier of the survey
+  surveyName: string;
+};
+
+// #### RoutineCondition
+// Properties | Required | Type | Description
+export type RoutineCondition = StepConditionBase & {
+  // type | true | `routine` | Condition that requires a previous routine to have been completed
+  type: 'routine';
+  // routineName | true | string | Identifier of the routine
+  routineName: string;
+};
+
+// #### ConsentCondition
+// Properties | Required | Type | Description
+export type ConsentCondition = StepConditionBase & {
+  // type | true | `consent` | Condition that require a specific consent to be given
+  type: 'consent';
+  // consentKey | true | string | Reference to the consent that must have been granted to fulfill the condition.
+  consentKey: string;
+};
+
+// #### ResponseCondition
+// Properties | Required | Type | Description
+export type ResponseCondition = StepConditionBase & {
+  // type | true | `response` | Condition that require a specific response to be received
+  type: 'response';
+  // responseName | true | string | Reference to the response that must have been received to fulfill the condition.
+  responseName: string;
+};
+
+// #### AndCondition
+// Properties | Required | Type | Description
+export type AndCondition = StepConditionBase & {
+  // type | true | `and` | Condition that requires all subconditions to be fulfilled
+  type: 'and';
+  // items | true | StepCondition[] | List of conditions that must all be fulfilled.
+  items: StepCondition[];
+  // sorting | false | `earliest`, `latest` |  Determines which resulting dates of the items gets picked. Defaults to `latest`.
+  sorting?: ConditionSorting;
+};
+
+// #### OrCondition
+// Properties | Required | Type | Description
+export type OrCondition = StepConditionBase & {
+  // type | true | `or` | Condition that requires one subcondition to be fulfilled
+  type: 'or';
+  // items | true | StepCondition[] | List of conditions where at least one must be fulfilled.
+  items: StepCondition[];
+  // sorting | false | `earliest`, `latest` | Determines which resulting dates of the items gets picked. Defaults to `earliest`.
+  sorting?: ConditionSorting;
+};
+
+// #### OffsetCondition
+// Properties | Required | Type | Description
+export type OffsetCondition = StepConditionBase & {
+  // type | true | `offset` | Condition that adds a date offset to the fulfillment date of the given subcondition
+  type: 'offset';
+  // offset | true | ISO 8601 duration string | Offset as duration, can be negative.
+  offset: string;
+  // item | true | StepCondition | Condition to apply the additional offset to.
+  item: StepCondition;
+};
+
 export type ConditionType =
-  // question | Condition that requires a specific answer from a previous survey
+  | 'date'
   | 'question'
-  // survey | Condition that requires a previous survey to have been completed
   | 'survey'
-  // routine | Condition that requires a previous routine to have been completed
   | 'routine'
-  // and | Condition that requires all subconditions to be fulfilled
   | 'and'
-  // or | Condition that requires one subcondition to be fulfilled
   | 'or'
-  // offset | Condition that adds a date offset to the fulfillment date of the given subcondition
   | 'offset'
-  // consent | Condition that require a specific consent to be given
-  | 'consent';
+  | 'consent'
+  | 'response';
 
 export type ConditionQuestionType = 'coding' | 'date';
 export type ConditionOperatorType = fhir5.QuestionnaireItemEnableWhen['operator'];
@@ -252,8 +346,6 @@ export type ProgramDonation = {
 export type ProgramAnonymization = {
   // blur | false | object | The set of blurring settings that should be applied to the resource.
   blur?: {
-    // blur.location | true | string | The timezone location of the resource, e.g `"Europe/Berlin"`.
-    location: string;
     // blur.authored | false | [DateBlurringFunction](#DateBlurringFunction) | The name of the default blurring function which is used to blur the authored timestamp of every QuestionnaireResponse.
     authored?: DateBlurringFunction;
     // blur.authored | false | [DateBlurringFunction](#DateBlurringFunction) | The name of the default blurring function which is used to blur the period start and end of every ResearchSubject.

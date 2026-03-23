@@ -47,7 +47,7 @@ const blurQuestionnaireResponse = (
     return {
       ...document,
       ...(document.authored && {
-        authored: blurAuthored(document.authored, blur.authored, blur.location),
+        authored: blurAuthored(document.authored, blur.authored),
       }),
     };
   }
@@ -67,11 +67,7 @@ const blurResearchSubject = (
   const programBlur = anonymization?.blur;
 
   if (programBlur && programBlur.researchSubject) {
-    const blurredPeriod = blurPeriod(
-      document.period,
-      programBlur.researchSubject,
-      programBlur.location
-    );
+    const blurredPeriod = blurPeriod(document.period, programBlur.researchSubject);
     return {
       ...document,
       ...(blurredPeriod && { period: blurredPeriod }),
@@ -84,18 +80,13 @@ const blurResearchSubject = (
  * Blur the `authored` date of the QuestionnaireResponse
  * @param authored The time when the QuestionnaireResponse was authored
  * @param blur The function that should be used for blurring
- * @param location The location of the authored date
  * @returns The blurred authored string
  */
-const blurAuthored = (
-  authored: string,
-  blurFn: DateBlurringFunction | undefined,
-  location: string | undefined
-): string => {
-  if (!location || !blurFn) {
+const blurAuthored = (authored: string, blurFn: DateBlurringFunction | undefined): string => {
+  if (!blurFn) {
     return authored;
   }
-  const authoredDate = DateTime.fromISO(authored).setZone(location);
+  const authoredDate = DateTime.fromISO(authored);
   if (!authoredDate || !authoredDate.isValid) {
     return authored;
   }
@@ -106,20 +97,18 @@ const blurAuthored = (
  * Blur a period with a specific blurring function
  * @param period The period to blur
  * @param blurFn The blurring function to apply
- * @param location The location to which the period is assigned
  * @returns The blurred period
  */
 const blurPeriod = (
   period: { start?: string; end?: string } | undefined,
-  blurFn: DateBlurringFunction,
-  location: string
+  blurFn: DateBlurringFunction
 ): { start?: string; end?: string } | undefined => {
   if (!period) {
     return undefined;
   }
 
-  const startDate = period.start ? DateTime.fromISO(period.start).setZone(location) : undefined;
-  const endDate = period.end ? DateTime.fromISO(period.end).setZone(location) : undefined;
+  const startDate = period.start ? DateTime.fromISO(period.start) : undefined;
+  const endDate = period.end ? DateTime.fromISO(period.end) : undefined;
 
   return {
     ...(period.start &&

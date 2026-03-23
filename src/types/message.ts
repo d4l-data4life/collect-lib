@@ -9,6 +9,8 @@ export interface Message {
   programName: string;
   // recipients | true | string[] | List of subject Ids to receive the message
   recipients: string[];
+  // fileName | false | string | File used to upload recipients.
+  fileName?: string;
   // subject | true | {[language]: text} | Message subject in available languages
   subject: TranslatedString;
   // blocks | false | [ContentBlock](#ContentBlock)[] | Content blocks for the display
@@ -19,7 +21,7 @@ export interface Message {
   updatedAt?: string;
   // sentAt | false | string | ISO Date string when the message was sent
   sentAt?: string;
-};
+}
 
 export type MessagePath = RecursiveKeyOf<Message>;
 
@@ -30,7 +32,6 @@ export interface MessageRecipient {
   sentAt?: string;
   pushedAt?: string;
   readAt?: string;
-
 }
 
 export interface SeenMessage {

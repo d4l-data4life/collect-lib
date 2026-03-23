@@ -21,6 +21,8 @@ export type Display = {
   content: DisplayContent;
   // charts | false | { [key in ProgramDeviceType]?: ProgramDevicesDataType[] } | List of devices and their data types that are relevant for the display
   charts?: { [key in ProgramDeviceType]?: ProgramDevicesDataType[] };
+  // publishedAt | false | ISO 8601 date with timezone | Date the display was published.
+  publishedAt?: string;
 };
 
 export type DisplayType = 'report' | 'recommendation' | 'end-of-participation';
@@ -77,4 +79,4 @@ export interface SeenDisplay {
   content?: DisplayContent;
 }
 
-export type DisplayPath = RecursiveKeyOf<Display>
+export type DisplayPath = RecursiveKeyOf<Display>;

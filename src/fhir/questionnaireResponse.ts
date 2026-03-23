@@ -1,9 +1,13 @@
 import {
   QuestionInputType,
-  ReponseValue,
   QuestionnaireResponse,
+  ResponseValue,
 } from '../types/questionnaireResponse';
-import { CustomExtensionDate, CustomExtensionStudyName } from './constants';
+import {
+  CustomExtensionContextValue,
+  CustomExtensionDate,
+  CustomExtensionStudyName,
+} from './constants';
 
 export function generateFHIRResponse(
   id: string,
@@ -15,11 +19,18 @@ export function generateFHIRResponse(
     createdAt,
     status,
     answers,
+    context,
   }: QuestionnaireResponse
 ): fhir5.QuestionnaireResponse {
   const extension: fhir5.Extension[] = [
     { url: CustomExtensionStudyName, valueString: programName },
     ...(effectiveDate ? [{ url: CustomExtensionDate, valueDate: effectiveDate }] : []),
+    ...(context
+      ? Object.entries(context).map(([key, value]) => ({
+          url: CustomExtensionContextValue,
+          valueString: `${key}=${value}`,
+        }))
+      : []),
   ];
 
   return {
@@ -32,23 +43,39 @@ export function generateFHIRResponse(
     status,
     item: answers.map((answer) => toQuestionnaireResponseItem(answer)),
   };
-};
+}
 
 export const toQuestionnaireResponseItem = (answer: {
   id: string;
   type: QuestionInputType;
-  response: ReponseValue | ReponseValue[];
+  response: ResponseValue | ResponseValue[];
   text: string;
 }): fhir5.QuestionnaireResponseItem => {
   const response = answer.response;
+
   if (Array.isArray(response)) {
-    return {
-      linkId: answer.id,
-      text: answer.text,
-      answer: response.map((r: ReponseValue) => ({
-        valueCoding: { system: r.system, code: r.value, display: r?.display },
-      })),
-    };
+    switch (answer.type) {
+      case 'multi-select':
+        return {
+          linkId: answer.id,
+          text: answer.text,
+          answer: response.map((r: ResponseValue) => ({
+            valueCoding: { system: r.system, code: r.value, display: r?.display },
+          })),
+        };
+      case 'list':
+        return {
+          linkId: answer.id,
+          text: answer.text,
+          answer: response.map((r: ResponseValue) => ({
+            valueString: r.value,
+          })),
+        };
+      default:
+        return {
+          linkId: answer.id,
+        };
+    }
   }
 
   switch (answer.type) {
@@ -93,6 +120,7 @@ export const toQuestionnaireResponseItem = (answer: {
       };
     case 'string':
     case 'text':
+    case 'geo-location':
       return {
         linkId: answer.id,
         text: answer.text,

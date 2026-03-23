@@ -21,6 +21,10 @@ export type Survey = {
   reminder?: TaskReminder;
   // template | false | string | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed)
   template?: string;
+  // publishedAt | false | ISO 8601 date with timezone | Date the survey was published.
+  publishedAt?: string;
+  // multiplex | false | [SurveyMultiplex](#SurveyMultiplex) | Configures that this survey will be answered multiple times per window based on the answers of another questionnaire.
+  multiplex?: SurveyMultiplex;
 };
 
 // #### TaskFrequency
@@ -32,8 +36,6 @@ export type TaskFrequency = {
   start: string;
   // end | false | ISO 8601 date with timezone | Determines the global ending date of the survey.
   end?: string;
-  // location | false | Timezone Location | Determines the location for the defined date, so that timezone problems can be handled.
-  location?: string;
   // factor | false | integer | For `daily`, `weekly` and `monthly` this factor is used to manipulate the cycle length, e.g. `daily` with a factor of 7 makes it a survey that is repeated every week, but doesn't necessarily start on monday.
   factor?: number;
   // editDuration | false | ISO 8601 duration string | Enables editing events of this survey for the given duration.
@@ -56,6 +58,8 @@ export type TaskReminder = {
 // #### SurveyScoring
 // Properties | Required | Type | Description
 export type SurveyScoring = {
+  // eligibility | false | boolean | Indicates if the scoring is suitable for eligibility.
+  eligibility?: boolean;
   // scores | true | object | Defines how the questions will be scored
   scores: {
     // scores.valueset | false | {valuesetURL: {answerCode: score}} | For questions that use valuesets scores are assigned to each code of the valuesets
@@ -113,5 +117,16 @@ export type SurveyContent = {
     icon?: string;
   };
 };
+
+// #### SurveyMultiplex
+// Properties | Required | Type | Description
+export type SurveyMultiplex = {
+  // questionnaire | true | string | Name of the questionnaires the multiplexing is based on.
+  questionnaire: string;
+  // linkIds | true | string[] | List of question linkds. Answers to these questions will be used to fill the placeholder
+  linkIds: string[];
+  // placeholder | true | string | Placeholder text to be replaced with answers from the specified linkIds
+  placeholder: string;
+}
 
 export type SurveyContentPath = RecursiveKeyOf<SurveyContent>;

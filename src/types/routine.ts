@@ -21,6 +21,8 @@ export type Routine = {
   duration?: string;
   // reminder | false | [TaskReminder](#TaskReminder) | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)
   reminder?: TaskReminder;
+  // publishedAt | false | ISO 8601 date with timezone | Date the routine was published.
+  publishedAt?: string;
 };
 
 // #### ProgramDevice
@@ -54,7 +56,8 @@ export type ProgramDeviceType =
   | 'FITBIT'
   | 'GalaxyWatch6'
   | 'PixelWatch1'
-  | 'AppleHealth';
+  | 'AppleHealth'
+  | 'HealthConnect';
 
 export type ProgramDevicesDataType =
   | 'distance'
