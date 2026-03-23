@@ -1,9 +1,13 @@
 import {
   QuestionInputType,
-  ResponseValue,
   QuestionnaireResponse,
+  ResponseValue,
 } from '../types/questionnaireResponse';
-import { CustomExtensionDate, CustomExtensionStudyName } from './constants';
+import {
+  CustomExtensionContextValue,
+  CustomExtensionDate,
+  CustomExtensionStudyName,
+} from './constants';
 
 export function generateFHIRResponse(
   id: string,
@@ -15,11 +19,18 @@ export function generateFHIRResponse(
     createdAt,
     status,
     answers,
+    context,
   }: QuestionnaireResponse
 ): fhir5.QuestionnaireResponse {
   const extension: fhir5.Extension[] = [
     { url: CustomExtensionStudyName, valueString: programName },
     ...(effectiveDate ? [{ url: CustomExtensionDate, valueDate: effectiveDate }] : []),
+    ...(context
+      ? Object.entries(context).map(([key, value]) => ({
+          url: CustomExtensionContextValue,
+          valueString: `${key}=${value}`,
+        }))
+      : []),
   ];
 
   return {

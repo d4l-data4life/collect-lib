@@ -23,6 +23,8 @@ export type Survey = {
   template?: string;
   // publishedAt | false | ISO 8601 date with timezone | Date the survey was published.
   publishedAt?: string;
+  // multiplex | false | [SurveyMultiplex](#SurveyMultiplex) | Configures that this survey will be answered multiple times per window based on the answers of another questionnaire.
+  multiplex?: SurveyMultiplex;
 };
 
 // #### TaskFrequency
@@ -115,5 +117,16 @@ export type SurveyContent = {
     icon?: string;
   };
 };
+
+// #### SurveyMultiplex
+// Properties | Required | Type | Description
+export type SurveyMultiplex = {
+  // questionnaire | true | string | Name of the questionnaires the multiplexing is based on.
+  questionnaire: string;
+  // linkIds | true | string[] | List of question linkds. Answers to these questions will be used to fill the placeholder
+  linkIds: string[];
+  // placeholder | true | string | Placeholder text to be replaced with answers from the specified linkIds
+  placeholder: string;
+}
 
 export type SurveyContentPath = RecursiveKeyOf<SurveyContent>;
