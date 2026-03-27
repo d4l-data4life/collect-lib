@@ -13,6 +13,13 @@ export const DEVICE_ANNOTATION_ITEM_UNIX_TIMESTAMP: DEVICE_ANNOTATION_ITEM = {
   note: DEVICE_ANNOTATION_TIMESTAMP_NOTE,
 };
 
+export const DEVICE_ANNOTATION_ITEM_DATA_SOURCE: DEVICE_ANNOTATION_ITEM = {
+  type: 'dataSource',
+  size: 16,
+  format: 'byte',
+  littleEndian: true,
+};
+
 export const DEVICE_ANNOTATION_ITEM_ACCELERATION: DEVICE_ANNOTATION_ITEM = {
   type: 'acceleration',
   size: 12,

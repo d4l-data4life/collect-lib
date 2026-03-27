@@ -60,6 +60,8 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'sleepState'
   // Health Connect types
   | 'sleepStage'
+  // Common types for SDK sources
+  | 'dataSource'
 
   // // Special case for Fitbit, Apple health & Health Connect -> we configure sleep but it then actually uses (sleepLevel for fitbit, sleepState for Apple health, sleepStage for Health Connect) and duration
   // | 'sleep'

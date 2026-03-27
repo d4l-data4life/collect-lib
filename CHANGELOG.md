@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Annotation data type for SDK service to define the source of the data
+
 ### Changed
 
 ### Deprecated
