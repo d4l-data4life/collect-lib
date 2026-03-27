@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Annotation data type for SDK service to define the source of the data
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.27.0] - 2026-03-27
+
+### Added
+
+- Annotation data type for SDK service to define the source of the data
 
 ## [v1.26.0] - 2026-03-23
 
@@ -279,7 +283,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.26.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.27.0...HEAD
+[v1.27.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.26.0...v1.27.0
 [v1.26.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.25.0...v1.26.0
 [v1.25.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.24.0...v1.25.0
 [v1.24.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.23.0...v1.24.0
