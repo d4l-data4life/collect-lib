@@ -17,8 +17,6 @@ export type Survey = {
   scoring?: SurveyScoring;
   // content | true | [SurveyContent](#SurveyContent) | Defines the texts, images and icons that need to be displayed for the survey
   content: SurveyContent;
-  // reminder | false | [TaskReminder](#TaskReminder) | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)
-  reminder?: TaskReminder;
   // template | false | string | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed)
   template?: string;
   // publishedAt | false | ISO 8601 date with timezone | Date the survey was published.
@@ -46,13 +44,6 @@ export type TaskFrequency = {
   retainCTAs?: number;
   // allowAddOnDemand | false | boolean | If true allows the task to also be added at any point in time (on demand).
   allowAddOnDemand?: boolean;
-};
-
-// #### TaskReminder
-// Properties | Required | Type | Description
-export type TaskReminder = {
-  // frequency | true | [ReminderFrequencyType](#ReminderFrequencyType) | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)
-  frequency: ReminderFrequencyType;
 };
 
 // #### SurveyScoring
@@ -94,14 +85,6 @@ export type FrequencyType =
   // onDemand | There is a button that allows you to add one at any point
   | 'onDemand';
 
-// #### ReminderFrequencyType
-// Type | Description
-export type ReminderFrequencyType =
-  // daily | A reminder will be sent daily
-  | 'daily'
-  // beforeExpiry | A reminder will be sent when the task is about to expire (last day it is available)
-  | 'beforeExpiry';
-
 // #### SurveyContent
 // Properties | Required | Type | Description
 export type SurveyContent = {
@@ -127,6 +110,6 @@ export type SurveyMultiplex = {
   linkIds: string[];
   // placeholder | true | string | Placeholder text to be replaced with answers from the specified linkIds
   placeholder: string;
-}
+};
 
 export type SurveyContentPath = RecursiveKeyOf<SurveyContent>;
