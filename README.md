@@ -285,7 +285,6 @@ Update the types by running `yarn run readme:update`.
 | frequency   | true     | [TaskFrequency](#TaskFrequency)     | Defines in which frequency the questionnaire occurs                                                                   |
 | scoring     | true     | [SurveyScoring](#SurveyScoring)     | Defines the texts, images and icons that need to be displayed for the survey                                          |
 | content     | true     | [SurveyContent](#SurveyContent)     | Defines the texts, images and icons that need to be displayed for the survey                                          |
-| reminder    | false    | [TaskReminder](#TaskReminder)       | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks)                    |
 | template    | false    | string                              | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed)               |
 | publishedAt | false    | ISO 8601 date with timezone         | Date the survey was published.                                                                                        |
 | multiplex   | false    | [SurveyMultiplex](#SurveyMultiplex) | Configures that this survey will be answered multiple times per window based on the answers of another questionnaire. |
@@ -302,12 +301,6 @@ Update the types by running `yarn run readme:update`.
 | skipFirst        | false    | boolean                         | Determines if the first iteration of the survey after subscription should be skipped. Skipping it means the questionnaire won't open in the middle of the window and instead at the start of the next full window. Defaults to `false`. |
 | retainCTAs       | false    | number                          | Allows configuring that x amount of previous CTAs remain active on the todo screen.                                                                                                                                                     |
 | allowAddOnDemand | false    | boolean                         | If true allows the task to also be added at any point in time (on demand).                                                                                                                                                              |
-
-#### TaskReminder
-
-| Properties | Required | Type                                            | Description                                                                                        |
-| ---------- | -------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| frequency  | true     | [ReminderFrequencyType](#ReminderFrequencyType) | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
 
 #### SurveyScoring
 
@@ -336,13 +329,6 @@ Update the types by running `yarn run readme:update`.
 | monthly  | Occurs every 1st of a month                               |
 | onDemand | There is a button that allows you to add one at any point |
 
-#### ReminderFrequencyType
-
-| Type         | Description                                                                         |
-| ------------ | ----------------------------------------------------------------------------------- |
-| daily        | A reminder will be sent daily                                                       |
-| beforeExpiry | A reminder will be sent when the task is about to expire (last day it is available) |
-
 #### SurveyContent
 
 | Properties          | Required | Type                 | Description                                |
@@ -363,16 +349,15 @@ Update the types by running `yarn run readme:update`.
 
 ### Routine
 
-| Properties  | Required                 | Type                                | Description                                                                                        |
-| ----------- | ------------------------ | ----------------------------------- | -------------------------------------------------------------------------------------------------- |
-| name        | true                     | string                              | Primary identifier. Assumption: survey and routine names are collectively unique                   |
-| programName | true                     | string                              | The name of the program the routine belongs to                                                     |
-| frequency   | true                     | [TaskFrequency](#TaskFrequency)     | Defines in which frequency the questionnaire occurs                                                |
-| content     | true                     | [RoutineContent](#RoutineContent)   | Defines the texts, images and icons that need to be displayed for the routine                      |
-| devices     | true                     | string[]                            | Lists the devices used in the routine                                                              |
+| Properties  | Required                 | Type                                | Description                                                                      |
+| ----------- | ------------------------ | ----------------------------------- | -------------------------------------------------------------------------------- |
+| name        | true                     | string                              | Primary identifier. Assumption: survey and routine names are collectively unique |
+| programName | true                     | string                              | The name of the program the routine belongs to                                   |
+| frequency   | true                     | [TaskFrequency](#TaskFrequency)     | Defines in which frequency the questionnaire occurs                              |
+| content     | true                     | [RoutineContent](#RoutineContent)   | Defines the texts, images and icons that need to be displayed for the routine    |
+| devices     | true                     | string[]                            | Lists the devices used in the routine                                            |
 | duration    | ISO 8601 duration String | Defines the duration of the routine |
-| reminder    | false                    | [TaskReminder](#TaskReminder)       | Defines if and when a reminder should be sent for the task (only for one-time and recurring tasks) |
-| publishedAt | false                    | ISO 8601 date with timezone         | Date the routine was published.                                                                    |
+| publishedAt | false                    | ISO 8601 date with timezone         | Date the routine was published.                                                  |
 
 #### ProgramDevice
 

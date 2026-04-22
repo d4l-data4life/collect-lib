@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [v1.28.0] - 2026-04-21
+
+### Removed
+
+- `reminder` configuration from Survey and Routine
+
 ## [v1.27.0] - 2026-03-27
 
 ### Added
@@ -285,7 +291,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.27.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.28.0...HEAD
+[v1.28.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.27.0...v1.28.0
 [v1.27.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.26.0...v1.27.0
 [v1.26.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.25.0...v1.26.0
 [v1.25.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.24.0...v1.25.0
