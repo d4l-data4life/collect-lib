@@ -12,6 +12,7 @@ export const MinValueExtension = 'http://hl7.org/fhir/StructureDefinition/minVal
 export const MinLengthExtension = 'http://hl7.org/fhir/StructureDefinition/minLength';
 export const QItemControlDefinition = 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl';
 export const RoutineIsPassiveExtension = 'http://fhir.data4life.care/StructureDefinition/is-passive-recording';
+export const PrepopulateExtension = 'http://fhir.data4life.care/StructureDefinition/prepopulate';
 // Naming Systems
 export const SignalIDSystem = 'http://fhir.data4life.care/r5/NamingSystem/app-signal-ids';
 export const AppIDNamingSystem = 'http://fhir.data4life.care/r5/NamingSystem/app-db-ids';
