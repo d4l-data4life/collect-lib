@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Prepopulate extension
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.29.0] - 2026-04-22
+
+### Added
+
+- Prepopulate extension
 
 ## [v1.28.0] - 2026-04-21
 
@@ -291,7 +295,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.28.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.29.0...HEAD
+[v1.29.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.28.0...v1.29.0
 [v1.28.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.27.0...v1.28.0
 [v1.27.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.26.0...v1.27.0
 [v1.26.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.25.0...v1.26.0
