@@ -2,6 +2,8 @@
 export const SliderMinLabelExtension = 'http://fhir.data4life.care/StructureDefinition/slider-label-min';
 export const SliderMaxLabelExtension = 'http://fhir.data4life.care/StructureDefinition/slider-label-max';
 export const SliderStepSizeExtension = 'http://fhir.data4life.care/StructureDefinition/slider-step-size';
+export const SliderOrientationExtension = 'http://fhir.data4life.care/StructureDefinition/slider-orientation';
+export const SliderInputLabel = 'http://fhir.data4life.care/StructureDefinition/slider-input-label';
 export const RelativeMinValueExtension = 'http://fhir.data4life.care/StructureDefinition/relative-min-value';
 export const RelativeMaxValueExtension = 'http://fhir.data4life.care/StructureDefinition/relative-max-value';
 export const CustomExtensionStudyName = 'http://fhir.data4life.care/StructureDefinition/study-name';
