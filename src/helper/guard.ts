@@ -679,7 +679,7 @@ export const generateStepGuard = (cond: StepCondition): GuardContext => {
         responseNames: [cond.responseName],
       };
     case 'date':
-      return { guard: new DateGuard(cond.date) };
+      return { guard: new DateGuard(cond.date, cond.offset) };
     default:
       console.warn(`[Step Guard Generation] Unknown condition: "${cond}"`);
       return {

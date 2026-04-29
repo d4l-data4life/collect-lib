@@ -22,7 +22,6 @@ import {
 
 const trueCondition = new BoolGuard(true);
 const falseCondition = new BoolGuard(false);
-``;
 const firstDate = new Date('2020-07-01T10:00:00.000+02:00');
 
 describe('Guard', () => {
@@ -987,6 +986,15 @@ describe('Guard', () => {
       let { guard, surveyNames } = generateStepGuard(dateCondition);
       expect(guard).toEqual(expectedDate);
       expect(surveyNames).toEqual(['survey2']);
+    });
+
+    it('works for a date condition with an offset', () => {
+      let { guard } = generateStepGuard({
+        type: 'date',
+        date: '2025-10-14',
+        offset: 'P3D',
+      });
+      expect(guard.getFulfillmentDate({})).toEqual(new Date('2025-10-17'));
     });
 
     it('works for and conditions', () => {
