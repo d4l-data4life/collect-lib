@@ -278,16 +278,17 @@ Update the types by running `yarn run readme:update`.
 
 ### Survey
 
-| Properties  | Required | Type                                | Description                                                                                                           |
-| ----------- | -------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| name        | true     | string                              | Primary identifier. Assumption: survey and routine names are collectively unique                                      |
-| programName | true     | string                              | The name of the program the survey belongs to                                                                         |
-| frequency   | true     | [TaskFrequency](#TaskFrequency)     | Defines in which frequency the questionnaire occurs                                                                   |
-| scoring     | true     | [SurveyScoring](#SurveyScoring)     | Defines the texts, images and icons that need to be displayed for the survey                                          |
-| content     | true     | [SurveyContent](#SurveyContent)     | Defines the texts, images and icons that need to be displayed for the survey                                          |
-| template    | false    | string                              | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed)               |
-| publishedAt | false    | ISO 8601 date with timezone         | Date the survey was published.                                                                                        |
-| multiplex   | false    | [SurveyMultiplex](#SurveyMultiplex) | Configures that this survey will be answered multiple times per window based on the answers of another questionnaire. |
+| Properties     | Required | Type                                | Description                                                                                                           |
+| -------------- | -------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| name           | true     | string                              | Primary identifier. Assumption: survey and routine names are collectively unique                                      |
+| programName    | true     | string                              | The name of the program the survey belongs to                                                                         |
+| frequency      | true     | [TaskFrequency](#TaskFrequency)     | Defines in which frequency the questionnaire occurs                                                                   |
+| scoring        | true     | [SurveyScoring](#SurveyScoring)     | Defines the texts, images and icons that need to be displayed for the survey                                          |
+| content        | true     | [SurveyContent](#SurveyContent)     | Defines the texts, images and icons that need to be displayed for the survey                                          |
+| template       | false    | string                              | Name of the template used for the questionnaire (templated surveys don't allow questions to be changed)               |
+| publishedAt    | false    | ISO 8601 date with timezone         | Date the survey was published.                                                                                        |
+| multiplex      | false    | [SurveyMultiplex](#SurveyMultiplex) | Configures that this survey will be answered multiple times per window based on the answers of another questionnaire. |
+| copyrightLabel | false    | CopyrightLabel                      | Optional copyright/trademark text shown on questionnaire screens                                                      |
 
 #### TaskFrequency
 
