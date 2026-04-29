@@ -3,6 +3,7 @@ import { RecursiveKeyOf, TranslatedString } from '.';
 export type Answer = string | string[];
 export type Answers = { [key: string]: Answer };
 export type MultiAnswers = { [key: string]: { date: Date | null; answers: Answers } };
+export type CopyrightLabel = { [key: string]: string };
 
 // ### Survey
 // Properties | Required | Type | Description
@@ -23,6 +24,8 @@ export type Survey = {
   publishedAt?: string;
   // multiplex | false | [SurveyMultiplex](#SurveyMultiplex) | Configures that this survey will be answered multiple times per window based on the answers of another questionnaire.
   multiplex?: SurveyMultiplex;
+  // copyrightLabel | false | CopyrightLabel | Optional copyright/trademark text shown on questionnaire screens
+  copyrightLabel?: CopyrightLabel;
 };
 
 // #### TaskFrequency
