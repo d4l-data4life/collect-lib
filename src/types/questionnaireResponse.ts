@@ -1,12 +1,26 @@
+type AnswerItemBase = { id: string; text: string };
+
+export type ScalarAnswerItem = AnswerItemBase & {
+  type: Exclude<QuestionInputType, 'matrix' | 'multi-select' | 'list'>;
+  response: ResponseValue;
+};
+
+export type ArrayAnswerItem = AnswerItemBase & {
+  type: 'multi-select' | 'list';
+  response: ResponseValue[];
+};
+
+export type MatrixAnswerItem = AnswerItemBase & {
+  type: 'matrix';
+  items: ScalarAnswerItem[];
+};
+
+export type AnswerItem = ScalarAnswerItem | ArrayAnswerItem | MatrixAnswerItem;
+
 export interface QuestionnaireResponse {
   status: fhir5.QuestionnaireResponse['status'];
   language: string;
-  answers: {
-    id: string;
-    type: QuestionInputType;
-    response: ResponseValue | ResponseValue[];
-    text: string;
-  }[];
+  answers: AnswerItem[];
   questionnaire: {
     name: string;
     url: string;
@@ -49,4 +63,6 @@ export type QuestionInputType =
   | 'country'
   | 'postal-code'
   | 'group'
-  | 'display';
+  | 'display'
+  | 'matrix'
+  | 'matrix_item';

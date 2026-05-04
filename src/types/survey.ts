@@ -1,7 +1,26 @@
+import { QuestionInputType } from './questionnaireResponse';
 import { RecursiveKeyOf, TranslatedString } from '.';
 
-export type Answer = string | string[];
-export type Answers = { [key: string]: Answer };
+export type MatrixAnswer = Record<string, string>;
+export type FlatAnswer = string | string[];
+export type Answer = FlatAnswer | MatrixAnswer;
+export type Answers = Record<string, Answer>;
+
+export function isMatrixAnswer(answer: Answer | undefined): answer is MatrixAnswer {
+  return typeof answer === 'object' && answer !== null && !Array.isArray(answer);
+}
+
+export function isFlatAnswer(answer: Answer | undefined): answer is FlatAnswer {
+  return typeof answer === 'string' || Array.isArray(answer);
+}
+
+export function isMultiAnswer(answer: Answer | undefined): answer is string[] {
+  return Array.isArray(answer);
+}
+
+export function isScalarAnswer(answer: Answer | undefined): answer is string {
+  return typeof answer === 'string';
+}
 export type MultiAnswers = { [key: string]: { date: Date | null; answers: Answers } };
 export type CopyrightLabel = { [key: string]: string };
 
