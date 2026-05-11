@@ -45,4 +45,5 @@ export type QuestionInputType =
   | 'string'
   | 'text'
   | 'geo-location'
-  | 'list';
+  | 'list'
+  | 'country';
