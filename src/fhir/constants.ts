@@ -30,6 +30,11 @@ export const StudyNameSystem = 'http://fhir.data4life.care/r5/CodeSystem/study-n
 export const SensorSettingsSystem = 'http://fhir.data4life.care/r5/CodeSystem/sensor-settings';
 export const CustomQuestionSystem = 'http://fhir.data4life.care/r5/CodeSystem/custom-question-class';
 export const CommunicationTypeSystem = 'http://fhir.data4life.care/r5/CodeSystem/communication-types';
+// Canonical FHIR ValueSet URL for ISO 3166-1 alpha-2 country codes. Referenced
+// by the `country` input type; consumers render a dedicated country picker and
+// submit answers as a valueCoding with the ISO 3166 system below.
+export const CountryValueSet = 'http://hl7.org/fhir/ValueSet/iso3166-1-2';
+export const Iso3166CodeSystem = 'urn:iso:std:iso:3166';
 
 export const DEVICE_LABEL_CODING = {
   system: SensorSettingsSystem,

@@ -98,6 +98,7 @@ export const toQuestionnaireResponseItem = (answer: {
         answer: [{ valueDate: String(response.value) }],
       };
     case 'single-select':
+    case 'country':
       return {
         linkId: answer.id,
         text: answer.text,
