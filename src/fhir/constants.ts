@@ -36,6 +36,14 @@ export const CommunicationTypeSystem = 'http://fhir.data4life.care/r5/CodeSystem
 export const CountryValueSet = 'http://hl7.org/fhir/ValueSet/iso3166-1-2';
 export const Iso3166CodeSystem = 'urn:iso:std:iso:3166';
 
+// Complex extension carrying the country source for a `postal-code` input. Sub-
+// extensions: `fromItem` (valueString = another item's linkId) XOR
+// `fixedCountry` (valueCoding with system Iso3166CodeSystem).
+export const PostalCodeCountrySourceExtension =
+  'http://fhir.data4life.care/fhir/StructureDefinition/postalcode-country-source';
+export const PostalCodeFromItemUrl = 'fromItem';
+export const PostalCodeFixedCountryUrl = 'fixedCountry';
+
 export const DEVICE_LABEL_CODING = {
   system: SensorSettingsSystem,
   code: 'device_label',
