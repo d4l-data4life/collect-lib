@@ -16,7 +16,6 @@ export const QItemControlDefinition = 'http://hl7.org/fhir/StructureDefinition/q
 export const RoutineIsPassiveExtension = 'http://fhir.data4life.care/StructureDefinition/is-passive-recording';
 export const PrepopulateExtension = 'http://fhir.data4life.care/StructureDefinition/prepopulate';
 export const ImageExtension = 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemMedia';
-export const ImageAltTextURLExtension = 'http://hl7.org/fhir/StructureDefinition/rendering-altText';
 // Naming Systems
 export const SignalIDSystem = 'http://fhir.data4life.care/r5/NamingSystem/app-signal-ids';
 export const AppIDNamingSystem = 'http://fhir.data4life.care/r5/NamingSystem/app-db-ids';
