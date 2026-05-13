@@ -47,4 +47,6 @@ export type QuestionInputType =
   | 'geo-location'
   | 'list'
   | 'country'
-  | 'postal-code';
+  | 'postal-code'
+  | 'group'
+  | 'display';
