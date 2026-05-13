@@ -14,10 +14,6 @@ export function isFlatAnswer(answer: Answer | undefined): answer is FlatAnswer {
   return typeof answer === 'string' || Array.isArray(answer);
 }
 
-export function isMultiAnswer(answer: Answer | undefined): answer is string[] {
-  return Array.isArray(answer);
-}
-
 export function isScalarAnswer(answer: Answer | undefined): answer is string {
   return typeof answer === 'string';
 }
