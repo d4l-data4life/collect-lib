@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `'postal-code'` `QuestionInputType` and FHIR constants `PostalCodeCountrySourceExtension`, `PostalCodeFromItemUrl`, `PostalCodeFixedCountryUrl`
+- `postal-code` input type
 
 ### Changed
 
