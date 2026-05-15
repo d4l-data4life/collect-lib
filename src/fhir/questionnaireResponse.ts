@@ -122,6 +122,7 @@ export const toQuestionnaireResponseItem = (answer: {
     case 'string':
     case 'text':
     case 'geo-location':
+    case 'postal-code':
       return {
         linkId: answer.id,
         text: answer.text,
