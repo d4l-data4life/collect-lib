@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Postal code response to FHIR
-
 ### Security
+
+## [v1.31.2] - 2026-05-15
+
+### Fixed
+
+- Postal code response to FHIR
 
 ## [v1.31.1] - 2026-05-13
 
@@ -321,7 +325,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.31.1...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.31.2...HEAD
+[v1.31.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.31.1...v1.31.2
 [v1.31.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.31.0...v1.31.1
 [v1.31.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.30.0...v1.31.0
 [v1.30.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.29.1...v1.30.0
