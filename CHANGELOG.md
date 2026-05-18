@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `likert-scale` input type
-
 ### Changed
 
 ### Deprecated
@@ -19,10 +17,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [v1.34.0] - 2026-05-18
+
+### Added
+
+- `likert-scale` input type
+
+### Fixed
+
 - `matrix-item` input type constant
 - `scale_numeric` using `valueInteger` (question is defined as decimal)
-
-### Security
 
 ## [v1.33.3] - 2026-05-18
 
@@ -354,7 +360,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.3...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.34.0...HEAD
+[v1.34.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.3...v1.34.0
 [v1.33.3]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.2...v1.33.3
 [v1.33.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.1...v1.33.2
 [v1.33.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.0...v1.33.1
