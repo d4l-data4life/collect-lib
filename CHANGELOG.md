@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Handle empty response for optional questions
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.33.3] - 2026-05-18
+
+### Changed
+
+- Handle empty response for optional questions
 
 ## [v1.33.2] - 2026-05-18
 
@@ -345,7 +349,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.2...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.3...HEAD
+[v1.33.3]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.2...v1.33.3
 [v1.33.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.1...v1.33.2
 [v1.33.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.0...v1.33.1
 [v1.33.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.32.0...v1.33.0
