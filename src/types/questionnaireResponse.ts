@@ -2,12 +2,12 @@ type AnswerItemBase = { id: string; text: string };
 
 export type ScalarAnswerItem = AnswerItemBase & {
   type: Exclude<QuestionInputType, 'matrix' | 'multi-select' | 'list'>;
-  response: ResponseValue;
+  response: ResponseValue | undefined;
 };
 
 export type ArrayAnswerItem = AnswerItemBase & {
   type: 'multi-select' | 'list';
-  response: ResponseValue[];
+  response: ResponseValue[] | undefined;
 };
 
 export type MatrixAnswerItem = AnswerItemBase & {
