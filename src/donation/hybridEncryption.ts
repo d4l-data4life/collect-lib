@@ -182,8 +182,8 @@ export class HybridEncrypter {
       donation.iv
     );
 
-    // Return the Arraybuffeer as plain text
-    return this.converter.uint8ArrayToUTF8(decryptedDonation);
+    // Buffer decoding works across browser and React Native via the existing buffer polyfill.
+    return Buffer.from(decryptedDonation).toString('utf8');
   };
 
   private getDataKey = (): string => {
