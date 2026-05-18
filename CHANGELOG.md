@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `matrix-item` input type constant
+- `scale_numeric` using `valueInteger` (question is defined as decimal)
 
 ### Security
 
