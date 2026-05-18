@@ -65,4 +65,5 @@ export type QuestionInputType =
   | 'group'
   | 'display'
   | 'matrix'
-  | 'matrix_item';
+  | 'matrix-item'
+  | 'likert-scale';
