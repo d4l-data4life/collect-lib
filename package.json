@@ -1,6 +1,6 @@
 {
   "name": "@d4l/collect-lib",
-  "version": "1.33.3",
+  "version": "1.34.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
