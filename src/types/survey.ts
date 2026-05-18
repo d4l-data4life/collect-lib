@@ -1,4 +1,3 @@
-import { QuestionInputType } from './questionnaireResponse';
 import { RecursiveKeyOf, TranslatedString } from '.';
 
 export type MatrixAnswer = Record<string, string>;

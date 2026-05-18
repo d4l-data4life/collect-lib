@@ -66,10 +66,13 @@ export const toQuestionnaireResponseItem = (
         answer: createAnswer(answer.response, (response) => ({ valueDate: response.value })),
       };
     case 'decimal':
+    case 'scale-numeric':
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: createAnswer(answer.response, (response) => ({ valueDecimal: Number(response.value) })),
+        answer: createAnswer(answer.response, (response) => ({
+          valueDecimal: Number(response.value),
+        })),
       };
     case 'year':
       return {
@@ -83,7 +86,7 @@ export const toQuestionnaireResponseItem = (
         text: answer.text,
         item: answer.items.map(toQuestionnaireResponseItem),
       };
-    case 'matrix_item':
+    case 'matrix-item':
     case 'single-select':
     case 'country':
       return {
@@ -98,11 +101,13 @@ export const toQuestionnaireResponseItem = (
         })),
       };
     case 'scale-ordinal':
-    case 'scale-numeric':
+    case 'likert-scale':
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: createAnswer(answer.response, (response) => ({ valueInteger: Number(response.value) })),
+        answer: createAnswer(answer.response, (response) => ({
+          valueInteger: Number(response.value),
+        })),
       };
     case 'string':
     case 'text':
