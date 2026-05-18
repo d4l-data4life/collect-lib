@@ -8,6 +8,8 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "allowUmdGlobalAccess": true
+    "allowUmdGlobalAccess": true,
+    "types": ["node", "jest", "fhir"],
+    "isolatedModules": true
   }
 }
