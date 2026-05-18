@@ -1,4 +1,4 @@
-import { AnswerItem, QuestionnaireResponse } from '../types/questionnaireResponse';
+import { AnswerItem, QuestionnaireResponse, ResponseValue } from '../types/questionnaireResponse';
 import {
   CustomExtensionContextValue,
   CustomExtensionDate,
@@ -49,7 +49,7 @@ export const toQuestionnaireResponseItem = (
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: answer.response.map((r) => ({
+        answer: createArrayAnswer(answer.response, (r) => ({
           valueCoding: { system: r.system, code: r.value, display: r.display },
         })),
       };
@@ -57,25 +57,25 @@ export const toQuestionnaireResponseItem = (
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: answer.response.map((r) => ({ valueString: r.value })),
+        answer: createArrayAnswer(answer.response, (r) => ({ valueString: r.value })),
       };
     case 'date':
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: [{ valueDate: String(answer.response.value) }],
+        answer: createAnswer(answer.response, (response) => ({ valueDate: response.value })),
       };
     case 'decimal':
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: [{ valueDecimal: Number(answer.response.value) }],
+        answer: createAnswer(answer.response, (response) => ({ valueDecimal: Number(response.value) })),
       };
     case 'year':
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: [{ valueDate: String(answer.response.value) }],
+        answer: createAnswer(answer.response, (response) => ({ valueDate: response.value })),
       };
     case 'matrix':
       return {
@@ -89,22 +89,20 @@ export const toQuestionnaireResponseItem = (
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: [
-          {
-            valueCoding: {
-              system: answer.response.system,
-              code: answer.response.value,
-              display: answer.response.display,
-            },
+        answer: createAnswer(answer.response, (response) => ({
+          valueCoding: {
+            system: response.system,
+            code: response.value,
+            display: response.display,
           },
-        ],
+        })),
       };
     case 'scale-ordinal':
     case 'scale-numeric':
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: [{ valueInteger: Number(answer.response.value) }],
+        answer: createAnswer(answer.response, (response) => ({ valueInteger: Number(response.value) })),
       };
     case 'string':
     case 'text':
@@ -113,9 +111,23 @@ export const toQuestionnaireResponseItem = (
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: [{ valueString: answer.response.value }],
+        answer: createAnswer(answer.response, (response) => ({ valueString: response.value })),
       };
     default:
       return { linkId: answer.id };
   }
+};
+
+const createAnswer = <T>(
+  response: ResponseValue | undefined,
+  mapper: (response: ResponseValue) => T
+): T[] => {
+  return response !== undefined ? [mapper(response)] : [];
+};
+
+const createArrayAnswer = <T>(
+  responses: ResponseValue[] | undefined,
+  mapper: (r: ResponseValue) => T
+): T[] => {
+  return responses !== undefined ? responses.map(mapper) : [];
 };
