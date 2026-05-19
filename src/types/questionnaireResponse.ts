@@ -56,6 +56,7 @@ export type QuestionInputType =
   | 'multi-select'
   | 'scale-ordinal'
   | 'scale-numeric'
+  | 'scale-likert'
   | 'string'
   | 'text'
   | 'geo-location'
@@ -65,5 +66,4 @@ export type QuestionInputType =
   | 'group'
   | 'display'
   | 'matrix'
-  | 'matrix-item'
-  | 'likert-scale';
+  | 'matrix-item';
