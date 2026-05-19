@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Rename `likert-scale` to `scale-likert`
-
 ### Security
+
+## [v1.34.1] - 2026-05-19
+
+### Fixed
+
+- Rename `likert-scale` to `scale-likert`
 
 ## [v1.34.0] - 2026-05-18
 
@@ -362,7 +366,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.34.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.34.1...HEAD
+[v1.34.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.34.0...v1.34.1
 [v1.34.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.3...v1.34.0
 [v1.33.3]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.2...v1.33.3
 [v1.33.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.1...v1.33.2
