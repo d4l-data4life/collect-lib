@@ -101,7 +101,7 @@ export const toQuestionnaireResponseItem = (
         })),
       };
     case 'scale-ordinal':
-    case 'likert-scale':
+    case 'scale-likert':
       return {
         linkId: answer.id,
         text: answer.text,
