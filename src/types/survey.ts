@@ -121,10 +121,10 @@ export type SurveyContent = {
 // #### SurveyMultiplex
 // Properties | Required | Type | Description
 export type SurveyMultiplex = {
-  // questionnaire | true | string | Name of the questionnaires the multiplexing is based on.
-  questionnaire: string;
-  // linkIds | true | string[] | List of question linkds. Answers to these questions will be used to fill the placeholder
-  linkIds: string[];
+  // source | true | object | Defines the source of the multiplexing. The keys of the object are the questionnaire names and the values are the linkIds of the questions whose answers will be used for multiplexing. The answers to these questions will be used to fill the placeholder.
+  source: { [key: string]: string[] };
+  // lookup | true | `all` or `latest` | Defines how the answers of the source questions will be looked up. `latest` means only the latest iteration of the source questionnaires will be used, `all` means all iterations of the source questionnaires will be used.
+  lookup: 'all' | 'latest';
   // placeholder | true | string | Placeholder text to be replaced with answers from the specified linkIds
   placeholder: string;
 };
