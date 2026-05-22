@@ -342,11 +342,11 @@ Update the types by running `yarn run readme:update`.
 
 #### SurveyMultiplex
 
-| Properties    | Required | Type     | Description                                                                              |
-| ------------- | -------- | -------- | ---------------------------------------------------------------------------------------- |
-| questionnaire | true     | string   | Name of the questionnaires the multiplexing is based on.                                 |
-| linkIds       | true     | string[] | List of question linkds. Answers to these questions will be used to fill the placeholder |
-| placeholder   | true     | string   | Placeholder text to be replaced with answers from the specified linkIds                  |
+| Properties  | Required | Type              | Description                                                                                                                                                                                                                                                  |
+| ----------- | -------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| source      | true     | object            | Defines the source of the multiplexing. The keys of the object are the questionnaire names and the values are the linkIds of the questions whose answers will be used for multiplexing. The answers to these questions will be used to fill the placeholder. |
+| lookup      | true     | `all` or `latest` | Defines how the answers of the source questions will be looked up. `latest` means only the latest iteration of the source questionnaires will be used, `all` means all iterations of the source questionnaires will be used.                                 |
+| placeholder | true     | string            | Placeholder text to be replaced with answers from the specified linkIds                                                                                                                                                                                      |
 
 ### Routine
 
