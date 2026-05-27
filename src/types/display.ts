@@ -44,7 +44,7 @@ export type DisplayContent = {
 // #### ContentBlock
 // Properties | Required | Type | Description
 export type ContentBlock = {
-  // image | false | string | Optional image for the content block
+  // image | false | object | Optional image for the content block
   image?: {
     // image.src | true | string | Image source URL
     src: string;
