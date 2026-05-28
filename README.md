@@ -411,7 +411,9 @@ Update the types by running `yarn run readme:update`.
 
 #### ContentBlock
 
-| Properties | Required | Type               | Description                          |
-| ---------- | -------- | ------------------ | ------------------------------------ |
-| image      | false    | string             | Optional image for the content block |
-| text       | true     | {[language]: text} | Block text in available languages    |
+| Properties | Required | Type               | Description                                   |
+| ---------- | -------- | ------------------ | --------------------------------------------- |
+| image      | false    | object             | Optional image for the content block          |
+| image.src  | true     | string             | Image source URL                              |
+| image.alt  | false    | {[language]: text} | Alt text for the image in available languages |
+| text       | true     | {[language]: text} | Block text in available languages             |

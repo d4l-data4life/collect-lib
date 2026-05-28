@@ -44,8 +44,13 @@ export type DisplayContent = {
 // #### ContentBlock
 // Properties | Required | Type | Description
 export type ContentBlock = {
-  // image | false | string | Optional image for the content block
-  image?: string;
+  // image | false | object | Optional image for the content block
+  image?: {
+    // image.src | true | string | Image source URL
+    src: string;
+    // image.alt | false | {[language]: text} | Alt text for the image in available languages
+    alt?: TranslatedString;
+  };
   // text | true | {[language]: text} | Block text in available languages
   text: TranslatedString;
 };
