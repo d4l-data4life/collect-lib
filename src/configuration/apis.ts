@@ -1,6 +1,6 @@
 import { ProgramClientTarget } from '../types';
 
-export type API = 'DEXCOM' | 'FITBIT';
+export type API = 'DEXCOM' | 'FITBIT' | 'GOOGLE_HEALTH';
 
 export type APIConfig = {
   loginEndpoint: string;
@@ -32,6 +32,19 @@ export const API_TARGET_MAP: { [key in API]: { [target in ProgramClientTarget]: 
       loginEndpoint: 'https://www.fitbit.com/oauth2/authorize',
       tokenEndpoint: 'https://api.fitbit.com/oauth2/token',
       dataEndpoint: 'https://api.fitbit.com',
+    },
+  },
+  GOOGLE_HEALTH: {
+    prod: {
+      loginEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
+      tokenEndpoint: 'https://oauth2.googleapis.com/token',
+      dataEndpoint: 'https://health.googleapis.com/v4',
+    },
+    sandbox: {
+      // No sandbox for Google Health
+      loginEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
+      tokenEndpoint: 'https://oauth2.googleapis.com/token',
+      dataEndpoint: 'https://health.googleapis.com/v4',
     },
   },
 };
