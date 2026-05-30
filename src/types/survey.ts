@@ -1,7 +1,21 @@
 import { RecursiveKeyOf, TranslatedString } from '.';
 
-export type Answer = string | string[];
-export type Answers = { [key: string]: Answer };
+export type MatrixAnswer = Record<string, string>;
+export type FlatAnswer = string | string[];
+export type Answer = FlatAnswer | MatrixAnswer;
+export type Answers = Record<string, Answer>;
+
+export function isMatrixAnswer(answer: Answer | undefined): answer is MatrixAnswer {
+  return typeof answer === 'object' && answer !== null && !Array.isArray(answer);
+}
+
+export function isFlatAnswer(answer: Answer | undefined): answer is FlatAnswer {
+  return typeof answer === 'string' || Array.isArray(answer);
+}
+
+export function isScalarAnswer(answer: Answer | undefined): answer is string {
+  return typeof answer === 'string';
+}
 export type MultiAnswers = { [key: string]: { date: Date | null; answers: Answers } };
 export type CopyrightLabel = { [key: string]: string };
 
@@ -107,10 +121,10 @@ export type SurveyContent = {
 // #### SurveyMultiplex
 // Properties | Required | Type | Description
 export type SurveyMultiplex = {
-  // questionnaire | true | string | Name of the questionnaires the multiplexing is based on.
-  questionnaire: string;
-  // linkIds | true | string[] | List of question linkds. Answers to these questions will be used to fill the placeholder
-  linkIds: string[];
+  // source | true | object | Defines the source of the multiplexing. The keys of the object are the questionnaire names and the values are the linkIds of the questions whose answers will be used for multiplexing. The answers to these questions will be used to fill the placeholder.
+  source: { [key: string]: string[] };
+  // lookup | true | `all` or `latest` | Defines how the answers of the source questions will be looked up. `latest` means only the latest iteration of the source questionnaires will be used, `all` means all iterations of the source questionnaires will be used.
+  lookup: 'all' | 'latest';
   // placeholder | true | string | Placeholder text to be replaced with answers from the specified linkIds
   placeholder: string;
 };

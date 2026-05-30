@@ -1,8 +1,4 @@
-import {
-  QuestionInputType,
-  QuestionnaireResponse,
-  ResponseValue,
-} from '../types/questionnaireResponse';
+import { AnswerItem, QuestionnaireResponse, ResponseValue } from '../types/questionnaireResponse';
 import {
   CustomExtensionContextValue,
   CustomExtensionDate,
@@ -45,79 +41,73 @@ export function generateFHIRResponse(
   };
 }
 
-export const toQuestionnaireResponseItem = (answer: {
-  id: string;
-  type: QuestionInputType;
-  response: ResponseValue | ResponseValue[];
-  text: string;
-}): fhir5.QuestionnaireResponseItem => {
-  const response = answer.response;
-
-  if (Array.isArray(response)) {
-    switch (answer.type) {
-      case 'multi-select':
-        return {
-          linkId: answer.id,
-          text: answer.text,
-          answer: response.map((r: ResponseValue) => ({
-            valueCoding: { system: r.system, code: r.value, display: r?.display },
-          })),
-        };
-      case 'list':
-        return {
-          linkId: answer.id,
-          text: answer.text,
-          answer: response.map((r: ResponseValue) => ({
-            valueString: r.value,
-          })),
-        };
-      default:
-        return {
-          linkId: answer.id,
-        };
-    }
-  }
-
+export const toQuestionnaireResponseItem = (
+  answer: AnswerItem
+): fhir5.QuestionnaireResponseItem => {
   switch (answer.type) {
+    case 'multi-select':
+      return {
+        linkId: answer.id,
+        text: answer.text,
+        answer: createArrayAnswer(answer.response, (r) => ({
+          valueCoding: { system: r.system, code: r.value, display: r.display },
+        })),
+      };
+    case 'list':
+      return {
+        linkId: answer.id,
+        text: answer.text,
+        answer: createArrayAnswer(answer.response, (r) => ({ valueString: r.value })),
+      };
     case 'date':
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: [{ valueDate: String(response.value) }],
+        answer: createAnswer(answer.response, (response) => ({ valueDate: response.value })),
       };
     case 'decimal':
+    case 'scale-numeric':
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: [{ valueDecimal: Number(response.value) }],
+        answer: createAnswer(answer.response, (response) => ({
+          valueDecimal: Number(response.value),
+        })),
       };
     case 'year':
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: [{ valueDate: String(response.value) }],
+        answer: createAnswer(answer.response, (response) => ({ valueDate: response.value })),
       };
+    case 'matrix':
+      return {
+        linkId: answer.id,
+        text: answer.text,
+        item: answer.items.map(toQuestionnaireResponseItem),
+      };
+    case 'matrix-item':
     case 'single-select':
     case 'country':
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: [
-          {
-            valueCoding: {
-              system: response.system,
-              code: response?.value!,
-              display: response?.display!,
-            },
+        answer: createAnswer(answer.response, (response) => ({
+          valueCoding: {
+            system: response.system,
+            code: response.value,
+            display: response.display,
           },
-        ],
+        })),
       };
     case 'scale-ordinal':
-    case 'scale-numeric':
+    case 'scale-likert':
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: [{ valueInteger: Number(response.value) }],
+        answer: createAnswer(answer.response, (response) => ({
+          valueInteger: Number(response.value),
+        })),
       };
     case 'string':
     case 'text':
@@ -126,11 +116,23 @@ export const toQuestionnaireResponseItem = (answer: {
       return {
         linkId: answer.id,
         text: answer.text,
-        answer: [{ valueString: response.value }],
+        answer: createAnswer(answer.response, (response) => ({ valueString: response.value })),
       };
     default:
-      return {
-        linkId: answer.id,
-      };
+      return { linkId: answer.id };
   }
+};
+
+const createAnswer = <T>(
+  response: ResponseValue | undefined,
+  mapper: (response: ResponseValue) => T
+): T[] => {
+  return response !== undefined ? [mapper(response)] : [];
+};
+
+const createArrayAnswer = <T>(
+  responses: ResponseValue[] | undefined,
+  mapper: (r: ResponseValue) => T
+): T[] => {
+  return responses !== undefined ? responses.map(mapper) : [];
 };

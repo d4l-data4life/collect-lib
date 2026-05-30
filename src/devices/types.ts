@@ -59,6 +59,7 @@ export type DEVICE_KEY_BLE =
 
 export type DEVICE_KEY_API =
   | 'FITBIT'
+  | 'GOOGLE_HEALTH'
   | 'DEXCOM'
   | 'dexcom_g4'
   | 'dexcom_g5'
@@ -120,6 +121,7 @@ export const DEVICE_KEY_TO_NAME: Record<DEVICE_KEY, DeviceName> = {
   PixelWatch1: { shortName: 'Pixel Watch', fullName: 'Google Pixel Watch' },
   GalaxyWatch6: { shortName: 'Galaxy Watch', fullName: 'Samsung Galaxy Watch 6' },
   FITBIT: { shortName: 'fitbit', fullName: 'fitbit' },
+  GOOGLE_HEALTH: { shortName: 'Google Health', fullName: 'Google Health' },
   DEXCOM: { shortName: 'Dexcom', fullName: 'Dexcom' },
   dexcom_g4: { shortName: 'Dexcom G4', fullName: 'Dexcom G4' },
   dexcom_g5: { shortName: 'Dexcom G5', fullName: 'Dexcom G5' },

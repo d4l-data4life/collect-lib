@@ -177,7 +177,7 @@ export class AnswerDateGuard implements Guard {
     }
 
     const answer = answers[questionID];
-    if (Array.isArray(answer)) {
+    if (typeof answer !== 'string') {
       return false;
     }
 
@@ -192,7 +192,7 @@ export class AnswerDateGuard implements Guard {
     const { multiAnswers } = params;
     if (this.surveyName && multiAnswers !== undefined) {
       const answer = multiAnswers[this.surveyName].answers[this.questionID];
-      if (answer && !Array.isArray(answer)) {
+      if (typeof answer === 'string') {
         const jsDate = new Date(answer);
         if (!isNaN(jsDate.getTime())) {
           const answerDate = DateTime.fromJSDate(jsDate).plus(this.offset);
@@ -234,7 +234,7 @@ export class YearGuard implements Guard {
     }
 
     const answer = answers[questionID];
-    if (Array.isArray(answer)) {
+    if (typeof answer !== 'string') {
       return false;
     }
 
@@ -271,7 +271,7 @@ export class DecimalGuard implements Guard {
     }
 
     const answer = answers[questionID];
-    if (Array.isArray(answer)) {
+    if (typeof answer !== 'string') {
       return false;
     }
 
