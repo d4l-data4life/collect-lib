@@ -19,11 +19,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-## [v1.31.2] - 2026-05-15
+## [v1.37.0] - 2026-05-30
+
+### Added
+
+- Add Google Health
+
+## [v1.36.0] - 2026-05-28
+
+### Changed
+
+- Add Alt text to ContentBlock image
+
+## [v1.35.0] - 2026-05-22
+
+### Changed
+
+- Survey multiplex type
+
+## [v1.34.1] - 2026-05-19
+
+### Fixed
+
+- Rename `likert-scale` to `scale-likert`
+
+## [v1.34.0] - 2026-05-18
+
+### Added
+
+- `likert-scale` input type
+
+### Fixed
+
+- `matrix-item` input type constant
+- `scale_numeric` using `valueInteger` (question is defined as decimal)
+
+## [v1.33.3] - 2026-05-18
+
+### Changed
+
+- Handle empty response for optional questions
+
+## [v1.33.2] - 2026-05-18
+
+### Fixed
+
+- Decryption failing in browser environment
+
+## [v1.33.1] - 2026-05-15
 
 ### Fixed
 
 - Postal code response to FHIR
+
+## [v1.33.0] - 2026-05-13
+
+### Added
+
+- Add matrix question type
+
+## [v1.32.0] - 2026-05-13
+
+### Added
+
+- Support for groups and display in questionnaires
 
 ## [v1.31.1] - 2026-05-13
 
@@ -325,8 +384,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.31.2...HEAD
-[v1.31.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.31.1...v1.31.2
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.37.0...HEAD
+[v1.37.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.36.0...v1.37.0
+[v1.36.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.35.0...v1.36.0
+[v1.35.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.34.1...v1.35.0
+[v1.34.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.34.0...v1.34.1
+[v1.34.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.3...v1.34.0
+[v1.33.3]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.2...v1.33.3
+[v1.33.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.1...v1.33.2
+[v1.33.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.0...v1.33.1
+[v1.33.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.32.0...v1.33.0
+[v1.32.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.31.1...v1.32.0
 [v1.31.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.31.0...v1.31.1
 [v1.31.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.30.0...v1.31.0
 [v1.30.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.29.1...v1.30.0
