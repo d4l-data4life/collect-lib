@@ -45,6 +45,7 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'ppgGreen'
   | 'ppgRed'
   | 'ppgInfrared'
+  | 'samsungSdkAcceleration'
   // Fitbit types
   | 'skinTemperature'
   | 'sleepLevel'
