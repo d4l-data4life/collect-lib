@@ -101,6 +101,7 @@ export type ProgramDevicesDataType =
   | 'ppgGreen'
   | 'ppgRed'
   | 'ppgInfrared'
+  | 'samsungSdkAcceleration'
   | 'ecg'
   | 'spo2'
   | 'steps'
