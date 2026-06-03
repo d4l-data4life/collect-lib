@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Config for `samsungSdkAcceleration` to record acceleration data in background on Galaxy Watch
+- Support for withholding surveys, routines and displays from being published
 
 ### Changed
 

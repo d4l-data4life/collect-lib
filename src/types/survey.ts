@@ -40,6 +40,8 @@ export type Survey = {
   multiplex?: SurveyMultiplex;
   // copyrightLabel | false | CopyrightLabel | Optional copyright/trademark text shown on questionnaire screens
   copyrightLabel?: CopyrightLabel;
+  // withheld | true | boolean | If true, the survey will not be published yet
+  withheld: boolean;
 };
 
 // #### TaskFrequency
