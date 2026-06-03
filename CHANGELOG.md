@@ -9,9 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Config for `samsungSdkAcceleration` to record acceleration data in background on Galaxy Watch
-- Support for withholding surveys, routines and displays from being published
-
 ### Changed
 
 ### Deprecated
@@ -21,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.38.0] - 2026-06-03
+
+### Added
+
+- Config for `samsungSdkAcceleration` to record acceleration data in background on Galaxy Watch
+- Support for withholding surveys, routines and displays from being published
 
 ## [v1.37.0] - 2026-05-30
 
@@ -387,7 +391,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.37.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.38.0...HEAD
+[v1.38.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.37.0...v1.38.0
 [v1.37.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.36.0...v1.37.0
 [v1.36.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.35.0...v1.36.0
 [v1.35.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.34.1...v1.35.0
