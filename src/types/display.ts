@@ -23,8 +23,8 @@ export type Display = {
   charts?: { [key in ProgramDeviceType]?: ProgramDevicesDataType[] };
   // publishedAt | false | ISO 8601 date with timezone | Date the display was published.
   publishedAt?: string;
-  // withheld | false | boolean | If true, the survey will not be published yet
-  withheld?: boolean;
+  // withheld | true | boolean | If true, the survey will not be published yet
+  withheld: boolean;
 };
 
 export type DisplayType = 'report' | 'recommendation' | 'end-of-participation';

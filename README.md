@@ -289,7 +289,7 @@ Update the types by running `yarn run readme:update`.
 | publishedAt    | false    | ISO 8601 date with timezone         | Date the survey was published.                                                                                        |
 | multiplex      | false    | [SurveyMultiplex](#SurveyMultiplex) | Configures that this survey will be answered multiple times per window based on the answers of another questionnaire. |
 | copyrightLabel | false    | CopyrightLabel                      | Optional copyright/trademark text shown on questionnaire screens                                                      |
-| withheld       | false    | boolean                             | If true, the survey will not be published yet                                                                         |
+| withheld       | true     | boolean                             | If true, the survey will not be published yet                                                                         |
 
 #### TaskFrequency
 
@@ -360,7 +360,7 @@ Update the types by running `yarn run readme:update`.
 | devices     | true                     | string[]                            | Lists the devices used in the routine                                            |
 | duration    | ISO 8601 duration String | Defines the duration of the routine |
 | publishedAt | false                    | ISO 8601 date with timezone         | Date the routine was published.                                                  |
-| withheld    | false                    | boolean                             | If true, the routine will not be published yet                                   |
+| withheld    | true                     | boolean                             | If true, the routine will not be published yet                                   |
 
 #### ProgramDevice
 
@@ -401,7 +401,7 @@ Update the types by running `yarn run readme:update`.
 | content     | true     | [DisplayContent](#DisplayContent)                         | Defines the texts, images and icons that need to be displayed for the display    |
 | charts      | false    | { [key in ProgramDeviceType]?: ProgramDevicesDataType[] } | List of devices and their data types that are relevant for the display           |
 | publishedAt | false    | ISO 8601 date with timezone                               | Date the display was published.                                                  |
-| withheld    | false    | boolean                                                   | If true, the survey will not be published yet                                    |
+| withheld    | true     | boolean                                                   | If true, the survey will not be published yet                                    |
 
 #### DisplayContent
 
