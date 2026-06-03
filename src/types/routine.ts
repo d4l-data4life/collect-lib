@@ -21,6 +21,8 @@ export type Routine = {
   duration?: string;
   // publishedAt | false | ISO 8601 date with timezone | Date the routine was published.
   publishedAt?: string;
+  // withheld | false | boolean | If true, the routine will not be published yet
+  withheld?: boolean;
 };
 
 // #### ProgramDevice
