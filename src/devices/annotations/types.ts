@@ -59,6 +59,10 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'walkingAndRunningDistance'
   | 'activeEnergy'
   | 'sleepState'
+  // Oura types
+  | 'stress'
+  | 'workout'
+  | 'tag'
   // Health Connect types
   | 'sleepStage'
   // Common types for SDK sources

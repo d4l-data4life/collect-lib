@@ -55,6 +55,7 @@ export type ProgramDeviceType =
   | 'INTERNAL'
   | 'FITBIT'
   | 'GOOGLE_HEALTH'
+  | 'OURA'
   | 'GalaxyWatch6'
   | 'PixelWatch1'
   | 'AppleHealth'
@@ -113,7 +114,10 @@ export type ProgramDevicesDataType =
   | 'stepCount'
   | 'walkingAndRunningDistance'
   | 'activeEnergy'
-  | 'sleepAnalysis';
+  | 'sleepAnalysis'
+  | 'stress'
+  | 'workout'
+  | 'tag';
 
 export type ProgramDevicesLabel = { name: string } & TranslatedString;
 

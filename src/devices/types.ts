@@ -60,6 +60,7 @@ export type DEVICE_KEY_BLE =
 export type DEVICE_KEY_API =
   | 'FITBIT'
   | 'GOOGLE_HEALTH'
+  | 'OURA'
   | 'DEXCOM'
   | 'dexcom_g4'
   | 'dexcom_g5'
@@ -105,7 +106,11 @@ export type DEVICE_SIGNAL_TYPE =
   | 'stepCount'
   | 'walkingAndRunningDistance'
   | 'activeEnergy'
-  | 'sleepAnalysis';
+  | 'sleepAnalysis'
+  // Oura types
+  | 'stress'
+  | 'workout'
+  | 'tag';
 
 export type DeviceName = {
   shortName: string;
@@ -122,6 +127,7 @@ export const DEVICE_KEY_TO_NAME: Record<DEVICE_KEY, DeviceName> = {
   GalaxyWatch6: { shortName: 'Galaxy Watch', fullName: 'Samsung Galaxy Watch 6' },
   FITBIT: { shortName: 'fitbit', fullName: 'fitbit' },
   GOOGLE_HEALTH: { shortName: 'Google Health', fullName: 'Google Health' },
+  OURA: { shortName: 'Oura', fullName: 'Oura Ring' },
   DEXCOM: { shortName: 'Dexcom', fullName: 'Dexcom' },
   dexcom_g4: { shortName: 'Dexcom G4', fullName: 'Dexcom G4' },
   dexcom_g5: { shortName: 'Dexcom G5', fullName: 'Dexcom G5' },
