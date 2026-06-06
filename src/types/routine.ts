@@ -117,7 +117,8 @@ export type ProgramDevicesDataType =
   | 'sleepAnalysis'
   | 'stress'
   | 'workout'
-  | 'tag';
+  | 'tag'
+  | 'cardiovascularAge';
 
 export type ProgramDevicesLabel = { name: string } & TranslatedString;
 

@@ -63,6 +63,7 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'stress'
   | 'workout'
   | 'tag'
+  | 'cardiovascularAge'
   // Health Connect types
   | 'sleepStage'
   // Common types for SDK sources

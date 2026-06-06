@@ -110,7 +110,8 @@ export type DEVICE_SIGNAL_TYPE =
   // Oura types
   | 'stress'
   | 'workout'
-  | 'tag';
+  | 'tag'
+  | 'cardiovascularAge';
 
 export type DeviceName = {
   shortName: string;
