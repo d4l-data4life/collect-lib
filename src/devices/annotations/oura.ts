@@ -47,6 +47,22 @@ export const OURA_ANNOTATION_ITEM_TAG: DEVICE_ANNOTATION_ITEM = {
 export const OURA_TAG_ANNOTATION: DEVICE_ANNOTATION = [OURA_ANNOTATION_ITEM_TAG];
 // #endregion
 
+// #region Cardiovascular Age / Heart Health (daily_cardiovascular_age)
+export const OURA_ANNOTATION_ITEM_CARDIOVASCULAR_AGE: DEVICE_ANNOTATION_ITEM = {
+  type: 'cardiovascularAge',
+  size: 8,
+  channels: 2,
+  channelLabels: ['vascularAge', 'pulseWaveVelocity'],
+  format: 'float32',
+  littleEndian: true,
+  note: 'vascularAge in years [18,100]; pulseWaveVelocity in m/s (NaN if unavailable)',
+};
+
+export const OURA_CARDIOVASCULAR_AGE_ANNOTATION: DEVICE_ANNOTATION = [
+  OURA_ANNOTATION_ITEM_CARDIOVASCULAR_AGE,
+];
+// #endregion
+
 // Overlapping signals re-use Fitbit's buffer encoding so a study can ingest data
 // from Fitbit, Google Health and Oura through the same FHIR pipeline.
 export const OURA_SIGNAL_TYPE_ANNOTATIONS: {
@@ -63,4 +79,5 @@ export const OURA_SIGNAL_TYPE_ANNOTATIONS: {
   stress: OURA_STRESS_ANNOTATION,
   workout: OURA_WORKOUT_ANNOTATION,
   tag: OURA_TAG_ANNOTATION,
+  cardiovascularAge: OURA_CARDIOVASCULAR_AGE_ANNOTATION,
 };
