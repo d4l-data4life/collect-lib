@@ -8,14 +8,6 @@ export type FlatAnswer = string | string[];
 export type Answer = FlatAnswer | MatrixAnswer;
 export type Answers = Record<string, Answer>;
 
-export function isMatrixAnswer(answer: Answer | undefined): answer is MatrixAnswer {
-  return typeof answer === 'object' && answer !== null && !Array.isArray(answer);
-}
-
-export function isFlatAnswer(answer: Answer | undefined): answer is FlatAnswer {
-  return typeof answer === 'string' || Array.isArray(answer);
-}
-
 export function isScalarAnswer(answer: Answer | undefined): answer is ScalarAnswer {
   return typeof answer === 'string';
 }
@@ -28,6 +20,14 @@ export function isGeoLocationAnswer(answer: Answer | undefined): answer is GeoLo
   return Array.isArray(answer) &&
     answer.length === 2 &&
     [answer[0], answer[1]].every((s): s is string => Number.isFinite(Number(s)));
+}
+
+export function isMatrixAnswer(answer: Answer | undefined): answer is MatrixAnswer {
+  return typeof answer === 'object' && answer !== null && !Array.isArray(answer);
+}
+
+export function isFlatAnswer(answer: Answer | undefined): answer is FlatAnswer {
+  return typeof answer === 'string' || Array.isArray(answer);
 }
 
 export type MultiAnswers = { [key: string]: { date: Date | null; answers: Answers } };
