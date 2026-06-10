@@ -23,6 +23,8 @@ export type Display = {
   charts?: { [key in ProgramDeviceType]?: ProgramDevicesDataType[] };
   // publishedAt | false | ISO 8601 date with timezone | Date the display was published.
   publishedAt?: string;
+  // withheld | true | boolean | If true, the survey will not be published yet
+  withheld: boolean;
 };
 
 export type DisplayType = 'report' | 'recommendation' | 'end-of-participation';
@@ -44,8 +46,13 @@ export type DisplayContent = {
 // #### ContentBlock
 // Properties | Required | Type | Description
 export type ContentBlock = {
-  // image | false | string | Optional image for the content block
-  image?: string;
+  // image | false | object | Optional image for the content block
+  image?: {
+    // image.src | true | string | Image source URL
+    src: string;
+    // image.alt | false | {[language]: text} | Alt text for the image in available languages
+    alt?: TranslatedString;
+  };
   // text | true | {[language]: text} | Block text in available languages
   text: TranslatedString;
 };

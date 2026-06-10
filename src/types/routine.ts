@@ -21,6 +21,8 @@ export type Routine = {
   duration?: string;
   // publishedAt | false | ISO 8601 date with timezone | Date the routine was published.
   publishedAt?: string;
+  // withheld | true | boolean | If true, the routine will not be published yet
+  withheld: boolean;
 };
 
 // #### ProgramDevice
@@ -52,6 +54,8 @@ export type ProgramDeviceType =
   | 'OH1'
   | 'INTERNAL'
   | 'FITBIT'
+  | 'GOOGLE_HEALTH'
+  | 'OURA'
   | 'GalaxyWatch6'
   | 'PixelWatch1'
   | 'AppleHealth'
@@ -100,6 +104,7 @@ export type ProgramDevicesDataType =
   | 'ppgGreen'
   | 'ppgRed'
   | 'ppgInfrared'
+  | 'samsungSdkAcceleration'
   | 'ecg'
   | 'spo2'
   | 'steps'
@@ -109,7 +114,11 @@ export type ProgramDevicesDataType =
   | 'stepCount'
   | 'walkingAndRunningDistance'
   | 'activeEnergy'
-  | 'sleepAnalysis';
+  | 'sleepAnalysis'
+  | 'stress'
+  | 'workout'
+  | 'tag'
+  | 'cardiovascularAge';
 
 export type ProgramDevicesLabel = { name: string } & TranslatedString;
 

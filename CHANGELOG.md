@@ -19,6 +19,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [v1.39.1] - 2026-06-06
+
+### Added
+
+- Add Oura heart health (cardiovascular age) data type
+
+## [v1.39.0] - 2026-06-05
+
+### Added
+
+- Add Oura
+
+## [v1.38.0] - 2026-06-03
+
+### Added
+
+- Config for `samsungSdkAcceleration` to record acceleration data in background on Galaxy Watch
+- Support for withholding surveys, routines and displays from being published
+
+## [v1.37.0] - 2026-05-30
+
+### Added
+
+- Add Google Health
+
+## [v1.36.0] - 2026-05-28
+
+### Changed
+
+- Add Alt text to ContentBlock image
+
 ## [v1.35.0] - 2026-05-22
 
 ### Changed
@@ -372,7 +403,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.35.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.1...HEAD
+[v1.39.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.0...v1.39.1
+[v1.39.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.38.0...v1.39.0
+[v1.38.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.37.0...v1.38.0
+[v1.37.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.36.0...v1.37.0
+[v1.36.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.35.0...v1.36.0
 [v1.35.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.34.1...v1.35.0
 [v1.34.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.34.0...v1.34.1
 [v1.34.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.3...v1.34.0

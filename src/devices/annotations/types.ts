@@ -45,6 +45,7 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'ppgGreen'
   | 'ppgRed'
   | 'ppgInfrared'
+  | 'samsungSdkAcceleration'
   // Fitbit types
   | 'skinTemperature'
   | 'sleepLevel'
@@ -58,6 +59,11 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'walkingAndRunningDistance'
   | 'activeEnergy'
   | 'sleepState'
+  // Oura types
+  | 'stress'
+  | 'workout'
+  | 'tag'
+  | 'cardiovascularAge'
   // Health Connect types
   | 'sleepStage'
   // Common types for SDK sources

@@ -16,6 +16,8 @@ export function toDeviceConfig(devices: ProgramDevice[]): DeviceConfig[] {
           }));
         case 'DEXCOM':
         case 'FITBIT':
+        case 'GOOGLE_HEALTH':
+        case 'OURA':
           return {
             type: 'api',
             device: device.type,
