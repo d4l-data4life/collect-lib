@@ -1,5 +1,8 @@
 import { RecursiveKeyOf, TranslatedString } from '.';
 
+export type ScalarAnswer = string;
+export type ArrayAnswer = string[];
+export type GeoLocationAnswer = [string, string];
 export type MatrixAnswer = Record<string, string>;
 export type FlatAnswer = string | string[];
 export type Answer = FlatAnswer | MatrixAnswer;
@@ -13,9 +16,20 @@ export function isFlatAnswer(answer: Answer | undefined): answer is FlatAnswer {
   return typeof answer === 'string' || Array.isArray(answer);
 }
 
-export function isScalarAnswer(answer: Answer | undefined): answer is string {
+export function isScalarAnswer(answer: Answer | undefined): answer is ScalarAnswer {
   return typeof answer === 'string';
 }
+
+export function isArrayAnswer(answer: Answer | undefined): answer is ArrayAnswer {
+  return Array.isArray(answer);
+}
+
+export function isGeoLocationAnswer(answer: Answer | undefined): answer is GeoLocationAnswer {
+  return Array.isArray(answer) &&
+    answer.length === 2 &&
+    [answer[0], answer[1]].every((s): s is string => Number.isFinite(Number(s)));
+}
+
 export type MultiAnswers = { [key: string]: { date: Date | null; answers: Answers } };
 export type CopyrightLabel = { [key: string]: string };
 
