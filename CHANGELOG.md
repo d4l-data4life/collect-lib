@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add Oura activity and battery level data types
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.39.3] - 2026-06-12
+
+### Added
+
+- Add Oura activity and battery level data types
 
 ## [v1.39.2] - 2026-06-12
 
@@ -411,7 +415,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.2...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.3...HEAD
+[v1.39.3]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.2...v1.39.3
 [v1.39.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.1...v1.39.2
 [v1.39.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.0...v1.39.1
 [v1.39.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.38.0...v1.39.0
