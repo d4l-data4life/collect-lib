@@ -111,7 +111,9 @@ export type DEVICE_SIGNAL_TYPE =
   | 'stress'
   | 'workout'
   | 'tag'
-  | 'cardiovascularAge';
+  | 'cardiovascularAge'
+  | 'activity'
+  | 'batteryLevel';
 
 export type DeviceName = {
   shortName: string;
