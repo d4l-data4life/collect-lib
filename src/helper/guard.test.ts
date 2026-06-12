@@ -16,6 +16,7 @@ import {
   RoutineGuard,
   SurveyGuard,
   YearGuard,
+  generateQuestionGuard,
   generateStepGuard,
   newStepDateGuard,
 } from './guard';
@@ -513,6 +514,20 @@ describe('Guard', () => {
         expect(case1.evaluate({ [decimalQuestion]: '3.1415' })).toBeTruthy();
         const case2 = new DecimalGuard(decimalQuestion, operand, 'exists');
         expect(case2.evaluate({})).toBeFalsy();
+      });
+
+      describe('with operand 0', () => {
+        it('with the "!=" operator', () => {
+          const guard = new DecimalGuard(decimalQuestion, 0, '!=');
+          expect(guard.evaluate({ [decimalQuestion]: '0' })).toBe(false);
+          expect(guard.evaluate({ [decimalQuestion]: '5' })).toBe(true);
+        });
+
+        it('with the "=" operator', () => {
+          const guard = new DecimalGuard(decimalQuestion, 0, '=');
+          expect(guard.evaluate({ [decimalQuestion]: '0' })).toBe(true);
+          expect(guard.evaluate({ [decimalQuestion]: '5' })).toBe(false);
+        });
       });
     });
   });
@@ -1144,6 +1159,35 @@ describe('Guard', () => {
       const expected: Guard = new DateGuard(date);
       const { guard } = generateStepGuard(dateCondition);
       expect(guard).toEqual(expected);
+    });
+  });
+
+  describe('generateQuestionGuard', () => {
+    it('creates a decimal guard when answerDecimal is 0', () => {
+      const guard = generateQuestionGuard(
+        [{ question: 'pain-level', operator: '!=', answerDecimal: 0 }],
+        'all'
+      );
+
+      expect(guard).toEqual(new Conjunction([new DecimalGuard('pain-level', 0, '!=')]));
+    });
+
+    it('does not show a question when the answer equals 0 and condition is != 0', () => {
+      const guard = generateQuestionGuard(
+        [{ question: 'pain-level', operator: '!=', answerDecimal: 0 }],
+        'all'
+      );
+
+      expect(guard?.evaluate({ 'pain-level': '0' })).toBe(false);
+    });
+
+    it('shows a question when the answer is not 0 and condition is != 0', () => {
+      const guard = generateQuestionGuard(
+        [{ question: 'pain-level', operator: '!=', answerDecimal: 0 }],
+        'all'
+      );
+
+      expect(guard?.evaluate({ 'pain-level': '5' })).toBe(true);
     });
   });
 });
