@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Guard for decimal answers
-
 ### Security
+
+## [v1.39.2] - 2026-06-12
+
+### Fixed
+
+- Guard for decimal answers
 
 ## [v1.39.1] - 2026-06-06
 
@@ -405,7 +409,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.1...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.2...HEAD
+[v1.39.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.1...v1.39.2
 [v1.39.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.0...v1.39.1
 [v1.39.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.38.0...v1.39.0
 [v1.38.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.37.0...v1.38.0
