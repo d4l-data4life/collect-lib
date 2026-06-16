@@ -266,7 +266,7 @@ export class DecimalGuard implements Guard {
   }
   evaluate(answers: Answers): boolean {
     const { operand, questionID, operator } = this;
-    if (!operand) {
+    if (operand === undefined) {
       return false;
     }
 
@@ -276,7 +276,7 @@ export class DecimalGuard implements Guard {
     }
 
     const has = parseFloat(answer);
-    if (!has || isNaN(has)) {
+    if (isNaN(has)) {
       return false;
     }
 
@@ -598,7 +598,7 @@ export const generateQuestionGuard = (
       guards.push(
         new AnswerCodeGuard(condition.question, condition.operator, condition.answerCoding.code)
       );
-    } else if (condition.answerDecimal) {
+    } else if (condition.answerDecimal !== undefined) {
       guards.push(
         new DecimalGuard(condition.question, condition.answerDecimal, condition.operator)
       );

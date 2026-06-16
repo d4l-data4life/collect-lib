@@ -63,6 +63,34 @@ export const OURA_CARDIOVASCULAR_AGE_ANNOTATION: DEVICE_ANNOTATION = [
 ];
 // #endregion
 
+// #region Activity (daily_activity.class_5_min — 5-minute activity classification)
+// One byte per 5-minute bucket: the activity level is a single uint8 (0–5). The bucket
+// start time is the item's timestamp and the 5-minute cadence is fixed, so no duration
+// channel is stored. Level 0 explicitly marks ring non-wear.
+export const OURA_ANNOTATION_ITEM_ACTIVITY_LEVEL: DEVICE_ANNOTATION_ITEM = {
+  type: 'activityLevel',
+  size: 1,
+  format: 'unsignedInt',
+  littleEndian: true,
+  note: '0=non-wear, 1=rest, 2=inactive, 3=low, 4=medium, 5=high activity',
+};
+
+export const OURA_ACTIVITY_ANNOTATION: DEVICE_ANNOTATION = [OURA_ANNOTATION_ITEM_ACTIVITY_LEVEL];
+// #endregion
+
+// #region Ring battery level (ring_battery_level — discrete % samples)
+// A single uint8 byte per sample: ring battery percentage in [0, 100].
+export const OURA_ANNOTATION_ITEM_BATTERY_LEVEL: DEVICE_ANNOTATION_ITEM = {
+  type: 'batteryLevel',
+  size: 1,
+  format: 'unsignedInt',
+  littleEndian: true,
+  unit: '%',
+};
+
+export const OURA_BATTERY_LEVEL_ANNOTATION: DEVICE_ANNOTATION = [OURA_ANNOTATION_ITEM_BATTERY_LEVEL];
+// #endregion
+
 // Overlapping signals re-use Fitbit's buffer encoding so a study can ingest data
 // from Fitbit, Google Health and Oura through the same FHIR pipeline.
 export const OURA_SIGNAL_TYPE_ANNOTATIONS: {
@@ -80,4 +108,6 @@ export const OURA_SIGNAL_TYPE_ANNOTATIONS: {
   workout: OURA_WORKOUT_ANNOTATION,
   tag: OURA_TAG_ANNOTATION,
   cardiovascularAge: OURA_CARDIOVASCULAR_AGE_ANNOTATION,
+  activity: OURA_ACTIVITY_ANNOTATION,
+  batteryLevel: OURA_BATTERY_LEVEL_ANNOTATION,
 };
