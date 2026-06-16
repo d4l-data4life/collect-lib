@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add `ScalarAnswer`, `ArrayAnswer`, `GeoLocationAnswer` types and corresponding type guards for survey answers
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.40.0] - 2026-06-16
+
+### Added
+
+- Add `ScalarAnswer`, `ArrayAnswer`, `GeoLocationAnswer` types and corresponding type guards for survey answers
 
 ## [v1.39.3] - 2026-06-12
 
@@ -417,7 +421,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.3...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.40.0...HEAD
+[v1.40.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.3...v1.40.0
 [v1.39.3]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.2...v1.39.3
 [v1.39.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.1...v1.39.2
 [v1.39.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.0...v1.39.1
