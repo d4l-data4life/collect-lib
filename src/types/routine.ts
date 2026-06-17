@@ -56,6 +56,7 @@ export type ProgramDeviceType =
   | 'FITBIT'
   | 'GOOGLE_HEALTH'
   | 'OURA'
+  | 'GARMIN'
   | 'GalaxyWatch6'
   | 'PixelWatch1'
   | 'AppleHealth'

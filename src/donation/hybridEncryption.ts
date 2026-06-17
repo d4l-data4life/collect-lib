@@ -1,3 +1,7 @@
+import { secp256k1 } from '@noble/curves/secp256k1';
+import * as secpUtils from '@noble/curves/abstract/utils';
+import { hkdf } from '@noble/hashes/hkdf';
+import { sha256 } from '@noble/hashes/sha256';
 import { Buffer } from 'buffer/';
 import * as forge from 'node-forge';
 import { Converter, binaryStringToUint8Array, utf8ToUint8Array } from '../helper/converter';
@@ -12,6 +16,19 @@ export const AES_BLOCKSIZE = 16;
 export const TAG_LENGTH = 16;
 export const KEY_LENGTH = 32;
 export const HYBRID_ENCRYPTION_VERSION_RECOVERY = 3;
+
+// ---- v4 hybrid format (generic, slot-based; see go-crypto d4lcrypto/hybrid_v4.go) ----
+export const HYBRID_ENCRYPTION_VERSION_V4 = 4;
+const V4_PAYLOAD_ALG_AES_GCM = 0;
+const V4_DECRYPTER_MOBILE_APP = 0;
+const V4_KEY_ALG_EC = 2;
+const V4_UNCOMPRESSED_PUBKEY_LENGTH = 65;
+const V4_EC_NONCE_LENGTH = 12;
+const V4_PAYLOAD_IV_LENGTH = 12;
+const V4_GCM_TAG_LENGTH = 16;
+// These MUST be byte-identical to the go-crypto implementation.
+const V4_EC_SALT = utf8ToUint8Array('d4l/hybrid-v4/ec/salt');
+const V4_EC_INFO = utf8ToUint8Array('d4l/hybrid-v4/ec/secp256k1/aes256gcm');
 
 export class HybridEncrypter {
   converter: Converter;
@@ -184,6 +201,102 @@ export class HybridEncrypter {
 
     // Buffer decoding works across browser and React Native via the existing buffer polyfill.
     return Buffer.from(decryptedDonation).toString('utf8');
+  };
+
+  /**
+   * Decrypt a v4 hybrid ciphertext addressed to the mobile app via an EC slot (ECIES
+   * over secp256k1). Used to read payloads the data-collector encrypted to the phone's
+   * derived encryption key.
+   * @param privateKeyHex The phone's encryption private key (secp256k1 scalar, hex)
+   * @param cipherText The base64-encoded v4 ciphertext
+   * @returns The decrypted UTF-8 string
+   */
+  decryptV4 = (privateKeyHex: string, cipherText: string): string => {
+    const buffer = this.converter.base64ToArrayBuffer(cipherText);
+    const bytes = new Uint8Array(buffer);
+    const view = new DataView(buffer);
+    let offset = 0;
+
+    // Header: version | payloadAlg | slotCount
+    const version = view.getUint8(offset);
+    offset += 1;
+    if (version !== HYBRID_ENCRYPTION_VERSION_V4) {
+      throw new Error(`Version mismatch: only v4 is supported by decryptV4, got ${version}`);
+    }
+    const payloadAlg = view.getUint8(offset);
+    offset += 1;
+    if (payloadAlg !== V4_PAYLOAD_ALG_AES_GCM) {
+      throw new Error('Unsupported v4 payload algorithm');
+    }
+    const slotCount = view.getUint8(offset);
+    offset += 1;
+
+    // Slots: decrypterId | keyAlg | slotLen(uint16 LE) | slot
+    let ecSlot: Uint8Array | undefined;
+    for (let i = 0; i < slotCount; i++) {
+      const decrypterId = view.getUint8(offset);
+      offset += 1;
+      const keyAlg = view.getUint8(offset);
+      offset += 1;
+      const slotLen = view.getUint16(offset, true);
+      offset += 2;
+      const slot = bytes.slice(offset, offset + slotLen);
+      offset += slotLen;
+      if (decrypterId === V4_DECRYPTER_MOBILE_APP && keyAlg === V4_KEY_ALG_EC) {
+        ecSlot = slot;
+      }
+    }
+    if (!ecSlot) {
+      throw new Error('No EC slot for the mobile app in v4 ciphertext');
+    }
+
+    // Payload: iv(12) | payloadLen(uint64 LE) | ciphertext||tag
+    const payloadIv = bytes.slice(offset, offset + V4_PAYLOAD_IV_LENGTH);
+    offset += V4_PAYLOAD_IV_LENGTH;
+    const payloadLen = view.getUint32(offset, true);
+    const payloadLenHigh = view.getUint32(offset + 4, true);
+    offset += 8;
+    if (payloadLenHigh !== 0) {
+      throw new Error('v4 payload too large');
+    }
+    const payload = bytes.slice(offset, offset + payloadLen);
+
+    // EC slot layout: ephPub(65, uncompressed) | nonce(12) | wrappedDataKey||tag(48)
+    const ephemeralPublicKey = ecSlot.slice(0, V4_UNCOMPRESSED_PUBKEY_LENGTH);
+    const ecNonce = ecSlot.slice(
+      V4_UNCOMPRESSED_PUBKEY_LENGTH,
+      V4_UNCOMPRESSED_PUBKEY_LENGTH + V4_EC_NONCE_LENGTH
+    );
+    const wrappedDataKey = ecSlot.slice(V4_UNCOMPRESSED_PUBKEY_LENGTH + V4_EC_NONCE_LENGTH);
+
+    // ECDH(phonePriv, ephPub) -> X coordinate -> HKDF-SHA256 -> AES-256-GCM key.
+    const privateKey = secpUtils.hexToBytes(privateKeyHex);
+    const sharedPoint = secp256k1.getSharedSecret(privateKey, ephemeralPublicKey); // 33-byte compressed
+    const sharedX = sharedPoint.slice(1, 33);
+    const wrappingKey = hkdf(sha256, sharedX, V4_EC_SALT, V4_EC_INFO, 32);
+
+    const dataKey = this.decryptAESGCM(wrappingKey, ecNonce, wrappedDataKey);
+    const plaintext = this.decryptAESGCM(dataKey, payloadIv, payload);
+    return Buffer.from(plaintext).toString('utf8');
+  };
+
+  /**
+   * Decrypt an AES-256-GCM ciphertext (ciphertext||tag) with a 12-byte nonce.
+   */
+  private decryptAESGCM = (
+    key: Uint8Array,
+    iv: Uint8Array,
+    ciphertextWithTag: Uint8Array
+  ): Uint8Array => {
+    const ciphertext = ciphertextWithTag.slice(0, -V4_GCM_TAG_LENGTH);
+    const tag = ciphertextWithTag.slice(-V4_GCM_TAG_LENGTH);
+    const decipher = forge.cipher.createDecipher('AES-GCM', forge.util.createBuffer(key));
+    decipher.start({ iv: forge.util.createBuffer(iv), tag: forge.util.createBuffer(tag) });
+    decipher.update(forge.util.createBuffer(ciphertext));
+    if (!decipher.finish()) {
+      throw new Error('AES-GCM authentication failed');
+    }
+    return binaryStringToUint8Array(decipher.output.getBytes());
   };
 
   private getDataKey = (): string => {

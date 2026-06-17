@@ -69,6 +69,34 @@ export class KeyHandler {
     };
   }
 
+  /**
+   * Derive the dedicated encryption keypair (secp256k1) as a hierarchical child of the
+   * donor identity, reusing the same one-way KDF as the program key. The public key is
+   * shared with the data-collector (SPKI), which ECIES-encrypts buffered payloads to it;
+   * the private key feeds HybridEncrypter.decryptV4. Deterministic, so it survives reinstall.
+   * @param programPrivateKey The donor identity's base64-encoded program private key (keys.priv)
+   * @returns publicKey (SPKI, base64) and privateKey (secp256k1 scalar, hex)
+   */
+  async deriveEncryptionKeypair(
+    programPrivateKey: string
+  ): Promise<{ publicKey: string; privateKey: string }> {
+    const seed = secpUtils.hexToBytes(this.converter.base64ToHex(programPrivateKey));
+
+    let encryptionPrivateKey = await this.crypto.deriveEncryptionKey(seed, 'encryption');
+    while (!secp256k1.utils.isValidPrivateKey(encryptionPrivateKey)) {
+      encryptionPrivateKey = await this.crypto.deriveEncryptionKey(encryptionPrivateKey, 'encryption');
+    }
+
+    const encryptionPublicKey = this.extendPublicKey(
+      secp256k1.getPublicKey(encryptionPrivateKey, false)
+    );
+
+    return {
+      publicKey: encryptionPublicKey,
+      privateKey: secpUtils.bytesToHex(encryptionPrivateKey),
+    };
+  }
+
   extendPublicKey = (publicKey: Uint8Array): string => {
     let key = Buffer.from(publicKey);
 

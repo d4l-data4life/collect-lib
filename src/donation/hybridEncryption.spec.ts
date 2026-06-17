@@ -33,3 +33,24 @@ describe('HybridEncrypter', () => {
     expect(decryptedString).toBe(originalString);
   });
 });
+
+describe('HybridEncrypter v4 (ECIES secp256k1)', () => {
+  const encrypter = new HybridEncrypter(new WebConverter());
+
+  // Canonical cross-language vector — produced by go-crypto's
+  // d4lcrypto.TestHybridV4_DeterministicVector. If this test fails, the v4 wire format
+  // has drifted between go-crypto (encode) and collect-lib (decode).
+  const scalarHex = 'c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa';
+  const ciphertextB64 =
+    'BAABAAJ9AAQ8cq3bT98Jr5TwyU1/6So4an5wz4odhZFjhrslNcexsTswaw/ghWZdj8GyiuFnbNOtbgjq7aIl/jjQ2k3lVwPgRERERERERERERERE39swXW9F+dlAkGVh6h3GKlmYupkDAyD9uDDG1thiFXwuBD2b4nXat0+xDtoLKGluVVVVVVVVVVVVVVVVLAAAAAAAAAAiML/XtYqK2tHnBJiG/TF4aUypAIwbZsnv8NGcW5rVCnt+r8MhJETi4OQIWQ==';
+  const plaintext = '{"hello":"garmin","spo2":97}';
+
+  it('decrypts the canonical go-crypto vector', () => {
+    expect(encrypter.decryptV4(scalarHex, ciphertextB64)).toBe(plaintext);
+  });
+
+  it('fails authentication with the wrong private key', () => {
+    const wrongScalar = '1111111111111111111111111111111111111111111111111111111111111111';
+    expect(() => encrypter.decryptV4(wrongScalar, ciphertextB64)).toThrow();
+  });
+});

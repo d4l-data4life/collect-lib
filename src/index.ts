@@ -3,6 +3,8 @@ export * from './types';
 export * from './fhir';
 export * from './timefuncs';
 
+export * from './collector/sdk';
+
 export * from './donation/crypto';
 export * from './donation/keyHandler';
 export * from './donation/sdk';

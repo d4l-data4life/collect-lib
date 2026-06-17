@@ -6,6 +6,8 @@ import {
   uint8ArrayToBinaryString,
 } from '..';
 import { WORDLIST_LANGUAGES, getLanguageOfPassPhrase } from '../helper/wordlists';
+import { secp256k1 } from '@noble/curves/secp256k1';
+import * as secpUtils from '@noble/curves/abstract/utils';
 import crypto from 'node:crypto';
 
 class NodeCrypto implements CryptoModule {
@@ -50,6 +52,32 @@ describe('Recovery Phrase Functions', () => {
       expect(keyHandler.validateRecoveryKey(entropy)).toBe(true);
       expect(entropy.length).toBe(16);
       expect(mnemonicFromEntropy).toBe(mnemonic);
+    });
+  });
+
+  describe('deriveEncryptionKeypair', () => {
+    // A program private key as produced by deriveProgramKeys (base64 of the hex scalar).
+    const programPrivateKey = '1m2vGqozd9liGPxg4D8Cr9sjV4K2gpwayw90RfMhglc=';
+
+    it('derives a deterministic, valid secp256k1 encryption subkey from the donor identity', async () => {
+      const a = await keyHandler.deriveEncryptionKeypair(programPrivateKey);
+      const b = await keyHandler.deriveEncryptionKeypair(programPrivateKey);
+
+      expect(a).toEqual(b); // deterministic -> survives reinstall
+      expect(a.privateKey).toMatch(/^[0-9a-f]{64}$/);
+      expect(secp256k1.utils.isValidPrivateKey(secpUtils.hexToBytes(a.privateKey))).toBe(true);
+
+      // The returned public key corresponds to the returned private key.
+      const expectedPublic = keyHandler.extendPublicKey(
+        secp256k1.getPublicKey(secpUtils.hexToBytes(a.privateKey), false)
+      );
+      expect(a.publicKey).toBe(expectedPublic);
+    });
+
+    it('derives a different subkey from the signing key (key separation)', async () => {
+      const { privateKey } = await keyHandler.deriveEncryptionKeypair(programPrivateKey);
+      const signingScalarHex = new WebConverter().base64ToHex(programPrivateKey);
+      expect(privateKey).not.toBe(signingScalarHex);
     });
   });
 });
