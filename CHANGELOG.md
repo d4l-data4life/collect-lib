@@ -9,9 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add skin temperature baseline deviation data type
-- Add short HRV (R-R interval) data type
-
 ### Changed
 
 ### Deprecated
@@ -21,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.41.0] - 2026-07-04
+
+### Added
+
+- Add skin temperature baseline deviation data type
+- Add short HRV (R-R interval) data type
 
 ## [v1.40.0] - 2026-06-16
 
@@ -424,7 +428,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.40.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.41.0...HEAD
+[v1.41.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.40.0...v1.41.0
 [v1.40.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.3...v1.40.0
 [v1.39.3]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.2...v1.39.3
 [v1.39.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.1...v1.39.2
