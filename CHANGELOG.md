@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add skin temperature baseline deviation data type
+- Add short HRV (R-R interval) data type
+
 ### Changed
 
 ### Deprecated
