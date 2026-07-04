@@ -66,6 +66,7 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'cardiovascularAge'
   | 'activityLevel'
   | 'batteryLevel'
+  | 'skinTemperatureDeviation'
   // Health Connect types
   | 'sleepStage'
   // Common types for SDK sources
