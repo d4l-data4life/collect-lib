@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add optional `availabilityDuration` to `TaskFrequency` used to defined how long each recurring task occurrence stays actionable after its start (supports same-day and overnight availability windows)
+
 ### Changed
 
 ### Deprecated

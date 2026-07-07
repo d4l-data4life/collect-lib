@@ -17,9 +17,11 @@ export function isArrayAnswer(answer: Answer | undefined): answer is ArrayAnswer
 }
 
 export function isGeoLocationAnswer(answer: Answer | undefined): answer is GeoLocationAnswer {
-  return Array.isArray(answer) &&
+  return (
+    Array.isArray(answer) &&
     answer.length === 2 &&
-    [answer[0], answer[1]].every((s): s is string => Number.isFinite(Number(s)));
+    [answer[0], answer[1]].every((s): s is string => Number.isFinite(Number(s)))
+  );
 }
 
 export function isMatrixAnswer(answer: Answer | undefined): answer is MatrixAnswer {
@@ -77,6 +79,8 @@ export type TaskFrequency = {
   retainCTAs?: number;
   // allowAddOnDemand | false | boolean | If true allows the task to also be added at any point in time (on demand).
   allowAddOnDemand?: boolean;
+  // availabilityDuration | false | ISO 8601 duration string | How long each occurrence stays actionable after `start`. Currently honored for recurring tasks only, where it defines a per-window slot [windowStart, windowStart + availabilityDuration] and MUST be <= one window (factor x unit) so at most one slot is ever open. Omit for "available the whole window".
+  availabilityDuration?: string;
 };
 
 // #### SurveyScoring
