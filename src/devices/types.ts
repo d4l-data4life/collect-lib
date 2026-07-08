@@ -79,6 +79,18 @@ export type DEVICE_KEY_INTERNAL =
 
 export type DEVICE_MOVELLA_PAYLOAD_MODES = 'completeEuler' | 'customMode1' | 'rateQuantities';
 
+export type DEVICE_SIGNAL_TYPE_APPLE =
+  | 'stepCount'
+  | 'sleepAnalysis'
+  | 'walkingAndRunningDistance'
+  | 'activeEnergy'
+  | 'heartRate'
+  | 'restingHeartRate'
+  | 'hrv'
+  | 'respiratoryRate'
+  | 'spo2'
+  | 'skinTemperature';
+
 export type DEVICE_SIGNAL_TYPE =
   | 'heartRate'
   | 'imu'
@@ -102,11 +114,8 @@ export type DEVICE_SIGNAL_TYPE =
   | 'sleep'
   | 'skinTemperature'
   | 'spo2'
-  // Apple health types
-  | 'stepCount'
-  | 'walkingAndRunningDistance'
-  | 'activeEnergy'
-  | 'sleepAnalysis'
+  // Apple Health types
+  | DEVICE_SIGNAL_TYPE_APPLE
   // Oura types
   | 'stress'
   | 'workout'

@@ -59,6 +59,7 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'walkingAndRunningDistance'
   | 'activeEnergy'
   | 'sleepState'
+  | 'restingHeartRate'
   // Oura types
   | 'stress'
   | 'workout'
