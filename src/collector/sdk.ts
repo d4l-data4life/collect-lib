@@ -5,24 +5,19 @@ import { DonorIdentity } from '../donation/types';
 import { Converter } from '../helper/converter';
 import Requester from '../helper/requester';
 
-/**
- * A Garmin OAuth token, handed to the collector at connect time and held server-side.
- */
-export type GarminToken = {
-  accessToken: string;
-  refreshToken: string;
-  expiry: string; // RFC3339
-  scopes?: string[];
-};
-
 export type CollectorConnectParams = {
-  garminToken: GarminToken;
+  /**
+   * OAuth authorization code captured by the app at the HTTPS redirect
+   * (Universal/App Links). The collector exchanges it server-side — the client
+   * secret and the resulting Garmin token never reach the phone.
+   */
+  code: string;
+  /** PKCE code verifier matching the authorize request. */
+  codeVerifier: string;
   /** The phone's derived encryption public key (SPKI, base64) — see KeyHandler.deriveEncryptionKeypair. */
   encPublicKey: string;
   /** Consent date (RFC3339); anchors backfill and is the lower bound for stored data. */
   consentDate: string;
-  /** Optional; the collector resolves it from Garmin if omitted. */
-  garminUserID?: string;
 };
 
 /** One opaque, phone-decryptable item from the collector buffer (blob is a base64 v4 ciphertext). */

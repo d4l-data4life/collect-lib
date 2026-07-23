@@ -4,7 +4,12 @@ import { hkdf } from '@noble/hashes/hkdf';
 import { sha256 } from '@noble/hashes/sha256';
 import { Buffer } from 'buffer/';
 import * as forge from 'node-forge';
-import { Converter, binaryStringToUint8Array, utf8ToUint8Array } from '../helper/converter';
+import {
+  Converter,
+  binaryStringToUint8Array,
+  uint8ArrayToBinaryString,
+  utf8ToUint8Array,
+} from '../helper/converter';
 
 /**
  * node-forge does not have documentation on the types, look up the
@@ -290,9 +295,14 @@ export class HybridEncrypter {
   ): Uint8Array => {
     const ciphertext = ciphertextWithTag.slice(0, -V4_GCM_TAG_LENGTH);
     const tag = ciphertextWithTag.slice(-V4_GCM_TAG_LENGTH);
-    const decipher = forge.cipher.createDecipher('AES-GCM', forge.util.createBuffer(key));
-    decipher.start({ iv: forge.util.createBuffer(iv), tag: forge.util.createBuffer(tag) });
-    decipher.update(forge.util.createBuffer(ciphertext));
+    // forge is driven with binary strings (its native representation) — the typed-array
+    // overloads reject Uint8Array<ArrayBufferLike> under newer TS lib generics.
+    const decipher = forge.cipher.createDecipher('AES-GCM', uint8ArrayToBinaryString(key));
+    decipher.start({
+      iv: uint8ArrayToBinaryString(iv),
+      tag: forge.util.createBuffer(uint8ArrayToBinaryString(tag)),
+    });
+    decipher.update(forge.util.createBuffer(uint8ArrayToBinaryString(ciphertext)));
     if (!decipher.finish()) {
       throw new Error('AES-GCM authentication failed');
     }

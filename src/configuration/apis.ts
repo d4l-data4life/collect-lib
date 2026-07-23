@@ -62,9 +62,9 @@ export const API_TARGET_MAP: { [key in API]: { [target in ProgramClientTarget]: 
     },
   },
   GARMIN: {
-    // Garmin Connect OAuth2 + PKCE. The phone only performs the OAuth handshake; the
-    // token is handed to the data-collector and actual data arrives via webhook there.
-    // TODO: verify the exact endpoints against the Garmin developer portal.
+    // Garmin Connect OAuth2 + PKCE (endpoints confirmed against Garmin's OAuth2 PKCE
+    // spec). The phone only captures the authorization code at the HTTPS redirect; the
+    // data-collector exchanges it server-side and receives the data via ping callbacks.
     prod: {
       loginEndpoint: 'https://connect.garmin.com/oauth2Confirm',
       tokenEndpoint: 'https://diauth.garmin.com/di-oauth2-service/oauth/token',

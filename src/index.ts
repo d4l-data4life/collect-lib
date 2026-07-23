@@ -6,6 +6,7 @@ export * from './timefuncs';
 export * from './collector/sdk';
 
 export * from './donation/crypto';
+export * from './donation/hybridEncryption';
 export * from './donation/keyHandler';
 export * from './donation/sdk';
 export * from './donation/types';
