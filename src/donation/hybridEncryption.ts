@@ -209,6 +209,31 @@ export class HybridEncrypter {
   };
 
   /**
+   * Version-aware decrypt. Reads the leading version byte and routes to the matching
+   * scheme, so a single call transparently handles pre-v4 resources (v1–v3, recovery
+   * key) and v4 resources (ECIES, EC private key) — no separate call site per version.
+   * Pass whichever keys are relevant for the versions you expect to encounter.
+   * @param cipherText The base64-encoded hybrid ciphertext (any version)
+   * @param keys `recoveryKey` (base64) for v1–v3, `ecPrivateKeyHex` for v4
+   */
+  decryptHybrid = (
+    cipherText: string,
+    keys: { recoveryKey?: string; ecPrivateKeyHex?: string }
+  ): string => {
+    const version = new Uint8Array(this.converter.base64ToArrayBuffer(cipherText))[0];
+    if (version === HYBRID_ENCRYPTION_VERSION_V4) {
+      if (!keys.ecPrivateKeyHex) {
+        throw new Error('v4 (EC) ciphertext but no EC private key was provided');
+      }
+      return this.decryptV4(keys.ecPrivateKeyHex, cipherText);
+    }
+    if (!keys.recoveryKey) {
+      throw new Error(`pre-v4 (v${version}) ciphertext but no recovery key was provided`);
+    }
+    return this.decrypt(keys.recoveryKey, cipherText);
+  };
+
+  /**
    * Decrypt a v4 hybrid ciphertext addressed to the mobile app via an EC slot (ECIES
    * over secp256k1). Used to read payloads the data-collector encrypted to the phone's
    * derived encryption key.
