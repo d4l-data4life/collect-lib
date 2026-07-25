@@ -69,6 +69,7 @@ export type ProgramDevicesDataType =
   | 'freeAcceleration'
   | 'angularVelocity'
   | 'heartRate'
+  | 'restingHeartRate'
   | 'hrv'
   | 'internal_gyroscope'
   | 'internal_accelerometer'
