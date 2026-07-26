@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - v4 hybrid decryption: `HybridEncrypter.decryptV4` reads ECIES (secp256k1) payloads from the
   data collector and falls back to the legacy recovery-key path for pre-v4 ciphertexts.
+- v4 hybrid encryption: `HybridEncrypter.encryptV4` wraps the payload data key into one slot
+  per recipient (`v4AesSlot` / `v4RsaSlot`), matching go-crypto's v4 format.
 - Export `HybridEncrypter`.
 
 ### Changed
