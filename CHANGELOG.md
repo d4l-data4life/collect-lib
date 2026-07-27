@@ -17,14 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Renamed the generic device-annotation constants to source-neutral names (dropped the
-  `FITBIT_` prefix) and moved them to `devices/annotations/common`. Non-breaking — the old
-  `FITBIT_*` names remain as deprecated aliases.
-
 ### Deprecated
-
-- The generic `FITBIT_*` annotation constants (e.g. `FITBIT_STEPS_ANNOTATION`); use the
-  unprefixed names from `devices/annotations/common`.
 
 ### Removed
 
