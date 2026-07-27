@@ -75,7 +75,8 @@ export class KeyHandler {
    * shared with the data-collector (SPKI), which ECIES-encrypts buffered payloads to it;
    * the private key feeds HybridEncrypter.decryptV4. Deterministic, so it survives reinstall.
    * @param programPrivateKey The donor identity's base64-encoded program private key (keys.priv)
-   * @returns publicKey (SPKI, base64) and privateKey (secp256k1 scalar, hex)
+   * @returns publicKey (SPKI, base64) and privateKey (secp256k1 scalar, base64 — the same
+   *          encoding as the program private key)
    */
   async deriveEncryptionKeypair(
     programPrivateKey: string
@@ -93,7 +94,7 @@ export class KeyHandler {
 
     return {
       publicKey: encryptionPublicKey,
-      privateKey: secpUtils.bytesToHex(encryptionPrivateKey),
+      privateKey: this.converter.uint8ArrayToBase64(encryptionPrivateKey),
     };
   }
 

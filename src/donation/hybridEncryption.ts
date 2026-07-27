@@ -1,5 +1,4 @@
 import { secp256k1 } from '@noble/curves/secp256k1';
-import * as secpUtils from '@noble/curves/abstract/utils';
 import { hkdf } from '@noble/hashes/hkdf';
 import { sha256 } from '@noble/hashes/sha256';
 import { Buffer } from 'buffer/';
@@ -248,12 +247,13 @@ export class HybridEncrypter {
    *     recover pre-v4 records then recovers v4 records too.
    * The EC slot is always preferred when present; the recovery key is only needed to fall
    * back to the AES slot (or a pre-v4 blob).
-   * @param privateKeyHex The phone's encryption private key (secp256k1 scalar, hex)
+   * @param privateKey The phone's encryption private key (secp256k1 scalar, base64 — as
+   *                    returned by KeyHandler.deriveEncryptionKeypair)
    * @param cipherText The base64-encoded ciphertext (v4, or v1–v3 for the fallback)
    * @param recoveryKey Base64 recovery key; needed only for the AES-recovery or pre-v4 paths
    * @returns The decrypted UTF-8 string
    */
-  decryptV4 = (privateKeyHex: string, cipherText: string, recoveryKey?: string): string => {
+  decryptV4 = (privateKey: string, cipherText: string, recoveryKey?: string): string => {
     const buffer = this.converter.base64ToArrayBuffer(cipherText);
     const bytes = new Uint8Array(buffer);
     const view = new DataView(buffer);
@@ -314,7 +314,7 @@ export class HybridEncrypter {
 
     // Prefer the EC slot (the phone's deterministic encryption key); fall back to the AES
     // recovery slot when only that is present and a recovery key is available.
-    const dataKey = this.unwrapV4DataKey(ecSlot, recoverySlot, privateKeyHex, recoveryKey);
+    const dataKey = this.unwrapV4DataKey(ecSlot, recoverySlot, privateKey, recoveryKey);
     const plaintext = this.decryptAESGCM(dataKey, payloadIv, payload);
     return Buffer.from(plaintext).toString('utf8');
   };
@@ -436,11 +436,11 @@ export class HybridEncrypter {
   private unwrapV4DataKey = (
     ecSlot: Uint8Array | undefined,
     recoverySlot: Uint8Array | undefined,
-    privateKeyHex: string,
+    privateKey: string,
     recoveryKey?: string
   ): Uint8Array => {
     if (ecSlot) {
-      return this.unwrapV4EcDataKey(ecSlot, privateKeyHex);
+      return this.unwrapV4EcDataKey(ecSlot, privateKey);
     }
     if (recoverySlot) {
       if (recoveryKey === undefined) {
@@ -457,7 +457,7 @@ export class HybridEncrypter {
    * Unwrap the data key from an EC slot via ECIES.
    * Slot layout: ephPub(65, uncompressed) | nonce(12) | wrappedDataKey||tag(48).
    */
-  private unwrapV4EcDataKey = (ecSlot: Uint8Array, privateKeyHex: string): Uint8Array => {
+  private unwrapV4EcDataKey = (ecSlot: Uint8Array, privateKey: string): Uint8Array => {
     const ephemeralPublicKey = ecSlot.slice(0, V4_UNCOMPRESSED_PUBKEY_LENGTH);
     const ecNonce = ecSlot.slice(
       V4_UNCOMPRESSED_PUBKEY_LENGTH,
@@ -466,8 +466,8 @@ export class HybridEncrypter {
     const wrappedDataKey = ecSlot.slice(V4_UNCOMPRESSED_PUBKEY_LENGTH + V4_EC_NONCE_LENGTH);
 
     // ECDH(phonePriv, ephPub) -> X coordinate -> HKDF-SHA256 -> AES-256-GCM key.
-    const privateKey = secpUtils.hexToBytes(privateKeyHex);
-    const sharedPoint = secp256k1.getSharedSecret(privateKey, ephemeralPublicKey); // 33-byte compressed
+    const privateKeyBytes = this.converter.base64ToUint8Array(privateKey);
+    const sharedPoint = secp256k1.getSharedSecret(privateKeyBytes, ephemeralPublicKey); // 33-byte compressed
     const sharedX = sharedPoint.slice(1, 33);
     const wrappingKey = hkdf(sha256, sharedX, V4_EC_SALT, V4_EC_INFO, 32);
     return this.decryptAESGCM(wrappingKey, ecNonce, wrappedDataKey);

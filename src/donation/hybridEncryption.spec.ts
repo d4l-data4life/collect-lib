@@ -47,22 +47,27 @@ describe('HybridEncrypter', () => {
 });
 
 describe('HybridEncrypter v4 (ECIES secp256k1)', () => {
-  const encrypter = new HybridEncrypter(new WebConverter());
+  const converter = new WebConverter();
+  const encrypter = new HybridEncrypter(converter);
 
   // Canonical cross-language vector — produced by go-crypto's
   // d4lcrypto.TestHybridV4_DeterministicVector. If this test fails, the v4 wire format
-  // has drifted between go-crypto (encode) and collect-lib (decode).
+  // has drifted between go-crypto (encode) and collect-lib (decode). The scalar is kept in
+  // hex to match go-crypto's vectorScalarHex constant; the API takes it base64-encoded.
   const scalarHex = 'c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa';
+  const scalar = converter.hexToBase64(scalarHex);
   const ciphertextB64 =
     'BAABAAJ9AAQ8cq3bT98Jr5TwyU1/6So4an5wz4odhZFjhrslNcexsTswaw/ghWZdj8GyiuFnbNOtbgjq7aIl/jjQ2k3lVwPgRERERERERERERERE39swXW9F+dlAkGVh6h3GKlmYupkDAyD9uDDG1thiFXwuBD2b4nXat0+xDtoLKGluVVVVVVVVVVVVVVVVLAAAAAAAAAAiML/XtYqK2tHnBJiG/TF4aUypAIwbZsnv8NGcW5rVCnt+r8MhJETi4OQIWQ==';
   const plaintext = '{"hello":"garmin","spo2":97}';
 
   it('decrypts the canonical go-crypto vector', () => {
-    expect(encrypter.decryptV4(scalarHex, ciphertextB64)).toBe(plaintext);
+    expect(encrypter.decryptV4(scalar, ciphertextB64)).toBe(plaintext);
   });
 
   it('fails authentication with the wrong private key', () => {
-    const wrongScalar = '1111111111111111111111111111111111111111111111111111111111111111';
+    const wrongScalar = converter.hexToBase64(
+      '1111111111111111111111111111111111111111111111111111111111111111'
+    );
     expect(() => encrypter.decryptV4(wrongScalar, ciphertextB64)).toThrow();
   });
 });
@@ -73,7 +78,9 @@ describe('HybridEncrypter v4 (AES recovery slot)', () => {
   // A base64 AES-256 recovery key (32 bytes) and an arbitrary phone scalar (unused by the
   // recovery path, but decryptV4 still requires the argument).
   const recoveryKeyB64 = 'TjYtXohpnhir+vUlv8UsUFAE+MNdazJb1psp4UZ2mic=';
-  const phoneScalarHex = 'c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa';
+  const phoneScalar = new WebConverter().hexToBase64(
+    'c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa'
+  );
 
   // AES-256-GCM(key, nonce, plaintext) -> ciphertext||tag, matching HybridEncrypter's
   // private decryptAESGCM so the round-trip exercises the real unwrap path.
@@ -137,12 +144,12 @@ describe('HybridEncrypter v4 (AES recovery slot)', () => {
   it('decrypts a v4 AES recovery slot with the recovery key', () => {
     const plaintext = '{"hello":"recovery","spo2":98}';
     const ciphertext = buildRecoveryOnlyV4(plaintext);
-    expect(encrypter.decryptV4(phoneScalarHex, ciphertext, recoveryKeyB64)).toBe(plaintext);
+    expect(encrypter.decryptV4(phoneScalar, ciphertext, recoveryKeyB64)).toBe(plaintext);
   });
 
   it('throws when only an AES recovery slot is present but no recovery key is given', () => {
     const ciphertext = buildRecoveryOnlyV4('{"x":1}');
-    expect(() => encrypter.decryptV4(phoneScalarHex, ciphertext)).toThrow(/recovery key/);
+    expect(() => encrypter.decryptV4(phoneScalar, ciphertext)).toThrow(/recovery key/);
   });
 });
 
@@ -150,7 +157,9 @@ describe('HybridEncrypter v4 encrypt + backward compatibility', () => {
   const converter = new WebConverter();
   const encrypter = new HybridEncrypter(converter);
   const recoveryKey = donorIdentity.keys.rec; // base64 AES-256 key
-  const anyScalar = 'c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa';
+  const anyScalar = converter.hexToBase64(
+    'c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa'
+  );
 
   it('encryptV4 + decryptV4 round-trip through the AES recovery slot', () => {
     const plaintext = '{"steps":1234,"spo2":97}';
