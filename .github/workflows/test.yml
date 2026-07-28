@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: gesundheitscloud/github-actions/build-setup@main
+      - uses: d4l-data4life/github-actions/build-setup@main
         with:
           setup-yarn: true
 
