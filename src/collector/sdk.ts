@@ -96,6 +96,17 @@ export class CollectorClient {
     return new Requester(this.api.baseUrl, getAuthToken, true);
   }
 
+  /**
+   * The collector's donor endpoints are study-scoped in the URL (mirroring the
+   * data-dispatcher); the study id is the identity's scope (the program name).
+   */
+  private studySegment(donorIdentity: DonorIdentity): string {
+    if (!donorIdentity.scope) {
+      throw new Error('donor identity has no study scope; cannot address the collector');
+    }
+    return encodeURIComponent(donorIdentity.scope);
+  }
+
   /** Register the donor's Garmin connection and start ingestion. */
   async connect(
     donorIdentity: DonorIdentity,
@@ -103,7 +114,7 @@ export class CollectorClient {
   ): Promise<{ status: string; garminUserID: string }> {
     const api = await this.authenticatedApi(donorIdentity);
     const [response] = await api.put<{ status: string; garminUserID: string }>({
-      uri: '/connect',
+      uri: `/connect/${this.studySegment(donorIdentity)}`,
       body: JSON.stringify(params),
     });
     return response;
@@ -113,7 +124,7 @@ export class CollectorClient {
   async sync(donorIdentity: DonorIdentity, since = 0): Promise<CollectorSyncResponse> {
     const api = await this.authenticatedApi(donorIdentity);
     const [response] = await api.get<CollectorSyncResponse>({
-      uri: `/sync?since=${since}`,
+      uri: `/sync/${this.studySegment(donorIdentity)}?since=${since}`,
     });
     return response;
   }
@@ -121,12 +132,15 @@ export class CollectorClient {
   /** Acknowledge items up to (and including) `cursor`; the collector prunes them. */
   async ack(donorIdentity: DonorIdentity, cursor: number): Promise<void> {
     const api = await this.authenticatedApi(donorIdentity);
-    await api.post<void>({ uri: '/sync/ack', body: JSON.stringify({ cursor }) });
+    await api.post<void>({
+      uri: `/sync/${this.studySegment(donorIdentity)}/ack`,
+      body: JSON.stringify({ cursor }),
+    });
   }
 
   /** Revoke the Garmin authorization and purge the donor's token + buffer. */
   async disconnect(donorIdentity: DonorIdentity): Promise<void> {
     const api = await this.authenticatedApi(donorIdentity);
-    await api.post<void>({ uri: '/disconnect' });
+    await api.post<void>({ uri: `/disconnect/${this.studySegment(donorIdentity)}` });
   }
 }

@@ -52,7 +52,7 @@ export class KeyHandler {
     let privateProgramKey = await this.crypto.deriveEncryptionKey(recoveryKey, programName);
 
     // Check if the private key is valid. If it is invalid, use the private key as entropy to generate a new private key, again, using the program name as salt
-    while (!secp256k1.utils.isValidPrivateKey(privateProgramKey)) {
+    while (!secp256k1.utils.isValidSecretKey(privateProgramKey)) {
       privateProgramKey = await this.crypto.deriveEncryptionKey(privateProgramKey, programName);
     }
 
@@ -84,7 +84,7 @@ export class KeyHandler {
     const seed = secpUtils.hexToBytes(this.converter.base64ToHex(programPrivateKey));
 
     let encryptionPrivateKey = await this.crypto.deriveEncryptionKey(seed, 'encryption');
-    while (!secp256k1.utils.isValidPrivateKey(encryptionPrivateKey)) {
+    while (!secp256k1.utils.isValidSecretKey(encryptionPrivateKey)) {
       encryptionPrivateKey = await this.crypto.deriveEncryptionKey(encryptionPrivateKey, 'encryption');
     }
 

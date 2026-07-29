@@ -66,7 +66,7 @@ describe('Recovery Phrase Functions', () => {
       // The private key is base64-encoded — the same encoding as the program private key.
       const scalar = converter.base64ToUint8Array(a.privateKey);
       expect(scalar).toHaveLength(32);
-      expect(secp256k1.utils.isValidPrivateKey(scalar)).toBe(true);
+      expect(secp256k1.utils.isValidSecretKey(scalar)).toBe(true);
 
       // The returned public key corresponds to the returned private key.
       const expectedPublic = keyHandler.extendPublicKey(secp256k1.getPublicKey(scalar, false));

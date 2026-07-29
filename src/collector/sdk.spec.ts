@@ -38,7 +38,7 @@ describe('CollectorClient self-signed auth token', () => {
       .toHex();
     const valid = secp256k1.verify(
       converter.base64ToUint8Array(decoded.signature),
-      digestHex,
+      secpUtils.hexToBytes(digestHex),
       publicKeyRaw
     );
     expect(valid).toBe(true);
