@@ -139,3 +139,33 @@ describe('Byte Array and Binary String Conversion Functions', () => {
     });
   });
 });
+
+describe('sign / verify round-trip', () => {
+  const converter = new WebConverter();
+  const keyHandler = new KeyHandler(converter, new NodeCrypto());
+  // A donor identity as produced by deriveProgramKeys.
+  const priv = '1m2vGqozd9liGPxg4D8Cr9sjV4K2gpwayw90RfMhglc=';
+
+  it('verifies a signature produced by sign', async () => {
+    const message = JSON.stringify({ token: 'abc', donorID: 'xyz' });
+    const { public: pub } = await keyHandler.deriveProgramKeys(
+      converter.base64ToUint8Array(priv).slice(0, 16),
+      'demo'
+    );
+    const derivedPriv = (
+      await keyHandler.deriveProgramKeys(converter.base64ToUint8Array(priv).slice(0, 16), 'demo')
+    ).private;
+
+    const signature = await keyHandler.sign(message, derivedPriv);
+    expect(await keyHandler.verify(message, signature, pub)).toBe(true);
+  });
+
+  it('rejects a signature over a different message', async () => {
+    const { public: pub, private: derivedPriv } = await keyHandler.deriveProgramKeys(
+      converter.base64ToUint8Array(priv).slice(0, 16),
+      'demo'
+    );
+    const signature = await keyHandler.sign('the signed message', derivedPriv);
+    expect(await keyHandler.verify('a different message', signature, pub)).toBe(false);
+  });
+});

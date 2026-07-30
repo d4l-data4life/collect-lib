@@ -40,12 +40,13 @@ const V4_EC_INFO = utf8ToUint8Array('d4l/hybrid-v4/ec/secp256k1/aes256gcm');
 
 /**
  * V4SlotSpec describes one recipient of a v4 record: the (opaque) decrypter id, the wrap
- * algorithm, and the key material. Build it with v4AesSlot or v4RsaSlot.
+ * algorithm, and the public/symmetric key material. Build it with v4AesSlot, v4RsaSlot or
+ * v4EcSlot — the same three algorithms go-crypto's ECSlot/RSASlot/AESSlot produce.
  */
 export interface V4SlotSpec {
   decrypterId: number;
   keyAlg: number;
-  key: string; // base64 symmetric key (AES) or PEM public key (RSA)
+  key: string; // base64 symmetric key (AES), PEM public key (RSA) or base64 SPKI key (EC)
 }
 
 /** v4AesSlot wraps the data key under a symmetric key (e.g. the recovery key) with AES-256-GCM. */
@@ -61,6 +62,98 @@ export const v4RsaSlot = (decrypterId: number, publicKeyPem: string): V4SlotSpec
   keyAlg: V4_KEY_ALG_RSA_OAEP,
   key: publicKeyPem,
 });
+
+/**
+ * v4EcSlot wraps the data key to a secp256k1 public key via ECIES — the counterpart of
+ * what the data-collector emits for the phone.
+ * @param decrypterId The recipient this slot is addressed to
+ * @param publicKeyBase64 SPKI public key, as returned by KeyHandler.deriveEncryptionKeypair
+ */
+export const v4EcSlot = (decrypterId: number, publicKeyBase64: string): V4SlotSpec => ({
+  decrypterId,
+  keyAlg: V4_KEY_ALG_EC,
+  key: publicKeyBase64,
+});
+
+/**
+ * V4KeySpec is one entry of a decryption keychain: the recipient identity and algorithm of
+ * the slots it can open, plus the private/symmetric key material. Build it with v4AesKey,
+ * v4RsaKey or v4EcKey. Mirrors go-crypto's AESKey/RSAKey/ECKey.
+ */
+export interface V4KeySpec {
+  decrypterId: number;
+  keyAlg: number;
+  key: string; // base64 symmetric key (AES), PEM private key (RSA) or base64 scalar (EC)
+}
+
+/** v4AesKey opens AES-symmetric slots (e.g. the donor's recovery key). */
+export const v4AesKey = (decrypterId: number, symmetricKeyBase64: string): V4KeySpec => ({
+  decrypterId,
+  keyAlg: V4_KEY_ALG_AES_SYM,
+  key: symmetricKeyBase64,
+});
+
+/** v4RsaKey opens RSA-OAEP slots with a PEM private key. */
+export const v4RsaKey = (decrypterId: number, privateKeyPem: string): V4KeySpec => ({
+  decrypterId,
+  keyAlg: V4_KEY_ALG_RSA_OAEP,
+  key: privateKeyPem,
+});
+
+/** v4EcKey opens EC (ECIES secp256k1) slots with a base64 scalar. */
+export const v4EcKey = (decrypterId: number, privateKeyBase64: string): V4KeySpec => ({
+  decrypterId,
+  keyAlg: V4_KEY_ALG_EC,
+  key: privateKeyBase64,
+});
+
+/**
+ * Assert a v4 record still holds `length` bytes at `offset`, so lengths taken from the
+ * record itself cannot run past its end.
+ * @param bytes The whole v4 record
+ * @param offset Where the field starts
+ * @param length How many bytes the field claims
+ * @param what Field name, for the error message
+ */
+const requireV4Bytes = (bytes: Uint8Array, offset: number, length: number, what: string): void => {
+  if (length < 0 || offset + length > bytes.length) {
+    throw new Error(
+      `Malformed v4 record: ${what} needs ${length} bytes at offset ${offset}, ` +
+        `but the record is only ${bytes.length} bytes`
+    );
+  }
+};
+
+/** One slot as it appears on the wire, before any key has been matched against it. */
+interface DecodedV4Slot {
+  decrypterId: number;
+  keyAlg: number;
+  blob: Uint8Array;
+}
+
+/** A parsed v4 record: its slots plus the AES-GCM payload. */
+interface DecodedV4Record {
+  slots: DecodedV4Slot[];
+  payloadIv: Uint8Array;
+  payload: Uint8Array;
+}
+
+/**
+ * Reduce a secp256k1 public key to the raw uncompressed point the curve functions expect.
+ * Donor keys are SPKI-wrapped (see KeyHandler.extendPublicKey), whose wrapper ends with the
+ * 0x04 point prefix — so the raw key is its last 65 bytes. Raw keys pass through.
+ * @param publicKey SPKI-wrapped or raw uncompressed public key
+ * @returns The 65-byte uncompressed point (0x04 || X || Y)
+ */
+const rawEcPublicKey = (publicKey: Uint8Array): Uint8Array => {
+  if (publicKey.length === V4_UNCOMPRESSED_PUBKEY_LENGTH) {
+    return publicKey;
+  }
+  if (publicKey.length < V4_UNCOMPRESSED_PUBKEY_LENGTH) {
+    throw new Error(`Invalid secp256k1 public key length: ${publicKey.length}`);
+  }
+  return publicKey.subarray(publicKey.length - V4_UNCOMPRESSED_PUBKEY_LENGTH);
+};
 
 export class HybridEncrypter {
   converter: Converter;
@@ -241,33 +334,86 @@ export class HybridEncrypter {
    *
    * The AES-256 recovery key is a durable fallback across formats, so it is consulted for
    * two kinds of input:
-   *   - a pre-v4 (v1–v3) ciphertext, delegated to the legacy recovery-key path; and
+   *   - a v3 ciphertext, delegated to the legacy recovery-key path (`decrypt`); and
    *   - a v4 ciphertext that carries an AES recovery slot (decrypterId = mobile app,
    *     keyAlg = AES symmetric) but no usable EC slot — the same recovery key that could
-   *     recover pre-v4 records then recovers v4 records too.
+   *     recover v3 records then recovers v4 records too.
    * The EC slot is always preferred when present; the recovery key is only needed to fall
-   * back to the AES slot (or a pre-v4 blob).
+   * back to the AES slot (or a v3 blob).
+   *
+   * Note the legacy branch is v3-only, matching `decrypt`: v1 (AES-CBC) and v2 (AES-GCM)
+   * are single-recipient formats this library never produced — donations have always been
+   * written with a recovery branch — so a v1/v2 blob is rejected rather than decrypted.
    * @param privateKey The phone's encryption private key (secp256k1 scalar, base64 — as
    *                    returned by KeyHandler.deriveEncryptionKeypair)
-   * @param cipherText The base64-encoded ciphertext (v4, or v1–v3 for the fallback)
-   * @param recoveryKey Base64 recovery key; needed only for the AES-recovery or pre-v4 paths
+   * @param cipherText The base64-encoded ciphertext (v4, or v3 for the legacy fallback)
+   * @param recoveryKey Base64 recovery key; needed only for the AES-recovery or v3 paths
    * @returns The decrypted UTF-8 string
    */
   decryptV4 = (privateKey: string, cipherText: string, recoveryKey?: string): string => {
+    const version = new Uint8Array(this.converter.base64ToArrayBuffer(cipherText))[0];
+    if (version !== HYBRID_ENCRYPTION_VERSION_V4) {
+      // Legacy (v3) backward compatibility: decrypt through the recovery-key path, which
+      // rejects any other version itself.
+      if (recoveryKey === undefined) {
+        throw new Error(`Cannot decrypt v${version} ciphertext without a recovery key`);
+      }
+      return this.decrypt(recoveryKey, cipherText);
+    }
+
+    const keys: V4KeySpec[] = [v4EcKey(V4_DECRYPTER_MOBILE_APP, privateKey)];
+    if (recoveryKey !== undefined) {
+      keys.push(v4AesKey(V4_DECRYPTER_MOBILE_APP, recoveryKey));
+    }
+    const record = this.decodeV4(cipherText);
+    const hasRecoverySlot = record.slots.some(
+      (s) => s.decrypterId === V4_DECRYPTER_MOBILE_APP && s.keyAlg === V4_KEY_ALG_AES_SYM
+    );
+    if (recoveryKey === undefined && hasRecoverySlot) {
+      // Keep this specific: the caller holds the one thing that would have worked.
+      throw new Error('v4 ciphertext has an AES recovery slot but no recovery key was provided');
+    }
+    return this.openV4Record(record, keys);
+  };
+
+  /**
+   * Decrypt a v4 record with an explicit keychain — the generic entry point, mirroring
+   * go-crypto's `NewDecrypterFromKeys`. A slot is opened only by a key whose
+   * (decrypterId, keyAlg) match, and every matching key is tried, so a record carrying
+   * several slots for the same recipient (e.g. a rotated recovery key) still opens.
+   * @param cipherText The base64-encoded v4 ciphertext
+   * @param keys Keychain entries, built with v4EcKey / v4AesKey / v4RsaKey
+   * @returns The decrypted UTF-8 string
+   */
+  decryptV4WithKeys = (cipherText: string, keys: V4KeySpec[]): string =>
+    this.openV4Record(this.decodeV4(cipherText), keys);
+
+  /** Unwrap the data key with the first matching key, then open the payload. */
+  private openV4Record = (record: DecodedV4Record, keys: V4KeySpec[]): string => {
+    const dataKey = this.unwrapV4DataKey(record.slots, keys);
+    const plaintext = this.decryptAESGCM(dataKey, record.payloadIv, record.payload);
+    return Buffer.from(plaintext).toString('utf8');
+  };
+
+  /**
+   * Parse a v4 record into its slots and payload. Every length comes from the record
+   * itself, so each read is bounds-checked first: a truncated or malformed blob fails as a
+   * clear format error instead of a raw RangeError or a silently short slice.
+   * @param cipherText The base64-encoded v4 ciphertext
+   * @returns The decoded slots, payload IV and payload
+   */
+  private decodeV4 = (cipherText: string): DecodedV4Record => {
     const buffer = this.converter.base64ToArrayBuffer(cipherText);
     const bytes = new Uint8Array(buffer);
     const view = new DataView(buffer);
     let offset = 0;
 
     // Header: version | payloadAlg | slotCount
+    requireV4Bytes(bytes, offset, 3, 'header');
     const version = view.getUint8(offset);
     offset += 1;
     if (version !== HYBRID_ENCRYPTION_VERSION_V4) {
-      // Pre-v4 backward compatibility: decrypt through the legacy recovery-key path.
-      if (recoveryKey === undefined) {
-        throw new Error(`Cannot decrypt v${version} ciphertext without a recovery key`);
-      }
-      return this.decrypt(recoveryKey, cipherText);
+      throw new Error(`Not a v4 record: version ${version}`);
     }
     const payloadAlg = view.getUint8(offset);
     offset += 1;
@@ -277,31 +423,24 @@ export class HybridEncrypter {
     const slotCount = view.getUint8(offset);
     offset += 1;
 
-    // Slots: decrypterId | keyAlg | slotLen(uint16 LE) | slot. The mobile app can be
-    // addressed by an EC slot (the collector→phone path) and/or an AES slot wrapped under
-    // the recovery key (the durable recovery path, mirroring pre-v4 records).
-    let ecSlot: Uint8Array | undefined;
-    let recoverySlot: Uint8Array | undefined;
+    // Slots: decrypterId | keyAlg | slotLen(uint16 LE) | slot. All of them are kept —
+    // which ones are usable is decided by the keychain, not by this parser.
+    const slots: DecodedV4Slot[] = [];
     for (let i = 0; i < slotCount; i++) {
+      requireV4Bytes(bytes, offset, 4, `slot ${i} header`);
       const decrypterId = view.getUint8(offset);
       offset += 1;
       const keyAlg = view.getUint8(offset);
       offset += 1;
       const slotLen = view.getUint16(offset, true);
       offset += 2;
-      const slot = bytes.slice(offset, offset + slotLen);
+      requireV4Bytes(bytes, offset, slotLen, `slot ${i} body`);
+      slots.push({ decrypterId, keyAlg, blob: bytes.slice(offset, offset + slotLen) });
       offset += slotLen;
-      if (decrypterId !== V4_DECRYPTER_MOBILE_APP) {
-        continue;
-      }
-      if (keyAlg === V4_KEY_ALG_EC) {
-        ecSlot = slot;
-      } else if (keyAlg === V4_KEY_ALG_AES_SYM) {
-        recoverySlot = slot;
-      }
     }
 
     // Payload: iv(12) | payloadLen(uint64 LE) | ciphertext||tag
+    requireV4Bytes(bytes, offset, V4_PAYLOAD_IV_LENGTH + 8, 'payload header');
     const payloadIv = bytes.slice(offset, offset + V4_PAYLOAD_IV_LENGTH);
     offset += V4_PAYLOAD_IV_LENGTH;
     const payloadLen = view.getUint32(offset, true);
@@ -310,13 +449,8 @@ export class HybridEncrypter {
     if (payloadLenHigh !== 0) {
       throw new Error('v4 payload too large');
     }
-    const payload = bytes.slice(offset, offset + payloadLen);
-
-    // Prefer the EC slot (the phone's deterministic encryption key); fall back to the AES
-    // recovery slot when only that is present and a recovery key is available.
-    const dataKey = this.unwrapV4DataKey(ecSlot, recoverySlot, privateKey, recoveryKey);
-    const plaintext = this.decryptAESGCM(dataKey, payloadIv, payload);
-    return Buffer.from(plaintext).toString('utf8');
+    requireV4Bytes(bytes, offset, payloadLen, 'payload');
+    return { slots, payloadIv, payload: bytes.slice(offset, offset + payloadLen) };
   };
 
   /**
@@ -355,14 +489,55 @@ export class HybridEncrypter {
         // Reuse the existing RSA-OAEP wrap; the blob is the wrapped data key.
         return this.encryptWithTargetKey(slot.key, uint8ArrayToBinaryString(dataKey))
           .encryptedDataKey;
+      case V4_KEY_ALG_EC:
+        return this.wrapV4EcDataKey(slot.key, dataKey);
       default:
         throw new Error(`encryptV4: unsupported key algorithm ${slot.keyAlg}`);
     }
   };
 
   /**
+   * Wrap the data key to a secp256k1 public key via ECIES — the inverse of
+   * unwrapV4EcDataKey, and byte-compatible with go-crypto's EC slot:
+   * ephemeral ECDH -> HKDF-SHA256 -> AES-256-GCM.
+   * Slot layout: ephPub(65, uncompressed) | nonce(12) | wrappedDataKey||tag(48).
+   * @param publicKeyBase64 The recipient's SPKI (or raw uncompressed) secp256k1 public key
+   * @param dataKey The payload data key to wrap
+   */
+  private wrapV4EcDataKey = (publicKeyBase64: string, dataKey: Uint8Array): Uint8Array => {
+    const recipient = rawEcPublicKey(this.converter.base64ToUint8Array(publicKeyBase64));
+
+    // Fresh ephemeral scalar per record — reuse would leak the wrapping key across records.
+    let ephemeralPrivate = binaryStringToUint8Array(forge.random.getBytesSync(32));
+    while (!secp256k1.utils.isValidSecretKey(ephemeralPrivate)) {
+      ephemeralPrivate = binaryStringToUint8Array(forge.random.getBytesSync(32));
+    }
+    const ephemeralPublic = secp256k1.getPublicKey(ephemeralPrivate, false); // uncompressed, 65
+
+    const sharedPoint = secp256k1.getSharedSecret(ephemeralPrivate, recipient); // 33 compressed
+    const sharedX = sharedPoint.slice(1, 33);
+    const wrappingKey = hkdf(sha256, sharedX, V4_EC_SALT, V4_EC_INFO, 32);
+
+    const nonce = binaryStringToUint8Array(forge.random.getBytesSync(V4_EC_NONCE_LENGTH));
+    const wrapped = this.encryptAESGCM(wrappingKey, nonce, dataKey);
+
+    const out = new Uint8Array(ephemeralPublic.length + nonce.length + wrapped.length);
+    out.set(ephemeralPublic, 0);
+    out.set(nonce, ephemeralPublic.length);
+    out.set(wrapped, ephemeralPublic.length + nonce.length);
+    return out;
+  };
+
+  /**
    * Wrap the data key under a symmetric key with AES-256-GCM — the inverse of
    * unwrapV4RecoveryDataKey. Layout: nonce(12) | wrappedDataKey||tag.
+   *
+   * This is deliberately the *same* donor recovery key that v3 uses with AES-CBC: one
+   * key the donor can keep, usable across formats. Reusing it under two modes is safe
+   * here — the modes are never mixed within a record, the key is only ever used to wrap
+   * 32-byte data keys, and GCM is an upgrade over v3's unauthenticated CBC. GCM's
+   * requirement is nonce uniqueness, which a fresh 96-bit random nonce per wrap gives
+   * with an enormous margin at donation volumes (birthday bound ≈ 2^32 wraps per key).
    */
   private wrapV4RecoveryDataKey = (symmetricKey: Uint8Array, dataKey: Uint8Array): Uint8Array => {
     const nonce = binaryStringToUint8Array(forge.random.getBytesSync(V4_RECOVERY_NONCE_LENGTH));
@@ -379,6 +554,26 @@ export class HybridEncrypter {
     payloadIv: Uint8Array,
     payload: Uint8Array
   ): string => {
+    // The header fields are single bytes and slotLen is a uint16, so out-of-range values
+    // would wrap silently into a record that decodes as something else. Unreachable with
+    // the current registries — checked so it stays that way as they grow.
+    if (slots.length > 0xff) {
+      throw new Error(`encryptV4: at most 255 slots are supported, got ${slots.length}`);
+    }
+    for (const slot of slots) {
+      if (slot.decrypterId > 0xff || slot.decrypterId < 0) {
+        throw new Error(`encryptV4: decrypterId ${slot.decrypterId} does not fit in a byte`);
+      }
+      if (slot.keyAlg > 0xff || slot.keyAlg < 0) {
+        throw new Error(`encryptV4: keyAlg ${slot.keyAlg} does not fit in a byte`);
+      }
+      if (slot.blob.length > 0xffff) {
+        throw new Error(
+          `encryptV4: wrapped key of ${slot.blob.length} bytes exceeds the slot limit`
+        );
+      }
+    }
+
     let total = 3; // version | payloadAlg | slotCount
     for (const slot of slots) {
       total += 2 + 2 + slot.blob.length; // decrypterId | keyAlg | slotLen(2) | slot
@@ -432,25 +627,55 @@ export class HybridEncrypter {
     return out;
   };
 
-  /** Recover the payload data key from whichever mobile-app slot is present (EC preferred). */
-  private unwrapV4DataKey = (
-    ecSlot: Uint8Array | undefined,
-    recoverySlot: Uint8Array | undefined,
-    privateKey: string,
-    recoveryKey?: string
-  ): Uint8Array => {
-    if (ecSlot) {
-      return this.unwrapV4EcDataKey(ecSlot, privateKey);
-    }
-    if (recoverySlot) {
-      if (recoveryKey === undefined) {
-        throw new Error(
-          'v4 ciphertext has only an AES recovery slot but no recovery key was provided'
-        );
+  /**
+   * Recover the payload data key: walk the record's slots and, for each, try every key
+   * whose (decrypterId, keyAlg) match. Same semantics as go-crypto — a slot addressed to
+   * another recipient is ignored, and several slots for the same recipient (rotated keys)
+   * are all attempted, so an unusable one never masks a usable one.
+   * @param slots The record's decoded slots
+   * @param keys The caller's keychain
+   * @returns The unwrapped 32-byte data key
+   */
+  private unwrapV4DataKey = (slots: DecodedV4Slot[], keys: V4KeySpec[]): Uint8Array => {
+    for (const slot of slots) {
+      for (const key of keys) {
+        if (key.decrypterId !== slot.decrypterId || key.keyAlg !== slot.keyAlg) {
+          continue;
+        }
+        try {
+          return this.unwrapV4Slot(slot, key);
+        } catch {
+          // Wrong key for this slot (or a corrupt slot): keep looking.
+        }
       }
-      return this.unwrapV4RecoveryDataKey(recoverySlot, recoveryKey);
     }
-    throw new Error('No decryptable slot for the mobile app in v4 ciphertext');
+    throw new Error('No v4 slot could be opened with the given keys');
+  };
+
+  /** Unwrap one slot with one matching key, dispatching on the key algorithm. */
+  private unwrapV4Slot = (slot: DecodedV4Slot, key: V4KeySpec): Uint8Array => {
+    switch (key.keyAlg) {
+      case V4_KEY_ALG_EC:
+        return this.unwrapV4EcDataKey(slot.blob, key.key);
+      case V4_KEY_ALG_AES_SYM:
+        return this.unwrapV4RecoveryDataKey(slot.blob, key.key);
+      case V4_KEY_ALG_RSA_OAEP:
+        return this.unwrapV4RsaDataKey(slot.blob, key.key);
+      default:
+        throw new Error(`Unsupported v4 key algorithm ${key.keyAlg}`);
+    }
+  };
+
+  /**
+   * Unwrap the data key from an RSA-OAEP slot with a PEM private key — the counterpart of
+   * v4RsaSlot, for a receiver-side (non-phone) decrypter.
+   */
+  private unwrapV4RsaDataKey = (slot: Uint8Array, privateKeyPem: string): Uint8Array => {
+    const privateKey = forge.pki.privateKeyFromPem(privateKeyPem);
+    const dataKey = privateKey.decrypt(uint8ArrayToBinaryString(slot), 'RSA-OAEP', {
+      md: forge.md.sha256.create(),
+    });
+    return binaryStringToUint8Array(dataKey);
   };
 
   /**
@@ -583,27 +808,25 @@ export class HybridEncrypter {
     donation: string,
     dataKey: string
   ): { iv: Uint8Array; encrypted: Uint8Array<ArrayBuffer> } => {
-    try {
-      const iv = forge.random.getBytesSync(AES_BLOCKSIZE);
+    // Errors propagate on purpose: returning a partial result here used to produce a
+    // malformed donation buffer further down, turning an encryption failure into
+    // undecryptable data instead of a visible error.
+    const iv = forge.random.getBytesSync(AES_BLOCKSIZE);
 
-      const cipher = forge.cipher.createCipher('AES-GCM', dataKey);
-      cipher.start({ iv: iv });
-      cipher.update(forge.util.createBuffer(utf8ToUint8Array(donation)));
-      cipher.finish();
-      const encrypted = cipher.output.getBytes();
-      const tag = cipher.mode.tag.getBytes();
+    const cipher = forge.cipher.createCipher('AES-GCM', dataKey);
+    cipher.start({ iv: iv });
+    cipher.update(forge.util.createBuffer(utf8ToUint8Array(donation)));
+    cipher.finish();
+    const encrypted = cipher.output.getBytes();
+    const tag = cipher.mode.tag.getBytes();
 
-      return {
-        iv: binaryStringToUint8Array(iv),
-        encrypted: Buffer.concat([
-          binaryStringToUint8Array(encrypted),
-          binaryStringToUint8Array(tag),
-        ]),
-      };
-    } catch (error) {
-      console.error(`[HybridEncrypter] encrypt: ${error}`);
-      return {} as any;
-    }
+    return {
+      iv: binaryStringToUint8Array(iv),
+      encrypted: Buffer.concat([
+        binaryStringToUint8Array(encrypted),
+        binaryStringToUint8Array(tag),
+      ]),
+    };
   };
 
   private decryptDonation = (

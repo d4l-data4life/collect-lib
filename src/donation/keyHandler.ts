@@ -3,7 +3,7 @@ import { secp256k1 } from '@noble/curves/secp256k1';
 import * as bip39 from '@scure/bip39';
 import { Buffer } from 'buffer/';
 import * as forge from 'node-forge';
-import { binaryStringToUint8Array, Converter } from '../helper/converter';
+import { Converter } from '../helper/converter';
 import { WORDLIST_LANGUAGES, WordListLanguage, wordlists } from '../helper/wordlists';
 import { CryptoModule } from './crypto';
 import { ERROR_CODES } from './types';
@@ -154,11 +154,34 @@ export class KeyHandler {
    * @returns True, if the signature is valid. Otherwise, false.
    */
   verify = async (message: string, signature: Uint8Array, pub: string): Promise<boolean> => {
+    // Both inputs need the same encoding sign() used, or this silently returns false:
+    //   - hash() yields the digest as a hex string, so decode it to the 32 digest bytes
+    //     (handing over the 64 hex characters as bytes never matches);
+    //   - donor public keys are SPKI (see extendPublicKey), while noble wants the raw
+    //     uncompressed point.
     const sha256 = this.hash(message);
     return secp256k1.verify(
       signature,
-      binaryStringToUint8Array(sha256),
-      this.converter.base64ToUint8Array(pub)
+      secpUtils.hexToBytes(sha256),
+      this.rawPublicKey(this.converter.base64ToUint8Array(pub))
     );
+  };
+
+  /**
+   * Reduce a donor public key to the raw uncompressed point noble expects — the inverse
+   * of extendPublicKey. The SPKI wrapper ends with the 0x04 point prefix, so the raw key
+   * is simply its last 65 bytes. Already-raw keys are passed through.
+   * @param publicKey SPKI-wrapped (as produced by extendPublicKey) or raw uncompressed key
+   * @returns The 65-byte uncompressed point (0x04 || X || Y)
+   */
+  private rawPublicKey = (publicKey: Uint8Array): Uint8Array => {
+    const UNCOMPRESSED_LENGTH = 65;
+    if (publicKey.length === UNCOMPRESSED_LENGTH) {
+      return publicKey;
+    }
+    if (publicKey.length < UNCOMPRESSED_LENGTH) {
+      throw new Error(`Invalid public key length: ${publicKey.length}`);
+    }
+    return publicKey.subarray(publicKey.length - UNCOMPRESSED_LENGTH);
   };
 }

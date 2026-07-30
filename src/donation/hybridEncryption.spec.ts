@@ -2,9 +2,14 @@ import {
   HybridEncrypter,
   V4_DECRYPTER_DATA_RECEIVER,
   V4_DECRYPTER_MOBILE_APP,
+  v4AesKey,
   v4AesSlot,
+  v4EcKey,
+  v4EcSlot,
+  v4RsaKey,
   v4RsaSlot,
 } from './hybridEncryption';
+import { secp256k1 } from '@noble/curves/secp256k1';
 import { WebConverter } from '..';
 import * as forge from 'node-forge';
 import {
@@ -101,7 +106,8 @@ describe('HybridEncrypter v4 (AES recovery slot)', () => {
   //   version(4) | payloadAlg(0) | slotCount(1)
   //     slot: decrypterId(0) | keyAlg(0=AES) | slotLen(uint16 LE) | nonce(12) | wrapped||tag
   //   payloadIv(12) | payloadLen(uint64 LE) | payload(ct||tag)
-  // This is the layout go-crypto must emit for a recoverable v4 record (no encoder yet).
+  // Hand-built so the parser is exercised independently of our own encoder; the pinned
+  // go-crypto records below prove the real encoder agrees on this layout.
   const buildRecoveryOnlyV4 = (plaintext: string): string => {
     const recoveryKey = new Uint8Array(converter.base64ToArrayBuffer(recoveryKeyB64));
     const dataKey = new Uint8Array(32).fill(0x22);
@@ -163,7 +169,9 @@ describe('HybridEncrypter v4 encrypt + backward compatibility', () => {
 
   it('encryptV4 + decryptV4 round-trip through the AES recovery slot', () => {
     const plaintext = '{"steps":1234,"spo2":97}';
-    const ciphertext = encrypter.encryptV4(plaintext, [v4AesSlot(V4_DECRYPTER_MOBILE_APP, recoveryKey)]);
+    const ciphertext = encrypter.encryptV4(plaintext, [
+      v4AesSlot(V4_DECRYPTER_MOBILE_APP, recoveryKey),
+    ]);
     expect(encrypter.decryptV4(anyScalar, ciphertext, recoveryKey)).toBe(plaintext);
   });
 
@@ -180,5 +188,184 @@ describe('HybridEncrypter v4 encrypt + backward compatibility', () => {
     const plaintext = 'legacy v3 donation payload';
     const v3 = encrypter.encrypt(recoveryKey, plaintext, testKey);
     expect(encrypter.decryptV4(anyScalar, v3, recoveryKey)).toBe(plaintext);
+  });
+});
+
+describe('HybridEncrypter v4 malformed-record handling', () => {
+  const converter = new WebConverter();
+  const encrypter = new HybridEncrypter(converter);
+  const recoveryKey = donorIdentity.keys.rec;
+  const anyScalar = converter.hexToBase64(
+    'c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa'
+  );
+
+  const truncate = (b64: string, bytes: number): string => {
+    const full = new Uint8Array(converter.base64ToArrayBuffer(b64));
+    return converter.uint8ArrayToBase64(full.subarray(0, full.length - bytes));
+  };
+
+  // Lengths inside a v4 record are attacker-controllable, so a truncated blob must fail
+  // as a clear format error rather than a raw RangeError or a silently short slice.
+  it('rejects a truncated payload with a descriptive error', () => {
+    const ciphertext = encrypter.encryptV4('{"a":1}', [
+      v4AesSlot(V4_DECRYPTER_MOBILE_APP, recoveryKey),
+    ]);
+    expect(() => encrypter.decryptV4(anyScalar, truncate(ciphertext, 8), recoveryKey)).toThrow(
+      /Malformed v4 record/
+    );
+  });
+
+  it('rejects a record truncated inside its slots', () => {
+    const ciphertext = encrypter.encryptV4('{"a":1}', [
+      v4AesSlot(V4_DECRYPTER_MOBILE_APP, recoveryKey),
+    ]);
+    // Cut deep enough to land inside the slot body + payload header.
+    expect(() => encrypter.decryptV4(anyScalar, truncate(ciphertext, 60), recoveryKey)).toThrow(
+      /Malformed v4 record/
+    );
+  });
+
+  // Key rotation is a keychain concern, not a record one: a record carries ONE slot per
+  // recipient (encrypted to whichever key was current), and the decrypter may hold several
+  // keys for that recipient — the new one plus the retired one — so older records keep
+  // opening. Mirrors go-crypto's TestHybridV4_Decrypter_KeyRotation.
+  it('opens a record encrypted to a retired key when the keychain still holds it', () => {
+    const retiredKey = converter.uint8ArrayToBase64(new Uint8Array(32).fill(0x0a));
+    const currentKey = converter.uint8ArrayToBase64(new Uint8Array(32).fill(0x0b));
+    const plaintext = '{"rotated":true}';
+    // One slot, encrypted to the key that was current at the time.
+    const ciphertext = encrypter.encryptV4(plaintext, [
+      v4AesSlot(V4_DECRYPTER_MOBILE_APP, retiredKey),
+    ]);
+
+    // Keychain lists the current key first; the retired one still opens the old record.
+    expect(
+      encrypter.decryptV4WithKeys(ciphertext, [
+        v4AesKey(V4_DECRYPTER_MOBILE_APP, currentKey),
+        v4AesKey(V4_DECRYPTER_MOBILE_APP, retiredKey),
+      ])
+    ).toBe(plaintext);
+
+    // Without the retired key in the chain, the record is no longer readable.
+    expect(() =>
+      encrypter.decryptV4WithKeys(ciphertext, [v4AesKey(V4_DECRYPTER_MOBILE_APP, currentKey)])
+    ).toThrow(/No v4 slot could be opened/);
+  });
+});
+
+describe('HybridEncrypter v4 generic keychain (all slot types)', () => {
+  const converter = new WebConverter();
+  const encrypter = new HybridEncrypter(converter);
+  const recoveryKey = donorIdentity.keys.rec;
+
+  // The format is generic: every algorithm must be encryptable and decryptable here, not
+  // only the ones the phone happens to use today.
+  it('round-trips an EC slot (the collector -> phone shape) produced by collect-lib', () => {
+    const phonePriv = converter.uint8ArrayToBase64(new Uint8Array(32).fill(0x2b));
+    const phonePubRaw = secp256k1.getPublicKey(converter.base64ToUint8Array(phonePriv), false);
+    const plaintext = '{"ec":"round-trip"}';
+
+    const ciphertext = encrypter.encryptV4(plaintext, [
+      v4EcSlot(V4_DECRYPTER_MOBILE_APP, converter.uint8ArrayToBase64(phonePubRaw)),
+    ]);
+    expect(encrypter.decryptV4(phonePriv, ciphertext)).toBe(plaintext);
+    expect(
+      encrypter.decryptV4WithKeys(ciphertext, [v4EcKey(V4_DECRYPTER_MOBILE_APP, phonePriv)])
+    ).toBe(plaintext);
+  });
+
+  it('round-trips an RSA slot via the keychain (receiver-side decryption)', () => {
+    const pair = forge.pki.rsa.generateKeyPair({ bits: 2048 });
+    const plaintext = '{"rsa":"round-trip"}';
+    const ciphertext = encrypter.encryptV4(plaintext, [
+      v4RsaSlot(V4_DECRYPTER_DATA_RECEIVER, forge.pki.publicKeyToPem(pair.publicKey)),
+    ]);
+    expect(
+      encrypter.decryptV4WithKeys(ciphertext, [
+        v4RsaKey(V4_DECRYPTER_DATA_RECEIVER, forge.pki.privateKeyToPem(pair.privateKey)),
+      ])
+    ).toBe(plaintext);
+  });
+
+  it('opens each recipient of a three-slot record with its own key', () => {
+    const pair = forge.pki.rsa.generateKeyPair({ bits: 2048 });
+    const phonePriv = converter.uint8ArrayToBase64(new Uint8Array(32).fill(0x3c));
+    const phonePubRaw = secp256k1.getPublicKey(converter.base64ToUint8Array(phonePriv), false);
+    const plaintext = '{"all":"three"}';
+
+    const ciphertext = encrypter.encryptV4(plaintext, [
+      v4EcSlot(V4_DECRYPTER_MOBILE_APP, converter.uint8ArrayToBase64(phonePubRaw)),
+      v4AesSlot(V4_DECRYPTER_MOBILE_APP, recoveryKey),
+      v4RsaSlot(V4_DECRYPTER_DATA_RECEIVER, forge.pki.publicKeyToPem(pair.publicKey)),
+    ]);
+
+    for (const key of [
+      v4EcKey(V4_DECRYPTER_MOBILE_APP, phonePriv),
+      v4AesKey(V4_DECRYPTER_MOBILE_APP, recoveryKey),
+      v4RsaKey(V4_DECRYPTER_DATA_RECEIVER, forge.pki.privateKeyToPem(pair.privateKey)),
+    ]) {
+      expect(encrypter.decryptV4WithKeys(ciphertext, [key])).toBe(plaintext);
+    }
+  });
+
+  it('refuses a slot addressed to another recipient', () => {
+    const phonePriv = converter.uint8ArrayToBase64(new Uint8Array(32).fill(0x4d));
+    const phonePubRaw = secp256k1.getPublicKey(converter.base64ToUint8Array(phonePriv), false);
+    const ciphertext = encrypter.encryptV4('{"x":1}', [
+      v4EcSlot(V4_DECRYPTER_MOBILE_APP, converter.uint8ArrayToBase64(phonePubRaw)),
+    ]);
+    // Right key material, wrong decrypterId -> no slot matches.
+    expect(() =>
+      encrypter.decryptV4WithKeys(ciphertext, [v4EcKey(V4_DECRYPTER_DATA_RECEIVER, phonePriv)])
+    ).toThrow(/No v4 slot could be opened/);
+  });
+});
+
+describe('HybridEncrypter v4 large payloads', () => {
+  const converter = new WebConverter();
+  const encrypter = new HybridEncrypter(converter);
+  const recoveryKey = donorIdentity.keys.rec;
+  const anyScalar = converter.hexToBase64(
+    'c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa'
+  );
+
+  // A single Garmin sync blob (detailed HR / activity JSON) easily passes the ~128 KB
+  // point where String.fromCharCode.apply over the whole payload throws
+  // "Maximum call stack size exceeded".
+  it('round-trips a payload well past the call-argument limit', () => {
+    const big = JSON.stringify({
+      dailies: Array.from({ length: 20000 }, (_, i) => ({ t: i, hr: 60 + (i % 40) })),
+    });
+    expect(big.length).toBeGreaterThan(300_000);
+
+    const ciphertext = encrypter.encryptV4(big, [v4AesSlot(V4_DECRYPTER_MOBILE_APP, recoveryKey)]);
+    expect(encrypter.decryptV4(anyScalar, ciphertext, recoveryKey)).toBe(big);
+  });
+});
+
+// Records produced by go-crypto v1.1.0 (d4lcrypto.EncryptHybridV4) with random keys and
+// pinned here as snapshots. They cover the directions the deterministic EC vector above
+// does not: go-crypto's AES-recovery encoder, and a multi-recipient record. Nonces are
+// random, so these cannot be regenerated byte-identically — regenerate the whole block if
+// the wire format intentionally changes.
+describe('HybridEncrypter v4 cross-language (go-crypto -> collect-lib)', () => {
+  const converter = new WebConverter();
+  const encrypter = new HybridEncrypter(converter);
+  const goRecoveryKeyB64 = 'AEVsPdSCeYz/SOe8mkdVEcysG+G3bCwv/TjNZmdGgek=';
+
+  it('decrypts a go-crypto AES-recovery-only record with the recovery key', () => {
+    const ciphertext =
+      'BAABAAA8AMLkPWeX6H/m4SUlZ7aaFD0pJDlcNaA8xJ6sb66tOD4XqIWm2zpvCekCw5ZhUtuZr6bD1Ayq+fK1qG2bj2afbr/VQnVFeLXzwSQAAAAAAAAATVaeb4/+Wm3mLSj+puYTPeOaCXcNwyu1tOCO/K1lSgAJndzy';
+    expect(encrypter.decryptV4('', ciphertext, goRecoveryKeyB64)).toBe('{"hello":"recovery"}');
+  });
+
+  it('decrypts the phone slot of a go-crypto multi-recipient record (EC + AES + RSA)', () => {
+    const phonePrivB64 = 'TKK4Z6bGQQRQY6dbbdDmbcydGaWol2Ad4NbHtJ6kNHk=';
+    const ciphertext =
+      'BAADAAJ9AATgyvE/bB69jvi2DEyI5ehHqd6uX2BZqkyxB0yPtOyWtr19v08/jYd480xRo/neTo+3DDBw5lPok0yh+Th6MIFYURrVLjHkhYTUxZ4GEPkF1gWxRejjLmNirLReaEMzmCaapr2EP3VhxoUbkHiOCd+z/6nOt98eK2EVsXgLAAA8AGrg+5zq8v7MbcBWMxXqK7gd5qKmVT5k3ACwsB/tSCHS9HPEaF3qDRPxVXUHA5S7zc0FIS/Ta1b1P26JtwEBAAF2ENJepPKIh2KpBb5iBtvJA9j9AqMPHLQ2HrOu9cynXct/pheH3vSCr7V2QD/4O5yT0ivuBhLFu77zvusubDTozh00SqDTaBfBLHGMPjLrZieehWpcTm6gA84AHX0VctN2za8kde8J/nTRNNh1nIl9gP7IikDmggCtVgy5lmgpj6yV6Jm/WoNsNAc/m6fn+6m4Hsay2GrdkcWK8ruqvbE3QSMiHcKtF1c5rEs3gsznkBrBWKy+XsQ1ILBjdtAmV/H5FoRGSHs2Bp2ZiuR0LyMgmfK1yTL0M0Jaii0x5fEhJoX99yyxdEFcdG7qouzVtCevN7UEX5yBAfee4T4us5NlP+nFqc887EtnZGt7LwAAAAAAAACpggAGEm+GvrPe4sjJEikB108W0nS+ZO1vpAI5SNurkkFWmhnaBlmAKUSX9G6TMQ==';
+    // The EC slot wins when present — it is the collector -> phone path.
+    expect(encrypter.decryptV4(phonePrivB64, ciphertext, goRecoveryKeyB64)).toBe(
+      '{"multi":"recipient","steps":7}'
+    );
   });
 });

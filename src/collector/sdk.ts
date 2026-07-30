@@ -30,6 +30,16 @@ export type CollectorSyncItem = {
 export type CollectorSyncResponse = {
   items: CollectorSyncItem[];
   cursor: number;
+  /**
+   * The server can no longer collect Garmin data for this donor: the connection is
+   * gone or its authorization/token is unusable, and only a fresh authorization by
+   * the participant restores it. Buffered items are still delivered alongside this
+   * flag, so drain them first, then drop the local Garmin connection so the app
+   * offers the "connect Garmin" task again.
+   */
+  reconnectRequired?: boolean;
+  /** Short human-readable cause, for logs and support. */
+  reconnectReason?: string;
 };
 
 /**
