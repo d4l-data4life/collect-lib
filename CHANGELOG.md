@@ -9,13 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [v1.44.0] - 2026-07-31
+
+### Added
+
 - Garmin support: `GARMIN` API target, device config, annotations and routine type.
 - `CollectorClient` for the data-collector (study-scoped `connect`/`sync`/`ack`/`disconnect`);
-  `sync` reports `reconnectRequired` when the participant must reauthorize Garmin.
 - v4 hybrid encryption (slot-based, shared with go-crypto): `HybridEncrypter.encryptV4` with
-  `v4AesSlot` / `v4RsaSlot` / `v4EcSlot`, and `decryptV4` (phone EC slot, AES recovery slot,
   v3 fallback). `decryptV4WithKeys` takes an explicit keychain (`v4AesKey` / `v4RsaKey` /
-  `v4EcKey`) so any recipient can open any slot type, mirroring go-crypto's decrypter.
 - `KeyHandler.deriveEncryptionKeypair`: the phone's secp256k1 encryption keypair, derived
   deterministically from the donor identity.
 - Export `HybridEncrypter` and the collector SDK.
@@ -24,20 +35,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `@noble/curves` now requires `^1.9.3` (was `^1.8.2`) for `secp256k1.utils.isValidSecretKey`.
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - `uint8ArrayToBinaryString` threw `RangeError: Maximum call stack size exceeded` beyond
-  ~128 KB; it now converts in chunks.
 - `KeyHandler.verify` could not verify `KeyHandler.sign`'s own signatures (hex digest and
   SPKI public key were passed in the wrong encodings).
 - `encryptDonation` propagates errors instead of returning an empty object, which produced
   malformed donations.
-
-### Security
 
 ## [v1.43.0] - 2026-07-08
 
@@ -460,7 +464,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.43.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.0...HEAD
+[v1.44.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.43.0...v1.44.0
 [v1.43.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.42.0...v1.43.0
 [v1.42.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.41.0...v1.42.0
 [v1.41.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.40.0...v1.41.0
