@@ -1,6 +1,6 @@
 import { ProgramClientTarget } from '../types';
 
-export type API = 'DEXCOM' | 'FITBIT' | 'GOOGLE_HEALTH' | 'OURA';
+export type API = 'DEXCOM' | 'FITBIT' | 'GOOGLE_HEALTH' | 'OURA' | 'GARMIN';
 
 export type APIConfig = {
   loginEndpoint: string;
@@ -54,11 +54,26 @@ export const API_TARGET_MAP: { [key in API]: { [target in ProgramClientTarget]: 
       dataEndpoint: 'https://api.ouraring.com',
     },
     sandbox: {
-      // Oura's sandbox shares the OAuth endpoints; only the data paths differ
-      // (handled in the device via per-endpoint URI prefixing).
+      // No sandbox for Oura — this mirrors prod and is unused (kept only because the
+      // API_TARGET_MAP type requires a `sandbox` entry for every API).
       loginEndpoint: 'https://cloud.ouraring.com/oauth/authorize',
       tokenEndpoint: 'https://api.ouraring.com/oauth/token',
       dataEndpoint: 'https://api.ouraring.com',
+    },
+  },
+  GARMIN: {
+    // Garmin Connect OAuth2 + PKCE (endpoints confirmed against Garmin's OAuth2 PKCE
+    // spec). The phone only captures the authorization code at the HTTPS redirect; the
+    // data-collector exchanges it server-side and receives the data via ping callbacks.
+    prod: {
+      loginEndpoint: 'https://connect.garmin.com/oauth2Confirm',
+      tokenEndpoint: 'https://diauth.garmin.com/di-oauth2-service/oauth/token',
+      dataEndpoint: 'https://apis.garmin.com',
+    },
+    sandbox: {
+      loginEndpoint: 'https://connect.garmin.com/oauth2Confirm',
+      tokenEndpoint: 'https://diauth.garmin.com/di-oauth2-service/oauth/token',
+      dataEndpoint: 'https://apis.garmin.com',
     },
   },
 };

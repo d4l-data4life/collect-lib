@@ -33,7 +33,22 @@ export const binaryStringToUint8Array = (binaryString: string): Uint8Array<Array
  * @returns The binary string representation of the input (as used by forge)
  */
 export const uint8ArrayToBinaryString = (array: Uint8Array): string => {
-  return String.fromCharCode.apply(null, array as any);
+  // Converted in chunks: String.fromCharCode.apply spreads the array as call arguments,
+  // so a single apply() over a large payload exceeds the engine's argument limit and
+  // throws "Maximum call stack size exceeded" (empirically from ~128 KB in Node 22 —
+  // well within one Garmin sync blob).
+  const CHUNK_SIZE = 0x4000; // 16k arguments per call, comfortably below every engine's limit
+  if (array.length <= CHUNK_SIZE) {
+    return String.fromCharCode.apply(null, array as unknown as number[]);
+  }
+  let result = '';
+  for (let offset = 0; offset < array.length; offset += CHUNK_SIZE) {
+    result += String.fromCharCode.apply(
+      null,
+      array.subarray(offset, offset + CHUNK_SIZE) as unknown as number[]
+    );
+  }
+  return result;
 };
 
 /**

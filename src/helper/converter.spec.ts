@@ -21,6 +21,18 @@ describe('Platform-independent', () => {
       const str = uint8ArrayToBinaryString(arr);
       expect(str).toBe('');
     });
+
+    // A single String.fromCharCode.apply over the whole array blows the engine's
+    // argument limit from ~128 KB — reachable with one Garmin sync payload.
+    it('should round-trip payloads larger than the call-argument limit', () => {
+      const big = new Uint8Array(1_000_000);
+      for (let i = 0; i < big.length; i++) {
+        big[i] = i % 256;
+      }
+      const str = uint8ArrayToBinaryString(big);
+      expect(str.length).toBe(big.length);
+      expect(binaryStringToUint8Array(str)).toEqual(big);
+    });
   });
 
   describe('utf8ToUint8Array', () => {

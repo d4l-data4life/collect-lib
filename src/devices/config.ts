@@ -18,6 +18,7 @@ export function toDeviceConfig(devices: ProgramDevice[]): DeviceConfig[] {
         case 'FITBIT':
         case 'GOOGLE_HEALTH':
         case 'OURA':
+        case 'GARMIN':
           return {
             type: 'api',
             device: device.type,
