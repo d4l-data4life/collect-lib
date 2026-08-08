@@ -68,6 +68,8 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'activityLevel'
   | 'batteryLevel'
   | 'skinTemperatureDeviation'
+  | 'menstrualCycle'
+  | 'menstrualFlow'
   // Health Connect types
   | 'sleepStage'
   // Common types for SDK sources

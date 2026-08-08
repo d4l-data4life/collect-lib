@@ -122,6 +122,7 @@ export type ProgramDevicesDataType =
   | 'tag'
   | 'cardiovascularAge'
   | 'activity'
+  | 'menstrualCycle'
   | 'batteryLevel';
 
 export type ProgramDevicesLabel = { name: string } & TranslatedString;

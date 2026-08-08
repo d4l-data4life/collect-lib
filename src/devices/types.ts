@@ -115,6 +115,7 @@ export type DEVICE_SIGNAL_TYPE =
   | 'sleep'
   | 'skinTemperature'
   | 'spo2'
+  | 'menstrualCycle'
   // Apple Health types
   | DEVICE_SIGNAL_TYPE_APPLE
   // Oura types

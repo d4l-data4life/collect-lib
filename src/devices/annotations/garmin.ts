@@ -9,6 +9,7 @@ import {
   FITBIT_SPO2_ANNOTATION,
   FITBIT_STEPS_ANNOTATION,
 } from './fitbit';
+import { MENSTRUAL_CYCLE_ANNOTATION } from './menstrual';
 import { OURA_STRESS_ANNOTATION } from './oura';
 import { DEVICE_ANNOTATION } from './types';
 
@@ -27,4 +28,5 @@ export const GARMIN_SIGNAL_TYPE_ANNOTATIONS: {
   respiratoryRate: FITBIT_BREATHING_RATE_ANNOTATION,
   skinTemperature: FITBIT_SKIN_TEMPERATURE_ANNOTATION,
   stress: OURA_STRESS_ANNOTATION,
+  menstrualCycle: MENSTRUAL_CYCLE_ANNOTATION,
 };
