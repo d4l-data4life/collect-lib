@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add menstrual cycle tracking (MCT) data types
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.44.1] - 2026-08-08
+
+### Added
+
+- add menstrual cycle tracking (MCT) data types
 
 ## [v1.44.0] - 2026-07-31
 
@@ -466,7 +470,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.1...HEAD
+[v1.44.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.0...v1.44.1
 [v1.44.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.43.0...v1.44.0
 [v1.43.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.42.0...v1.43.0
 [v1.42.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.41.0...v1.42.0
