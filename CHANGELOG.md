@@ -9,9 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Garmin signal types for daily floors and distance, resting heart rate, body battery,
-  sleep score, VO2 max, body composition and blood pressure.
-
 ### Changed
 
 ### Deprecated
@@ -21,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.44.2] - 2026-08-10
+
+### Added
+
+- Garmin signal types for daily floors and distance, resting heart rate, body battery,
+  sleep score, VO2 max, body composition and blood pressure.
 
 ## [v1.44.1] - 2026-08-08
 
@@ -473,7 +477,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.1...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.2...HEAD
+[v1.44.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.1...v1.44.2
 [v1.44.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.0...v1.44.1
 [v1.44.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.43.0...v1.44.0
 [v1.43.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.42.0...v1.43.0
