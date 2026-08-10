@@ -117,6 +117,12 @@ export type DEVICE_SIGNAL_TYPE =
   | 'spo2'
   | 'menstrualCycle'
   | 'dailyFloors'
+  | 'dailyDistance'
+  | 'bodyBattery'
+  | 'sleepScore'
+  | 'vo2Max'
+  | 'bodyComposition'
+  | 'bloodPressure'
   // Apple Health types
   | DEVICE_SIGNAL_TYPE_APPLE
   // Oura types

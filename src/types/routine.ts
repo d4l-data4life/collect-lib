@@ -123,6 +123,11 @@ export type ProgramDevicesDataType =
   | 'cardiovascularAge'
   | 'activity'
   | 'menstrualCycle'
+  | 'bodyBattery'
+  | 'sleepScore'
+  | 'vo2Max'
+  | 'bodyComposition'
+  | 'bloodPressure'
   | 'batteryLevel';
 
 export type ProgramDevicesLabel = { name: string } & TranslatedString;

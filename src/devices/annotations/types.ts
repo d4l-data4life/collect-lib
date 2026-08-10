@@ -70,6 +70,11 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'skinTemperatureDeviation'
   | 'menstrualCycle'
   | 'menstrualFlow'
+  | 'bodyBattery'
+  | 'sleepScore'
+  | 'vo2Max'
+  | 'bodyComposition'
+  | 'bloodPressure'
   // Health Connect types
   | 'sleepStage'
   // Common types for SDK sources
