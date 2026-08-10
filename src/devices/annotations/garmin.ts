@@ -11,6 +11,7 @@ import {
 } from './fitbit';
 import { MENSTRUAL_CYCLE_ANNOTATION } from './menstrual';
 import { OURA_STRESS_ANNOTATION } from './oura';
+import { BLE_CPMS_ANNOTATION_ITEM_DAILY_FLOORS } from './wearOS3';
 import { DEVICE_ANNOTATION } from './types';
 
 // Garmin Health API metrics re-use the shared Fitbit buffer encodings so a study can
@@ -29,4 +30,7 @@ export const GARMIN_SIGNAL_TYPE_ANNOTATIONS: {
   skinTemperature: FITBIT_SKIN_TEMPERATURE_ANNOTATION,
   stress: OURA_STRESS_ANNOTATION,
   menstrualCycle: MENSTRUAL_CYCLE_ANNOTATION,
+  // Daily floors climbed: cumulative day total from /dailies (same float32 encoding
+  // as the Wear OS daily counter).
+  dailyFloors: [BLE_CPMS_ANNOTATION_ITEM_DAILY_FLOORS],
 };
