@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Garmin signal types for daily floors and distance, resting heart rate, body battery,
+  sleep score, VO2 max, body composition and blood pressure.
+
 ### Changed
 
 ### Deprecated
