@@ -90,7 +90,14 @@ export type DEVICE_SIGNAL_TYPE_APPLE =
   | 'hrv'
   | 'respiratoryRate'
   | 'spo2'
-  | 'skinTemperature';
+  | 'skinTemperature'
+  | 'workout'
+  | 'standHours'
+  | 'activitySummary'
+  | 'menstrualCycle'
+  | 'contraceptive'
+  | 'pregnancy'
+  | 'lactation';
 
 export type DEVICE_SIGNAL_TYPE =
   | 'heartRate'
