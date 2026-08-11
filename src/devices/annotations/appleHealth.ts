@@ -1,4 +1,4 @@
-import { DEVICE_SIGNAL_TYPE, DEVICE_SIGNAL_TYPE_APPLE } from '../types';
+import { DEVICE_SIGNAL_TYPE_APPLE } from '../types';
 import { DEVICE_ANNOTATION_ITEM_DATA_SOURCE } from './base';
 import { DEVICE_ANNOTATION, DEVICE_ANNOTATION_ITEM } from './types';
 
@@ -174,6 +174,136 @@ export const APPLE_HEALTH_ANNOTATION_SKIN_TEMPERATURE: DEVICE_ANNOTATION = [
 ];
 // #endregion
 
+// #region Workout (HKWorkout — activity type, duration, optional system-estimated effort)
+// All channels are unsigned 32-bit. `activityType` is HKWorkoutActivityType; `duration` is
+// seconds; `effort` is 1–10 when available, else 0.
+export const APPLE_HEALTH_ANNOTATION_ITEM_WORKOUT: DEVICE_ANNOTATION_ITEM = {
+  type: 'workout',
+  size: 12,
+  channels: 3,
+  channelLabels: ['activityType', 'duration', 'effort'],
+  format: 'unsignedInt',
+  littleEndian: true,
+  note: 'activityType is HKWorkoutActivityType; duration in s; effort 0 when not provided (1–10)',
+};
+
+export const APPLE_HEALTH_ANNOTATION_WORKOUT: DEVICE_ANNOTATION = [
+  APPLE_HEALTH_ANNOTATION_ITEM_WORKOUT,
+  DEVICE_ANNOTATION_ITEM_DATA_SOURCE,
+];
+// #endregion
+
+// #region Stand Hours (one row per clock hour: stood or idle)
+export const APPLE_HEALTH_ANNOTATION_ITEM_STAND_HOUR_STATE: DEVICE_ANNOTATION_ITEM = {
+  type: 'standHourState',
+  size: 1,
+  format: 'unsignedInt',
+  littleEndian: true,
+};
+
+export const APPLE_HEALTH_ANNOTATION_STAND_HOURS: DEVICE_ANNOTATION = [
+  APPLE_HEALTH_ANNOTATION_ITEM_STAND_HOUR_STATE,
+  DEVICE_ANNOTATION_ITEM_DATA_SOURCE,
+];
+// #endregion
+
+// #region Activity Summary (HKActivitySummary — daily Move / Exercise / Stand rings)
+// One snapshot per calendar day. All channels are unsigned 32-bit. Energy is
+// rounded to whole kcal; time channels are minutes; stand channels are hour
+// counts; moveMode is HKActivityMoveMode (1 = activeEnergy, 2 = appleMoveTime).
+export const APPLE_HEALTH_ANNOTATION_ITEM_ACTIVITY_SUMMARY: DEVICE_ANNOTATION_ITEM = {
+  type: 'activitySummary',
+  size: 36,
+  channels: 9,
+  channelLabels: [
+    'activeEnergy',
+    'activeEnergyGoal',
+    'exerciseTime',
+    'exerciseTimeGoal',
+    'standHours',
+    'standHoursGoal',
+    'moveMode',
+    'moveTime',
+    'moveTimeGoal',
+  ],
+  format: 'unsignedInt',
+  littleEndian: true,
+  note: 'activeEnergy* in whole kcal; *Time* in min; standHours* as count; moveMode per HKActivityMoveMode',
+};
+
+export const APPLE_HEALTH_ANNOTATION_ACTIVITY_SUMMARY: DEVICE_ANNOTATION = [
+  APPLE_HEALTH_ANNOTATION_ITEM_ACTIVITY_SUMMARY,
+];
+// #endregion
+
+// #region Menstrual Cycle (HKCategoryTypeIdentifierMenstrualFlow)
+// One user-logged observation. `state` is HealthKit CategoryValueMenstrualFlow;
+// `isCycleStart` is 1 when HKMetadataKeyMenstrualCycleStart is true, else 0.
+export const APPLE_HEALTH_ANNOTATION_ITEM_MENSTRUAL_CYCLE: DEVICE_ANNOTATION_ITEM = {
+  type: 'menstrualCycle',
+  size: 2,
+  channels: 2,
+  channelLabels: ['state', 'isCycleStart'],
+  format: 'unsignedInt',
+  littleEndian: true,
+};
+
+export const APPLE_HEALTH_ANNOTATION_MENSTRUAL_CYCLE: DEVICE_ANNOTATION = [
+  APPLE_HEALTH_ANNOTATION_ITEM_MENSTRUAL_CYCLE,
+  DEVICE_ANNOTATION_ITEM_DATA_SOURCE,
+];
+// #endregion
+
+// #region Contraceptive
+export const APPLE_HEALTH_ANNOTATION_ITEM_CONTRACEPTIVE_TYPE: DEVICE_ANNOTATION_ITEM = {
+  type: 'contraceptiveType',
+  size: 1,
+  format: 'unsignedInt',
+  littleEndian: true,
+};
+
+export const APPLE_HEALTH_ANNOTATION_CONTRACEPTIVE: DEVICE_ANNOTATION = [
+  APPLE_HEALTH_ANNOTATION_ITEM_CONTRACEPTIVE_TYPE,
+  DEVICE_ANNOTATION_ITEM_DATA_SOURCE,
+];
+// #endregion
+
+// #region Pregnancy
+/**
+ * Apple Health pregnancy cycle factor (HKCategoryValue.notApplicable).
+ * The mobile app stores true for each active pregnancy sample.
+ */
+export const APPLE_HEALTH_ANNOTATION_ITEM_PREGNANCY_STATE: DEVICE_ANNOTATION_ITEM = {
+  type: 'pregnancyState',
+  size: 1,
+  format: 'boolean',
+  littleEndian: true,
+};
+
+export const APPLE_HEALTH_ANNOTATION_PREGNANCY: DEVICE_ANNOTATION = [
+  APPLE_HEALTH_ANNOTATION_ITEM_PREGNANCY_STATE,
+  DEVICE_ANNOTATION_ITEM_DATA_SOURCE,
+];
+// #endregion
+
+// #region Lactation
+/**
+ * Apple Health lactation cycle factor (HKCategoryValue.notApplicable).
+ * The mobile app stores true for each active lactation sample.
+ */
+export const APPLE_HEALTH_ANNOTATION_ITEM_LACTATION_STATE: DEVICE_ANNOTATION_ITEM = {
+  type: 'lactationState',
+  size: 1,
+  format: 'boolean',
+  littleEndian: true,
+};
+
+export const APPLE_HEALTH_ANNOTATION_LACTATION: DEVICE_ANNOTATION = [
+  APPLE_HEALTH_ANNOTATION_ITEM_LACTATION_STATE,
+  DEVICE_ANNOTATION_ITEM_DATA_SOURCE,
+];
+// #endregion
+
 // #region Signal Type Annotations
 export const APPLE_HEALTH_SIGNAL_TYPE_ANNOTATIONS: {
   [key in DEVICE_SIGNAL_TYPE_APPLE]?: DEVICE_ANNOTATION;
@@ -188,5 +318,12 @@ export const APPLE_HEALTH_SIGNAL_TYPE_ANNOTATIONS: {
   respiratoryRate: APPLE_HEALTH_ANNOTATION_RESPIRATORY_RATE,
   spo2: APPLE_HEALTH_ANNOTATION_SPO2,
   skinTemperature: APPLE_HEALTH_ANNOTATION_SKIN_TEMPERATURE,
+  workout: APPLE_HEALTH_ANNOTATION_WORKOUT,
+  standHours: APPLE_HEALTH_ANNOTATION_STAND_HOURS,
+  activitySummary: APPLE_HEALTH_ANNOTATION_ACTIVITY_SUMMARY,
+  menstrualCycle: APPLE_HEALTH_ANNOTATION_MENSTRUAL_CYCLE,
+  contraceptive: APPLE_HEALTH_ANNOTATION_CONTRACEPTIVE,
+  pregnancy: APPLE_HEALTH_ANNOTATION_PREGNANCY,
+  lactation: APPLE_HEALTH_ANNOTATION_LACTATION,
 };
 // #endregion

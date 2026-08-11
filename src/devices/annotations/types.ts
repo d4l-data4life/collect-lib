@@ -54,12 +54,18 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'hrv'
   | 'calories'
   | 'steps'
-  // Apple health types
+  // Apple Health types
   | 'stepCount'
   | 'walkingAndRunningDistance'
   | 'activeEnergy'
   | 'sleepState'
   | 'restingHeartRate'
+  | 'workout'
+  | 'standHourState'
+  | 'activitySummary'
+  | 'contraceptiveType'
+  | 'pregnancyState'
+  | 'lactationState'
   // Oura types
   | 'stress'
   | 'workout'
