@@ -109,8 +109,6 @@ export const GARMIN_SIGNAL_TYPE_ANNOTATIONS: {
   // as the Wear OS daily counter).
   dailyFloors: [BLE_CPMS_ANNOTATION_ITEM_DAILY_FLOORS],
   dailyDistance: [BLE_CPMS_ANNOTATION_ITEM_DAILY_DISTANCE],
-  // Shared encoding, without Apple Health's dataSource channel: Garmin has a single
-  // source, and pairing them wrote short rows that decoded to nothing.
   restingHeartRate: [DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE],
   bodyBattery: GARMIN_BODY_BATTERY_ANNOTATION,
   sleepScore: GARMIN_SLEEP_SCORE_ANNOTATION,
