@@ -1,5 +1,8 @@
 import { DEVICE_SIGNAL_TYPE_APPLE } from '../types';
-import { DEVICE_ANNOTATION_ITEM_DATA_SOURCE } from './base';
+import {
+  DEVICE_ANNOTATION_ITEM_DATA_SOURCE,
+  DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE,
+} from './base';
 import { DEVICE_ANNOTATION, DEVICE_ANNOTATION_ITEM } from './types';
 
 // #region Step Count
@@ -100,13 +103,9 @@ export const APPLE_HEALTH_ANNOTATION_HEART_RATE: DEVICE_ANNOTATION = [
 // #endregion
 
 // #region Resting Heart Rate
-export const APPLE_HEALTH_ANNOTATION_ITEM_RESTING_HEART_RATE: DEVICE_ANNOTATION_ITEM = {
-  type: 'restingHeartRate',
-  size: 1,
-  format: 'unsignedInt',
-  littleEndian: true,
-  unit: 'bpm',
-};
+// Kept as an alias so existing importers are unaffected; the encoding is shared.
+export const APPLE_HEALTH_ANNOTATION_ITEM_RESTING_HEART_RATE: DEVICE_ANNOTATION_ITEM =
+  DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE;
 
 export const APPLE_HEALTH_ANNOTATION_RESTING_HEART_RATE: DEVICE_ANNOTATION = [
   APPLE_HEALTH_ANNOTATION_ITEM_RESTING_HEART_RATE,
