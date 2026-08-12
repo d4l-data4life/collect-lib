@@ -21,10 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v1.45.1] - 2026-08-12
 
-### Fixed
+### Added
 
-- Garmin resting heart rate stored nothing: it reused Apple Health's annotation, whose
-  extra data-source channel made every row short.
+- `DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE`: shared resting heart rate encoding. Garmin
+  stores it on its own, Apple Health pairs it with a data source.
 
 ## [v1.45.0] - 2026-08-11
 
