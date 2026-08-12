@@ -22,6 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [v1.45.1] - 2026-08-12
+
+### Added
+
+- `DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE`: shared resting heart rate encoding. Garmin
+  stores it on its own, Apple Health pairs it with a data source.
+
 ## [v1.45.0] - 2026-08-11
 
 ### Added
@@ -486,7 +493,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.1...HEAD
+[v1.45.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.0...v1.45.1
 [v1.45.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.2...v1.45.0
 [v1.44.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.1...v1.44.2
 [v1.44.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.0...v1.44.1
