@@ -43,10 +43,10 @@ export const GARMIN_SLEEP_SCORE_ANNOTATION: DEVICE_ANNOTATION = [
 
 // VO2 max + fitness age from userMetrics summaries (per calendar day).
 export const GARMIN_ANNOTATION_ITEM_VO2MAX: DEVICE_ANNOTATION_ITEM = {
-  type: 'vo2Max',
+  type: 'vo2max',
   size: 8,
   channels: 2,
-  channelLabels: ['vo2Max', 'fitnessAge'],
+  channelLabels: ['vo2max', 'fitnessAge'],
   format: 'float32',
   littleEndian: true,
   note: '-1 means not provided',
@@ -112,7 +112,7 @@ export const GARMIN_SIGNAL_TYPE_ANNOTATIONS: {
   restingHeartRate: [DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE],
   bodyBattery: GARMIN_BODY_BATTERY_ANNOTATION,
   sleepScore: GARMIN_SLEEP_SCORE_ANNOTATION,
-  vo2Max: GARMIN_VO2MAX_ANNOTATION,
+  vo2max: GARMIN_VO2MAX_ANNOTATION,
   bodyComposition: GARMIN_BODY_COMPOSITION_ANNOTATION,
   bloodPressure: GARMIN_BLOOD_PRESSURE_ANNOTATION,
 };

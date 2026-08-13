@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Garmin VO2 max uses the pre-existing `vo2max` type; the duplicate `vo2Max` spelling is gone.
+
 ### Deprecated
 
 ### Removed

@@ -78,7 +78,6 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'menstrualFlow'
   | 'bodyBattery'
   | 'sleepScore'
-  | 'vo2Max'
   | 'bodyComposition'
   | 'bloodPressure'
   // Health Connect types

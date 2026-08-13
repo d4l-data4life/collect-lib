@@ -127,7 +127,7 @@ export type DEVICE_SIGNAL_TYPE =
   | 'dailyDistance'
   | 'bodyBattery'
   | 'sleepScore'
-  | 'vo2Max'
+  | 'vo2max'
   | 'bodyComposition'
   | 'bloodPressure'
   // Apple Health types

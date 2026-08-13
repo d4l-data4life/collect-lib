@@ -130,7 +130,6 @@ export type ProgramDevicesDataType =
   | 'menstrualCycle'
   | 'bodyBattery'
   | 'sleepScore'
-  | 'vo2Max'
   | 'bodyComposition'
   | 'bloodPressure'
   | 'batteryLevel';
