@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Garmin VO2 max uses the pre-existing `vo2max` type; the duplicate `vo2Max` spelling is gone.
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.45.2] - 2026-08-13
+
+### Changed
+
+- Garmin VO2 max uses the pre-existing `vo2max` type; the duplicate `vo2Max` spelling is gone.
 
 ## [v1.45.1] - 2026-08-12
 
@@ -492,7 +496,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.1...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.2...HEAD
+[v1.45.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.1...v1.45.2
 [v1.45.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.0...v1.45.1
 [v1.45.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.2...v1.45.0
 [v1.44.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.1...v1.44.2
