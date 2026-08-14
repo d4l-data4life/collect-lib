@@ -192,12 +192,14 @@ export const APPLE_HEALTH_ANNOTATION_WORKOUT: DEVICE_ANNOTATION = [
 ];
 // #endregion
 
-// #region Stand Hours (one row per clock hour: stood or idle)
+// #region Stand Hours (one row per clock hour)
+// HealthKit CategoryValueAppleStandHour: stood = 0, idle = 1. Stored as boolean: true if stood.
 export const APPLE_HEALTH_ANNOTATION_ITEM_STAND_HOUR_STATE: DEVICE_ANNOTATION_ITEM = {
-  type: 'standHourState',
+  type: 'stoodDuringHour',
   size: 1,
-  format: 'unsignedInt',
+  format: 'boolean',
   littleEndian: true,
+  note: 'true if the user stood during that hour (HKCategoryValueAppleStandHour.stood)',
 };
 
 export const APPLE_HEALTH_ANNOTATION_STAND_HOURS: DEVICE_ANNOTATION = [
@@ -207,9 +209,9 @@ export const APPLE_HEALTH_ANNOTATION_STAND_HOURS: DEVICE_ANNOTATION = [
 // #endregion
 
 // #region Activity Summary (HKActivitySummary — daily Move / Exercise / Stand rings)
-// One snapshot per calendar day. All channels are unsigned 32-bit. Energy is
-// rounded to whole kcal; time channels are minutes; stand channels are hour
-// counts; moveMode is HKActivityMoveMode (1 = activeEnergy, 2 = appleMoveTime).
+// One snapshot per calendar day. All channels are unsigned 32-bit. Energy in
+// whole kcal; time in min; stand in hour counts. moveMode is HKActivityMoveMode:
+// 1 = Move ring tracks activeEnergy (kcal, default 18+); 2 = appleMoveTime (min, under-13 / teen option).
 export const APPLE_HEALTH_ANNOTATION_ITEM_ACTIVITY_SUMMARY: DEVICE_ANNOTATION_ITEM = {
   type: 'activitySummary',
   size: 36,
@@ -227,7 +229,7 @@ export const APPLE_HEALTH_ANNOTATION_ITEM_ACTIVITY_SUMMARY: DEVICE_ANNOTATION_IT
   ],
   format: 'unsignedInt',
   littleEndian: true,
-  note: 'activeEnergy* in whole kcal; *Time* in min; standHours* as count; moveMode per HKActivityMoveMode',
+  note: 'activeEnergy* in whole kcal; *Time* in min; standHours* as count; moveMode: 1=activeEnergy (kcal Move ring), 2=appleMoveTime (min Move ring)',
 };
 
 export const APPLE_HEALTH_ANNOTATION_ACTIVITY_SUMMARY: DEVICE_ANNOTATION = [

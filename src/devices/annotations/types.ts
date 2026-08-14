@@ -55,17 +55,7 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'calories'
   | 'steps'
   // Apple Health types
-  | 'stepCount'
-  | 'walkingAndRunningDistance'
-  | 'activeEnergy'
-  | 'sleepState'
-  | 'restingHeartRate'
-  | 'workout'
-  | 'standHourState'
-  | 'activitySummary'
-  | 'contraceptiveType'
-  | 'pregnancyState'
-  | 'lactationState'
+  | DEVICE_ANNOTATION_DATA_TYPE_APPLE
   // Oura types
   | 'stress'
   | 'workout'
@@ -108,6 +98,29 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
 // | 'internal_accelerometer'
 // | 'internal_magnetometer'
 // | 'internal_beacon_sensing';
+
+export type DEVICE_ANNOTATION_DATA_TYPE_APPLE =
+  // Quantity & activity
+  | 'stepCount'
+  | 'walkingAndRunningDistance'
+  | 'activeEnergy'
+  | 'heartRate'
+  | 'restingHeartRate'
+  | 'hrv'
+  | 'respiratoryRate'
+  | 'spo2'
+  | 'skinTemperature'
+  | 'workout'
+  | 'stoodDuringHour'
+  | 'activitySummary'
+  // Sleep (sleepState + shared duration channel)
+  | 'sleepState'
+  | 'duration'
+  // Reproductive health
+  | 'menstrualCycle'
+  | 'contraceptiveType'
+  | 'pregnancyState'
+  | 'lactationState';
 
 export type DEVICE_ANNOTATION_DATA_FORMAT =
   | 'bitmask'
