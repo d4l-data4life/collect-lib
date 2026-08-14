@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Use boolean value for stand hour in Apple Health
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.46.0] - 2026-08-14
+
+### Changed
+
+- Use boolean value for stand hour in Apple Health
 
 ## [v1.45.2] - 2026-08-13
 
@@ -498,7 +502,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.2...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.46.0...HEAD
+[v1.46.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.2...v1.46.0
 [v1.45.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.1...v1.45.2
 [v1.45.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.0...v1.45.1
 [v1.45.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.2...v1.45.0
