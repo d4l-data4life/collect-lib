@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- SpO2 for Health Connect
+
 ### Changed
 
 - Use boolean value for stand hour in Apple Health
