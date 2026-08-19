@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- SpO2 for Health Connect
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.47.0] - 2026-08-19
+
+### Added
+
+- SpO2 for Health Connect
 
 ## [v1.46.0] - 2026-08-14
 
@@ -504,7 +508,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.46.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.47.0...HEAD
+[v1.47.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.46.0...v1.47.0
 [v1.46.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.2...v1.46.0
 [v1.45.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.1...v1.45.2
 [v1.45.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.0...v1.45.1
