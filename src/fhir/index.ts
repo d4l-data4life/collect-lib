@@ -1,5 +1,6 @@
 export * from './consent';
 export * from './constants';
+export * from './topic-id';
 export * from './questionnaireScore';
 export * from './questionnaireResponse';
 export * from './recording';

@@ -141,9 +141,9 @@ export type SurveyContent = {
 // #### SurveyMultiplex
 // Properties | Required | Type | Description
 export type SurveyMultiplex = {
-  // source | true | object | DEPRECATED — replaced by `topic`; retained during the topic migration. The keys of the object are the questionnaire names and the values are the linkIds of the questions whose answers will be used for multiplexing. The answers to these questions will be used to fill the placeholder.
+  // source | true | object | DEPRECATED — replaced by `topic`; retained during the topic migration (see HUB-6797). The keys of the object are the questionnaire names and the values are the linkIds of the questions whose answers will be used for multiplexing. The answers to these questions will be used to fill the placeholder.
   source: { [key: string]: string[] };
-  // lookup | true | `all` or `latest` | DEPRECATED — replaced by `scope`. Defines how the answers of the source questions will be looked up. `latest` means only the latest iteration of the source questionnaires will be used, `all` means all iterations of the source questionnaires will be used.
+  // lookup | true | `all` or `latest` | DEPRECATED — replaced by `scope` (see HUB-6797). Defines how the answers of the source questions will be looked up. `latest` means only the latest iteration of the source questionnaires will be used, `all` means all iterations of the source questionnaires will be used.
   lookup: 'all' | 'latest';
   // topic | false | string | Canonical topic URL whose accumulated values drive the multiplexing (replaces `source`). When set, it takes precedence over `source`/`lookup`.
   topic?: string;
