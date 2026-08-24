@@ -19,3 +19,16 @@ export const topicIdFromCanonical = (canonical: string): string =>
 /** True if the canonical's id segment is identifier-safe. */
 export const isValidTopicCanonical = (canonical: string): boolean =>
   isValidTopicId(topicIdFromCanonical(canonical));
+
+/**
+ * The FHIR `valueCode` strings for a topic input's scope, in proto-enum order
+ * (session=0, latest=1, all=2). These are the wire contract: they must equal
+ * the grpc-modules `TopicScope` enum's JSON names
+ */
+export const TOPIC_SCOPE_CODES = ['session', 'latest', 'all'] as const;
+
+export type TopicScopeCode = (typeof TOPIC_SCOPE_CODES)[number];
+
+/** True if `code` is a recognized topic scope valueCode. */
+export const isValidTopicScope = (code: string): code is TopicScopeCode =>
+  (TOPIC_SCOPE_CODES as readonly string[]).includes(code);
