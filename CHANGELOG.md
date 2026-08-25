@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Support for minimum required app version in program definition
+
 ### Changed
 
 ### Deprecated
