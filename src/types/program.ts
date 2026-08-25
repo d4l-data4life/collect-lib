@@ -35,6 +35,17 @@ export type Program = {
   featured: ProgramFeatured;
   // theme | false | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app
   theme?: 'D4L' | 'GREEN' | 'PURPLE' | 'OLIVE' | 'BLUE';
+  // appVersion | false | object | Minimum smartphone app version required to run this program. When the installed app is below `version`, the program update is withheld and the user is asked to update. `version` and `androidVersionCode` must describe the same app release.
+  appVersion?: ProgramAppVersion;
+};
+
+// #### ProgramAppVersion
+// Minimum app version a program requires. `version` (semver / versionName) drives the runtime gate on both platforms and the iOS App Store availability check; `androidVersionCode` is the Play versionCode of that same release, used for the Android availability check (Play exposes only a version code, never a versionName).
+export type ProgramAppVersion = {
+  // version | true | semver string | e.g. "1.42.0"
+  version: string;
+  // androidVersionCode | true | number | Play versionCode of the same release
+  androidVersionCode: number;
 };
 
 // #### ProgramFeatured
