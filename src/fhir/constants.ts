@@ -14,8 +14,19 @@ export const MinValueExtension = 'http://hl7.org/fhir/StructureDefinition/minVal
 export const MinLengthExtension = 'http://hl7.org/fhir/StructureDefinition/minLength';
 export const QItemControlDefinition = 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl';
 export const RoutineIsPassiveExtension = 'http://fhir.data4life.care/StructureDefinition/is-passive-recording';
+// LEGACY(prepopulate) [HUB-6797]: remove when prepopulate is retired (replaced by input/output).
 export const PrepopulateExtension = 'http://fhir.data4life.care/StructureDefinition/prepopulate';
 export const ImageExtension = 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemMedia';
+// Topic-based question linking (input/output). Producer marker carries `valueCanonical` = the
+// topic; the consumer marker is a complex extension with `topic` (valueCanonical) + `scope`
+// (valueCode) sub-extensions. `TopicSystem` is the coding system for topic launchContexts.
+export const QuestionnaireItemOutputExtension =
+  'http://fhir.data4life.care/StructureDefinition/questionnaire-item-output';
+export const QuestionnaireItemInputExtension =
+  'http://fhir.data4life.care/StructureDefinition/questionnaire-item-input';
+export const TopicInputTopicUrl = 'topic';
+export const TopicInputScopeUrl = 'scope';
+export const TopicSystem = 'http://fhir.data4life.care/topic';
 // Naming Systems
 export const SignalIDSystem = 'http://fhir.data4life.care/r5/NamingSystem/app-signal-ids';
 export const AppIDNamingSystem = 'http://fhir.data4life.care/r5/NamingSystem/app-db-ids';
