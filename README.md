@@ -50,9 +50,10 @@ Update the types by running `yarn run readme:update`.
 
 Minimum app version a program requires. `version` (semver / versionName) drives the runtime gate on both platforms and the iOS App Store availability check; `androidVersionCode` is the Play versionCode of that same release, used for the Android availability check (Play exposes only a version code, never a versionName).
 
-| version            | true | semver string | e.g. "1.42.0"                        |
-| ------------------ | ---- | ------------- | ------------------------------------ |
-| androidVersionCode | true | number        | Play versionCode of the same release |
+| Properties         | Required | Type          | Description                          |
+| ------------------ | -------- | ------------- | ------------------------------------ |
+| version            | true     | semver string | e.g. "1.42.0"                        |
+| androidVersionCode | true     | number        | Play versionCode of the same release |
 
 #### ProgramFeatured
 
