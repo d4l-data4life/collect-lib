@@ -14,6 +14,7 @@ export const MinValueExtension = 'http://hl7.org/fhir/StructureDefinition/minVal
 export const MinLengthExtension = 'http://hl7.org/fhir/StructureDefinition/minLength';
 export const QItemControlDefinition = 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl';
 export const RoutineIsPassiveExtension = 'http://fhir.data4life.care/StructureDefinition/is-passive-recording';
+// LEGACY(prepopulate) [HUB-6797]: remove when prepopulate is retired (replaced by input/output).
 export const PrepopulateExtension = 'http://fhir.data4life.care/StructureDefinition/prepopulate';
 export const ImageExtension = 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemMedia';
 // Topic-based question linking (input/output). Producer marker carries `valueCanonical` = the
