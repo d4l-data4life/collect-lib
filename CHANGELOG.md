@@ -9,19 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Support for `input` and `output` topics for questions
-
 ### Changed
 
 ### Deprecated
-
-- `prepopulate` for list questions. Use `input` and `output` topics instead.
 
 ### Removed
 
 ### Fixed
 
 ### Security
+
+## [v1.49.0] - 2026-08-25
+
+### Added
+
+- Support for `input` and `output` topics for questions
+
+### Deprecated
+
+- `prepopulate` for list questions. Use `input` and `output` topics instead.
 
 ## [v1.48.0] - 2026-08-25
 
@@ -518,7 +524,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.48.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.49.0...HEAD
+[v1.49.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.48.0...v1.49.0
 [v1.48.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.47.0...v1.48.0
 [v1.47.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.46.0...v1.47.0
 [v1.46.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.2...v1.46.0
