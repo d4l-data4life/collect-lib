@@ -9,9 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Support for `input` and `output` topics for questions
+
 ### Changed
 
 ### Deprecated
+
+- `prepopulate` for list questions. Use `input` and `output` topics instead.
 
 ### Removed
 
