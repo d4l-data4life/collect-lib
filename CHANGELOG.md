@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Support for Garmin's activity signal (15-min epochs)
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.50.0] - 2026-08-26
+
+### Added
+
+- Support for Garmin's activity signal (15-min epochs)
 
 ## [v1.49.0] - 2026-08-25
 
@@ -526,7 +530,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.49.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.50.0...HEAD
+[v1.50.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.49.0...v1.50.0
 [v1.49.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.48.0...v1.49.0
 [v1.48.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.47.0...v1.48.0
 [v1.47.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.46.0...v1.47.0
