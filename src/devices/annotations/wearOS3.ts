@@ -320,7 +320,7 @@ export const BLE_PSMS_ANNOTATION_ITEM_PPG_IR: DEVICE_ANNOTATION_ITEM = {
 
 export const BLE_PSMS_ANNOTATION_ITEM_ACCELERATION: DEVICE_ANNOTATION_ITEM = {
   type: 'samsungSdkAcceleration',
-  size: 12,
+  size: 6,
   format: 'signedInt',
   littleEndian: true,
   channels: 3,
