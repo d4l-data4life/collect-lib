@@ -1,6 +1,7 @@
 import { Buffer } from 'buffer/';
 import { Converter } from '../helper/converter';
 import Requester from '../helper/requester';
+import { TrackingEventsDocument } from '../tracking/types';
 import { Program } from '../types';
 import { CryptoModule } from './crypto';
 import { filterRecords, includedResearchSubjects } from './document';
@@ -273,6 +274,63 @@ export class DonationSDK implements SDKInterface {
   }
 
   /**
+   * Upload one batch of tracking events (BI events) to the dedicated tracking
+   * endpoint. Tracking donations are stored under the `tracking` type on the
+   * backend and are excluded from restoration.
+   * @param donorIdentity The donor identity
+   * @param program The program the events belong to
+   * @param document The tracking events batch document
+   * @param batchId The UUID identifying this batch (idempotent across retries)
+   * @returns True if the upload succeeded
+   */
+  async donateTrackingEvents(
+    donorIdentity: DonorIdentity,
+    program: Program,
+    document: TrackingEventsDocument,
+    batchId: string
+  ): Promise<boolean> {
+    ////////
+    // Check prerequisites
+    ////////
+    // Validate the name of the program
+    validateProgramName(program.name, donorIdentity);
+
+    if (!document.events.length) {
+      return true;
+    }
+
+    ////////
+    // Encrypt document
+    ////////
+    // No filterRecords here: tracking documents are not FHIR resources and
+    // are not subject to the donation resource configuration
+    const donations = await this.encryptDonations(
+      [{ id: batchId, document, status: 'Active' }],
+      donorIdentity,
+      program.donation.target
+    );
+
+    ////////
+    // Upload
+    ////////
+
+    // Create authenticated Donation API requester
+    const authenticatedDonationAPI = await this.getAuthenticatedDonationAPI(donorIdentity);
+
+    try {
+      await authenticatedDonationAPI.put<void>({
+        uri: `/tracking/${program.name}`,
+        body: JSON.stringify(donations),
+      });
+    } catch (e) {
+      console.error(e);
+      throw new Error(ERROR_CODES.INTERNAL_SERVER_ERROR);
+    }
+
+    return true;
+  }
+
+  /**
    * Encrypt donations to be donated to a specific target
    * @param donatableRecords The donations to encrypt
    * @param donorIdentity The identity of the donor to use
@@ -280,7 +338,7 @@ export class DonationSDK implements SDKInterface {
    * @returns The list of encrypted donations
    */
   private async encryptDonations(
-    donatableRecords: DonationRecord[],
+    donatableRecords: { id: string; document: object; status: RecordState }[],
     donorIdentity: DonorIdentity,
     target: string
   ): Promise<{ id: string; data: string }[]> {

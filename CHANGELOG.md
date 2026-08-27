@@ -19,6 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [v1.51.0] - 2026-08-27
+
+### Added
+
+- BI tracking events: `TrackingEventsDocument` types and `DonationSDK.donateTrackingEvents` uploading one encrypted batch per call to the dispatcher tracking endpoint
+- `ProgramTracking` config on `Program` to opt a study into tracking per event category
+
+### Changed
+
+- Reduce size of acceleration payload
+
 ## [v1.50.0] - 2026-08-26
 
 ### Added
@@ -530,7 +541,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.50.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.51.0...HEAD
+[v1.51.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.50.0...v1.51.0
 [v1.50.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.49.0...v1.50.0
 [v1.49.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.48.0...v1.49.0
 [v1.48.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.47.0...v1.48.0
