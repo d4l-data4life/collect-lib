@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- BI tracking events: `TrackingEventsDocument` types and `DonationSDK.donateTrackingEvents` uploading one encrypted batch per call to the dispatcher tracking endpoint
+- `ProgramTracking` config on `Program` to opt a study into tracking per event category
+
 ### Changed
 
 - Reduce size of acceleration payload
