@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Garmin HRV contained 3 NaN columns
+- Garmin showed absolute skin temperature instead of deviation
+
 ### Security
 
 ## [v1.51.0] - 2026-08-27
