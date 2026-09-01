@@ -8,10 +8,10 @@
  * evaluates and next-research-studio only emits the closed subset declared here.
  *
  * This module is intentionally engine-free: it defines the subset and the fixture as data.
- * The evaluator (over `fhirpath.js` or a minimal interpreter) lives elsewhere and must satisfy
- * `ENABLE_WHEN_CONFORMANCE_CASES`; studio's validator must accept every in-subset expression and
- * reject every `OUT_OF_SUBSET_EXPRESSIONS` entry. Keeping both repos pinned to this one fixture
- * is the guard against subset drift.
+ * The evaluator lives in `enable-when-eval.ts` (exposed via the `./fhirpath`
+ * subpath) and must satisfy `ENABLE_WHEN_CONFORMANCE_CASES`; studio's validator must accept every
+ * in-subset expression and reject every `OUT_OF_SUBSET_EXPRESSIONS` entry. Keeping both repos
+ * pinned to this one fixture is the guard against subset drift.
  */
 
 /** Boolean and comparison operators, plus collection union, allowed in a gate expression. */
@@ -36,6 +36,7 @@ export const SUPPORTED_FHIRPATH_FUNCTIONS = [
   'contains',
   'today',
   'now',
+  'toDate', // convert a string variable to a Date before date arithmetic (%d.toDate() + 18 years)
 ] as const;
 
 /** Calendar units allowed in date arithmetic (`%d + 18 years`). */
@@ -100,14 +101,14 @@ export const ENABLE_WHEN_CONFORMANCE_CASES: EnableWhenConformanceCase[] = [
   // age band (derived vs now).
   {
     description: 'age band: 26 year old -> shown (>= 18)',
-    expression: '%birthDate.exists() and today() > %birthDate + 18 years',
+    expression: '%birthDate.exists() and today() > %birthDate.toDate() + 18 years',
     variables: { birthDate: ['2000-01-01'] },
     now: '2026-08-31',
     expected: true,
   },
   {
     description: 'age band: 11 year old -> hidden (< 18)',
-    expression: '%birthDate.exists() and today() > %birthDate + 18 years',
+    expression: '%birthDate.exists() and today() > %birthDate.toDate() + 18 years',
     variables: { birthDate: ['2015-01-01'] },
     now: '2026-08-31',
     expected: false,
@@ -115,14 +116,14 @@ export const ENABLE_WHEN_CONFORMANCE_CASES: EnableWhenConformanceCase[] = [
   // elapsed time since a date.
   {
     description: 'elapsed: enrolled 7 months ago -> shown (> 30 days)',
-    expression: '%enrolledAt.exists() and %enrolledAt + 30 days < today()',
+    expression: '%enrolledAt.exists() and %enrolledAt.toDate() + 30 days < today()',
     variables: { enrolledAt: ['2026-01-01'] },
     now: '2026-08-31',
     expected: true,
   },
   {
     description: 'elapsed: enrolled 11 days ago -> hidden (<= 30 days)',
-    expression: '%enrolledAt.exists() and %enrolledAt + 30 days < today()',
+    expression: '%enrolledAt.exists() and %enrolledAt.toDate() + 30 days < today()',
     variables: { enrolledAt: ['2026-08-20'] },
     now: '2026-08-31',
     expected: false,
@@ -160,7 +161,7 @@ export const ENABLE_WHEN_CONFORMANCE_CASES: EnableWhenConformanceCase[] = [
   // self-healing DOB: single topic variable, defensive .first() before date arithmetic.
   {
     description: 'first(): multi-value topic, adult -> shown',
-    expression: '%birthDate.exists() and today() > %birthDate.first() + 18 years',
+    expression: '%birthDate.exists() and today() > %birthDate.first().toDate() + 18 years',
     variables: { birthDate: ['2000-01-01'] },
     now: '2026-08-31',
     expected: true,
