@@ -27,7 +27,7 @@ export const SUPPORTED_FHIRPATH_OPERATORS = [
   '|',
 ] as const;
 
-/** Functions allowed in a gate expression. `today`/`now` read the injected clock. */
+/** Functions allowed in a gate expression. `today`/`now` read the ambient clock (device time in production, pinned via fake timers in tests). */
 export const SUPPORTED_FHIRPATH_FUNCTIONS = [
   'exists',
   'empty',
