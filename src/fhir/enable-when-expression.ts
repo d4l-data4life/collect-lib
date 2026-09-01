@@ -166,6 +166,61 @@ export const ENABLE_WHEN_CONFORMANCE_CASES: EnableWhenConformanceCase[] = [
     now: '2026-08-31',
     expected: true,
   },
+  // set membership: value is any of several (studio equalsOneOf).
+  {
+    description: 'membership: gender is one of {female, diverse} -> shown',
+    expression: "%gender contains 'female' or %gender contains 'diverse'",
+    variables: { gender: ['diverse'] },
+    now: '2026-08-31',
+    expected: true,
+  },
+  {
+    description: 'membership: gender not in the set -> hidden',
+    expression: "%gender contains 'female' or %gender contains 'diverse'",
+    variables: { gender: ['male'] },
+    now: '2026-08-31',
+    expected: false,
+  },
+  // recency: at most N days have passed (studio withinLastDays, complement of daysSince).
+  {
+    description: 'withinLastDays: enrolled 11 days ago -> shown (<= 30 days)',
+    expression: '%enrolledAt.exists() and %enrolledAt.first().toDate() + 30 days >= today()',
+    variables: { enrolledAt: ['2026-08-20'] },
+    now: '2026-08-31',
+    expected: true,
+  },
+  {
+    description: 'withinLastDays: enrolled 7 months ago -> hidden (> 30 days)',
+    expression: '%enrolledAt.exists() and %enrolledAt.first().toDate() + 30 days >= today()',
+    variables: { enrolledAt: ['2026-01-01'] },
+    now: '2026-08-31',
+    expected: false,
+  },
+  // age at most (studio ageAtMost): age <= N means the (N+1)th birthday is not yet reached.
+  {
+    description: 'ageAtMost 17: 11 year old -> shown',
+    expression: '%birthDate.exists() and today() < %birthDate.first().toDate() + 18 years',
+    variables: { birthDate: ['2015-01-01'] },
+    now: '2026-08-31',
+    expected: true,
+  },
+  // age band (studio ageBetween): min <= age <= max, inclusive (upper bound uses max + 1 years).
+  {
+    description: 'ageBetween 18..65: 36 year old -> shown',
+    expression:
+      '%birthDate.exists() and today() >= %birthDate.first().toDate() + 18 years and today() < %birthDate.first().toDate() + 66 years',
+    variables: { birthDate: ['1990-01-01'] },
+    now: '2026-08-31',
+    expected: true,
+  },
+  {
+    description: 'ageBetween 18..65: 11 year old -> hidden (below min)',
+    expression:
+      '%birthDate.exists() and today() >= %birthDate.first().toDate() + 18 years and today() < %birthDate.first().toDate() + 66 years',
+    variables: { birthDate: ['2015-01-01'] },
+    now: '2026-08-31',
+    expected: false,
+  },
 ];
 
 /**
