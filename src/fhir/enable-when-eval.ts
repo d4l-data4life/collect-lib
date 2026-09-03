@@ -13,9 +13,12 @@ import { FhirPathVariables } from './enable-when-expression';
  * Time: `today()`/`now()` read the ambient clock (fhirpath.js caches it for the duration of one
  * evaluation). Tests pin it with fake timers; production uses device time.
  *
- * NOTE: this module imports `fhirpath` and must not be re-exported from the fhir barrel until the
- * packaging strategy is decided, so that consumers which only need the subset/fixture data
- * (e.g. next-research-studio validation) do not pull the engine into their bundle.
+ * Packaging: this module imports the fhirpath.js engine (~157 KB gzipped) and is deliberately
+ * published on its own subpath (`@d4l/collect-lib/fhirpath`, see tsup.config.ts) instead of the
+ * barrel. The barrel is imported on nearly every Research Studio page, while evaluation is only
+ * needed where an expression is actually run (phoenix, and Studio's synthetic-data generator); the
+ * package declares no `sideEffects: false` (it imports polyfills), so bundlers could not drop the
+ * engine from the barrel on their own. Do not re-export it from `fhir/index.ts`.
  */
 export const evaluateEnableWhen = (expression: string, variables: FhirPathVariables): boolean => {
   try {
