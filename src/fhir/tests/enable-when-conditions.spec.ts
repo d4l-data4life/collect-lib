@@ -25,7 +25,7 @@ const coding = (
 });
 
 describe('compileEnableWhen', () => {
-  it('compiles the worked examples to their canonical expressions and bindings', () => {
+  it('compiles typical conditions to their canonical expressions and bindings', () => {
     expect(compileEnableWhen([coding(gender, { op: 'neq', value: 'male' })], 'all')).toEqual({
       itemVariables: [{ name: 'gender', topic: 'gender', scope: 'latest' }],
       expression: "%gender.exists() and (%gender contains 'male').not()",
