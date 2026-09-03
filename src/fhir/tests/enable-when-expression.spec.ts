@@ -1,6 +1,7 @@
 import {
   ENABLE_WHEN_CONFORMANCE_CASES,
   OUT_OF_SUBSET_EXPRESSIONS,
+  findSubsetViolations,
   referencedVariables,
 } from '../enable-when-expression';
 
@@ -12,10 +13,9 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 describe('referencedVariables', () => {
   it('extracts distinct %variables', () => {
-    expect(referencedVariables("%smoker = 'yes' and %gender.exists() and %gender != 'male'")).toEqual([
-      'smoker',
-      'gender',
-    ]);
+    expect(
+      referencedVariables("%smoker = 'yes' and %gender.exists() and %gender != 'male'")
+    ).toEqual(['smoker', 'gender']);
   });
 
   it('returns empty for an expression with no variables', () => {
@@ -52,5 +52,31 @@ describe('OUT_OF_SUBSET_EXPRESSIONS', () => {
       expect(typeof expr).toBe('string');
       expect(expr.length).toBeGreaterThan(0);
     });
+  });
+});
+
+describe('findSubsetViolations', () => {
+  it.each(ENABLE_WHEN_CONFORMANCE_CASES)('accepts in-subset: $description', ({ expression }) => {
+    expect(findSubsetViolations(expression)).toEqual([]);
+  });
+
+  it.each(OUT_OF_SUBSET_EXPRESSIONS)('rejects out-of-subset: %s', (expression) => {
+    expect(findSubsetViolations(expression)).not.toEqual([]);
+  });
+
+  it('names the offending token', () => {
+    expect(findSubsetViolations("%g.where($this = 'x')")).toEqual(
+      expect.arrayContaining([expect.stringContaining('where()'), expect.stringContaining('$')])
+    );
+    expect(findSubsetViolations("%coding.code = 'x'")).toEqual([expect.stringContaining('code')]);
+  });
+
+  it('ignores words inside string literals', () => {
+    expect(findSubsetViolations("%g contains 'where iif $this count'")).toEqual([]);
+  });
+
+  it('accepts a number literal on either side of a converted variable', () => {
+    expect(findSubsetViolations('5 < %x.first().toInteger()')).toEqual([]);
+    expect(findSubsetViolations('5 < %x.first()')).not.toEqual([]);
   });
 });

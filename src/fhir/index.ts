@@ -2,6 +2,7 @@ export * from './consent';
 export * from './constants';
 export * from './topic-id';
 export * from './enable-when-expression';
+export * from './enable-when-conditions';
 export * from './questionnaireScore';
 export * from './questionnaireResponse';
 export * from './recording';

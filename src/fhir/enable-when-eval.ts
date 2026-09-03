@@ -2,9 +2,11 @@ import fhirpath from 'fhirpath';
 import { FhirPathVariables } from './enable-when-expression';
 
 /**
- * Evaluate a gate's `enableWhenExpression` against a variable environment, returning whether the
+ * Evaluate an `enableWhenExpression` against a variable environment, returning whether the
  * item should be shown. An empty or non-true result is treated as `false` (hidden until known),
- * matching native `enableWhen` semantics.
+ * matching native `enableWhen` semantics. An evaluation error (malformed expression, type
+ * mismatch such as a raw string compared to a number, unbound variable) is also `false`: the
+ * fail-hidden contract must not depend on every caller validating the expression first.
  *
  * Variables are passed as the fhirpath.js environment and referenced in the expression as `%name`.
  *
@@ -16,6 +18,10 @@ import { FhirPathVariables } from './enable-when-expression';
  * (e.g. next-research-studio validation) do not pull the engine into their bundle.
  */
 export const evaluateEnableWhen = (expression: string, variables: FhirPathVariables): boolean => {
-  const result = fhirpath.evaluate({}, expression, variables);
-  return Array.isArray(result) && result[0] === true;
+  try {
+    const result = fhirpath.evaluate({}, expression, variables);
+    return Array.isArray(result) && result[0] === true;
+  } catch {
+    return false;
+  }
 };

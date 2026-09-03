@@ -16,6 +16,20 @@ describe('evaluateEnableWhen (fhirpath.js)', () => {
   });
 });
 
+// Evaluation errors must fail hidden, not throw: the caller may be handed an expression that slipped
+// past authoring-time validation.
+describe('fail hidden on evaluation errors', () => {
+  it.each([
+    ['raw string compared to a number', '%x > 5', { x: ['7'] }],
+    ['toInteger on a multi-value collection', '%x.toInteger() > 5', { x: ['7', '3'] }],
+    ['unbound variable', '%missing.exists()', {}],
+    ['syntax error', '%x.exists( and', { x: ['7'] }],
+    ['non-boolean result', '%x.first()', { x: ['7'] }],
+  ])('%s -> false', (_, expression, variables) => {
+    expect(evaluateEnableWhen(expression, variables)).toBe(false);
+  });
+});
+
 // Proves fake timers actually drive fhirpath.js `today()` (module-level clock, read per
 // evaluation), using times far from the real clock so a stale/real clock would flip the result.
 describe('clock injection', () => {

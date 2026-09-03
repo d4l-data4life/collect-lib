@@ -36,7 +36,7 @@ export const QuestionnaireItemInputExtension =
 export const TopicInputTopicUrl = 'topic';
 export const TopicInputScopeUrl = 'scope';
 export const TopicSystem = 'http://fhir.data4life.care/topic';
-// Cross-questionnaire enableWhen. The gate condition is a standard SDC
+// Cross-questionnaire enableWhen. The condition is a standard SDC
 // `enableWhenExpression` (text/fhirpath); the variables it references are bound by the custom
 // `questionnaire-item-variable` extension, which mirrors the shape of a FHIR `variable` but
 // sources the value from a topic (with scope) or a local question (linkId) rather than from a
