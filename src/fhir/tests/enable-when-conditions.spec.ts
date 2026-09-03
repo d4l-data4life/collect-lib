@@ -66,7 +66,7 @@ describe('compileEnableWhen', () => {
     );
   });
 
-  it('joins rows with or for behavior any', () => {
+  it('joins conditions with or for behavior any', () => {
     const { expression } = compileEnableWhen(
       [coding(smoker, { op: 'exists' }), coding(gender, { op: 'eq', value: 'female' })],
       'any'
@@ -74,7 +74,7 @@ describe('compileEnableWhen', () => {
     expect(expression).toBe("(%smoker.exists()) or (%gender contains 'female')");
   });
 
-  it('shares one variable between rows on the same source and sanitizes linkIds', () => {
+  it('shares one variable between conditions on the same source and sanitizes linkIds', () => {
     const { itemVariables, expression } = compileEnableWhen(
       [
         { source: score, valueType: 'integer', predicate: { op: 'gteq', value: 3 } },
@@ -170,7 +170,7 @@ describe('compileEnableWhen', () => {
     expect(() => compileEnableWhen([], 'all')).toThrow(EnableWhenCompileError);
   });
 
-  it('reports the offending row index', () => {
+  it('reports the offending condition index', () => {
     try {
       compileEnableWhen(
         [coding(gender, { op: 'exists' }), coding(gender, { op: 'gt', value: 'x' })],
@@ -184,7 +184,7 @@ describe('compileEnableWhen', () => {
 });
 
 describe('requiresExpression', () => {
-  it('is false for purely local static rows (native enableWhen)', () => {
+  it('is false for purely local static conditions (native enableWhen)', () => {
     expect(
       requiresExpression([
         coding(smoker, { op: 'eq', value: 'yes' }),
@@ -258,7 +258,7 @@ const allConditions: EnableWhenCondition[] = Object.entries(
 
 describe('compile -> decompile round trip', () => {
   it.each(allConditions.map((c) => [c.valueType, c.predicate.op, c] as const))(
-    'single row %s %s',
+    'single condition %s %s',
     (_valueType, _op, condition) => {
       const compiled = compileEnableWhen([condition], 'all');
       expect(findSubsetViolations(compiled.expression)).toEqual([]);
@@ -271,7 +271,7 @@ describe('compile -> decompile round trip', () => {
     }
   );
 
-  it.each(['all', 'any'] as const)('all rows combined with %s', (behavior) => {
+  it.each(['all', 'any'] as const)('all conditions combined with %s', (behavior) => {
     const compiled = compileEnableWhen(allConditions, behavior);
     expect(findSubsetViolations(compiled.expression)).toEqual([]);
     const byKey = new Map(allConditions.map((c) => [JSON.stringify(c.source), c.valueType]));
@@ -282,7 +282,7 @@ describe('compile -> decompile round trip', () => {
   });
 
   it('infers value types from the expression shape when no resolver is given', () => {
-    const rows: EnableWhenCondition[] = [
+    const conditions: EnableWhenCondition[] = [
       coding(gender, { op: 'oneOf', values: ['female', 'diverse'] }),
       { source: score, valueType: 'integer', predicate: { op: 'neq', value: 4 } },
       { source: smoker, valueType: 'string', predicate: { op: 'eq', value: 'x' } },
@@ -298,14 +298,14 @@ describe('compile -> decompile round trip', () => {
         predicate: { op: 'gt', value: '1999' },
       },
     ];
-    const compiled = compileEnableWhen(rows, 'any');
+    const compiled = compileEnableWhen(conditions, 'any');
     expect(decompileEnableWhen(compiled.itemVariables, compiled.expression)).toEqual({
-      conditions: rows,
+      conditions: conditions,
       behavior: 'any',
     });
   });
 
-  it('defaults an untyped exists row to string and lets the resolver override it', () => {
+  it('defaults an untyped exists condition to string and lets the resolver override it', () => {
     const compiled = compileEnableWhen([coding(gender, { op: 'exists' })], 'all');
     expect(
       decompileEnableWhen(compiled.itemVariables, compiled.expression)?.conditions[0].valueType
@@ -366,28 +366,28 @@ describe('compiled expressions evaluate as authored', () => {
   };
 
   it('elapsed less than 18 years ("age at most 17") excludes the 18th birthday', () => {
-    const rows: EnableWhenCondition[] = [
+    const conditions: EnableWhenCondition[] = [
       {
         source: birthDate,
         valueType: 'date',
         predicate: { op: 'elapsedLessThan', amount: 18, unit: 'years' },
       },
     ];
-    expect(evalAt('2026-08-31', rows, 'all', { birthDate: ['2008-09-01'] })).toBe(true); // still 17
-    expect(evalAt('2026-08-31', rows, 'all', { birthDate: ['2008-08-31'] })).toBe(false); // turned 18 today
+    expect(evalAt('2026-08-31', conditions, 'all', { birthDate: ['2008-09-01'] })).toBe(true); // still 17
+    expect(evalAt('2026-08-31', conditions, 'all', { birthDate: ['2008-08-31'] })).toBe(false); // turned 18 today
   });
 
   it('age between is inclusive on both ends', () => {
-    const rows: EnableWhenCondition[] = [
+    const conditions: EnableWhenCondition[] = [
       {
         source: birthDate,
         valueType: 'date',
         predicate: { op: 'elapsedBetween', min: 18, max: 66, unit: 'years' },
       },
     ];
-    expect(evalAt('2026-08-31', rows, 'all', { birthDate: ['2008-08-31'] })).toBe(true); // 18 today
-    expect(evalAt('2026-08-31', rows, 'all', { birthDate: ['1960-09-01'] })).toBe(true); // 65, turns 66 tomorrow
-    expect(evalAt('2026-08-31', rows, 'all', { birthDate: ['1960-08-31'] })).toBe(false); // 66 today
+    expect(evalAt('2026-08-31', conditions, 'all', { birthDate: ['2008-08-31'] })).toBe(true); // 18 today
+    expect(evalAt('2026-08-31', conditions, 'all', { birthDate: ['1960-09-01'] })).toBe(true); // 65, turns 66 tomorrow
+    expect(evalAt('2026-08-31', conditions, 'all', { birthDate: ['1960-08-31'] })).toBe(false); // 66 today
   });
 
   it('elapsedAtLeast and elapsedLessThan are exact complements on the boundary day', () => {
@@ -419,28 +419,32 @@ describe('compiled expressions evaluate as authored', () => {
   });
 
   it('coding neq on a multi-value source hides when any value matches', () => {
-    const rows = [coding(gender, { op: 'neq', value: 'male' })];
-    expect(evalAt('2026-08-31', rows, 'all', { gender: ['female', 'male'] })).toBe(false);
-    expect(evalAt('2026-08-31', rows, 'all', { gender: ['female'] })).toBe(true);
-    expect(evalAt('2026-08-31', rows, 'all', { gender: [] })).toBe(false);
+    const conditions = [coding(gender, { op: 'neq', value: 'male' })];
+    expect(evalAt('2026-08-31', conditions, 'all', { gender: ['female', 'male'] })).toBe(false);
+    expect(evalAt('2026-08-31', conditions, 'all', { gender: ['female'] })).toBe(true);
+    expect(evalAt('2026-08-31', conditions, 'all', { gender: [] })).toBe(false);
   });
 
   it('numeric comparisons work on string-typed variables', () => {
-    const rows: EnableWhenCondition[] = [
+    const conditions: EnableWhenCondition[] = [
       { source: score, valueType: 'decimal', predicate: { op: 'gteq', value: 2.5 } },
       { source: score, valueType: 'decimal', predicate: { op: 'neq', value: 3 } },
     ];
-    expect(evalAt('2026-08-31', rows, 'all', { q_1_score: ['2.5'] })).toBe(true);
-    expect(evalAt('2026-08-31', rows, 'all', { q_1_score: ['3'] })).toBe(false);
-    expect(evalAt('2026-08-31', rows, 'all', { q_1_score: [] })).toBe(false);
+    expect(evalAt('2026-08-31', conditions, 'all', { q_1_score: ['2.5'] })).toBe(true);
+    expect(evalAt('2026-08-31', conditions, 'all', { q_1_score: ['3'] })).toBe(false);
+    expect(evalAt('2026-08-31', conditions, 'all', { q_1_score: [] })).toBe(false);
   });
 
-  it('any-of shows when a single row holds', () => {
-    const rows = [
+  it('any-of shows when a single condition holds', () => {
+    const conditions = [
       coding(smoker, { op: 'eq', value: 'yes' }),
       coding(gender, { op: 'eq', value: 'female' }),
     ];
-    expect(evalAt('2026-08-31', rows, 'any', { smoker: ['no'], gender: ['female'] })).toBe(true);
-    expect(evalAt('2026-08-31', rows, 'all', { smoker: ['no'], gender: ['female'] })).toBe(false);
+    expect(evalAt('2026-08-31', conditions, 'any', { smoker: ['no'], gender: ['female'] })).toBe(
+      true
+    );
+    expect(evalAt('2026-08-31', conditions, 'all', { smoker: ['no'], gender: ['female'] })).toBe(
+      false
+    );
   });
 });

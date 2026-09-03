@@ -456,7 +456,7 @@ export const ENABLE_WHEN_CONFORMANCE_CASES: EnableWhenConformanceCase[] = [
     now: '2026-08-31',
     expected: true,
   },
-  // combining rows: each row parenthesized, one connector.
+  // combining conditions: each condition parenthesized, one connector.
   {
     description: 'all of: local smoker yes and topic gender not male -> shown',
     expression:
@@ -474,7 +474,7 @@ export const ENABLE_WHEN_CONFORMANCE_CASES: EnableWhenConformanceCase[] = [
     expected: false,
   },
   {
-    description: 'any of: adult or consented -> shown via second row',
+    description: 'any of: adult or consented -> shown via second condition',
     expression:
       "(%birthDate.exists() and today() >= %birthDate.first().toDate() + 18 years) or (%consent contains 'yes')",
     variables: { birthDate: ['2015-01-01'], consent: ['yes'] },

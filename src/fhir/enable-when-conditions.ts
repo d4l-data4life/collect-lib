@@ -1,11 +1,11 @@
 /**
  * Structured enableWhen conditions and their compilation to (and from) an `enableWhenExpression`.
  *
- * Research Studio authors a dependency as a flat list of {@link EnableWhenCondition} rows combined with one
+ * Research Studio authors a dependency as a flat list of {@link EnableWhenCondition} conditions combined with one
  * {@link EnableWhenBehavior} (all / any), the same mental model as native `enableWhen` +
- * `enableBehavior`. `compileEnableWhen` turns those rows into the two proto/FHIR artifacts (variable
+ * `enableBehavior`. `compileEnableWhen` turns those conditions into the two proto/FHIR artifacts (variable
  * bindings and one FHIRPath expression in the subset declared in `enable-when-expression.ts`);
- * `decompileEnableWhen` reads them back so the editor can reopen a saved dependency as rows. The compiler is
+ * `decompileEnableWhen` reads them back so the editor can reopen a saved dependency as conditions. The compiler is
  * the only producer of FHIRPath in the system, so its output shapes are the canonical forms the
  * decompiler and the conformance fixture are written against.
  *
@@ -59,7 +59,7 @@ export type EnableWhenCondition = {
   predicate: EnableWhenPredicate;
 };
 
-/** Mirrors `enableBehavior`: `all` = every row must hold (and), `any` = at least one (or). */
+/** Mirrors `enableBehavior`: `all` = every condition must hold (and), `any` = at least one (or). */
 export type EnableWhenBehavior = 'all' | 'any';
 
 /** Predicates that compare against the clock; they can never be expressed as native `enableWhen`. */
@@ -98,7 +98,7 @@ export const ENABLE_WHEN_PREDICATES_BY_VALUE_TYPE: Record<
 };
 
 /**
- * True if the rows cannot be carried as native `enableWhen` and must be compiled to an expression:
+ * True if the conditions cannot be carried as native `enableWhen` and must be compiled to an expression:
  * any topic source, any clock-relative predicate, or a predicate native `enableWhen` has no
  * operator for (`empty`, `oneOf`).
  */
@@ -226,7 +226,7 @@ const formatLiteral = (
   }
 };
 
-/** Compile one row. `v` is the `%variable` reference. Shapes here are the canonical forms `decompileEnableWhen` recognizes. */
+/** Compile one condition. `v` is the `%variable` reference. Shapes here are the canonical forms `decompileEnableWhen` recognizes. */
 const compileCondition = (condition: EnableWhenCondition, v: string, index: number): string => {
   const { valueType, predicate } = condition;
   if (!ENABLE_WHEN_PREDICATES_BY_VALUE_TYPE[valueType].includes(predicate.op)) {
@@ -286,9 +286,9 @@ const compileCondition = (condition: EnableWhenCondition, v: string, index: numb
 };
 
 /**
- * Compile rows + behavior into variable bindings and one FHIRPath expression. Sources used by
- * several rows share one variable. Throws {@link EnableWhenCompileError} on an invalid row; studio only
- * compiles rows that passed its own validation, so a throw is a programming error there.
+ * Compile conditions + behavior into variable bindings and one FHIRPath expression. Sources used by
+ * several conditions share one variable. Throws {@link EnableWhenCompileError} on an invalid condition; studio only
+ * compiles conditions that passed its own validation, so a throw is a programming error there.
  */
 export const compileEnableWhen = (
   conditions: EnableWhenCondition[],
@@ -321,13 +321,13 @@ export const compileEnableWhen = (
     return name;
   };
 
-  const rows = conditions.map((condition, index) =>
+  const compiled = conditions.map((condition, index) =>
     compileCondition(condition, `%${variableFor(condition.source)}`, index)
   );
   const expression =
-    rows.length === 1
-      ? rows[0]
-      : rows.map((row) => `(${row})`).join(behavior === 'all' ? ' and ' : ' or ');
+    compiled.length === 1
+      ? compiled[0]
+      : compiled.map((part) => `(${part})`).join(behavior === 'all' ? ' and ' : ' or ');
 
   return { itemVariables: Array.from(variablesBySource.values()), expression };
 };
@@ -348,25 +348,25 @@ const INT = '(\\d+)';
 
 const rx = (pattern: string): RegExp => new RegExp(`^${pattern}$`);
 
-const ROW_EXISTS = rx(`${V}\\.exists\\(\\)`);
-const ROW_EMPTY = rx(`${V}\\.empty\\(\\)`);
-const ROW_CONTAINS = rx(`${V} contains ${STR}`);
-const ROW_NOT_CONTAINS = rx(`${V}\\.exists\\(\\) and \\(${V} contains ${STR}\\)\\.not\\(\\)`);
-const ROW_STRING_EQ = rx(`${V}\\.first\\(\\) = ${STR}`);
-const ROW_STRING_NEQ = rx(`${V}\\.exists\\(\\) and ${V}\\.first\\(\\) != ${STR}`);
-const ROW_CONVERTED_CMP = rx(`${V}\\.first\\(\\)\\.${CONV}\\(\\) ${CMP} ${LIT}`);
-const ROW_CONVERTED_NEQ = rx(
+const CONDITION_EXISTS = rx(`${V}\\.exists\\(\\)`);
+const CONDITION_EMPTY = rx(`${V}\\.empty\\(\\)`);
+const CONDITION_CONTAINS = rx(`${V} contains ${STR}`);
+const CONDITION_NOT_CONTAINS = rx(`${V}\\.exists\\(\\) and \\(${V} contains ${STR}\\)\\.not\\(\\)`);
+const CONDITION_STRING_EQ = rx(`${V}\\.first\\(\\) = ${STR}`);
+const CONDITION_STRING_NEQ = rx(`${V}\\.exists\\(\\) and ${V}\\.first\\(\\) != ${STR}`);
+const CONDITION_CONVERTED_CMP = rx(`${V}\\.first\\(\\)\\.${CONV}\\(\\) ${CMP} ${LIT}`);
+const CONDITION_CONVERTED_NEQ = rx(
   `${V}\\.exists\\(\\) and ${V}\\.first\\(\\)\\.${CONV}\\(\\) != ${LIT}`
 );
 const UNIT = `(${SUPPORTED_FHIRPATH_DATE_UNITS.join('|')})`;
 const ELAPSED = `${V}\\.first\\(\\)\\.toDate\\(\\) \\+ ${INT} ${UNIT}`;
-const ROW_ELAPSED_AT_LEAST = rx(`${V}\\.exists\\(\\) and today\\(\\) >= ${ELAPSED}`);
-const ROW_ELAPSED_LESS_THAN = rx(`${V}\\.exists\\(\\) and today\\(\\) < ${ELAPSED}`);
-const ROW_ELAPSED_BETWEEN = rx(
+const CONDITION_ELAPSED_AT_LEAST = rx(`${V}\\.exists\\(\\) and today\\(\\) >= ${ELAPSED}`);
+const CONDITION_ELAPSED_LESS_THAN = rx(`${V}\\.exists\\(\\) and today\\(\\) < ${ELAPSED}`);
+const CONDITION_ELAPSED_BETWEEN = rx(
   `${V}\\.exists\\(\\) and today\\(\\) >= ${ELAPSED} and today\\(\\) < ${ELAPSED}`
 );
 
-type ParsedRow = {
+type ParsedCondition = {
   variable: string;
   valueType?: EnableWhenValueType;
   predicate: EnableWhenPredicate;
@@ -393,34 +393,34 @@ const convertedValueType = (
 
 const sameVariable = (...names: string[]): boolean => names.every((n) => n === names[0]);
 
-/** Recognize one canonical row shape. */
-const parseRow = (row: string): ParsedRow | null => {
+/** Recognize one canonical condition shape. */
+const parseCondition = (text: string): ParsedCondition | null => {
   let m: RegExpMatchArray | null;
 
-  if ((m = row.match(ROW_EXISTS))) return { variable: m[1], predicate: { op: 'exists' } };
-  if ((m = row.match(ROW_EMPTY))) return { variable: m[1], predicate: { op: 'empty' } };
-  if ((m = row.match(ROW_NOT_CONTAINS)) && sameVariable(m[1], m[2])) {
+  if ((m = text.match(CONDITION_EXISTS))) return { variable: m[1], predicate: { op: 'exists' } };
+  if ((m = text.match(CONDITION_EMPTY))) return { variable: m[1], predicate: { op: 'empty' } };
+  if ((m = text.match(CONDITION_NOT_CONTAINS)) && sameVariable(m[1], m[2])) {
     return {
       variable: m[1],
       valueType: 'coding',
       predicate: { op: 'neq', value: unescapeString(m[3]) },
     };
   }
-  if ((m = row.match(ROW_STRING_EQ))) {
+  if ((m = text.match(CONDITION_STRING_EQ))) {
     return {
       variable: m[1],
       valueType: 'string',
       predicate: { op: 'eq', value: unescapeString(m[2]) },
     };
   }
-  if ((m = row.match(ROW_STRING_NEQ)) && sameVariable(m[1], m[2])) {
+  if ((m = text.match(CONDITION_STRING_NEQ)) && sameVariable(m[1], m[2])) {
     return {
       variable: m[1],
       valueType: 'string',
       predicate: { op: 'neq', value: unescapeString(m[3]) },
     };
   }
-  if ((m = row.match(ROW_CONVERTED_CMP))) {
+  if ((m = text.match(CONDITION_CONVERTED_CMP))) {
     const lit = literalValue(m[4], m[5], m[6]);
     if (lit.valueType === 'string') return null;
     return {
@@ -429,7 +429,7 @@ const parseRow = (row: string): ParsedRow | null => {
       predicate: { op: SYMBOL_COMPARISON[m[3]], value: lit.value },
     };
   }
-  if ((m = row.match(ROW_CONVERTED_NEQ)) && sameVariable(m[1], m[2])) {
+  if ((m = text.match(CONDITION_CONVERTED_NEQ)) && sameVariable(m[1], m[2])) {
     const lit = literalValue(m[4], m[5], m[6]);
     if (lit.valueType === 'string') return null;
     return {
@@ -439,7 +439,11 @@ const parseRow = (row: string): ParsedRow | null => {
     };
   }
   // groups: 1 guard var, 2 var, 3 amount, 4 unit (, 5 var, 6 amount, 7 unit for between)
-  if ((m = row.match(ROW_ELAPSED_BETWEEN)) && sameVariable(m[1], m[2], m[5]) && m[4] === m[7]) {
+  if (
+    (m = text.match(CONDITION_ELAPSED_BETWEEN)) &&
+    sameVariable(m[1], m[2], m[5]) &&
+    m[4] === m[7]
+  ) {
     return {
       variable: m[1],
       valueType: 'date',
@@ -451,14 +455,14 @@ const parseRow = (row: string): ParsedRow | null => {
       },
     };
   }
-  if ((m = row.match(ROW_ELAPSED_AT_LEAST)) && sameVariable(m[1], m[2])) {
+  if ((m = text.match(CONDITION_ELAPSED_AT_LEAST)) && sameVariable(m[1], m[2])) {
     return {
       variable: m[1],
       valueType: 'date',
       predicate: { op: 'elapsedAtLeast', amount: Number(m[3]), unit: m[4] as EnableWhenDateUnit },
     };
   }
-  if ((m = row.match(ROW_ELAPSED_LESS_THAN)) && sameVariable(m[1], m[2])) {
+  if ((m = text.match(CONDITION_ELAPSED_LESS_THAN)) && sameVariable(m[1], m[2])) {
     return {
       variable: m[1],
       valueType: 'date',
@@ -467,9 +471,9 @@ const parseRow = (row: string): ParsedRow | null => {
   }
 
   // `contains` alone or or-joined over the same variable: eq (one value) or oneOf (several).
-  const parts = splitTopLevel(row);
+  const parts = splitTopLevel(text);
   if (parts && parts.connector === 'or') {
-    const matches = parts.segments.map((s) => s.match(ROW_CONTAINS));
+    const matches = parts.segments.map((s) => s.match(CONDITION_CONTAINS));
     if (
       matches.every((x): x is RegExpMatchArray => x !== null) &&
       sameVariable(...matches.map((x) => x[1]))
@@ -481,7 +485,7 @@ const parseRow = (row: string): ParsedRow | null => {
       };
     }
   }
-  if ((m = row.match(ROW_CONTAINS))) {
+  if ((m = text.match(CONDITION_CONTAINS))) {
     return {
       variable: m[1],
       valueType: 'coding',
@@ -556,11 +560,11 @@ const splitTopLevel = (s: string): { connector: 'and' | 'or'; segments: string[]
 };
 
 /**
- * Read compiled artifacts back into rows. Returns null when the expression is not in the compiler's
+ * Read compiled artifacts back into conditions. Returns null when the expression is not in the compiler's
  * canonical shapes (hand-written or imported FHIRPath), which the editor shows as a read-only
- * custom expression. The value type of a row is inferred from the expression where the shape
+ * custom expression. The value type of a condition is inferred from the expression where the shape
  * reveals it; pass `resolveValueType` (looked up from the actual source) to make it authoritative,
- * since e.g. an age row cannot tell a `date` from a `year` source and `exists` rows carry no type.
+ * since e.g. an age condition cannot tell a `date` from a `year` source and `exists` conditions carry no type.
  */
 export const decompileEnableWhen = (
   itemVariables: EnableWhenItemVariable[],
@@ -584,27 +588,27 @@ export const decompileEnableWhen = (
 
   const normalized = unwrap(normalize(expression));
   let behavior: EnableWhenBehavior = 'all';
-  let rows: ParsedRow[];
+  let parsedConditions: ParsedCondition[];
 
-  const single = parseRow(normalized);
+  const single = parseCondition(normalized);
   if (single) {
-    rows = [single];
+    parsedConditions = [single];
   } else {
     const split = splitTopLevel(normalized);
     if (!split) return null;
     behavior = split.connector === 'and' ? 'all' : 'any';
-    const parsed = split.segments.map((segment) => parseRow(unwrap(segment)));
-    if (!parsed.every((r): r is ParsedRow => r !== null)) return null;
-    rows = parsed;
+    const parsed = split.segments.map((segment) => parseCondition(unwrap(segment)));
+    if (!parsed.every((r): r is ParsedCondition => r !== null)) return null;
+    parsedConditions = parsed;
   }
 
   const conditions: EnableWhenCondition[] = [];
-  for (const row of rows) {
-    const source = sources.get(row.variable);
+  for (const parsed of parsedConditions) {
+    const source = sources.get(parsed.variable);
     if (!source) return null;
-    const valueType = resolveValueType?.(source) ?? row.valueType ?? 'string';
-    if (!ENABLE_WHEN_PREDICATES_BY_VALUE_TYPE[valueType].includes(row.predicate.op)) return null;
-    conditions.push({ source, valueType, predicate: row.predicate });
+    const valueType = resolveValueType?.(source) ?? parsed.valueType ?? 'string';
+    if (!ENABLE_WHEN_PREDICATES_BY_VALUE_TYPE[valueType].includes(parsed.predicate.op)) return null;
+    conditions.push({ source, valueType, predicate: parsed.predicate });
   }
   return { conditions, behavior };
 };
