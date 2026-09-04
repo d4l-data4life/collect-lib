@@ -8,6 +8,10 @@ export type APIConfig = {
   dataEndpoint: string;
 };
 
+// NOTE: The research-pillars token proxy only calls `tokenEndpoint` URLs that are on its
+// allow-list, see `pkg/client/tokenEndpoints.go` in the research-pillars repository.
+// Whenever a `tokenEndpoint` is added or changed below, update that allow-list as well,
+// otherwise the token exchange for that API will be rejected by the backend.
 export const API_TARGET_MAP: { [key in API]: { [target in ProgramClientTarget]: APIConfig } } = {
   DEXCOM: {
     prod: {
