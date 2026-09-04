@@ -1,19 +1,28 @@
 // Structure Definitions
-export const SliderMinLabelExtension = 'http://fhir.data4life.care/StructureDefinition/slider-label-min';
-export const SliderMaxLabelExtension = 'http://fhir.data4life.care/StructureDefinition/slider-label-max';
-export const SliderStepSizeExtension = 'http://fhir.data4life.care/StructureDefinition/slider-step-size';
-export const SliderOrientationExtension = 'http://fhir.data4life.care/StructureDefinition/slider-orientation';
+export const SliderMinLabelExtension =
+  'http://fhir.data4life.care/StructureDefinition/slider-label-min';
+export const SliderMaxLabelExtension =
+  'http://fhir.data4life.care/StructureDefinition/slider-label-max';
+export const SliderStepSizeExtension =
+  'http://fhir.data4life.care/StructureDefinition/slider-step-size';
+export const SliderOrientationExtension =
+  'http://fhir.data4life.care/StructureDefinition/slider-orientation';
 export const SliderInputLabel = 'http://fhir.data4life.care/StructureDefinition/slider-input-label';
-export const RelativeMinValueExtension = 'http://fhir.data4life.care/StructureDefinition/relative-min-value';
-export const RelativeMaxValueExtension = 'http://fhir.data4life.care/StructureDefinition/relative-max-value';
+export const RelativeMinValueExtension =
+  'http://fhir.data4life.care/StructureDefinition/relative-min-value';
+export const RelativeMaxValueExtension =
+  'http://fhir.data4life.care/StructureDefinition/relative-max-value';
 export const CustomExtensionStudyName = 'http://fhir.data4life.care/StructureDefinition/study-name';
-export const CustomExtensionContextValue = 'http://fhir.data4life.care/StructureDefinition/context-value';
+export const CustomExtensionContextValue =
+  'http://fhir.data4life.care/StructureDefinition/context-value';
 export const CustomExtensionDate = 'http://fhir.data4life.care/StructureDefinition/effective-date';
 export const MaxValueExtension = 'http://hl7.org/fhir/StructureDefinition/maxValue';
 export const MinValueExtension = 'http://hl7.org/fhir/StructureDefinition/minValue';
 export const MinLengthExtension = 'http://hl7.org/fhir/StructureDefinition/minLength';
-export const QItemControlDefinition = 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl';
-export const RoutineIsPassiveExtension = 'http://fhir.data4life.care/StructureDefinition/is-passive-recording';
+export const QItemControlDefinition =
+  'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl';
+export const RoutineIsPassiveExtension =
+  'http://fhir.data4life.care/StructureDefinition/is-passive-recording';
 // LEGACY(prepopulate) [HUB-6797]: remove when prepopulate is retired (replaced by input/output).
 export const PrepopulateExtension = 'http://fhir.data4life.care/StructureDefinition/prepopulate';
 export const ImageExtension = 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemMedia';
@@ -27,21 +36,40 @@ export const QuestionnaireItemInputExtension =
 export const TopicInputTopicUrl = 'topic';
 export const TopicInputScopeUrl = 'scope';
 export const TopicSystem = 'http://fhir.data4life.care/topic';
+// Cross-questionnaire enableWhen. The condition is a standard SDC
+// `enableWhenExpression` (text/fhirpath); the variables it references are bound by the custom
+// `questionnaire-item-variable` extension, which mirrors the shape of a FHIR `variable` but
+// sources the value from a topic (with scope) or a local question (linkId) rather than from a
+// FHIRPath expression over the resource. The name/topic/question/scope sub-extension URLs are a
+// wire contract shared with research-pillars and the phoenix/studio parsers.
+export const QuestionnaireItemVariableExtension =
+  'http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable';
+export const ItemVariableNameUrl = 'name';
+export const ItemVariableTopicUrl = 'topic';
+export const ItemVariableQuestionUrl = 'question';
+export const ItemVariableScopeUrl = 'scope';
+export const EnableWhenExpressionExtension =
+  'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression';
+export const FhirPathLanguage = 'text/fhirpath';
 // Naming Systems
 export const SignalIDSystem = 'http://fhir.data4life.care/r5/NamingSystem/app-signal-ids';
 export const AppIDNamingSystem = 'http://fhir.data4life.care/r5/NamingSystem/app-db-ids';
 export const SensorTypeSystem = 'http://fhir.data4life.care/r5/NamingSystem/sensor-device-type';
-export const SensorIdentifierSystem = 'http://fhir.data4life.care/r5/NamingSystem/sensor-peripheral-id';
+export const SensorIdentifierSystem =
+  'http://fhir.data4life.care/r5/NamingSystem/sensor-peripheral-id';
 export const TokenNamingSystem = 'http://fhir.data4life.care/r5/NamingSystem/participation-token';
 export const ConsentNameSystem = 'http://fhir.data4life.care/r5/NamingSystem/consent-name';
 export const ConsentVersionSystem = 'http://fhir.data4life.care/r5/NamingSystem/consent-version';
 // Code Systems
 export const ObservationTypeSystem = 'http://fhir.data4life.care/r5/CodeSystem/observation-types';
-export const MeasurementTypeSystem = 'http://fhir.data4life.care/r5/CodeSystem/sensor-measurement-types';
+export const MeasurementTypeSystem =
+  'http://fhir.data4life.care/r5/CodeSystem/sensor-measurement-types';
 export const StudyNameSystem = 'http://fhir.data4life.care/r5/CodeSystem/study-name';
 export const SensorSettingsSystem = 'http://fhir.data4life.care/r5/CodeSystem/sensor-settings';
-export const CustomQuestionSystem = 'http://fhir.data4life.care/r5/CodeSystem/custom-question-class';
-export const CommunicationTypeSystem = 'http://fhir.data4life.care/r5/CodeSystem/communication-types';
+export const CustomQuestionSystem =
+  'http://fhir.data4life.care/r5/CodeSystem/custom-question-class';
+export const CommunicationTypeSystem =
+  'http://fhir.data4life.care/r5/CodeSystem/communication-types';
 // Canonical FHIR ValueSet URL for ISO 3166-1 alpha-2 country codes. Referenced
 // by the `country` input type; consumers render a dedicated country picker and
 // submit answers as a valueCoding with the ISO 3166 system below.

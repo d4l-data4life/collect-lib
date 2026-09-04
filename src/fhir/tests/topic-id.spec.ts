@@ -23,15 +23,15 @@ describe('isValidTopicId', () => {
 
 describe('topicIdFromCanonical', () => {
   it('returns the last path segment', () => {
-    expect(topicIdFromCanonical('http://host/r5/topic/puls/socialNetwork')).toBe('socialNetwork');
+    expect(topicIdFromCanonical('http://host/r5/puls/topic/socialNetwork')).toBe('socialNetwork');
     expect(topicIdFromCanonical('socialNetwork')).toBe('socialNetwork');
   });
 });
 
 describe('isValidTopicCanonical', () => {
   it('validates the id segment of a canonical URL', () => {
-    expect(isValidTopicCanonical('http://host/r5/topic/puls/socialNetwork')).toBe(true);
-    expect(isValidTopicCanonical('http://host/r5/topic/puls/social-network')).toBe(false);
+    expect(isValidTopicCanonical('http://host/r5/puls/topic/socialNetwork')).toBe(true);
+    expect(isValidTopicCanonical('http://host/r5/puls/topic/social-network')).toBe(false);
   });
 });
 
