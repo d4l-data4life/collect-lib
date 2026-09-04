@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- FHIRpath enableWhen evaluator
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.52.0] - 2026-09-04
+
+### Added
+
+- FHIRpath enableWhen evaluator
 
 ## [v1.51.1] - 2026-08-28
 
@@ -550,7 +554,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.51.1...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.52.0...HEAD
+[v1.52.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.51.1...v1.52.0
 [v1.51.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.51.0...v1.51.1
 [v1.51.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.50.0...v1.51.0
 [v1.50.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.49.0...v1.50.0
