@@ -45,6 +45,16 @@ Update the types by running `yarn run readme:update`.
 | featured    | true     | [ProgramFeatured](#ProgramFeatured)         | Describes the featured state of the program.                                                                                                                                                                                                   |
 | theme       | false    | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app                                                                                                                                                                                                |
 | appVersion  | false    | object                                      | Minimum smartphone app version required to run this program. When the installed app is below `version`, the program update is withheld and the user is asked to update. `version` and `androidVersionCode` must describe the same app release. |
+| tracking    | false    | [ProgramTracking](#ProgramTracking)         | BI event tracking configuration. When absent, tracking is off.                                                                                                                                                                                 |
+
+#### ProgramTracking
+
+BI event tracking is opt-in per program: no configuration means no tracking.
+
+| Properties | Required | Type               | Description                                                               |
+| ---------- | -------- | ------------------ | ------------------------------------------------------------------------- |
+| enabled    | true     | boolean            | Master switch for BI event tracking in this program                       |
+| categories | true     | TrackingCategory[] | Event categories ('technical', 'task', 'engagement') that may be recorded |
 
 #### ProgramAppVersion
 

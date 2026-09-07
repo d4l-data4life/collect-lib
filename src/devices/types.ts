@@ -62,6 +62,7 @@ export type DEVICE_KEY_API =
   | 'GOOGLE_HEALTH'
   | 'OURA'
   | 'GARMIN'
+  | 'LINE_SYSTEMS'
   | 'DEXCOM'
   | 'dexcom_g4'
   | 'dexcom_g5'
@@ -138,7 +139,13 @@ export type DEVICE_SIGNAL_TYPE =
   | 'tag'
   | 'cardiovascularAge'
   | 'activity'
-  | 'batteryLevel';
+  | 'batteryLevel'
+  // Line Systems (Line Portal) types
+  | 'cgm'
+  | 'bolus'
+  | 'basal'
+  | 'bgm'
+  | 'deviceEvents';
 
 export type DeviceName = {
   shortName: string;
@@ -157,6 +164,7 @@ export const DEVICE_KEY_TO_NAME: Record<DEVICE_KEY, DeviceName> = {
   GOOGLE_HEALTH: { shortName: 'Google Health', fullName: 'Google Health' },
   OURA: { shortName: 'Oura', fullName: 'Oura Ring' },
   GARMIN: { shortName: 'Garmin', fullName: 'Garmin' },
+  LINE_SYSTEMS: { shortName: 'Line Portal', fullName: 'Line Systems Line Portal' },
   DEXCOM: { shortName: 'Dexcom', fullName: 'Dexcom' },
   dexcom_g4: { shortName: 'Dexcom G4', fullName: 'Dexcom G4' },
   dexcom_g5: { shortName: 'Dexcom G5', fullName: 'Dexcom G5' },

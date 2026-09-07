@@ -72,6 +72,16 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'bloodPressure'
   // Health Connect types
   | 'sleepStage'
+  // Line Systems (Line Portal) types
+  | 'cgm'
+  | 'bgm'
+  | 'bgmSubType'
+  | 'bolus'
+  | 'basal'
+  | 'basalState'
+  | 'insulinOrigin'
+  | 'deviceEventType'
+  | 'deviceEventSource'
   // Common types for SDK sources
   | 'dataSource'
 

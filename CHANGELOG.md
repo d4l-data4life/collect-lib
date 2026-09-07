@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Line Systems (Line Portal) device type `LINE_SYSTEMS` with the data types `cgm`, `bolus`, `basal`, `bgm` and `deviceEvents` and their binary annotations
+
 ### Changed
 
 ### Deprecated
