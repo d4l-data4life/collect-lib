@@ -164,7 +164,7 @@ export const DEVICE_KEY_TO_NAME: Record<DEVICE_KEY, DeviceName> = {
   GOOGLE_HEALTH: { shortName: 'Google Health', fullName: 'Google Health' },
   OURA: { shortName: 'Oura', fullName: 'Oura Ring' },
   GARMIN: { shortName: 'Garmin', fullName: 'Garmin' },
-  LINE_SYSTEMS: { shortName: 'Line Portal', fullName: 'Line Systems Line Portal' },
+  LINE_SYSTEMS: { shortName: 'Line Systems', fullName: 'Line Systems' },
   DEXCOM: { shortName: 'Dexcom', fullName: 'Dexcom' },
   dexcom_g4: { shortName: 'Dexcom G4', fullName: 'Dexcom G4' },
   dexcom_g5: { shortName: 'Dexcom G5', fullName: 'Dexcom G5' },
