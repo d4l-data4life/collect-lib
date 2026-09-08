@@ -10,8 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Line Systems (Line Portal) device type `LINE_SYSTEMS` with the data types `cgm`, `bolus`, `basal`, `bgm` and `deviceEvents` and their binary annotations
+- Donor access tokens from the data-dispatcher: `DonationSDK.requestAccessToken` (`POST /access-token`, self-signed donor auth) and the caching `DonationSDK.getAccessToken` (reused until 30 s before expiry, single-flight per donor); `AccessTokenProvider` type
 
 ### Changed
+
+- **Breaking:** `CollectorClient` authenticates with a dispatcher-issued donor access token (`Authorization: Bearer <accessToken>`) instead of the self-signed scheme; its constructor is now `(accessToken: AccessTokenProvider, collectorURL)` and no longer takes the self-sign secret, converter or crypto module. The collector's `GET /token` is no longer called and `buildSelfSignedAuthToken` was removed
 
 ### Deprecated
 

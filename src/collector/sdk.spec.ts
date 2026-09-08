@@ -1,54 +1,96 @@
-import { secp256k1 } from '@noble/curves/secp256k1';
-import * as secpUtils from '@noble/curves/abstract/utils';
-import * as forge from 'node-forge';
-import { buildSelfSignedAuthToken } from './sdk';
-import { CryptoModule, KeyHandler, WebConverter } from '..';
+import { CollectorClient } from './sdk';
 
-// sign/verify don't touch CryptoModule, so a stub suffices.
-class StubCrypto implements CryptoModule {
-  generateKey = (size: number): Uint8Array => new Uint8Array(size);
-  deriveEncryptionKey = async (seed: Uint8Array, _salt = 'phoenix'): Promise<Uint8Array> => seed;
-}
+const donorIdentity = {
+  t: 'data-donation' as const,
+  keys: { priv: 'priv', pub: 'donor-pub', rec: 'rec' },
+  v: 2,
+  scope: 'demo-bp',
+};
 
-describe('CollectorClient self-signed auth token', () => {
-  const converter = new WebConverter();
-  const keyHandler = new KeyHandler(converter, new StubCrypto());
-
-  // A matching donor keypair (priv = base64 of the hex scalar; pub = SPKI), as produced by deriveProgramKeys.
-  const priv = '1m2vGqozd9liGPxg4D8Cr9sjV4K2gpwayw90RfMhglc=';
-  const pub =
-    'MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEars2EMxOJvgpavwGLc/6Xu4xgtOe5QjOcOHJWCLkEQylJDdOZume1tWmHfiNbZNGtqkLdZSjqc1J+EFpdOXSew==';
-
-  it('builds a verifiable token signed over (message + secret) with the donor key', async () => {
-    const token = 'collector-issued-jwt';
-    const secret = 'shared-self-sign-secret';
-
-    const authToken = await buildSelfSignedAuthToken(keyHandler, converter, pub, priv, token, secret);
-
-    const decoded = JSON.parse(Buffer.from(authToken, 'base64').toString('utf8'));
-    expect(JSON.parse(decoded.messageJSON)).toEqual({ token, donorID: pub });
-
-    // Verify the signature exactly as keyHandler.sign produced it: secp256k1 over sha256(message + secret).
-    const scalarHex = converter.base64ToHex(priv);
-    const publicKeyRaw = secp256k1.getPublicKey(secpUtils.hexToBytes(scalarHex), false);
-    const digestHex = forge.md.sha256
-      .create()
-      .update(decoded.messageJSON + secret)
-      .digest()
-      .toHex();
-    const valid = secp256k1.verify(
-      converter.base64ToUint8Array(decoded.signature),
-      secpUtils.hexToBytes(digestHex),
-      publicKeyRaw
-    );
-    expect(valid).toBe(true);
+const jsonResponse = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
   });
 
-  it('is deterministic and secret-sensitive', async () => {
-    const a = await buildSelfSignedAuthToken(keyHandler, converter, pub, priv, 't', 'secret-a');
-    const a2 = await buildSelfSignedAuthToken(keyHandler, converter, pub, priv, 't', 'secret-a');
-    const b = await buildSelfSignedAuthToken(keyHandler, converter, pub, priv, 't', 'secret-b');
-    expect(a).toBe(a2); // RFC6979 deterministic signing
-    expect(a).not.toBe(b);
+describe('CollectorClient', () => {
+  const collectorURL = 'https://collect.example/api/collector/v1';
+  let fetchMock: jest.Mock;
+  let accessToken: jest.Mock;
+
+  beforeEach(() => {
+    fetchMock = jest.fn(async () => new Response(null, { status: 204 }));
+    global.fetch = fetchMock as unknown as typeof fetch;
+    accessToken = jest.fn().mockResolvedValue('dispatcher-jwt');
+  });
+
+  const headersOf = (call: number) =>
+    fetchMock.mock.calls[call][1].headers as Record<string, string>;
+
+  it('authenticates every donor endpoint with the provided access token as Bearer', async () => {
+    const client = new CollectorClient(accessToken, collectorURL);
+    fetchMock.mockResolvedValueOnce(jsonResponse({ status: 'connected', garminUserID: 'g-1' }));
+
+    const connected = await client.connect(donorIdentity, {
+      code: 'c',
+      codeVerifier: 'v',
+      encPublicKey: 'enc',
+      consentDate: '2026-09-01T00:00:00Z',
+    });
+    expect(connected).toEqual({ status: 'connected', garminUserID: 'g-1' });
+    await client.ack(donorIdentity, 7);
+    await client.disconnect(donorIdentity);
+
+    expect(fetchMock.mock.calls.map(([url, init]) => [url, init.method])).toEqual([
+      [`${collectorURL}/connect/demo-bp`, 'PUT'],
+      [`${collectorURL}/sync/demo-bp/ack`, 'POST'],
+      [`${collectorURL}/disconnect/demo-bp`, 'POST'],
+    ]);
+    for (let i = 0; i < 3; i++) {
+      expect(headersOf(i).Authorization).toBe('Bearer dispatcher-jwt');
+    }
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({ cursor: 7 });
+    // The provider decides about caching; the client asks it once per request.
+    expect(accessToken).toHaveBeenCalledTimes(3);
+  });
+
+  it('syncs with the since cursor and returns the collector payload', async () => {
+    const client = new CollectorClient(accessToken, collectorURL);
+    const payload = { items: [{ seq: 3, dataType: 'dailies', blob: 'AAA=' }], cursor: 3 };
+    fetchMock.mockResolvedValueOnce(jsonResponse(payload));
+
+    await expect(client.sync(donorIdentity, 2)).resolves.toEqual(payload);
+    expect(fetchMock.mock.calls[0][0]).toBe(`${collectorURL}/sync/demo-bp?since=2`);
+    expect(headersOf(0).Authorization).toBe('Bearer dispatcher-jwt');
+  });
+
+  it('retries once with a fresh token from the provider on 401', async () => {
+    const client = new CollectorClient(accessToken, collectorURL);
+    accessToken.mockResolvedValueOnce('stale-jwt').mockResolvedValueOnce('fresh-jwt');
+    fetchMock
+      .mockResolvedValueOnce(new Response('expired', { status: 401 }))
+      .mockResolvedValueOnce(jsonResponse({ items: [], cursor: 0 }));
+
+    await client.sync(donorIdentity);
+
+    expect(headersOf(0).Authorization).toBe('Bearer stale-jwt');
+    expect(headersOf(1).Authorization).toBe('Bearer fresh-jwt');
+  });
+
+  it('fails without a request when the provider cannot supply a token', async () => {
+    const client = new CollectorClient(accessToken, collectorURL);
+    accessToken.mockRejectedValue(new Error('not enrolled'));
+
+    await expect(client.sync(donorIdentity)).rejects.toThrow('not enrolled');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('refuses a donor identity without a study scope', async () => {
+    const client = new CollectorClient(accessToken, collectorURL);
+
+    await expect(client.sync({ ...donorIdentity, scope: undefined })).rejects.toThrow(
+      /no study scope/
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

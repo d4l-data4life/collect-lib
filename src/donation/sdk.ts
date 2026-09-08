@@ -18,6 +18,27 @@ import {
 } from './types';
 import { DONOR_IDENTITY_VERSION, isPrivateProgram, validateProgramName } from './utils';
 
+/**
+ * Supplies a currently valid donor access token (see DonationSDK.getAccessToken) to a
+ * client of a downstream service (data-collector, research-pillars proxy) that
+ * authenticates donors with `Authorization: Bearer <accessToken>`.
+ */
+export type AccessTokenProvider = () => Promise<string>;
+
+/** Donor access token as issued by the data-dispatcher's `POST /access-token`. */
+export type AccessToken = {
+  /** Signed JWT (`sub` = donorID, `studyID`); opaque to the app */
+  accessToken: string;
+  /** Lifetime in seconds, counted from receipt */
+  expiresIn: number;
+};
+
+/**
+ * A cached access token is refreshed this long before it expires, so that a token handed
+ * out at the very end of its lifetime still survives the request it is used for.
+ */
+const ACCESS_TOKEN_REFRESH_MARGIN_MS = 30 * 1000;
+
 export class DonationSDK implements SDKInterface {
   /**
    * Flag indicating if the SDK has been initialized
@@ -31,6 +52,11 @@ export class DonationSDK implements SDKInterface {
   private keyHandler: KeyHandler;
   private converter: Converter;
   private hybridEncrypter: HybridEncrypter;
+
+  /** Access tokens per donor (public key), valid until `refreshAt` */
+  private accessTokens: Map<string, { token: string; refreshAt: number }> = new Map();
+  /** In-flight access token requests per donor, shared by concurrent callers */
+  private accessTokenRequests: Map<string, Promise<string>> = new Map();
 
   constructor(
     selfSignSecret: string,
@@ -155,6 +181,76 @@ export class DonationSDK implements SDKInterface {
     // Validate the token
     return valid && extractedToken === token;
   };
+
+  /**
+   * Request a fresh donor access token from the data-dispatcher. The request itself is
+   * authenticated with the self-signed donor scheme; the returned token is a short-lived
+   * JWT for the other donor-facing services (data-collector, research-pillars proxy),
+   * which only verify the token instead of sharing the self-sign secret.
+   * @param donorIdentity The donor identity
+   * @returns The access token and its lifetime in seconds
+   * @throws Error(INTERNAL_SERVER_ERROR) if the token could not be obtained
+   */
+  async requestAccessToken(donorIdentity: DonorIdentity): Promise<AccessToken> {
+    const authenticatedDonationAPI = await this.getAuthenticatedDonationAPI(donorIdentity);
+    try {
+      const [response] = await authenticatedDonationAPI.post<{
+        accessToken: string;
+        tokenType?: string;
+        expiresIn: number;
+      }>({ uri: '/access-token' });
+      if (typeof response?.accessToken !== 'string' || !response.accessToken) {
+        throw new Error('access token response without accessToken');
+      }
+      if (typeof response.expiresIn !== 'number' || !(response.expiresIn > 0)) {
+        throw new Error('access token response without expiresIn');
+      }
+      return { accessToken: response.accessToken, expiresIn: response.expiresIn };
+    } catch (e) {
+      console.error(e);
+      throw new Error(ERROR_CODES.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  /**
+   * Get a donor access token, reusing the last one until shortly before it expires.
+   * Concurrent callers share a single request; a failed request leaves no token behind,
+   * so the next call retries.
+   * @param donorIdentity The donor identity
+   * @returns A currently valid access token
+   * @throws Error(INTERNAL_SERVER_ERROR) if no token could be obtained
+   */
+  async getAccessToken(donorIdentity: DonorIdentity): Promise<string> {
+    const donorID = donorIdentity.keys.pub;
+
+    const cached = this.accessTokens.get(donorID);
+    if (cached && cached.refreshAt > Date.now()) {
+      return cached.token;
+    }
+
+    const inFlight = this.accessTokenRequests.get(donorID);
+    if (inFlight) {
+      return inFlight;
+    }
+
+    const request = (async () => {
+      try {
+        const { accessToken, expiresIn } = await this.requestAccessToken(donorIdentity);
+        this.accessTokens.set(donorID, {
+          token: accessToken,
+          refreshAt: Date.now() + expiresIn * 1000 - ACCESS_TOKEN_REFRESH_MARGIN_MS,
+        });
+        return accessToken;
+      } catch (e) {
+        this.accessTokens.delete(donorID);
+        throw e;
+      } finally {
+        this.accessTokenRequests.delete(donorID);
+      }
+    })();
+    this.accessTokenRequests.set(donorID, request);
+    return request;
+  }
 
   async donationServiceAvailable(): Promise<boolean> {
     try {
