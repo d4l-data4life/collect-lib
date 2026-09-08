@@ -166,7 +166,7 @@ Minimum app version a program requires. `version` (semver / versionName) drives 
 | type       | true     | `date`              | Condition that requires a date to have passed                   |
 | date       | true     | string (YYYY-MM-DD) | Timestamp that needs to be passed for the condition to be true. |
 
-#### QuestionCondition
+#### CodeQuestionCondition
 
 | Properties   | Required | Type                                | Description                                                                     |
 | ------------ | -------- | ----------------------------------- | ------------------------------------------------------------------------------- |
@@ -177,7 +177,7 @@ Minimum app version a program requires. `version` (semver / versionName) drives 
 | operand      | false    | string                              | (unless operator is `exists`). Used as `<answer>` `<operator>` `<operand>`.     |
 | operator     | true     | `exists`,`=`,`!=`,`>`,`<`,`>=`,`<=` | Used as `<answer>` `<operator>` `<operand>`.                                    |
 
-#### QuestionCondition
+#### DateQuestionCondition
 
 | Properties   | Required | Type       | Description                                                           |
 | ------------ | -------- | ---------- | --------------------------------------------------------------------- |
