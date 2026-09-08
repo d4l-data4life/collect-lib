@@ -88,9 +88,7 @@ describe('CollectorClient', () => {
   it('refuses a donor identity without a study scope', async () => {
     const client = new CollectorClient(accessToken, collectorURL);
 
-    const { scope: _scope, ...unscoped } = donorIdentity;
-
-    await expect(client.sync(unscoped)).rejects.toThrow(/no study scope/);
+    await expect(client.sync({ ...donorIdentity, scope: '' })).rejects.toThrow(/no study scope/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
