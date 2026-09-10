@@ -1,6 +1,6 @@
 import { ProgramClientTarget } from '../types';
 
-export type API = 'DEXCOM' | 'FITBIT' | 'GOOGLE_HEALTH' | 'OURA' | 'GARMIN';
+export type API = 'DEXCOM' | 'FITBIT' | 'GOOGLE_HEALTH' | 'OURA' | 'GARMIN' | 'LINE_SYSTEMS';
 
 export type APIConfig = {
   loginEndpoint: string;
@@ -78,6 +78,22 @@ export const API_TARGET_MAP: { [key in API]: { [target in ProgramClientTarget]: 
       loginEndpoint: 'https://connect.garmin.com/oauth2Confirm',
       tokenEndpoint: 'https://diauth.garmin.com/di-oauth2-service/oauth/token',
       dataEndpoint: 'https://apis.garmin.com',
+    },
+  },
+  LINE_SYSTEMS: {
+    // Line Portal endpoints are per study: the base URL and the Keycloak realm come from
+    // the research-pillars client configuration (`extra.baseUrl` / `extra.realm`) and the
+    // phone receives the base URL together with the patient token from the proxy. These
+    // placeholders only exist because the map is exhaustive over API.
+    prod: {
+      loginEndpoint: '',
+      tokenEndpoint: '',
+      dataEndpoint: '',
+    },
+    sandbox: {
+      loginEndpoint: '',
+      tokenEndpoint: '',
+      dataEndpoint: '',
     },
   },
 };

@@ -237,7 +237,7 @@ export type DateCondition = StepConditionBase & {
   date: string;
 };
 
-// #### QuestionCondition
+// #### CodeQuestionCondition
 // Properties | Required | Type | Description
 export type CodeQuestionCondition = StepConditionBase & {
   // type | true | `question` | Condition that requires a specific answer from a previous survey
@@ -254,7 +254,7 @@ export type CodeQuestionCondition = StepConditionBase & {
   operator: ConditionOperatorType;
 };
 
-// #### QuestionCondition
+// #### DateQuestionCondition
 // Properties | Required | Type | Description
 export type DateQuestionCondition = StepConditionBase & {
   // type | true | `question` | Condition that requires a specific answer from a previous survey
