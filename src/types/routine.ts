@@ -56,6 +56,8 @@ export type ProgramDeviceType =
   | 'FITBIT'
   | 'GOOGLE_HEALTH'
   | 'OURA'
+  | 'GARMIN'
+  | 'LINE_SYSTEMS'
   | 'GalaxyWatch6'
   | 'PixelWatch1'
   | 'AppleHealth'
@@ -118,10 +120,25 @@ export type ProgramDevicesDataType =
   | 'sleepAnalysis'
   | 'stress'
   | 'workout'
+  | 'standHours'
+  | 'activitySummary'
+  | 'contraceptive'
+  | 'pregnancy'
+  | 'lactation'
   | 'tag'
   | 'cardiovascularAge'
   | 'activity'
-  | 'batteryLevel';
+  | 'menstrualCycle'
+  | 'bodyBattery'
+  | 'sleepScore'
+  | 'bodyComposition'
+  | 'bloodPressure'
+  | 'batteryLevel'
+  | 'cgm'
+  | 'bolus'
+  | 'basal'
+  | 'bgm'
+  | 'deviceEvents';
 
 export type ProgramDevicesLabel = { name: string } & TranslatedString;
 

@@ -54,12 +54,8 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'hrv'
   | 'calories'
   | 'steps'
-  // Apple health types
-  | 'stepCount'
-  | 'walkingAndRunningDistance'
-  | 'activeEnergy'
-  | 'sleepState'
-  | 'restingHeartRate'
+  // Apple Health types
+  | DEVICE_ANNOTATION_DATA_TYPE_APPLE
   // Oura types
   | 'stress'
   | 'workout'
@@ -68,8 +64,24 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'activityLevel'
   | 'batteryLevel'
   | 'skinTemperatureDeviation'
+  | 'menstrualCycle'
+  | 'menstrualFlow'
+  | 'bodyBattery'
+  | 'sleepScore'
+  | 'bodyComposition'
+  | 'bloodPressure'
   // Health Connect types
   | 'sleepStage'
+  // Line Systems (Line Portal) types
+  | 'cgm'
+  | 'bgm'
+  | 'bgmSubType'
+  | 'bolus'
+  | 'basal'
+  | 'basalState'
+  | 'insulinOrigin'
+  | 'deviceEventType'
+  | 'deviceEventSource'
   // Common types for SDK sources
   | 'dataSource'
 
@@ -96,6 +108,29 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
 // | 'internal_accelerometer'
 // | 'internal_magnetometer'
 // | 'internal_beacon_sensing';
+
+export type DEVICE_ANNOTATION_DATA_TYPE_APPLE =
+  // Quantity & activity
+  | 'stepCount'
+  | 'walkingAndRunningDistance'
+  | 'activeEnergy'
+  | 'heartRate'
+  | 'restingHeartRate'
+  | 'hrv'
+  | 'respiratoryRate'
+  | 'spo2'
+  | 'skinTemperature'
+  | 'workout'
+  | 'stoodDuringHour'
+  | 'activitySummary'
+  // Sleep (sleepState + shared duration channel)
+  | 'sleepState'
+  | 'duration'
+  // Reproductive health
+  | 'menstrualCycle'
+  | 'contraceptiveType'
+  | 'pregnancyState'
+  | 'lactationState';
 
 export type DEVICE_ANNOTATION_DATA_FORMAT =
   | 'bitmask'

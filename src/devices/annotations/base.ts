@@ -20,6 +20,16 @@ export const DEVICE_ANNOTATION_ITEM_DATA_SOURCE: DEVICE_ANNOTATION_ITEM = {
   littleEndian: true,
 };
 
+// Resting heart rate in bpm. Provider-neutral: Apple Health pairs it with a data source
+// (HealthKit merges several devices), Garmin stores it alone.
+export const DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE: DEVICE_ANNOTATION_ITEM = {
+  type: 'restingHeartRate',
+  size: 1,
+  format: 'unsignedInt',
+  littleEndian: true,
+  unit: 'bpm',
+};
+
 export const DEVICE_ANNOTATION_ITEM_ACCELERATION: DEVICE_ANNOTATION_ITEM = {
   type: 'acceleration',
   size: 12,

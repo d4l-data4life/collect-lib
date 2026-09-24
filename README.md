@@ -30,20 +30,40 @@ Update the types by running `yarn run readme:update`.
 
 ### Program
 
-| Properties  | Required | Type                                        | Description                                                                                                                                                                                |
-| ----------- | -------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| name        | true     | string                                      | Name of the program used as primary identifier                                                                                                                                             |
-| tenantID    | true     | string                                      | Tenant the program belongs to                                                                                                                                                              |
-| languages   | true     | string[]                                    | Language codes that the program is available in. Example: `['en', 'de']`                                                                                                                   |
-| type        | true     | `study` or `sensor`                         | `sensor` is the new research-studio type, `study` is from the study-builder (and older)                                                                                                    |
-| phases      | true     | [ProgramStep](#ProgramStep)[][]             | Defines the flow of the program as an array of `phases`. `phases` consist of arrays of `steps`. `phases` are worked through sequentially and `steps` within a single `phase` are parallel. |
-| donation    | true     | [ProgramDonation](#ProgramDonation)         | Donation settings handle which resources are donated, where they are donated to, and how the donation is regulated                                                                         |
-| content     | true     | [ProgramContent](#ProgramContent)           | Contains all the relevant content properties of the program.                                                                                                                               |
-| endDate     | false    | ISO 8601 date with timezone                 | Date the program should finish for all users.                                                                                                                                              |
-| tags        | false    | [ProgramTag](#ProgramTag)[]                 | List of supported tags including their configuration                                                                                                                                       |
-| publishedAt | false    | ISO 8601 date with timezone                 | Date the program was published (used to determine program state).                                                                                                                          |
-| featured    | true     | [ProgramFeatured](#ProgramFeatured)         | Describes the featured state of the program.                                                                                                                                               |
-| theme       | false    | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app                                                                                                                                            |
+| Properties  | Required | Type                                        | Description                                                                                                                                                                                                                                    |
+| ----------- | -------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| name        | true     | string                                      | Name of the program used as primary identifier                                                                                                                                                                                                 |
+| tenantID    | true     | string                                      | Tenant the program belongs to                                                                                                                                                                                                                  |
+| languages   | true     | string[]                                    | Language codes that the program is available in. Example: `['en', 'de']`                                                                                                                                                                       |
+| type        | true     | `study` or `sensor`                         | `sensor` is the new research-studio type, `study` is from the study-builder (and older)                                                                                                                                                        |
+| phases      | true     | [ProgramStep](#ProgramStep)[][]             | Defines the flow of the program as an array of `phases`. `phases` consist of arrays of `steps`. `phases` are worked through sequentially and `steps` within a single `phase` are parallel.                                                     |
+| donation    | true     | [ProgramDonation](#ProgramDonation)         | Donation settings handle which resources are donated, where they are donated to, and how the donation is regulated                                                                                                                             |
+| content     | true     | [ProgramContent](#ProgramContent)           | Contains all the relevant content properties of the program.                                                                                                                                                                                   |
+| endDate     | false    | ISO 8601 date with timezone                 | Date the program should finish for all users.                                                                                                                                                                                                  |
+| tags        | false    | [ProgramTag](#ProgramTag)[]                 | List of supported tags including their configuration                                                                                                                                                                                           |
+| publishedAt | false    | ISO 8601 date with timezone                 | Date the program was published (used to determine program state).                                                                                                                                                                              |
+| featured    | true     | [ProgramFeatured](#ProgramFeatured)         | Describes the featured state of the program.                                                                                                                                                                                                   |
+| theme       | false    | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app                                                                                                                                                                                                |
+| appVersion  | false    | object                                      | Minimum smartphone app version required to run this program. When the installed app is below `version`, the program update is withheld and the user is asked to update. `version` and `androidVersionCode` must describe the same app release. |
+| tracking    | false    | [ProgramTracking](#ProgramTracking)         | BI event tracking configuration. When absent, tracking is off.                                                                                                                                                                                 |
+
+#### ProgramTracking
+
+BI event tracking is opt-in per program: no configuration means no tracking.
+
+| Properties | Required | Type               | Description                                                               |
+| ---------- | -------- | ------------------ | ------------------------------------------------------------------------- |
+| enabled    | true     | boolean            | Master switch for BI event tracking in this program                       |
+| categories | true     | TrackingCategory[] | Event categories ('technical', 'task', 'engagement') that may be recorded |
+
+#### ProgramAppVersion
+
+Minimum app version a program requires. `version` (semver / versionName) drives the runtime gate on both platforms and the iOS App Store availability check; `androidVersionCode` is the Play versionCode of that same release, used for the Android availability check (Play exposes only a version code, never a versionName).
+
+| Properties         | Required | Type          | Description                          |
+| ------------------ | -------- | ------------- | ------------------------------------ |
+| version            | true     | semver string | e.g. "1.42.0"                        |
+| androidVersionCode | true     | number        | Play versionCode of the same release |
 
 #### ProgramFeatured
 
@@ -146,7 +166,7 @@ Update the types by running `yarn run readme:update`.
 | type       | true     | `date`              | Condition that requires a date to have passed                   |
 | date       | true     | string (YYYY-MM-DD) | Timestamp that needs to be passed for the condition to be true. |
 
-#### QuestionCondition
+#### CodeQuestionCondition
 
 | Properties   | Required | Type                                | Description                                                                     |
 | ------------ | -------- | ----------------------------------- | ------------------------------------------------------------------------------- |
@@ -157,7 +177,7 @@ Update the types by running `yarn run readme:update`.
 | operand      | false    | string                              | (unless operator is `exists`). Used as `<answer>` `<operator>` `<operand>`.     |
 | operator     | true     | `exists`,`=`,`!=`,`>`,`<`,`>=`,`<=` | Used as `<answer>` `<operator>` `<operand>`.                                    |
 
-#### QuestionCondition
+#### DateQuestionCondition
 
 | Properties   | Required | Type       | Description                                                           |
 | ------------ | -------- | ---------- | --------------------------------------------------------------------- |
@@ -344,11 +364,13 @@ Update the types by running `yarn run readme:update`.
 
 #### SurveyMultiplex
 
-| Properties  | Required | Type              | Description                                                                                                                                                                                                                                                  |
-| ----------- | -------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| source      | true     | object            | Defines the source of the multiplexing. The keys of the object are the questionnaire names and the values are the linkIds of the questions whose answers will be used for multiplexing. The answers to these questions will be used to fill the placeholder. |
-| lookup      | true     | `all` or `latest` | Defines how the answers of the source questions will be looked up. `latest` means only the latest iteration of the source questionnaires will be used, `all` means all iterations of the source questionnaires will be used.                                 |
-| placeholder | true     | string            | Placeholder text to be replaced with answers from the specified linkIds                                                                                                                                                                                      |
+| Properties  | Required | Type              | Description                                                                                                                                                                                                                                                                                             |
+| ----------- | -------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| source      | true     | object            | LEGACY(prepopulate) [HUB-6797] — replaced by `topic`; remove when retired. The keys of the object are the questionnaire names and the values are the linkIds of the questions whose answers will be used for multiplexing. The answers to these questions will be used to fill the placeholder.         |
+| lookup      | true     | `all` or `latest` | LEGACY(prepopulate) [HUB-6797] — replaced by `scope`; remove when retired. Defines how the answers of the source questions will be looked up. `latest` means only the latest iteration of the source questionnaires will be used, `all` means all iterations of the source questionnaires will be used. |
+| topic       | false    | string            | Canonical topic URL whose accumulated values drive the multiplexing (replaces `source`). When set, it takes precedence over `source`/`lookup`.                                                                                                                                                          |
+| scope       | false    | `all` or `latest` | How far back to read the topic (replaces `lookup`). `all` = every response, `latest` = the most recent.                                                                                                                                                                                                 |
+| placeholder | true     | string            | Placeholder text to be replaced with answers from the specified linkIds                                                                                                                                                                                                                                 |
 
 ### Routine
 

@@ -28,3 +28,22 @@ jobs:
         with:
           files: |
             junit.xml
+
+  # The v4 hybrid format is implemented here and in the public go-crypto; this job checks
+  # both directions still agree (see xlang/README.md). Kept separate so the unit-test job
+  # needs no Go toolchain.
+  cross-language:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gesundheitscloud/github-actions/build-setup@main
+        with:
+          setup-yarn: true
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache-dependency-path: xlang/go.sum
+
+      - name: Cross-language v4 check (collect-lib <-> go-crypto)
+        run: yarn test:xlang
