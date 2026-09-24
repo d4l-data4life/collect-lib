@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: d4l-data4life/github-actions/build-setup@fix/HUB-6610/github-actions-node24
+      - uses: d4l-data4life/github-actions/build-setup@main
         with:
           setup-yarn: true
 
@@ -35,12 +35,12 @@ jobs:
   cross-language:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: gesundheitscloud/github-actions/build-setup@main
+      - uses: actions/checkout@v5
+      - uses: d4l-data4life/github-actions/build-setup@main
         with:
           setup-yarn: true
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6.2.0
         with:
           go-version: '1.24'
           cache-dependency-path: xlang/go.sum
