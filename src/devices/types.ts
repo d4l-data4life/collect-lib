@@ -48,14 +48,7 @@ export interface BleDeviceMetaLabel {
 
 export type DEVICE_KEY = DEVICE_KEY_BLE | DEVICE_KEY_API | DEVICE_KEY_SDK | DEVICE_KEY_INTERNAL;
 
-export type DEVICE_KEY_BLE =
-  | 'DOT'
-  | 'OH1'
-  | 'H10'
-  | 'EstimoteUWB'
-  | 'TicWatchE2'
-  | 'PixelWatch1'
-  | 'GalaxyWatch6';
+export type DEVICE_KEY_BLE = 'DOT' | 'OH1' | 'H10' | 'EstimoteUWB' | 'PixelWatch' | 'GalaxyWatch6';
 
 export type DEVICE_KEY_API =
   | 'FITBIT'
@@ -157,8 +150,7 @@ export const DEVICE_KEY_TO_NAME: Record<DEVICE_KEY, DeviceName> = {
   OH1: { shortName: 'Polar OH1', fullName: 'Polar OH1' },
   H10: { shortName: 'Polar H10', fullName: 'Polar H10' },
   EstimoteUWB: { shortName: 'Estimote', fullName: 'Estimote UWB' },
-  TicWatchE2: { shortName: 'TicWatch E2', fullName: 'Mobvoi TicWatch E2' },
-  PixelWatch1: { shortName: 'Pixel Watch', fullName: 'Google Pixel Watch' },
+  PixelWatch: { shortName: 'Pixel Watch', fullName: 'Google Pixel Watch' },
   GalaxyWatch6: { shortName: 'Galaxy Watch', fullName: 'Samsung Galaxy Watch 6' },
   FITBIT: { shortName: 'fitbit', fullName: 'fitbit' },
   GOOGLE_HEALTH: { shortName: 'Google Health', fullName: 'Google Health' },
