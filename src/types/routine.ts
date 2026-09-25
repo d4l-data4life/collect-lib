@@ -59,7 +59,7 @@ export type ProgramDeviceType =
   | 'GARMIN'
   | 'LINE_SYSTEMS'
   | 'GalaxyWatch6'
-  | 'PixelWatch1'
+  | 'PixelWatch'
   | 'AppleHealth'
   | 'HealthConnect';
 
