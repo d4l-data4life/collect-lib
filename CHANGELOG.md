@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Renamed device key `PixelWatch1` to `PixelWatch` (`DEVICE_KEY_BLE`, `ProgramDeviceType`, `DEVICE_KEY_TO_NAME`) to cover all Pixel Watch generations
+- Bump actions for Node 24 runner compatibility
 
 ### Deprecated
 
