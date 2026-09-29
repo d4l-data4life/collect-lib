@@ -10,7 +10,6 @@ import {
   FITBIT_SPO2_ANNOTATION,
   FITBIT_STEPS_ANNOTATION,
 } from './fitbit';
-import { MENSTRUAL_FLOW_ANNOTATION } from './menstrual';
 import { DEVICE_ANNOTATION, DEVICE_ANNOTATION_ITEM } from './types';
 import {
   BLE_CPMS_ANNOTATION_ITEM_DAILY_DISTANCE,
@@ -89,8 +88,8 @@ export const GOOGLE_HEALTH_VO2MAX_ANNOTATION: DEVICE_ANNOTATION = [
 // quantities and we store them with the same on-device buffer encoding so a study can
 // ingest both sources through the same FHIR pipeline. Fork only if a signal's data shape
 // diverges from Fitbit's. Later additions re-use the shared encodings (Wear OS daily
-// counters, the provider-neutral resting heart rate and menstrual flow) and get
-// Google-specific ones only where no shared shape fits.
+// counters and the provider-neutral resting heart rate) and get Google-specific ones only
+// where no shared shape fits.
 export const GOOGLE_HEALTH_SIGNAL_TYPE_ANNOTATIONS: {
   [key in DEVICE_SIGNAL_TYPE]?: DEVICE_ANNOTATION;
 } = {
@@ -112,9 +111,4 @@ export const GOOGLE_HEALTH_SIGNAL_TYPE_ANNOTATIONS: {
   activeZoneMinutes: GOOGLE_HEALTH_ACTIVE_ZONE_MINUTES_ANNOTATION,
   activity: GOOGLE_HEALTH_ACTIVITY_ANNOTATION,
   vo2max: GOOGLE_HEALTH_VO2MAX_ANNOTATION,
-  // menstrual-period is a logged period interval (the shape of Health Connect's
-  // MenstruationPeriodRecord), i.e. the per-day flow observation — not the computed cycle
-  // snapshot Garmin delivers. Google carries no flow strength, so the mapper records
-  // MENSTRUAL_FLOW.unspecified.
-  menstrualCycle: MENSTRUAL_FLOW_ANNOTATION,
 };

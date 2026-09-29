@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Google Health annotations for `restingHeartRate`, `dailyDistance`, `dailyFloors`, `dailyElevationGain`, `activeZoneMinutes`, `activity`, `vo2max` and `menstrualCycle`; new data types `dailyElevationGain` and `activeZoneMinutes` (annotation item types `heartRateZone`, `activeZoneMinutes`)
+- Google Health annotations for `restingHeartRate`, `dailyDistance`, `dailyFloors`, `dailyElevationGain`, `activeZoneMinutes`, `activity` and `vo2max`; new data types `dailyElevationGain` and `activeZoneMinutes` (annotation item types `heartRateZone`, `activeZoneMinutes`)
 
 ### Changed
 
@@ -19,9 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `Requester` now throws `RequesterError`, carrying the response `status`, so callers can branch on the HTTP status instead of only the body text (`registerDonor`'s 409/500 cases were unreachable)
+
 ### Security
 
 ## [v1.54.0] - 2026-09-25
+
+- `restingHeartRate` to `GOOGLE_HEALTH_SIGNAL_TYPE_ANNOTATIONS`, backed by the new `GOOGLE_HEALTH_RESTING_HEART_RATE_ANNOTATION`
 
 ### Changed
 
