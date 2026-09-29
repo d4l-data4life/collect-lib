@@ -28,6 +28,20 @@ interface RequesterInterface {
 const defaultAccessToken = () => Promise.resolve('');
 
 /**
+ * An error carrying the HTTP status of the response that caused it, so callers can
+ * branch on it (e.g. 409 vs 500) instead of only seeing the response body text.
+ */
+export class RequesterError extends Error {
+  constructor(
+    message: string,
+    public readonly status?: number
+  ) {
+    super(message);
+    this.name = 'RequesterError';
+  }
+}
+
+/**
  * Wrapper around requesting resources form the backend
  */
 class Requester implements RequesterInterface {
@@ -114,11 +128,11 @@ class Requester implements RequesterInterface {
       });
     } catch (e: any) {
       // Most likely network or CORS error
-      throw new Error(e);
+      throw new RequesterError(e);
     }
 
     if (!response) {
-      throw new Error('No response');
+      throw new RequesterError('No response');
     }
 
     if (response?.status === 401 && retry) {
@@ -136,7 +150,7 @@ class Requester implements RequesterInterface {
         : [(await response.text()) as any, response.headers];
     }
 
-    throw new Error(await response.text());
+    throw new RequesterError(await response.text(), response.status);
   };
 
   /**
