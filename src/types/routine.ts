@@ -21,6 +21,8 @@ export type Routine = {
   duration?: string;
   // publishedAt | false | ISO 8601 date with timezone | Date the routine was published.
   publishedAt?: string;
+  // withheld | true | boolean | If true, the routine will not be published yet
+  withheld: boolean;
 };
 
 // #### ProgramDevice
@@ -52,8 +54,12 @@ export type ProgramDeviceType =
   | 'OH1'
   | 'INTERNAL'
   | 'FITBIT'
+  | 'GOOGLE_HEALTH'
+  | 'OURA'
+  | 'GARMIN'
+  | 'LINE_SYSTEMS'
   | 'GalaxyWatch6'
-  | 'PixelWatch1'
+  | 'PixelWatch'
   | 'AppleHealth'
   | 'HealthConnect';
 
@@ -64,6 +70,7 @@ export type ProgramDevicesDataType =
   | 'freeAcceleration'
   | 'angularVelocity'
   | 'heartRate'
+  | 'restingHeartRate'
   | 'hrv'
   | 'internal_gyroscope'
   | 'internal_accelerometer'
@@ -100,6 +107,7 @@ export type ProgramDevicesDataType =
   | 'ppgGreen'
   | 'ppgRed'
   | 'ppgInfrared'
+  | 'samsungSdkAcceleration'
   | 'ecg'
   | 'spo2'
   | 'steps'
@@ -109,7 +117,28 @@ export type ProgramDevicesDataType =
   | 'stepCount'
   | 'walkingAndRunningDistance'
   | 'activeEnergy'
-  | 'sleepAnalysis';
+  | 'sleepAnalysis'
+  | 'stress'
+  | 'workout'
+  | 'standHours'
+  | 'activitySummary'
+  | 'contraceptive'
+  | 'pregnancy'
+  | 'lactation'
+  | 'tag'
+  | 'cardiovascularAge'
+  | 'activity'
+  | 'menstrualCycle'
+  | 'bodyBattery'
+  | 'sleepScore'
+  | 'bodyComposition'
+  | 'bloodPressure'
+  | 'batteryLevel'
+  | 'cgm'
+  | 'bolus'
+  | 'basal'
+  | 'bgm'
+  | 'deviceEvents';
 
 export type ProgramDevicesLabel = { name: string } & TranslatedString;
 

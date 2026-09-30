@@ -1,9 +1,22 @@
 {
   "name": "@d4l/collect-lib",
-  "version": "1.36.0",
+  "version": "1.54.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./fhirpath": {
+      "types": "./dist/fhirpath.d.ts",
+      "import": "./dist/fhirpath.mjs",
+      "require": "./dist/fhirpath.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist"
   ],
@@ -15,7 +28,8 @@
     "build": "tsup",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "readme:update": "npx tsx ./scripts/generateTypeDocs.ts"
+    "readme:update": "npx tsx ./scripts/generateTypeDocs.ts",
+    "test:xlang": "yarn build && node scripts/xlang.mjs"
   },
   "devDependencies": {
     "@types/fhir": "^0.0.41",
@@ -33,10 +47,11 @@
   },
   "packageManager": "yarn@4.9.1",
   "dependencies": {
-    "@noble/curves": "^1.8.2",
+    "@noble/curves": "^1.9.3",
     "@scure/bip39": "^1.5.4",
     "buffer": "^6.0.3",
     "date-fns": "^4.1.0",
+    "fhirpath": "^5.2.0",
     "luxon": "^3.6.1",
     "node-forge": "^1.4.0",
     "ulid": "^3.0.0",

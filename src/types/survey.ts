@@ -1,9 +1,28 @@
 import { RecursiveKeyOf, TranslatedString } from '.';
 
+export type ScalarAnswer = string;
+export type ArrayAnswer = string[];
+export type GeoLocationAnswer = [string, string];
 export type MatrixAnswer = Record<string, string>;
 export type FlatAnswer = string | string[];
 export type Answer = FlatAnswer | MatrixAnswer;
 export type Answers = Record<string, Answer>;
+
+export function isScalarAnswer(answer: Answer | undefined): answer is ScalarAnswer {
+  return typeof answer === 'string';
+}
+
+export function isArrayAnswer(answer: Answer | undefined): answer is ArrayAnswer {
+  return Array.isArray(answer);
+}
+
+export function isGeoLocationAnswer(answer: Answer | undefined): answer is GeoLocationAnswer {
+  return (
+    Array.isArray(answer) &&
+    answer.length === 2 &&
+    [answer[0], answer[1]].every((s): s is string => Number.isFinite(Number(s)))
+  );
+}
 
 export function isMatrixAnswer(answer: Answer | undefined): answer is MatrixAnswer {
   return typeof answer === 'object' && answer !== null && !Array.isArray(answer);
@@ -13,9 +32,6 @@ export function isFlatAnswer(answer: Answer | undefined): answer is FlatAnswer {
   return typeof answer === 'string' || Array.isArray(answer);
 }
 
-export function isScalarAnswer(answer: Answer | undefined): answer is string {
-  return typeof answer === 'string';
-}
 export type MultiAnswers = { [key: string]: { date: Date | null; answers: Answers } };
 export type CopyrightLabel = { [key: string]: string };
 
@@ -40,6 +56,8 @@ export type Survey = {
   multiplex?: SurveyMultiplex;
   // copyrightLabel | false | CopyrightLabel | Optional copyright/trademark text shown on questionnaire screens
   copyrightLabel?: CopyrightLabel;
+  // withheld | true | boolean | If true, the survey will not be published yet
+  withheld: boolean;
 };
 
 // #### TaskFrequency
@@ -61,6 +79,8 @@ export type TaskFrequency = {
   retainCTAs?: number;
   // allowAddOnDemand | false | boolean | If true allows the task to also be added at any point in time (on demand).
   allowAddOnDemand?: boolean;
+  // availabilityDuration | false | ISO 8601 duration string | How long each occurrence stays actionable after `start`. Currently honored for recurring tasks only, where it defines a per-window slot [windowStart, windowStart + availabilityDuration] and MUST be <= one window (factor x unit) so at most one slot is ever open. Omit for "available the whole window".
+  availabilityDuration?: string;
 };
 
 // #### SurveyScoring
@@ -121,10 +141,14 @@ export type SurveyContent = {
 // #### SurveyMultiplex
 // Properties | Required | Type | Description
 export type SurveyMultiplex = {
-  // source | true | object | Defines the source of the multiplexing. The keys of the object are the questionnaire names and the values are the linkIds of the questions whose answers will be used for multiplexing. The answers to these questions will be used to fill the placeholder.
+  // source | true | object | LEGACY(prepopulate) [HUB-6797] — replaced by `topic`; remove when retired. The keys of the object are the questionnaire names and the values are the linkIds of the questions whose answers will be used for multiplexing. The answers to these questions will be used to fill the placeholder.
   source: { [key: string]: string[] };
-  // lookup | true | `all` or `latest` | Defines how the answers of the source questions will be looked up. `latest` means only the latest iteration of the source questionnaires will be used, `all` means all iterations of the source questionnaires will be used.
+  // lookup | true | `all` or `latest` | LEGACY(prepopulate) [HUB-6797] — replaced by `scope`; remove when retired. Defines how the answers of the source questions will be looked up. `latest` means only the latest iteration of the source questionnaires will be used, `all` means all iterations of the source questionnaires will be used.
   lookup: 'all' | 'latest';
+  // topic | false | string | Canonical topic URL whose accumulated values drive the multiplexing (replaces `source`). When set, it takes precedence over `source`/`lookup`.
+  topic?: string;
+  // scope | false | `all` or `latest` | How far back to read the topic (replaces `lookup`). `all` = every response, `latest` = the most recent.
+  scope?: 'all' | 'latest';
   // placeholder | true | string | Placeholder text to be replaced with answers from the specified linkIds
   placeholder: string;
 };

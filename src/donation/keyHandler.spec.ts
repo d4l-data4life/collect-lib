@@ -6,6 +6,7 @@ import {
   uint8ArrayToBinaryString,
 } from '..';
 import { WORDLIST_LANGUAGES, getLanguageOfPassPhrase } from '../helper/wordlists';
+import { secp256k1 } from '@noble/curves/secp256k1';
 import crypto from 'node:crypto';
 
 class NodeCrypto implements CryptoModule {
@@ -50,6 +51,31 @@ describe('Recovery Phrase Functions', () => {
       expect(keyHandler.validateRecoveryKey(entropy)).toBe(true);
       expect(entropy.length).toBe(16);
       expect(mnemonicFromEntropy).toBe(mnemonic);
+    });
+  });
+
+  describe('deriveEncryptionKeypair', () => {
+    // A program private key as produced by deriveProgramKeys (base64 of the hex scalar).
+    const programPrivateKey = '1m2vGqozd9liGPxg4D8Cr9sjV4K2gpwayw90RfMhglc=';
+
+    it('derives a deterministic, valid secp256k1 encryption subkey from the donor identity', async () => {
+      const a = await keyHandler.deriveEncryptionKeypair(programPrivateKey);
+      const b = await keyHandler.deriveEncryptionKeypair(programPrivateKey);
+
+      expect(a).toEqual(b); // deterministic -> survives reinstall
+      // The private key is base64-encoded — the same encoding as the program private key.
+      const scalar = converter.base64ToUint8Array(a.privateKey);
+      expect(scalar).toHaveLength(32);
+      expect(secp256k1.utils.isValidSecretKey(scalar)).toBe(true);
+
+      // The returned public key corresponds to the returned private key.
+      const expectedPublic = keyHandler.extendPublicKey(secp256k1.getPublicKey(scalar, false));
+      expect(a.publicKey).toBe(expectedPublic);
+    });
+
+    it('derives a different subkey from the signing key (key separation)', async () => {
+      const { privateKey } = await keyHandler.deriveEncryptionKeypair(programPrivateKey);
+      expect(privateKey).not.toBe(programPrivateKey);
     });
   });
 });
@@ -111,5 +137,35 @@ describe('Byte Array and Binary String Conversion Functions', () => {
       const resultBase64 = converter.uint8ArrayToBase64(byteArray);
       expect(resultBase64).toBe(originalBase64);
     });
+  });
+});
+
+describe('sign / verify round-trip', () => {
+  const converter = new WebConverter();
+  const keyHandler = new KeyHandler(converter, new NodeCrypto());
+  // A donor identity as produced by deriveProgramKeys.
+  const priv = '1m2vGqozd9liGPxg4D8Cr9sjV4K2gpwayw90RfMhglc=';
+
+  it('verifies a signature produced by sign', async () => {
+    const message = JSON.stringify({ token: 'abc', donorID: 'xyz' });
+    const { public: pub } = await keyHandler.deriveProgramKeys(
+      converter.base64ToUint8Array(priv).slice(0, 16),
+      'demo'
+    );
+    const derivedPriv = (
+      await keyHandler.deriveProgramKeys(converter.base64ToUint8Array(priv).slice(0, 16), 'demo')
+    ).private;
+
+    const signature = await keyHandler.sign(message, derivedPriv);
+    expect(await keyHandler.verify(message, signature, pub)).toBe(true);
+  });
+
+  it('rejects a signature over a different message', async () => {
+    const { public: pub, private: derivedPriv } = await keyHandler.deriveProgramKeys(
+      converter.base64ToUint8Array(priv).slice(0, 16),
+      'demo'
+    );
+    const signature = await keyHandler.sign('the signed message', derivedPriv);
+    expect(await keyHandler.verify('a different message', signature, pub)).toBe(false);
   });
 });

@@ -61,11 +61,27 @@ export const HEALTH_CONNECT_SLEEP_ANNOTATION: DEVICE_ANNOTATION = [
 ];
 // #endregion
 
+// #region SpO2 (Oxygen Saturation)
+export const HEALTH_CONNECT_ITEM_SPO2: DEVICE_ANNOTATION_ITEM = {
+  type: 'spo2',
+  size: 4,
+  format: 'float32',
+  littleEndian: true,
+  unit: '%',
+};
+
+export const HEALTH_CONNECT_SPO2_ANNOTATION: DEVICE_ANNOTATION = [
+  HEALTH_CONNECT_ITEM_SPO2,
+  DEVICE_ANNOTATION_ITEM_DATA_SOURCE,
+];
+// #endregion
+
 // #region Signal Type Annotations
 export const HEALTH_CONNECT_SIGNAL_TYPE_ANNOTATIONS: {
   [key in DEVICE_SIGNAL_TYPE]?: DEVICE_ANNOTATION;
 } = {
   steps: HEALTH_CONNECT_STEPS_ANNOTATION,
   sleep: HEALTH_CONNECT_SLEEP_ANNOTATION,
+  spo2: HEALTH_CONNECT_SPO2_ANNOTATION,
 };
 // #endregion

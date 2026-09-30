@@ -318,6 +318,15 @@ export const BLE_PSMS_ANNOTATION_ITEM_PPG_IR: DEVICE_ANNOTATION_ITEM = {
   littleEndian: true,
 };
 
+export const BLE_PSMS_ANNOTATION_ITEM_ACCELERATION: DEVICE_ANNOTATION_ITEM = {
+  type: 'samsungSdkAcceleration',
+  size: 6,
+  format: 'signedInt',
+  littleEndian: true,
+  channels: 3,
+  channelLabels: ['x', 'y', 'z'],
+};
+
 export const BLE_PSMS_ANNOTATION_ITEM_SKIN_TEMPERATURE: DEVICE_ANNOTATION_ITEM = {
   type: 'skinTemperature',
   size: 4,
@@ -416,6 +425,11 @@ export const PSMSPPGIRAnnotation: DEVICE_ANNOTATION = [
   BLE_PSMS_ANNOTATION_ITEM_PPG_IR,
 ];
 
+export const PSMSAccelerationAnnotation: DEVICE_ANNOTATION = [
+  DEVICE_D4L_COMPANION_ANNOTATION_ITEM_TIMESTAMP,
+  BLE_PSMS_ANNOTATION_ITEM_ACCELERATION,
+];
+
 // #endregion
 
 export const WearOS3AnnotationMap: { [key in DEVICE_SIGNAL_TYPE]?: DEVICE_ANNOTATION[] } = {
@@ -438,5 +452,6 @@ export const WearOS3AnnotationMap: { [key in DEVICE_SIGNAL_TYPE]?: DEVICE_ANNOTA
     PSMSPPGGreenAnnotation,
     PSMSPPGRedAnnotation,
     PSMSPPGIRAnnotation,
+    PSMSAccelerationAnnotation,
   ],
 };

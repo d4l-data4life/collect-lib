@@ -19,6 +19,200 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [v1.54.0] - 2026-09-25
+
+### Changed
+
+- Renamed device key `PixelWatch1` to `PixelWatch` (`DEVICE_KEY_BLE`, `ProgramDeviceType`, `DEVICE_KEY_TO_NAME`) to cover all Pixel Watch generations
+- Bump actions for Node 24 runner compatibility
+
+## [v1.53.0] - 2026-09-10
+
+### Added
+
+- Line Systems (Line Portal) device type `LINE_SYSTEMS` with the data types `cgm`, `bolus`, `basal`, `bgm` and `deviceEvents` and their binary annotations
+- Donor access tokens from the data-dispatcher: `DonationSDK.requestAccessToken` (`POST /access-token`, self-signed donor auth) and the caching `DonationSDK.getAccessToken` (reused until 30 s before expiry, single-flight per donor); `AccessTokenProvider` type
+
+### Changed
+
+- **Breaking:** `CollectorClient` authenticates with a dispatcher-issued donor access token (`Authorization: Bearer <accessToken>`) instead of the self-signed scheme; its constructor is now `(accessToken: AccessTokenProvider, collectorURL)` and no longer takes the self-sign secret, converter or crypto module. The collector's `GET /token` is no longer called and `buildSelfSignedAuthToken` was removed
+
+## [v1.52.0] - 2026-09-04
+
+### Added
+
+- FHIRpath enableWhen evaluator
+
+## [v1.51.1] - 2026-08-28
+
+### Fixed
+
+- Garmin HRV contained 3 NaN columns
+- Garmin showed absolute skin temperature instead of deviation
+
+## [v1.51.0] - 2026-08-27
+
+### Added
+
+- BI tracking events: `TrackingEventsDocument` types and `DonationSDK.donateTrackingEvents` uploading one encrypted batch per call to the dispatcher tracking endpoint
+- `ProgramTracking` config on `Program` to opt a study into tracking per event category
+
+### Changed
+
+- Reduce size of acceleration payload
+
+## [v1.50.0] - 2026-08-26
+
+### Added
+
+- Support for Garmin's activity signal (15-min epochs)
+
+## [v1.49.0] - 2026-08-25
+
+### Added
+
+- Support for `input` and `output` topics for questions
+
+### Deprecated
+
+- `prepopulate` for list questions. Use `input` and `output` topics instead.
+
+## [v1.48.0] - 2026-08-25
+
+### Added
+
+- Support for minimum required app version in program definition
+
+## [v1.47.0] - 2026-08-19
+
+### Added
+
+- SpO2 for Health Connect
+
+## [v1.46.0] - 2026-08-14
+
+### Changed
+
+- Use boolean value for stand hour in Apple Health
+
+## [v1.45.2] - 2026-08-13
+
+### Changed
+
+- Garmin VO2 max uses the pre-existing `vo2max` type; the duplicate `vo2Max` spelling is gone.
+
+## [v1.45.1] - 2026-08-12
+
+### Added
+
+- `DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE`: shared resting heart rate encoding. Garmin
+  stores it on its own, Apple Health pairs it with a data source.
+
+## [v1.45.0] - 2026-08-11
+
+### Added
+
+- Apple Health data types (activity and cycle data)
+
+## [v1.44.2] - 2026-08-10
+
+### Added
+
+- Garmin signal types for daily floors and distance, resting heart rate, body battery,
+  sleep score, VO2 max, body composition and blood pressure.
+
+## [v1.44.1] - 2026-08-08
+
+### Added
+
+- add menstrual cycle tracking (MCT) data types
+
+## [v1.44.0] - 2026-07-31
+
+### Added
+
+- Garmin support: `GARMIN` API target, device config, annotations and routine type.
+- `CollectorClient` for the data-collector (study-scoped `connect`/`sync`/`ack`/`disconnect`);
+- v4 hybrid encryption (slot-based, shared with go-crypto): `HybridEncrypter.encryptV4` with
+  v3 fallback). `decryptV4WithKeys` takes an explicit keychain (`v4AesKey` / `v4RsaKey` /
+- `KeyHandler.deriveEncryptionKeypair`: the phone's secp256k1 encryption keypair, derived
+  deterministically from the donor identity.
+- Export `HybridEncrypter` and the collector SDK.
+
+### Changed
+
+- `@noble/curves` now requires `^1.9.3` (was `^1.8.2`) for `secp256k1.utils.isValidSecretKey`.
+
+### Fixed
+
+- `uint8ArrayToBinaryString` threw `RangeError: Maximum call stack size exceeded` beyond
+- `KeyHandler.verify` could not verify `KeyHandler.sign`'s own signatures (hex digest and
+  SPKI public key were passed in the wrong encodings).
+- `encryptDonation` propagates errors instead of returning an empty object, which produced
+  malformed donations.
+
+## [v1.43.0] - 2026-07-08
+
+### Added
+
+- Multiple data types for Apple Health
+
+## [v1.42.0] - 2026-07-08
+
+### Added
+
+- Add optional `availabilityDuration` to `TaskFrequency` used to defined how long each recurring task occurrence stays actionable after its start (supports same-day and overnight availability windows)
+
+## [v1.41.0] - 2026-07-04
+
+### Added
+
+- Add skin temperature baseline deviation data type
+- Add short HRV (R-R interval) data type
+
+## [v1.40.0] - 2026-06-16
+
+### Added
+
+- Add `ScalarAnswer`, `ArrayAnswer`, `GeoLocationAnswer` types and corresponding type guards for survey answers
+
+## [v1.39.3] - 2026-06-12
+
+### Added
+
+- Add Oura activity and battery level data types
+
+## [v1.39.2] - 2026-06-12
+
+### Fixed
+
+- Guard for decimal answers
+
+## [v1.39.1] - 2026-06-06
+
+### Added
+
+- Add Oura heart health (cardiovascular age) data type
+
+## [v1.39.0] - 2026-06-05
+
+### Added
+
+- Add Oura
+
+## [v1.38.0] - 2026-06-03
+
+### Added
+
+- Config for `samsungSdkAcceleration` to record acceleration data in background on Galaxy Watch
+- Support for withholding surveys, routines and displays from being published
+
+## [v1.37.0] - 2026-05-30
+
+### Added
+
+- Add Google Health
+
 ## [v1.36.0] - 2026-05-28
 
 ### Changed
@@ -378,7 +572,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.36.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.54.0...HEAD
+[v1.54.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.53.0...v1.54.0
+[v1.53.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.52.0...v1.53.0
+[v1.52.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.51.1...v1.52.0
+[v1.51.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.51.0...v1.51.1
+[v1.51.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.50.0...v1.51.0
+[v1.50.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.49.0...v1.50.0
+[v1.49.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.48.0...v1.49.0
+[v1.48.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.47.0...v1.48.0
+[v1.47.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.46.0...v1.47.0
+[v1.46.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.2...v1.46.0
+[v1.45.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.1...v1.45.2
+[v1.45.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.0...v1.45.1
+[v1.45.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.2...v1.45.0
+[v1.44.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.1...v1.44.2
+[v1.44.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.0...v1.44.1
+[v1.44.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.43.0...v1.44.0
+[v1.43.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.42.0...v1.43.0
+[v1.42.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.41.0...v1.42.0
+[v1.41.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.40.0...v1.41.0
+[v1.40.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.3...v1.40.0
+[v1.39.3]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.2...v1.39.3
+[v1.39.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.1...v1.39.2
+[v1.39.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.0...v1.39.1
+[v1.39.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.38.0...v1.39.0
+[v1.38.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.37.0...v1.38.0
+[v1.37.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.36.0...v1.37.0
 [v1.36.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.35.0...v1.36.0
 [v1.35.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.34.1...v1.35.0
 [v1.34.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.34.0...v1.34.1

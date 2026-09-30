@@ -1,4 +1,5 @@
 import { ProgramDevice, RecursiveKeyOf, TranslatedString } from '.';
+import { TrackingCategory } from '../tracking/types';
 
 export type SkippedStep = {
   programName: string;
@@ -35,6 +36,30 @@ export type Program = {
   featured: ProgramFeatured;
   // theme | false | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app
   theme?: 'D4L' | 'GREEN' | 'PURPLE' | 'OLIVE' | 'BLUE';
+  // appVersion | false | object | Minimum smartphone app version required to run this program. When the installed app is below `version`, the program update is withheld and the user is asked to update. `version` and `androidVersionCode` must describe the same app release.
+  appVersion?: ProgramAppVersion;
+  // tracking | false | [ProgramTracking](#ProgramTracking) | BI event tracking configuration. When absent, tracking is off.
+  tracking?: ProgramTracking;
+};
+
+// #### ProgramTracking
+// BI event tracking is opt-in per program: no configuration means no tracking.
+// Properties | Required | Type | Description
+export type ProgramTracking = {
+  // enabled | true | boolean | Master switch for BI event tracking in this program
+  enabled: boolean;
+  // categories | true | TrackingCategory[] | Event categories ('technical', 'task', 'engagement') that may be recorded
+  categories: TrackingCategory[];
+};
+
+// #### ProgramAppVersion
+// Minimum app version a program requires. `version` (semver / versionName) drives the runtime gate on both platforms and the iOS App Store availability check; `androidVersionCode` is the Play versionCode of that same release, used for the Android availability check (Play exposes only a version code, never a versionName).
+// Properties | Required | Type | Description
+export type ProgramAppVersion = {
+  // version | true | semver string | e.g. "1.42.0"
+  version: string;
+  // androidVersionCode | true | number | Play versionCode of the same release
+  androidVersionCode: number;
 };
 
 // #### ProgramFeatured
@@ -212,7 +237,7 @@ export type DateCondition = StepConditionBase & {
   date: string;
 };
 
-// #### QuestionCondition
+// #### CodeQuestionCondition
 // Properties | Required | Type | Description
 export type CodeQuestionCondition = StepConditionBase & {
   // type | true | `question` | Condition that requires a specific answer from a previous survey
@@ -229,7 +254,7 @@ export type CodeQuestionCondition = StepConditionBase & {
   operator: ConditionOperatorType;
 };
 
-// #### QuestionCondition
+// #### DateQuestionCondition
 // Properties | Required | Type | Description
 export type DateQuestionCondition = StepConditionBase & {
   // type | true | `question` | Condition that requires a specific answer from a previous survey

@@ -36,4 +36,8 @@ export interface RecordingSignal {
   sensorDelay?: number;
   type?: DEVICE_SIGNAL_TYPE;
   data?: ArrayBuffer;
+  // Free-form device-info captured at recording start (e.g. Oura ring's
+  // hardware_type, firmware_version, color, size). Optional; only populated by
+  // sources that surface a device-info endpoint.
+  deviceMetadata?: { [key: string]: string | number };
 }
