@@ -19,6 +19,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [v1.54.0] - 2026-09-25
+
+### Changed
+
+- Renamed device key `PixelWatch1` to `PixelWatch` (`DEVICE_KEY_BLE`, `ProgramDeviceType`, `DEVICE_KEY_TO_NAME`) to cover all Pixel Watch generations
+- Bump actions for Node 24 runner compatibility
+
+## [v1.53.0] - 2026-09-10
+
+### Added
+
+- Line Systems (Line Portal) device type `LINE_SYSTEMS` with the data types `cgm`, `bolus`, `basal`, `bgm` and `deviceEvents` and their binary annotations
+- Donor access tokens from the data-dispatcher: `DonationSDK.requestAccessToken` (`POST /access-token`, self-signed donor auth) and the caching `DonationSDK.getAccessToken` (reused until 30 s before expiry, single-flight per donor); `AccessTokenProvider` type
+
+### Changed
+
+- **Breaking:** `CollectorClient` authenticates with a dispatcher-issued donor access token (`Authorization: Bearer <accessToken>`) instead of the self-signed scheme; its constructor is now `(accessToken: AccessTokenProvider, collectorURL)` and no longer takes the self-sign secret, converter or crypto module. The collector's `GET /token` is no longer called and `buildSelfSignedAuthToken` was removed
+
+## [v1.52.0] - 2026-09-04
+
+### Added
+
+- FHIRpath enableWhen evaluator
+
+## [v1.51.1] - 2026-08-28
+
+### Fixed
+
+- Garmin HRV contained 3 NaN columns
+- Garmin showed absolute skin temperature instead of deviation
+
+## [v1.51.0] - 2026-08-27
+
+### Added
+
+- BI tracking events: `TrackingEventsDocument` types and `DonationSDK.donateTrackingEvents` uploading one encrypted batch per call to the dispatcher tracking endpoint
+- `ProgramTracking` config on `Program` to opt a study into tracking per event category
+
+### Changed
+
+- Reduce size of acceleration payload
+
+## [v1.50.0] - 2026-08-26
+
+### Added
+
+- Support for Garmin's activity signal (15-min epochs)
+
 ## [v1.49.0] - 2026-08-25
 
 ### Added
@@ -524,7 +572,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.49.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.54.0...HEAD
+[v1.54.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.53.0...v1.54.0
+[v1.53.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.52.0...v1.53.0
+[v1.52.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.51.1...v1.52.0
+[v1.51.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.51.0...v1.51.1
+[v1.51.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.50.0...v1.51.0
+[v1.50.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.49.0...v1.50.0
 [v1.49.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.48.0...v1.49.0
 [v1.48.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.47.0...v1.48.0
 [v1.47.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.46.0...v1.47.0

@@ -11,6 +11,8 @@ export * from './donation/keyHandler';
 export * from './donation/sdk';
 export * from './donation/types';
 
+export * from './tracking/types';
+
 export * from './helper/converter';
 export * from './helper/datetime';
 export * from './helper/eligibility';

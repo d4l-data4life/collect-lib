@@ -1,9 +1,22 @@
 {
   "name": "@d4l/collect-lib",
-  "version": "1.49.0",
+  "version": "1.54.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./fhirpath": {
+      "types": "./dist/fhirpath.d.ts",
+      "import": "./dist/fhirpath.mjs",
+      "require": "./dist/fhirpath.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist"
   ],
@@ -38,6 +51,7 @@
     "@scure/bip39": "^1.5.4",
     "buffer": "^6.0.3",
     "date-fns": "^4.1.0",
+    "fhirpath": "^5.2.0",
     "luxon": "^3.6.1",
     "node-forge": "^1.4.0",
     "ulid": "^3.0.0",

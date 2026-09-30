@@ -45,6 +45,16 @@ Update the types by running `yarn run readme:update`.
 | featured    | true     | [ProgramFeatured](#ProgramFeatured)         | Describes the featured state of the program.                                                                                                                                                                                                   |
 | theme       | false    | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app                                                                                                                                                                                                |
 | appVersion  | false    | object                                      | Minimum smartphone app version required to run this program. When the installed app is below `version`, the program update is withheld and the user is asked to update. `version` and `androidVersionCode` must describe the same app release. |
+| tracking    | false    | [ProgramTracking](#ProgramTracking)         | BI event tracking configuration. When absent, tracking is off.                                                                                                                                                                                 |
+
+#### ProgramTracking
+
+BI event tracking is opt-in per program: no configuration means no tracking.
+
+| Properties | Required | Type               | Description                                                               |
+| ---------- | -------- | ------------------ | ------------------------------------------------------------------------- |
+| enabled    | true     | boolean            | Master switch for BI event tracking in this program                       |
+| categories | true     | TrackingCategory[] | Event categories ('technical', 'task', 'engagement') that may be recorded |
 
 #### ProgramAppVersion
 
@@ -156,7 +166,7 @@ Minimum app version a program requires. `version` (semver / versionName) drives 
 | type       | true     | `date`              | Condition that requires a date to have passed                   |
 | date       | true     | string (YYYY-MM-DD) | Timestamp that needs to be passed for the condition to be true. |
 
-#### QuestionCondition
+#### CodeQuestionCondition
 
 | Properties   | Required | Type                                | Description                                                                     |
 | ------------ | -------- | ----------------------------------- | ------------------------------------------------------------------------------- |
@@ -167,7 +177,7 @@ Minimum app version a program requires. `version` (semver / versionName) drives 
 | operand      | false    | string                              | (unless operator is `exists`). Used as `<answer>` `<operator>` `<operand>`.     |
 | operator     | true     | `exists`,`=`,`!=`,`>`,`<`,`>=`,`<=` | Used as `<answer>` `<operator>` `<operand>`.                                    |
 
-#### QuestionCondition
+#### DateQuestionCondition
 
 | Properties   | Required | Type       | Description                                                           |
 | ------------ | -------- | ---------- | --------------------------------------------------------------------- |

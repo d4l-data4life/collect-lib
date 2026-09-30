@@ -3,13 +3,15 @@ import {
   FITBIT_BREATHING_RATE_ANNOTATION,
   FITBIT_CALORIES_ANNOTATION,
   FITBIT_HEART_RATE_ANNOTATION,
-  FITBIT_HEART_RATE_VARIABILITY_ANNOTATION,
-  FITBIT_SKIN_TEMPERATURE_ANNOTATION,
   FITBIT_SLEEP_ANNOTATION,
   FITBIT_SPO2_ANNOTATION,
   FITBIT_STEPS_ANNOTATION,
 } from './fitbit';
-import { DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE } from './base';
+import {
+  DEVICE_ANNOTATION_HRV_RMSSD,
+  DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE,
+  DEVICE_ANNOTATION_SKIN_TEMPERATURE_DEVIATION,
+} from './base';
 import { MENSTRUAL_CYCLE_ANNOTATION } from './menstrual';
 import { OURA_STRESS_ANNOTATION } from './oura';
 import {
@@ -89,6 +91,38 @@ export const GARMIN_BLOOD_PRESSURE_ANNOTATION: DEVICE_ANNOTATION = [
   GARMIN_ANNOTATION_ITEM_BLOOD_PRESSURE,
 ];
 
+// Activity epochs (/epochs): 15-minute monitoring windows, one item per epoch,
+// anchored at the epoch start. A window split across activity types arrives as one
+// epoch per type (same timestamp, own active time). The level uses Garmin's own
+// 3-step intensity — deliberately not Oura's 0-5 scale; each device documents its own.
+export const GARMIN_ANNOTATION_ITEM_ACTIVITY_LEVEL: DEVICE_ANNOTATION_ITEM = {
+  type: 'activityLevel',
+  size: 1,
+  format: 'unsignedInt',
+  note: '0=sedentary, 1=active, 2=highly active (Garmin epoch intensity)',
+};
+export const GARMIN_ANNOTATION_ITEM_ACTIVITY_METS: DEVICE_ANNOTATION_ITEM = {
+  type: 'averageMetabolicEquivalent',
+  size: 4,
+  format: 'float32',
+  littleEndian: true,
+  unit: 'MET',
+  note: 'average METs over the epoch; 0 when Garmin sent none',
+};
+export const GARMIN_ANNOTATION_ITEM_ACTIVITY_ACTIVE_TIME: DEVICE_ANNOTATION_ITEM = {
+  type: 'duration',
+  size: 2,
+  format: 'unsignedInt',
+  littleEndian: true,
+  unit: 's',
+  note: 'active seconds within the 15-minute epoch',
+};
+export const GARMIN_ACTIVITY_ANNOTATION: DEVICE_ANNOTATION = [
+  GARMIN_ANNOTATION_ITEM_ACTIVITY_LEVEL,
+  GARMIN_ANNOTATION_ITEM_ACTIVITY_METS,
+  GARMIN_ANNOTATION_ITEM_ACTIVITY_ACTIVE_TIME,
+];
+
 // Garmin Health API metrics re-use the shared Fitbit buffer encodings so a study can
 // ingest Fitbit, Google Health, Oura and Garmin through the same FHIR pipeline.
 // TODO: add body battery / VO2 max once dedicated DEVICE_SIGNAL_TYPEs exist for them.
@@ -96,13 +130,13 @@ export const GARMIN_SIGNAL_TYPE_ANNOTATIONS: {
   [key in DEVICE_SIGNAL_TYPE]?: DEVICE_ANNOTATION;
 } = {
   heartRate: FITBIT_HEART_RATE_ANNOTATION,
-  hrv: FITBIT_HEART_RATE_VARIABILITY_ANNOTATION,
+  hrv: DEVICE_ANNOTATION_HRV_RMSSD,
   spo2: FITBIT_SPO2_ANNOTATION,
   sleep: FITBIT_SLEEP_ANNOTATION,
   steps: FITBIT_STEPS_ANNOTATION,
   calories: FITBIT_CALORIES_ANNOTATION,
   respiratoryRate: FITBIT_BREATHING_RATE_ANNOTATION,
-  skinTemperature: FITBIT_SKIN_TEMPERATURE_ANNOTATION,
+  skinTemperature: DEVICE_ANNOTATION_SKIN_TEMPERATURE_DEVIATION,
   stress: OURA_STRESS_ANNOTATION,
   menstrualCycle: MENSTRUAL_CYCLE_ANNOTATION,
   // Daily floors climbed: cumulative day total from /dailies (same float32 encoding
@@ -115,4 +149,5 @@ export const GARMIN_SIGNAL_TYPE_ANNOTATIONS: {
   vo2max: GARMIN_VO2MAX_ANNOTATION,
   bodyComposition: GARMIN_BODY_COMPOSITION_ANNOTATION,
   bloodPressure: GARMIN_BLOOD_PRESSURE_ANNOTATION,
+  activity: GARMIN_ACTIVITY_ANNOTATION,
 };

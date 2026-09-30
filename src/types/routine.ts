@@ -57,8 +57,9 @@ export type ProgramDeviceType =
   | 'GOOGLE_HEALTH'
   | 'OURA'
   | 'GARMIN'
+  | 'LINE_SYSTEMS'
   | 'GalaxyWatch6'
-  | 'PixelWatch1'
+  | 'PixelWatch'
   | 'AppleHealth'
   | 'HealthConnect';
 
@@ -132,7 +133,12 @@ export type ProgramDevicesDataType =
   | 'sleepScore'
   | 'bodyComposition'
   | 'bloodPressure'
-  | 'batteryLevel';
+  | 'batteryLevel'
+  | 'cgm'
+  | 'bolus'
+  | 'basal'
+  | 'bgm'
+  | 'deviceEvents';
 
 export type ProgramDevicesLabel = { name: string } & TranslatedString;
 
