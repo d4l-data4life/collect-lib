@@ -23,6 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [v1.54.0] - 2026-09-25
+
+### Changed
+
+- Renamed device key `PixelWatch1` to `PixelWatch` (`DEVICE_KEY_BLE`, `ProgramDeviceType`, `DEVICE_KEY_TO_NAME`) to cover all Pixel Watch generations
+- Bump actions for Node 24 runner compatibility
+
 ## [v1.53.0] - 2026-09-10
 
 ### Added
@@ -569,7 +576,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.53.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.54.0...HEAD
+[v1.54.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.53.0...v1.54.0
 [v1.53.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.52.0...v1.53.0
 [v1.52.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.51.1...v1.52.0
 [v1.51.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.51.0...v1.51.1
