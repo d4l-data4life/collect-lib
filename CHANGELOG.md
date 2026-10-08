@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- code → label tables for `sleepLevel`, `sleepState`, `sleepStage` and `activityDetection`, so `phoenix` can import instead of maintaining its own copy
+
 ### Changed
 
 - Bump actions for Node 24 runner compatibility
