@@ -54,6 +54,11 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'hrv'
   | 'calories'
   | 'steps'
+  // Google Health types
+  | 'floors'
+  | 'elevationGain'
+  | 'heartRateZone'
+  | 'activeZoneMinutes'
   // Apple Health types
   | DEVICE_ANNOTATION_DATA_TYPE_APPLE
   // Oura types

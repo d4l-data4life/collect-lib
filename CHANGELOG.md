@@ -9,13 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Google Health annotations for `restingHeartRate`, `distance`, `floors`, `elevationGain`, `activeZoneMinutes`, `activity` and `vo2max`; new data types `distance`, `floors`, `elevationGain` and `activeZoneMinutes` (annotation item types `floors`, `elevationGain`, `heartRateZone`, `activeZoneMinutes`)
+- `GoogleHealthDataSource` / `GOOGLE_HEALTH_DATA_SOURCES` (`phone`, `reconciled`, `unknown` or the source device's slug), accepted by `encodeDataSource`
+
 ### Changed
+
+- Every Google Health annotation now ends with the 16-byte `dataSource` item, and the interval signals (`steps`, `calories`, `distance`, `floors`, `elevationGain`, `activeZoneMinutes`, `activity`) carry the interval length as `duration`; the eight original signals are therefore no longer byte-identical to their Fitbit annotations (`GOOGLE_HEALTH_*_ANNOTATION`)
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- `Requester` now throws `RequesterError`, carrying the response `status`, so callers can branch on the HTTP status instead of only the body text (`registerDonor`'s 409/500 cases were unreachable)
 
 ### Security
 

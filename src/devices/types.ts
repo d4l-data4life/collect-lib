@@ -124,6 +124,11 @@ export type DEVICE_SIGNAL_TYPE =
   | 'vo2max'
   | 'bodyComposition'
   | 'bloodPressure'
+  // Google Health types
+  | 'distance'
+  | 'floors'
+  | 'elevationGain'
+  | 'activeZoneMinutes'
   // Apple Health types
   | DEVICE_SIGNAL_TYPE_APPLE
   // Oura types
