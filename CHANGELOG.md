@@ -9,12 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Google Health annotations for `restingHeartRate`, `distance`, `floors`, `elevationGain`, `activeZoneMinutes`, `activity` and `vo2max`; new data types `distance`, `floors`, `elevationGain` and `activeZoneMinutes` (annotation item types `floors`, `elevationGain`, `heartRateZone`, `activeZoneMinutes`)
-- `GoogleHealthDataSource` / `GOOGLE_HEALTH_DATA_SOURCES` (`phone`, `reconciled`, `unknown` or the source device's slug), accepted by `encodeDataSource`
-
 ### Changed
-
-- Every Google Health annotation now ends with the 16-byte `dataSource` item, and the interval signals (`steps`, `calories`, `distance`, `floors`, `elevationGain`, `activeZoneMinutes`, `activity`) carry the interval length as `duration`; the eight original signals are therefore no longer byte-identical to their Fitbit annotations (`GOOGLE_HEALTH_*_ANNOTATION`)
 
 ### Deprecated
 
@@ -22,9 +17,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- `Requester` now throws `RequesterError`, carrying the response `status`, so callers can branch on the HTTP status instead of only the body text (`registerDonor`'s 409/500 cases were unreachable)
-
 ### Security
+
+## [v1.55.0] - 2026-10-08
+
+### Added
+
+- Google Health annotations for `restingHeartRate`, `distance`, `floors`, `elevationGain`, `activeZoneMinutes`, `activity` and `vo2max`; new data types `distance`, `floors`, `elevationGain` and `activeZoneMinutes` (annotation item types `floors`, `elevationGain`, `heartRateZone`, `activeZoneMinutes`)
+- `GoogleHealthDataSource` / `GOOGLE_HEALTH_DATA_SOURCES` (`phone`, `reconciled`, `unknown` or the source device's slug), accepted by `encodeDataSource`
+
+### Changed
+
+- Every Google Health annotation now ends with the 16-byte `dataSource` item, and the interval signals (`steps`, `calories`, `distance`, `floors`, `elevationGain`, `activeZoneMinutes`, `activity`) carry the interval length as `duration`; the eight original signals are therefore no longer byte-identical to their Fitbit annotations (`GOOGLE_HEALTH_*_ANNOTATION`)
+
+### Fixed
+
+- `Requester` now throws `RequesterError`, carrying the response `status`, so callers can branch on the HTTP status instead of only the body text (`registerDonor`'s 409/500 cases were unreachable)
 
 ## [v1.54.0] - 2026-09-25
 
@@ -579,7 +587,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.54.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.55.0...HEAD
+[v1.55.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.54.0...v1.55.0
 [v1.54.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.53.0...v1.54.0
 [v1.53.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.52.0...v1.53.0
 [v1.52.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.51.1...v1.52.0
