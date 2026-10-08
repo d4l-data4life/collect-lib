@@ -125,7 +125,9 @@ export type DEVICE_SIGNAL_TYPE =
   | 'bodyComposition'
   | 'bloodPressure'
   // Google Health types
-  | 'dailyElevationGain'
+  | 'distance'
+  | 'floors'
+  | 'elevationGain'
   | 'activeZoneMinutes'
   // Apple Health types
   | DEVICE_SIGNAL_TYPE_APPLE

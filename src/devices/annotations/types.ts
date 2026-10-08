@@ -55,6 +55,8 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'calories'
   | 'steps'
   // Google Health types
+  | 'floors'
+  | 'elevationGain'
   | 'heartRateZone'
   | 'activeZoneMinutes'
   // Apple Health types
