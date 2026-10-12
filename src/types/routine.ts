@@ -136,6 +136,7 @@ export type ProgramDevicesDataType =
   | 'sleepScore'
   | 'bodyComposition'
   | 'bloodPressure'
+  | 'exercise'
   | 'batteryLevel'
   | 'cgm'
   | 'bolus'

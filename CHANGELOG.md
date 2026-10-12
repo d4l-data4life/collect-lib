@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Health Connect `exercise` data type, expanded by `toDeviceConfig` / `toHealthConnectSignalTypes` into the signal types `exerciseSession`, `exerciseCalories`, `exerciseDistance`, `exerciseHeartRate`, `exercisePower`, `exerciseSpeed` and `exerciseVo2max` (new annotations, annotation item types `exerciseType`, `power` and `vo2maxMeasurementMethod`)
+
 ### Changed
 
 - Google Health HRV annotation is RMSSD-only (`DEVICE_ANNOTATION_ITEM_HRV_RMSSD` + data source) instead of the 4-channel Fitbit item, dropping the always-empty coverage/hf/lf columns
