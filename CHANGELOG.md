@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- code → label tables for `sleepLevel`, `sleepState`, `sleepStage` and `activityDetection`, so `phoenix` can import instead of maintaining its own copy
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.56.0] - 2026-10-12
+
+### Added
+
+- code → label tables for `sleepLevel`, `sleepState`, `sleepStage` and `activityDetection`, so `phoenix` can import instead of maintaining its own copy
 
 ## [v1.55.0] - 2026-10-08
 
@@ -589,7 +593,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.55.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.56.0...HEAD
+[v1.56.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.55.0...v1.56.0
 [v1.55.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.54.0...v1.55.0
 [v1.54.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.53.0...v1.54.0
 [v1.53.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.52.0...v1.53.0
