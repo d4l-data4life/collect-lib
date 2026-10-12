@@ -2,6 +2,7 @@ export * from './config';
 export * from './types';
 
 export * from './annotations/base';
+export * from './annotations/categoricalLabels';
 export * from './annotations/dataSource';
 export * from './annotations/fitbit';
 export * from './annotations/google-health';
