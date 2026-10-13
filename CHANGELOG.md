@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Google Health HRV annotation is RMSSD-only (`DEVICE_ANNOTATION_ITEM_HRV_RMSSD` + data source) instead of the 4-channel Fitbit item, dropping the always-empty coverage/hf/lf columns
+
 ### Deprecated
 
 ### Removed
