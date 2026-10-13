@@ -1,4 +1,5 @@
 import { ProgramDevice } from '../types';
+import { toHealthConnectSignalTypes } from './annotations/healthConnect';
 import { InternalSensorAnnotationTypes } from './annotations/internal';
 import { DEVICE_ANNOTATION_DATA_TYPE } from './annotations/types';
 import { BleDeviceMetaLabel, DEVICE_KEY_INTERNAL, DEVICE_SIGNAL_TYPE, DeviceConfig } from './types';
@@ -26,11 +27,16 @@ export function toDeviceConfig(devices: ProgramDevice[]): DeviceConfig[] {
             dataTypes: device.dataTypes as DEVICE_SIGNAL_TYPE[],
           };
         case 'AppleHealth':
-        case 'HealthConnect':
           return {
             type: 'sdk',
             device: device.type,
             dataTypes: device.dataTypes as DEVICE_SIGNAL_TYPE[],
+          };
+        case 'HealthConnect':
+          return {
+            type: 'sdk',
+            device: device.type,
+            dataTypes: toHealthConnectSignalTypes(device.dataTypes),
           };
         default:
           return {

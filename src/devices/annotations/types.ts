@@ -77,6 +77,9 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'bloodPressure'
   // Health Connect types
   | 'sleepStage'
+  | 'exerciseType'
+  | 'power'
+  | 'vo2maxMeasurementMethod'
   // Line Systems (Line Portal) types
   | 'cgm'
   | 'bgm'
