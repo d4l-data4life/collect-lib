@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Health Connect `exercise` data type, expanded by `toDeviceConfig` / `toHealthConnectSignalTypes` into the signal types `exerciseSession`, `exerciseCalories`, `exerciseDistance`, `exerciseHeartRate`, `exercisePower`, `exerciseSpeed` and `exerciseVo2max` (new annotations, annotation item types `exerciseType`, `power` and `vo2maxMeasurementMethod`)
-
 ### Changed
-
-- Google Health HRV annotation is RMSSD-only (`DEVICE_ANNOTATION_ITEM_HRV_RMSSD` + data source) instead of the 4-channel Fitbit item, dropping the always-empty coverage/hf/lf columns
 
 ### Deprecated
 
@@ -22,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.57.0] - 2026-10-13
+
+### Added
+
+- Health Connect `exercise` data type, expanded by `toDeviceConfig` / `toHealthConnectSignalTypes` into the signal types `exerciseSession`, `exerciseCalories`, `exerciseDistance`, `exerciseHeartRate`, `exercisePower`, `exerciseSpeed` and `exerciseVo2max` (new annotations, annotation item types `exerciseType`, `power` and `vo2maxMeasurementMethod`)
+
+### Changed
+
+- Google Health HRV annotation is RMSSD-only (`DEVICE_ANNOTATION_ITEM_HRV_RMSSD` + data source) instead of the 4-channel Fitbit item, dropping the always-empty coverage/hf/lf columns
 
 ## [v1.56.0] - 2026-10-12
 
@@ -597,7 +603,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.56.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.57.0...HEAD
+[v1.57.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.56.0...v1.57.0
 [v1.56.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.55.0...v1.56.0
 [v1.55.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.54.0...v1.55.0
 [v1.54.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.53.0...v1.54.0
