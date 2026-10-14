@@ -204,6 +204,19 @@ export type ProgramSensorStep = ProgramStepBase & {
   type: 'sensor';
   // devices | true | [ProgramDevices](#ProgramDevices)[] | List of supported devices including their configuration for passive data collection
   devices: ProgramDevice[];
+  // byod | false | [ProgramSensorByod](#ProgramSensorByod) | Lets participants choose which of the configured devices they own. When absent, every configured device applies to every participant.
+  byod?: ProgramSensorByod;
+};
+
+// #### ProgramSensorByod
+// Properties | Required | Type | Description
+export type ProgramSensorByod = {
+  // enabled | true | boolean | Master switch for participant device self-selection
+  enabled: boolean;
+  // selectionMode | true | `single` or `multi` | Whether the participant can pick one device or several
+  selectionMode: 'single' | 'multi';
+  // allowNone | true | boolean | Whether "I don't own any of the listed devices" is offered as an option
+  allowNone: boolean;
 };
 
 // ### StepCondition

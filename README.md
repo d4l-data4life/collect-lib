@@ -145,10 +145,19 @@ Minimum app version a program requires. `version` (semver / versionName) drives 
 
 #### Sensor Step
 
-| Properties | Required | Type                                | Description                                                                         |
-| ---------- | -------- | ----------------------------------- | ----------------------------------------------------------------------------------- |
-| type       | true     | `sensor`                            | Step that sets up passive data collection                                           |
-| devices    | true     | [ProgramDevices](#ProgramDevices)[] | List of supported devices including their configuration for passive data collection |
+| Properties | Required | Type                                    | Description                                                                                                                           |
+| ---------- | -------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| type       | true     | `sensor`                                | Step that sets up passive data collection                                                                                             |
+| devices    | true     | [ProgramDevices](#ProgramDevices)[]     | List of supported devices including their configuration for passive data collection                                                   |
+| byod       | false    | [ProgramSensorByod](#ProgramSensorByod) | Lets participants choose which of the configured devices they own. When absent, every configured device applies to every participant. |
+
+#### ProgramSensorByod
+
+| Properties    | Required | Type                | Description                                                             |
+| ------------- | -------- | ------------------- | ----------------------------------------------------------------------- |
+| enabled       | true     | boolean             | Master switch for participant device self-selection                     |
+| selectionMode | true     | `single` or `multi` | Whether the participant can pick one device or several                  |
+| allowNone     | true     | boolean             | Whether "I don't own any of the listed devices" is offered as an option |
 
 ### StepCondition
 
