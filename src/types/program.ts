@@ -40,6 +40,8 @@ export type Program = {
   appVersion?: ProgramAppVersion;
   // tracking | false | [ProgramTracking](#ProgramTracking) | BI event tracking configuration. When absent, tracking is off.
   tracking?: ProgramTracking;
+  // byod | false | [ProgramSensorByod](#ProgramSensorByod) | Lets participants choose which of the program's configured passive-recording devices they own. Applies across all sensor steps (each device has its own step — see Sensor Step). When absent, every configured device applies to every participant.
+  byod?: ProgramSensorByod;
 };
 
 // #### ProgramTracking
@@ -50,6 +52,17 @@ export type ProgramTracking = {
   enabled: boolean;
   // categories | true | TrackingCategory[] | Event categories ('technical', 'task', 'engagement') that may be recorded
   categories: TrackingCategory[];
+};
+
+// #### ProgramSensorByod
+// Properties | Required | Type | Description
+export type ProgramSensorByod = {
+  // enabled | true | boolean | Master switch for participant device self-selection
+  enabled: boolean;
+  // selectionMode | true | `single` or `multi` | Whether the participant can pick one device or several
+  selectionMode: 'single' | 'multi';
+  // allowNone | true | boolean | Whether "I don't own any of the listed devices" is offered as an option
+  allowNone: boolean;
 };
 
 // #### ProgramAppVersion
@@ -204,19 +217,6 @@ export type ProgramSensorStep = ProgramStepBase & {
   type: 'sensor';
   // devices | true | [ProgramDevices](#ProgramDevices)[] | List of supported devices including their configuration for passive data collection
   devices: ProgramDevice[];
-  // byod | false | [ProgramSensorByod](#ProgramSensorByod) | Lets participants choose which of the configured devices they own. When absent, every configured device applies to every participant.
-  byod?: ProgramSensorByod;
-};
-
-// #### ProgramSensorByod
-// Properties | Required | Type | Description
-export type ProgramSensorByod = {
-  // enabled | true | boolean | Master switch for participant device self-selection
-  enabled: boolean;
-  // selectionMode | true | `single` or `multi` | Whether the participant can pick one device or several
-  selectionMode: 'single' | 'multi';
-  // allowNone | true | boolean | Whether "I don't own any of the listed devices" is offered as an option
-  allowNone: boolean;
 };
 
 // ### StepCondition

@@ -30,22 +30,23 @@ Update the types by running `yarn run readme:update`.
 
 ### Program
 
-| Properties  | Required | Type                                        | Description                                                                                                                                                                                                                                    |
-| ----------- | -------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| name        | true     | string                                      | Name of the program used as primary identifier                                                                                                                                                                                                 |
-| tenantID    | true     | string                                      | Tenant the program belongs to                                                                                                                                                                                                                  |
-| languages   | true     | string[]                                    | Language codes that the program is available in. Example: `['en', 'de']`                                                                                                                                                                       |
-| type        | true     | `study` or `sensor`                         | `sensor` is the new research-studio type, `study` is from the study-builder (and older)                                                                                                                                                        |
-| phases      | true     | [ProgramStep](#ProgramStep)[][]             | Defines the flow of the program as an array of `phases`. `phases` consist of arrays of `steps`. `phases` are worked through sequentially and `steps` within a single `phase` are parallel.                                                     |
-| donation    | true     | [ProgramDonation](#ProgramDonation)         | Donation settings handle which resources are donated, where they are donated to, and how the donation is regulated                                                                                                                             |
-| content     | true     | [ProgramContent](#ProgramContent)           | Contains all the relevant content properties of the program.                                                                                                                                                                                   |
-| endDate     | false    | ISO 8601 date with timezone                 | Date the program should finish for all users.                                                                                                                                                                                                  |
-| tags        | false    | [ProgramTag](#ProgramTag)[]                 | List of supported tags including their configuration                                                                                                                                                                                           |
-| publishedAt | false    | ISO 8601 date with timezone                 | Date the program was published (used to determine program state).                                                                                                                                                                              |
-| featured    | true     | [ProgramFeatured](#ProgramFeatured)         | Describes the featured state of the program.                                                                                                                                                                                                   |
-| theme       | false    | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app                                                                                                                                                                                                |
-| appVersion  | false    | object                                      | Minimum smartphone app version required to run this program. When the installed app is below `version`, the program update is withheld and the user is asked to update. `version` and `androidVersionCode` must describe the same app release. |
-| tracking    | false    | [ProgramTracking](#ProgramTracking)         | BI event tracking configuration. When absent, tracking is off.                                                                                                                                                                                 |
+| Properties  | Required | Type                                        | Description                                                                                                                                                                                                                                         |
+| ----------- | -------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| name        | true     | string                                      | Name of the program used as primary identifier                                                                                                                                                                                                      |
+| tenantID    | true     | string                                      | Tenant the program belongs to                                                                                                                                                                                                                       |
+| languages   | true     | string[]                                    | Language codes that the program is available in. Example: `['en', 'de']`                                                                                                                                                                            |
+| type        | true     | `study` or `sensor`                         | `sensor` is the new research-studio type, `study` is from the study-builder (and older)                                                                                                                                                             |
+| phases      | true     | [ProgramStep](#ProgramStep)[][]             | Defines the flow of the program as an array of `phases`. `phases` consist of arrays of `steps`. `phases` are worked through sequentially and `steps` within a single `phase` are parallel.                                                          |
+| donation    | true     | [ProgramDonation](#ProgramDonation)         | Donation settings handle which resources are donated, where they are donated to, and how the donation is regulated                                                                                                                                  |
+| content     | true     | [ProgramContent](#ProgramContent)           | Contains all the relevant content properties of the program.                                                                                                                                                                                        |
+| endDate     | false    | ISO 8601 date with timezone                 | Date the program should finish for all users.                                                                                                                                                                                                       |
+| tags        | false    | [ProgramTag](#ProgramTag)[]                 | List of supported tags including their configuration                                                                                                                                                                                                |
+| publishedAt | false    | ISO 8601 date with timezone                 | Date the program was published (used to determine program state).                                                                                                                                                                                   |
+| featured    | true     | [ProgramFeatured](#ProgramFeatured)         | Describes the featured state of the program.                                                                                                                                                                                                        |
+| theme       | false    | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app                                                                                                                                                                                                     |
+| appVersion  | false    | object                                      | Minimum smartphone app version required to run this program. When the installed app is below `version`, the program update is withheld and the user is asked to update. `version` and `androidVersionCode` must describe the same app release.      |
+| tracking    | false    | [ProgramTracking](#ProgramTracking)         | BI event tracking configuration. When absent, tracking is off.                                                                                                                                                                                      |
+| byod        | false    | [ProgramSensorByod](#ProgramSensorByod)     | Lets participants choose which of the program's configured passive-recording devices they own. Applies across all sensor steps (each device has its own step — see Sensor Step). When absent, every configured device applies to every participant. |
 
 #### ProgramTracking
 
@@ -55,6 +56,14 @@ BI event tracking is opt-in per program: no configuration means no tracking.
 | ---------- | -------- | ------------------ | ------------------------------------------------------------------------- |
 | enabled    | true     | boolean            | Master switch for BI event tracking in this program                       |
 | categories | true     | TrackingCategory[] | Event categories ('technical', 'task', 'engagement') that may be recorded |
+
+#### ProgramSensorByod
+
+| Properties    | Required | Type                | Description                                                             |
+| ------------- | -------- | ------------------- | ----------------------------------------------------------------------- |
+| enabled       | true     | boolean             | Master switch for participant device self-selection                     |
+| selectionMode | true     | `single` or `multi` | Whether the participant can pick one device or several                  |
+| allowNone     | true     | boolean             | Whether "I don't own any of the listed devices" is offered as an option |
 
 #### ProgramAppVersion
 
@@ -145,19 +154,10 @@ Minimum app version a program requires. `version` (semver / versionName) drives 
 
 #### Sensor Step
 
-| Properties | Required | Type                                    | Description                                                                                                                           |
-| ---------- | -------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| type       | true     | `sensor`                                | Step that sets up passive data collection                                                                                             |
-| devices    | true     | [ProgramDevices](#ProgramDevices)[]     | List of supported devices including their configuration for passive data collection                                                   |
-| byod       | false    | [ProgramSensorByod](#ProgramSensorByod) | Lets participants choose which of the configured devices they own. When absent, every configured device applies to every participant. |
-
-#### ProgramSensorByod
-
-| Properties    | Required | Type                | Description                                                             |
-| ------------- | -------- | ------------------- | ----------------------------------------------------------------------- |
-| enabled       | true     | boolean             | Master switch for participant device self-selection                     |
-| selectionMode | true     | `single` or `multi` | Whether the participant can pick one device or several                  |
-| allowNone     | true     | boolean             | Whether "I don't own any of the listed devices" is offered as an option |
+| Properties | Required | Type                                | Description                                                                         |
+| ---------- | -------- | ----------------------------------- | ----------------------------------------------------------------------------------- |
+| type       | true     | `sensor`                            | Step that sets up passive data collection                                           |
+| devices    | true     | [ProgramDevices](#ProgramDevices)[] | List of supported devices including their configuration for passive data collection |
 
 ### StepCondition
 
