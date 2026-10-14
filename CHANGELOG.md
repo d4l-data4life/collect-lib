@@ -9,11 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Health Connect data types `calories`, `distance`, `heartRate`, `power`, `speed` and `vo2max`, one per Health Connect record type (new signal types `power` and `speed`, new data type `power`)
+
 ### Changed
+
+- Health Connect `exercise` data type maps to the exercise session only (signal type `exercise`) instead of expanding into all exercise-related signal types
 
 ### Deprecated
 
 ### Removed
+
+- **Breaking:** Health Connect signal types `exerciseSession`, `exerciseCalories`, `exerciseDistance`, `exerciseHeartRate`, `exercisePower`, `exerciseSpeed`, `exerciseVo2max` and the exports `HEALTH_CONNECT_EXERCISE_SIGNAL_TYPES` and `toHealthConnectSignalTypes`; `HEALTH_CONNECT_EXERCISE_*_ANNOTATION` exports are renamed to `HEALTH_CONNECT_*_ANNOTATION` and `HEALTH_CONNECT_ANNOTATION_ITEM_EXERCISE_DURATION` to `HEALTH_CONNECT_ANNOTATION_ITEM_RECORD_DURATION`
 
 ### Fixed
 
