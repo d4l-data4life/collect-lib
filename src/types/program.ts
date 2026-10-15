@@ -40,7 +40,7 @@ export type Program = {
   appVersion?: ProgramAppVersion;
   // tracking | false | [ProgramTracking](#ProgramTracking) | BI event tracking configuration. When absent, tracking is off.
   tracking?: ProgramTracking;
-  // byod | false | [ProgramSensorByod](#ProgramSensorByod) | Lets participants choose which of the program's configured passive-recording devices they own. Applies across all sensor steps (each device has its own step — see Sensor Step). When absent, every configured device applies to every participant.
+  // byod | false | [ProgramSensorByod](#ProgramSensorByod) | Whether participants can self-select which of their own compatible devices they want to use for the study. When absent, BYOD is off.
   byod?: ProgramSensorByod;
 };
 
