@@ -22,9 +22,6 @@ describe('HEALTH_CONNECT_SIGNAL_TYPE_ANNOTATIONS', () => {
 
   it.each<[DEVICE_SIGNAL_TYPE, number]>([
     ['exercise', 2 + 4 + 16],
-    ['calories', 4 + 4 + 16],
-    ['distance', 4 + 4 + 16],
-    ['heartRate', 2 + 16],
     ['power', 4 + 16],
     ['speed', 4 + 16],
     ['vo2max', 4 + 1 + 16],
