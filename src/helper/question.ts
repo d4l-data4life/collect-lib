@@ -7,7 +7,7 @@ export const getFollowUpQuestionLinkId = (linkId: string): string =>
 export const BYOD_SURVEY_NAME = 'byod_wearables_sensors';
 
 // Answer code for "I don't own any of the listed devices" in the byod questionnaire
-export const BYOD_NONE_ANSWER_CODE = '#byod_none';
+export const BYOD_NONE_ANSWER_CODE = 'BYOD_NONE';
 
 // linkId of the byod questionnaire's single device-selection question
 export const BYOD_DEVICES_LINK_ID = 'byod_devices';
