@@ -11,3 +11,8 @@ export const BYOD_NONE_ANSWER_CODE = 'BYOD_NONE';
 
 // linkId of the byod questionnaire's single device-selection question
 export const BYOD_DEVICES_LINK_ID = 'byod_devices';
+
+// Names of auto-generated surveys/questionnaires that must stay hidden from researcher-facing UI.
+const GENERATED_SURVEY_NAMES: readonly string[] = [BYOD_SURVEY_NAME];
+
+export const isGeneratedSurveyName = (name: string): boolean => GENERATED_SURVEY_NAMES.includes(name);
