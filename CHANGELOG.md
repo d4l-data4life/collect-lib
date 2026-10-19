@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Health Connect data points calories, distance and heart rate, and the grouping of exercise data points under `exercise`: exercise session, power, speed and VO2 max are now separate data points
+
 ### Fixed
 
 ### Security
