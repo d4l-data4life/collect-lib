@@ -59,11 +59,11 @@ BI event tracking is opt-in per program: no configuration means no tracking.
 
 #### ProgramSensorByod
 
-| Properties    | Required | Type                | Description                                                             |
-| ------------- | -------- | ------------------- | ----------------------------------------------------------------------- |
-| enabled       | true     | boolean             | Master switch for participant device self-selection                     |
-| selectionMode | true     | `single` or `multi` | Whether the participant can pick one device or several                  |
-| allowNone     | true     | boolean             | Whether "I don't own any of the listed devices" is offered as an option |
+| Properties    | Required | Type                              | Description                                                             |
+| ------------- | -------- | --------------------------------- | ----------------------------------------------------------------------- |
+| enabled       | true     | boolean                           | Master switch for participant device self-selection                     |
+| selectionMode | true     | `single_select` or `multi_select` | Whether the participant can pick one device or several                  |
+| allowNone     | true     | boolean                           | Whether "I don't own any of the listed devices" is offered as an option |
 
 #### ProgramAppVersion
 

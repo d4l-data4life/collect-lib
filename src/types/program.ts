@@ -59,8 +59,8 @@ export type ProgramTracking = {
 export type ProgramSensorByod = {
   // enabled | true | boolean | Master switch for participant device self-selection
   enabled: boolean;
-  // selectionMode | true | `single` or `multi` | Whether the participant can pick one device or several
-  selectionMode: 'single' | 'multi';
+  // selectionMode | true | `single_select` or `multi_select` | Whether the participant can pick one device or several
+  selectionMode: 'single_select' | 'multi_select';
   // allowNone | true | boolean | Whether "I don't own any of the listed devices" is offered as an option
   allowNone: boolean;
 };
