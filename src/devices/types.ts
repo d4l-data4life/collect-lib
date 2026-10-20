@@ -130,13 +130,9 @@ export type DEVICE_SIGNAL_TYPE =
   | 'elevationGain'
   | 'activeZoneMinutes'
   // Health Connect types
-  | 'exerciseSession'
-  | 'exerciseCalories'
-  | 'exerciseDistance'
-  | 'exerciseHeartRate'
-  | 'exercisePower'
-  | 'exerciseSpeed'
-  | 'exerciseVo2max'
+  | 'exercise'
+  | 'speed'
+  | 'power'
   // Apple Health types
   | DEVICE_SIGNAL_TYPE_APPLE
   // Oura types

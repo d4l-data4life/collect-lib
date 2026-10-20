@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [v1.57.1] - 2026-10-19
+
+### Removed
+
+- Health Connect data points calories, distance and heart rate, and the grouping of exercise data points under `exercise`: exercise session, power, speed and VO2 max are now separate data points
+
 ## [v1.57.0] - 2026-10-13
 
 ### Added
@@ -605,7 +611,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.57.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.57.1...HEAD
+[v1.57.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.57.0...v1.57.1
 [v1.57.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.56.0...v1.57.0
 [v1.56.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.55.0...v1.56.0
 [v1.55.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.54.0...v1.55.0

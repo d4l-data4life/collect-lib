@@ -90,6 +90,7 @@ export type ProgramDevicesDataType =
   | 'maxSpeed'
   | 'averageSpeed'
   | 'speed'
+  | 'power'
   | 'vo2max'
   | 'motionCadence'
   | 'minMotionCadence'
