@@ -40,6 +40,8 @@ export type Program = {
   appVersion?: ProgramAppVersion;
   // tracking | false | [ProgramTracking](#ProgramTracking) | BI event tracking configuration. When absent, tracking is off.
   tracking?: ProgramTracking;
+  // byod | false | [ProgramSensorByod](#ProgramSensorByod) | Whether participants can self-select which of their own compatible devices they want to use for the study. When absent, BYOD is off.
+  byod?: ProgramSensorByod;
 };
 
 // #### ProgramTracking
@@ -50,6 +52,17 @@ export type ProgramTracking = {
   enabled: boolean;
   // categories | true | TrackingCategory[] | Event categories ('technical', 'task', 'engagement') that may be recorded
   categories: TrackingCategory[];
+};
+
+// #### ProgramSensorByod
+// Properties | Required | Type | Description
+export type ProgramSensorByod = {
+  // enabled | true | boolean | Master switch for participant device self-selection
+  enabled: boolean;
+  // selectionMode | true | `single_select` or `multi_select` | Whether the participant can pick one device or several
+  selectionMode: 'single_select' | 'multi_select';
+  // allowNone | true | boolean | Whether "I don't own any of the listed devices" is offered as an option
+  allowNone: boolean;
 };
 
 // #### ProgramAppVersion

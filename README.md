@@ -46,6 +46,7 @@ Update the types by running `yarn run readme:update`.
 | theme       | false    | 'D4L', 'GREEN', 'PURPLE', 'OLIVE' or 'BLUE' | The theme to be used for the program in the app                                                                                                                                                                                                |
 | appVersion  | false    | object                                      | Minimum smartphone app version required to run this program. When the installed app is below `version`, the program update is withheld and the user is asked to update. `version` and `androidVersionCode` must describe the same app release. |
 | tracking    | false    | [ProgramTracking](#ProgramTracking)         | BI event tracking configuration. When absent, tracking is off.                                                                                                                                                                                 |
+| byod        | false    | [ProgramSensorByod](#ProgramSensorByod)     | Whether participants can self-select which of their own compatible devices they want to use for the study. When absent, BYOD is off.                                                                                                           |
 
 #### ProgramTracking
 
@@ -55,6 +56,14 @@ BI event tracking is opt-in per program: no configuration means no tracking.
 | ---------- | -------- | ------------------ | ------------------------------------------------------------------------- |
 | enabled    | true     | boolean            | Master switch for BI event tracking in this program                       |
 | categories | true     | TrackingCategory[] | Event categories ('technical', 'task', 'engagement') that may be recorded |
+
+#### ProgramSensorByod
+
+| Properties    | Required | Type                              | Description                                                             |
+| ------------- | -------- | --------------------------------- | ----------------------------------------------------------------------- |
+| enabled       | true     | boolean                           | Master switch for participant device self-selection                     |
+| selectionMode | true     | `single_select` or `multi_select` | Whether the participant can pick one device or several                  |
+| allowNone     | true     | boolean                           | Whether "I don't own any of the listed devices" is offered as an option |
 
 #### ProgramAppVersion
 
