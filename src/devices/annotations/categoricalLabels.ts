@@ -18,12 +18,14 @@ export const SLEEP_LEVEL_LABELS: Record<number, FitbitSleepLevelTypes> =
   invertLabelMap(FITBIT_SLEEP_LEVEL_MAP);
 
 // source: src/devices/annotations/appleHealth.ts:61 (APPLE_HEALTH_SLEEP_STATE_MAP)
-export const APPLE_HEALTH_SLEEP_STATE_LABELS: Record<number, AppleHealthSleepStates> =
-  invertLabelMap(APPLE_HEALTH_SLEEP_STATE_MAP);
+export const APPLE_HEALTH_SLEEP_STATE_LABELS: Record<number, AppleHealthSleepStates> = invertLabelMap(
+  APPLE_HEALTH_SLEEP_STATE_MAP
+);
 
 // source: src/devices/annotations/healthConnect.ts:21 (HEALTH_CONNECT_SLEEP_STAGE_MAP)
-export const HEALTH_CONNECT_SLEEP_STAGE_LABELS: Record<number, HealthConnectSleepStages> =
-  invertLabelMap(HEALTH_CONNECT_SLEEP_STAGE_MAP);
+export const HEALTH_CONNECT_SLEEP_STAGE_LABELS: Record<number, HealthConnectSleepStages> = invertLabelMap(
+  HEALTH_CONNECT_SLEEP_STAGE_MAP
+);
 
 // source: https://developer.android.com/reference/kotlin/androidx/health/services/client/data/UserActivityState
 export type ActivityDetectionTypes = 'unknown' | 'exercise' | 'passive' | 'asleep';
@@ -95,16 +97,15 @@ export type AppleHealthContraceptiveTypes =
   | 'oral'
   | 'patch';
 
-export const APPLE_HEALTH_CONTRACEPTIVE_TYPE_LABELS: Record<number, AppleHealthContraceptiveTypes> =
-  {
-    1: 'unspecified',
-    2: 'implant',
-    3: 'injection',
-    4: 'intrauterineDevice',
-    5: 'intravaginalRing',
-    6: 'oral',
-    7: 'patch',
-  };
+export const APPLE_HEALTH_CONTRACEPTIVE_TYPE_LABELS: Record<number, AppleHealthContraceptiveTypes> = {
+  1: 'unspecified',
+  2: 'implant',
+  3: 'injection',
+  4: 'intrauterineDevice',
+  5: 'intravaginalRing',
+  6: 'oral',
+  7: 'patch',
+};
 
 // source: phoenix/node_modules/@kingstinct/react-native-healthkit@14.0.2/lib/typescript/generated/
 // healthkit.generated.d.ts, `enum WorkoutActivityType`
@@ -194,10 +195,7 @@ export type AppleHealthWorkoutActivityTypes =
   | 'underwaterDiving'
   | 'other';
 
-export const APPLE_HEALTH_WORKOUT_ACTIVITY_TYPE_LABELS: Record<
-  number,
-  AppleHealthWorkoutActivityTypes
-> = {
+export const APPLE_HEALTH_WORKOUT_ACTIVITY_TYPE_LABELS: Record<number, AppleHealthWorkoutActivityTypes> = {
   1: 'americanFootball',
   2: 'archery',
   3: 'australianFootball',
