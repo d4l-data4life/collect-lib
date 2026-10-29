@@ -1,6 +1,6 @@
-import { AppleHealthSleepStates, APPLE_HEALTH_SLEEP_STATE_MAP } from './appleHealth';
-import { FitbitSleepLevelTypes, FITBIT_SLEEP_LEVEL_MAP } from './fitbit';
-import { HealthConnectSleepStages, HEALTH_CONNECT_SLEEP_STAGE_MAP } from './healthConnect';
+import { APPLE_HEALTH_SLEEP_STATE_MAP, AppleHealthSleepStates } from './appleHealth';
+import { FITBIT_SLEEP_LEVEL_MAP, FitbitSleepLevelTypes } from './fitbit';
+import { HEALTH_CONNECT_SLEEP_STAGE_MAP, HealthConnectSleepStages } from './healthConnect';
 import { MENSTRUAL_CYCLE_PHASE, MENSTRUAL_FLOW } from './menstrual';
 
 // Mirrored by hand in data-receiver pkg/models/categorical_labels.go keep in sync when either changes.
@@ -35,7 +35,7 @@ export const ACTIVITY_DETECTION_LABELS: Record<number, ActivityDetectionTypes> =
   3: 'asleep',
 };
 
-// source: menstrual.ts:17 (MENSTRUAL_CYCLE_PHASE) 
+// source: menstrual.ts:17 (MENSTRUAL_CYCLE_PHASE)
 export const MENSTRUAL_CYCLE_PHASE_LABELS: Record<number, keyof typeof MENSTRUAL_CYCLE_PHASE> =
   invertLabelMap(MENSTRUAL_CYCLE_PHASE);
 
@@ -95,18 +95,19 @@ export type AppleHealthContraceptiveTypes =
   | 'oral'
   | 'patch';
 
-export const APPLE_HEALTH_CONTRACEPTIVE_TYPE_LABELS: Record<number, AppleHealthContraceptiveTypes> = {
-  1: 'unspecified',
-  2: 'implant',
-  3: 'injection',
-  4: 'intrauterineDevice',
-  5: 'intravaginalRing',
-  6: 'oral',
-  7: 'patch',
-};
+export const APPLE_HEALTH_CONTRACEPTIVE_TYPE_LABELS: Record<number, AppleHealthContraceptiveTypes> =
+  {
+    1: 'unspecified',
+    2: 'implant',
+    3: 'injection',
+    4: 'intrauterineDevice',
+    5: 'intravaginalRing',
+    6: 'oral',
+    7: 'patch',
+  };
 
 // source: phoenix/node_modules/@kingstinct/react-native-healthkit@14.0.2/lib/typescript/generated/
-// healthkit.generated.d.ts, `enum WorkoutActivityType` 
+// healthkit.generated.d.ts, `enum WorkoutActivityType`
 export type AppleHealthWorkoutActivityTypes =
   | 'americanFootball'
   | 'archery'
@@ -193,7 +194,10 @@ export type AppleHealthWorkoutActivityTypes =
   | 'underwaterDiving'
   | 'other';
 
-export const APPLE_HEALTH_WORKOUT_ACTIVITY_TYPE_LABELS: Record<number, AppleHealthWorkoutActivityTypes> = {
+export const APPLE_HEALTH_WORKOUT_ACTIVITY_TYPE_LABELS: Record<
+  number,
+  AppleHealthWorkoutActivityTypes
+> = {
   1: 'americanFootball',
   2: 'archery',
   3: 'australianFootball',

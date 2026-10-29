@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `BleDeviceMetaLabel` accepts labels in every program language
+- `toDeviceConfig` keeps device label translations for all program languages
+
 ### Security
 
 ## [v1.58.0] - 2026-10-20

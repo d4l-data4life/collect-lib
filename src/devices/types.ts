@@ -1,3 +1,4 @@
+import { TranslatedString } from '../types';
 import { DEVICE_ANNOTATION_DATA_TYPE } from './annotations/types';
 
 // TODO: This should be consolidated with ProgramDevices
@@ -39,12 +40,10 @@ export interface SDKDeviceConfig extends BaseDeviceConfig {
   dataTypes: DEVICE_SIGNAL_TYPE[];
 }
 
-export interface BleDeviceMetaLabel {
+export type BleDeviceMetaLabel = {
   device: string;
   name: string;
-  de?: string;
-  en?: string;
-}
+} & TranslatedString;
 
 export type DEVICE_KEY = DEVICE_KEY_BLE | DEVICE_KEY_API | DEVICE_KEY_SDK | DEVICE_KEY_INTERNAL;
 
