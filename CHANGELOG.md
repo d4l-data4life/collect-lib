@@ -17,10 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [v1.58.1] - 2026-10-29
+
+### Fixed
+
 - `BleDeviceMetaLabel` accepts labels in every program language
 - `toDeviceConfig` keeps device label translations for all program languages
-
-### Security
 
 ## [v1.58.0] - 2026-10-20
 
@@ -618,7 +622,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.58.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.58.1...HEAD
+[v1.58.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.58.0...v1.58.1
 [v1.58.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.57.1...v1.58.0
 [v1.57.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.57.0...v1.57.1
 [v1.57.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.56.0...v1.57.0
