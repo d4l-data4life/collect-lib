@@ -113,6 +113,7 @@ export type ProgramDevicesDataType =
   | 'ppgRed'
   | 'ppgInfrared'
   | 'samsungSdkAcceleration'
+  | 'samsungSdkInterbeatInterval'
   | 'ecg'
   | 'spo2'
   | 'steps'

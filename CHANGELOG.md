@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `PSMSIBIAnnotation` for the Galaxy Watch IBI signal (reading timestamp, index, IBI in ms, status) and the data types `samsungSdkInterbeatInterval`, `samsungSdkIbiIndex`, `samsungSdkIbiStatus`
+
 ### Changed
 
 ### Deprecated
