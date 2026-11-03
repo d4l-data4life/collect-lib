@@ -9,7 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- shared annotation items `DEVICE_ANNOTATION_ITEM_ACTIVE_CALORIES`, `DEVICE_ANNOTATION_ITEM_DAILY_CALORIES_TOTAL` and `DEVICE_ANNOTATION_ITEM_DAILY_STEPS_TOTAL`
+
 ### Changed
+
+- **Breaking:** data types renamed, per device:
+  - Apple Health: `stepCount` → `steps`, `walkingAndRunningDistance` → `distance`, `activeEnergy` → `activeCalories`, `hrv` → `hrvSdnn`
+  - Google Health: `calories` → `activeCalories`, `hrv` → `hrvRmssd`
+  - Oura: `steps` → `dailyStepsTotal`, `calories` → `dailyCaloriesTotal`, `hrv` → `hrvRmssd`, `skinTemperature` → `skinTemperatureDeviation`
+  - Garmin: `steps` → `dailySteps`, `calories` → `dailyCalories`, `hrv` → `hrvRmssd`, `skinTemperature` → `skinTemperatureDeviation`
+- naming scheme: `steps` counts one interval, `dailySteps` is a running total since local midnight, `dailyStepsTotal` is one value per completed day (same for `calories` / `dailyCalories` / `dailyCaloriesTotal`; calories are the total burn, `activeCalories` the activity burn only)
+- **Breaking:** the RMSSD annotation item type is `hrvRmssd` instead of `hrv`
 
 ### Deprecated
 

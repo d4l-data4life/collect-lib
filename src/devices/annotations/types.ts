@@ -52,8 +52,12 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'duration'
   | 'respiratoryRate'
   | 'hrv'
+  | 'hrvRmssd'
   | 'calories'
   | 'steps'
+  | 'activeCalories'
+  | 'dailyCaloriesTotal'
+  | 'dailyStepsTotal'
   // Google Health types
   | 'floors'
   | 'elevationGain'
@@ -119,12 +123,11 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
 
 export type DEVICE_ANNOTATION_DATA_TYPE_APPLE =
   // Quantity & activity
-  | 'stepCount'
-  | 'walkingAndRunningDistance'
-  | 'activeEnergy'
+  | 'steps'
+  | 'distance'
   | 'heartRate'
   | 'restingHeartRate'
-  | 'hrv'
+  | 'hrvSdnn'
   | 'respiratoryRate'
   | 'spo2'
   | 'skinTemperature'

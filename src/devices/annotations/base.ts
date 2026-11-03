@@ -20,6 +20,32 @@ export const DEVICE_ANNOTATION_ITEM_DATA_SOURCE: DEVICE_ANNOTATION_ITEM = {
   littleEndian: true,
 };
 
+// Energy burned through activity only, without the resting (basal) burn.
+export const DEVICE_ANNOTATION_ITEM_ACTIVE_CALORIES: DEVICE_ANNOTATION_ITEM = {
+  type: 'activeCalories',
+  size: 4,
+  format: 'float32',
+  littleEndian: true,
+  unit: 'kcal',
+};
+
+// Energy burned (activity plus resting burn) as one value per completed day.
+export const DEVICE_ANNOTATION_ITEM_DAILY_CALORIES_TOTAL: DEVICE_ANNOTATION_ITEM = {
+  type: 'dailyCaloriesTotal',
+  size: 4,
+  format: 'float32',
+  littleEndian: true,
+  unit: 'kcal',
+};
+
+// Steps as one value per completed day.
+export const DEVICE_ANNOTATION_ITEM_DAILY_STEPS_TOTAL: DEVICE_ANNOTATION_ITEM = {
+  type: 'dailyStepsTotal',
+  size: 4,
+  format: 'unsignedInt',
+  littleEndian: true,
+};
+
 // Resting heart rate in bpm. Provider-neutral: Apple Health pairs it with a data source
 // (HealthKit merges several devices), Garmin stores it alone.
 export const DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE: DEVICE_ANNOTATION_ITEM = {
@@ -129,12 +155,10 @@ export const DEVICE_ANNOTATION_SKIN_TEMPERATURE_DEVIATION: DEVICE_ANNOTATION = [
   DEVICE_ANNOTATION_ITEM_SKIN_TEMPERATURE_DEVIATION,
 ];
 
-// HRV reported as the overnight RMSSD only (single channel). Sources that don't expose the
-// full rmssd/coverage/hf/lf breakdown (e.g. Oura, which surfaces only rmssd) point here
-// instead of the 4-channel Fitbit annotation, so the export is a single `hrv` column
-// rather than one padded with empty coverage/hf/lf columns.
+// HRV as RMSSD (single channel). Its own type, so it is never mixed up with SDNN (Apple)
+// or the legacy 4-channel Fitbit `hrv`.
 export const DEVICE_ANNOTATION_ITEM_HRV_RMSSD: DEVICE_ANNOTATION_ITEM = {
-  type: 'hrv',
+  type: 'hrvRmssd',
   size: 4,
   format: 'float32',
   littleEndian: true,
