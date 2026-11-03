@@ -1,11 +1,9 @@
 import { DEVICE_SIGNAL_TYPE } from '../types';
 import {
   FITBIT_BREATHING_RATE_ANNOTATION,
-  FITBIT_CALORIES_ANNOTATION,
   FITBIT_HEART_RATE_ANNOTATION,
   FITBIT_SLEEP_ANNOTATION,
   FITBIT_SPO2_ANNOTATION,
-  FITBIT_STEPS_ANNOTATION,
 } from './fitbit';
 import {
   DEVICE_ANNOTATION_HRV_RMSSD,
@@ -15,8 +13,10 @@ import {
 import { MENSTRUAL_CYCLE_ANNOTATION } from './menstrual';
 import { OURA_STRESS_ANNOTATION } from './oura';
 import {
+  BLE_CPMS_ANNOTATION_ITEM_DAILY_CALORIES,
   BLE_CPMS_ANNOTATION_ITEM_DAILY_DISTANCE,
   BLE_CPMS_ANNOTATION_ITEM_DAILY_FLOORS,
+  BLE_CPMS_ANNOTATION_ITEM_DAILY_STEPS,
 } from './wearOS3';
 import { DEVICE_ANNOTATION, DEVICE_ANNOTATION_ITEM } from './types';
 
@@ -130,13 +130,15 @@ export const GARMIN_SIGNAL_TYPE_ANNOTATIONS: {
   [key in DEVICE_SIGNAL_TYPE]?: DEVICE_ANNOTATION;
 } = {
   heartRate: FITBIT_HEART_RATE_ANNOTATION,
-  hrv: DEVICE_ANNOTATION_HRV_RMSSD,
+  hrvRmssd: DEVICE_ANNOTATION_HRV_RMSSD,
   spo2: FITBIT_SPO2_ANNOTATION,
   sleep: FITBIT_SLEEP_ANNOTATION,
-  steps: FITBIT_STEPS_ANNOTATION,
-  calories: FITBIT_CALORIES_ANNOTATION,
+  // Running day total from /dailies, re-sent with every sync.
+  dailySteps: [BLE_CPMS_ANNOTATION_ITEM_DAILY_STEPS],
+  // Running day total of activeKilocalories + bmrKilocalories, i.e. total burn.
+  dailyCalories: [BLE_CPMS_ANNOTATION_ITEM_DAILY_CALORIES],
   respiratoryRate: FITBIT_BREATHING_RATE_ANNOTATION,
-  skinTemperature: DEVICE_ANNOTATION_SKIN_TEMPERATURE_DEVIATION,
+  skinTemperatureDeviation: DEVICE_ANNOTATION_SKIN_TEMPERATURE_DEVIATION,
   stress: OURA_STRESS_ANNOTATION,
   menstrualCycle: MENSTRUAL_CYCLE_ANNOTATION,
   // Daily floors climbed: cumulative day total from /dailies (same float32 encoding
