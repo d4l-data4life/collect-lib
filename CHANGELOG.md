@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Replace `skinTemperature` by `skinTemperatureDeviation` for Google Health
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.60.0] - 2026-11-04
+
+### Changed
+
+- Replace `skinTemperature` by `skinTemperatureDeviation` for Google Health
 
 ## [v1.59.0] - 2026-11-03
 
@@ -636,7 +640,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.59.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.60.0...HEAD
+[v1.60.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.59.0...v1.60.0
 [v1.59.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.58.1...v1.59.0
 [v1.58.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.58.0...v1.58.1
 [v1.58.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.57.1...v1.58.0
