@@ -67,9 +67,7 @@ export const fhirToQuestionnaire = (fhirQuestionnaires: QuestionnaireMap): Quest
 };
 
 const extractQuestionsFromFHIR = (fhirQuestionnaires: QuestionnaireMap): Question[] => {
-  const languages = Object.values(fhirQuestionnaires)
-    .map((el) => el.language)
-    .filter((el) => el !== undefined);
+  const languages = Object.keys(fhirQuestionnaires);
   const valueSets: { [key: string]: { [language: string]: fhir5.ValueSet } } = {};
   const questionItems: { [key: string]: { [language: string]: fhir5.QuestionnaireItem } } = {};
   for (const language of languages) {
@@ -190,7 +188,7 @@ const convertQuestion = (
       operator: stringToOperator(ew.operator),
       answerCoding: ew.answerCoding?.code,
       answerDate: ew.answerDate,
-      answerDecimal: ew.answerDecimal,
+      answerDecimal: ew.answerDecimal ?? ew.answerInteger,
     }));
     question.enableBehavior = questionItem.enableBehavior;
   }
@@ -211,6 +209,7 @@ const convertQuestion = (
       console.warn(
         `The answer value set for question ${questionItem.linkId} cannot be found. The question will be ignored.`
       );
+      return undefined;
     }
   }
 
