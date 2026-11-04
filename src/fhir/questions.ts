@@ -182,7 +182,7 @@ const convertQuestion = (
     ...(image && { image }),
   };
 
-  if (questionItem.enableWhen !== undefined && questionItem.enableBehavior !== undefined) {
+  if (questionItem.enableWhen !== undefined) {
     question.enableWhen = questionItem.enableWhen.map((ew) => ({
       question: ew.question,
       operator: stringToOperator(ew.operator),
@@ -190,7 +190,7 @@ const convertQuestion = (
       answerDate: ew.answerDate,
       answerDecimal: ew.answerDecimal ?? ew.answerInteger,
     }));
-    question.enableBehavior = questionItem.enableBehavior;
+    question.enableBehavior = questionItem.enableBehavior ?? 'all';
   }
 
   // An expression dependency (topic-sourced or time-relative conditions) is carried as an SDC
