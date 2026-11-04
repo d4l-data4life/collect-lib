@@ -183,13 +183,16 @@ const convertQuestion = (
   };
 
   if (questionItem.enableWhen !== undefined) {
-    question.enableWhen = questionItem.enableWhen.map((ew) => ({
-      question: ew.question,
-      operator: stringToOperator(ew.operator),
-      answerCoding: ew.answerCoding?.code,
-      answerDate: ew.answerDate,
-      answerDecimal: ew.answerDecimal ?? ew.answerInteger,
-    }));
+    question.enableWhen = questionItem.enableWhen.map((ew) => {
+      const answerDecimal = ew.answerDecimal ?? ew.answerInteger;
+      return {
+        question: ew.question,
+        operator: stringToOperator(ew.operator),
+        ...(ew.answerCoding?.code !== undefined && { answerCoding: ew.answerCoding.code }),
+        ...(ew.answerDate !== undefined && { answerDate: ew.answerDate }),
+        ...(answerDecimal !== undefined && { answerDecimal }),
+      };
+    });
     question.enableBehavior = questionItem.enableBehavior ?? 'all';
   }
 

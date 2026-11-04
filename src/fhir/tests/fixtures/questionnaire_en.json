@@ -1,0 +1,667 @@
+{
+  "resourceType": "Questionnaire",
+  "name": "test-questionnaire",
+  "url": "http://localhost:9288/r5/test-program/Questionnaire/test-questionnaire",
+  "language": "en",
+  "publisher": "D4L data4life gGmbH",
+  "contact": [
+    {
+      "name": "D4L data4life gGmbH",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "https://www.data4life.care"
+        }
+      ]
+    }
+  ],
+  "status": "active",
+  "version": "1.0.0",
+  "title": "Questionnaire Title",
+  "date": "2022-03-12T06:34:22Z",
+  "subjectType": ["Patient"],
+  "item": [
+    {
+      "linkId": "question-1",
+      "text": "Multi Select Question",
+      "type": "coding",
+      "required": true,
+      "repeats": true,
+      "answerValueSet": "#0"
+    },
+    {
+      "linkId": "question-2",
+      "text": "Single Select Question",
+      "type": "coding",
+      "required": true,
+      "answerValueSet": "#1",
+      "enableWhen": [
+        {
+          "question": "question-1",
+          "operator": "=",
+          "answerCoding": {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-1",
+            "code": "apple"
+          }
+        },
+        {
+          "question": "question-1",
+          "operator": "=",
+          "answerCoding": {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-1",
+            "code": "pineapple"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "question-3",
+      "text": "Year Question",
+      "type": "date",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class",
+                "code": "year"
+              }
+            ]
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+          "valueDate": "1800"
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/relative-max-value",
+          "valueString": "P0Y"
+        }
+      ]
+    },
+    {
+      "linkId": "question-4",
+      "text": "Date Question",
+      "type": "date",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+          "valueDate": "2022-04-15"
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+          "valueDate": "2023-12-24"
+        }
+      ]
+    },
+    {
+      "linkId": "question-5",
+      "text": "Scale Question",
+      "type": "integer",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class",
+                "code": "scale_ordinal"
+              }
+            ]
+          }
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/slider-label-min",
+          "valueString": "Less"
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/slider-label-max",
+          "valueString": "More"
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+          "valueInteger": 1
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+          "valueInteger": 5
+        }
+      ]
+    },
+    {
+      "linkId": "question-6",
+      "text": "Numeric Scale Question",
+      "type": "decimal",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class",
+                "code": "scale_numeric"
+              }
+            ]
+          }
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/placeholder_reference",
+          "valueString": "question-2"
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/slider-step-size",
+          "valueDecimal": 1.5
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+          "valueDecimal": 0
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+          "valueDecimal": 4.5
+        }
+      ]
+    },
+    {
+      "linkId": "question-7",
+      "text": "Geo Location Question",
+      "type": "string",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class",
+                "code": "geo_location"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "question-8",
+      "text": "List Question",
+      "type": "string",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class",
+                "code": "list"
+              }
+            ]
+          }
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/prepopulate",
+          "valueString": "old/question-8"
+        }
+      ],
+      "repeats": true
+    },
+    {
+      "linkId": "question-9-group",
+      "text": "My Title",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "question-9-image",
+          "text": "A descriptive alt text for screen readers",
+          "type": "display",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemMedia",
+              "valueAttachment": {
+                "url": "http://localhost:9288/programs/test-program/images/hashAsName"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "question-9-description",
+          "text": "This is the description text shown below the image.",
+          "type": "display"
+        }
+      ]
+    },
+    {
+      "linkId": "question-10-matrix",
+      "text": "Matrix Question Text",
+      "type": "group",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class",
+                "code": "matrix"
+              }
+            ]
+          }
+        }
+      ],
+      "answerValueSet": "#2",
+      "item": [
+        {
+          "linkId": "question-10-matrix-0",
+          "text": "One",
+          "type": "coding",
+          "required": true,
+          "answerValueSet": "#2"
+        },
+        {
+          "linkId": "question-10-matrix-1",
+          "text": "Two",
+          "type": "coding",
+          "required": true,
+          "answerValueSet": "#2"
+        },
+        {
+          "linkId": "question-10-matrix-2",
+          "text": "Three",
+          "type": "coding",
+          "required": true,
+          "answerValueSet": "#2"
+        }
+      ]
+    },
+    {
+      "linkId": "question-11",
+      "text": "Likert Scale Question",
+      "type": "integer",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class",
+                "code": "scale_likert"
+              }
+            ]
+          }
+        }
+      ],
+      "answerValueSet": "#3"
+    },
+    {
+      "linkId": "question-12",
+      "text": "Expression Gated Question",
+      "type": "coding",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable",
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "consent"
+            },
+            {
+              "url": "question",
+              "valueString": "question-2"
+            }
+          ]
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable",
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "birthDate"
+            },
+            {
+              "url": "topic",
+              "valueCanonical": "http://localhost:9288/r5/test-program/topic/birthDate"
+            },
+            {
+              "url": "scope",
+              "valueCode": "latest"
+            }
+          ]
+        }
+      ],
+      "answerValueSet": "#4",
+      "modifierExtension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
+          "valueExpression": {
+            "language": "text/fhirpath",
+            "expression": "%consent = 'yes' and today() \u003e %birthDate.toDate() + 18 years"
+          }
+        }
+      ]
+    }
+  ],
+  "contained": [
+    {
+      "resourceType": "ValueSet",
+      "name": "question-1",
+      "url": "http://localhost:9288/r5/test-program/ValueSet/test-questionnaire/question-1",
+      "language": "en",
+      "publisher": "D4L data4life gGmbH",
+      "contact": [
+        {
+          "name": "D4L data4life gGmbH",
+          "telecom": [
+            {
+              "system": "url",
+              "value": "https://www.data4life.care"
+            }
+          ]
+        }
+      ],
+      "status": "active",
+      "extension": [
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/sorting",
+          "valueCode": "alphabetical"
+        }
+      ],
+      "id": "0",
+      "compose": {
+        "include": [
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-1",
+            "concept": [
+              {
+                "code": "banana"
+              },
+              {
+                "code": "apple"
+              },
+              {
+                "code": "pineapple"
+              }
+            ]
+          }
+        ]
+      },
+      "expansion": {
+        "identifier": "a260a4b3-567f-4092-9bea-9c88c522750b",
+        "timestamp": "2026-09-01T10:24:59+02:00",
+        "parameter": [
+          {
+            "name": "displayLanguage",
+            "valueCode": "en"
+          }
+        ],
+        "contains": [
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-1",
+            "code": "banana",
+            "display": "Banana"
+          },
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-1",
+            "code": "apple",
+            "display": "Apple"
+          },
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-1",
+            "code": "pineapple",
+            "display": "Pineapple"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "ValueSet",
+      "name": "question-2",
+      "url": "http://localhost:9288/r5/test-program/ValueSet/test-questionnaire/question-2",
+      "language": "en",
+      "publisher": "D4L data4life gGmbH",
+      "contact": [
+        {
+          "name": "D4L data4life gGmbH",
+          "telecom": [
+            {
+              "system": "url",
+              "value": "https://www.data4life.care"
+            }
+          ]
+        }
+      ],
+      "status": "active",
+      "id": "1",
+      "compose": {
+        "include": [
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-2",
+            "concept": [
+              {
+                "code": "yes"
+              },
+              {
+                "code": "no"
+              }
+            ]
+          }
+        ]
+      },
+      "expansion": {
+        "identifier": "c2be3278-5c4b-4db2-bcce-0392bacad703",
+        "timestamp": "2026-09-01T10:24:59+02:00",
+        "parameter": [
+          {
+            "name": "displayLanguage",
+            "valueCode": "en"
+          }
+        ],
+        "contains": [
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-2",
+            "code": "yes",
+            "display": "Yes"
+          },
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-2",
+            "code": "no",
+            "display": "No"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "ValueSet",
+      "name": "question-10-matrix",
+      "url": "http://localhost:9288/r5/test-program/ValueSet/test-questionnaire/question-10-matrix",
+      "language": "en",
+      "publisher": "D4L data4life gGmbH",
+      "contact": [
+        {
+          "name": "D4L data4life gGmbH",
+          "telecom": [
+            {
+              "system": "url",
+              "value": "https://www.data4life.care"
+            }
+          ]
+        }
+      ],
+      "status": "active",
+      "id": "2",
+      "compose": {
+        "include": [
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-10-matrix",
+            "concept": [
+              {
+                "code": "a"
+              },
+              {
+                "code": "b"
+              },
+              {
+                "code": "c"
+              }
+            ]
+          }
+        ]
+      },
+      "expansion": {
+        "identifier": "bb7610a1-5c7b-4b07-8a3c-d7f0edb4e331",
+        "timestamp": "2026-09-01T10:24:59+02:00",
+        "parameter": [
+          {
+            "name": "displayLanguage",
+            "valueCode": "en"
+          }
+        ],
+        "contains": [
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-10-matrix",
+            "code": "a",
+            "display": "A"
+          },
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-10-matrix",
+            "code": "b",
+            "display": "B"
+          },
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-10-matrix",
+            "code": "c",
+            "display": "C"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "ValueSet",
+      "name": "question-11",
+      "url": "http://localhost:9288/r5/test-program/ValueSet/test-questionnaire/question-11",
+      "language": "en",
+      "publisher": "D4L data4life gGmbH",
+      "contact": [
+        {
+          "name": "D4L data4life gGmbH",
+          "telecom": [
+            {
+              "system": "url",
+              "value": "https://www.data4life.care"
+            }
+          ]
+        }
+      ],
+      "status": "active",
+      "id": "3",
+      "compose": {
+        "include": [
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-11",
+            "concept": [
+              {
+                "code": "1"
+              },
+              {
+                "code": "2"
+              },
+              {
+                "code": "3"
+              }
+            ]
+          }
+        ]
+      },
+      "expansion": {
+        "identifier": "8593ef24-0ee3-4236-b449-c80e18ef59c0",
+        "timestamp": "2026-09-01T10:24:59+02:00",
+        "parameter": [
+          {
+            "name": "displayLanguage",
+            "valueCode": "en"
+          }
+        ],
+        "contains": [
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-11",
+            "code": "1",
+            "display": "Low"
+          },
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-11",
+            "code": "2",
+            "display": "Medium"
+          },
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-11",
+            "code": "3",
+            "display": "High"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "ValueSet",
+      "name": "question-12",
+      "url": "http://localhost:9288/r5/test-program/ValueSet/test-questionnaire/question-12",
+      "language": "en",
+      "publisher": "D4L data4life gGmbH",
+      "contact": [
+        {
+          "name": "D4L data4life gGmbH",
+          "telecom": [
+            {
+              "system": "url",
+              "value": "https://www.data4life.care"
+            }
+          ]
+        }
+      ],
+      "status": "active",
+      "id": "4",
+      "compose": {
+        "include": [
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-12",
+            "concept": [
+              {
+                "code": "yes"
+              },
+              {
+                "code": "no"
+              }
+            ]
+          }
+        ]
+      },
+      "expansion": {
+        "identifier": "048bd3be-aa50-47d9-af9d-6c42dc305434",
+        "timestamp": "2026-09-01T10:24:59+02:00",
+        "parameter": [
+          {
+            "name": "displayLanguage",
+            "valueCode": "en"
+          }
+        ],
+        "contains": [
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-12",
+            "code": "yes",
+            "display": "Yes"
+          },
+          {
+            "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-12",
+            "code": "no",
+            "display": "No"
+          }
+        ]
+      }
+    }
+  ]
+}

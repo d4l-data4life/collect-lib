@@ -1,0 +1,465 @@
+{
+    "name": "test-questionnaire",
+    "version": "1.0.0",
+    "title": {
+        "de": "Fragebogentitel",
+        "en": "Questionnaire Title"
+    },
+    "questions": [
+        {
+            "linkId": "question-1",
+            "inputType": 7,
+            "required": true,
+            "text": {
+                "de": "Mehrfachauswahl Frage",
+                "en": "Multi Select Question"
+            },
+            "answerset": {
+                "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-1",
+                "order": "alphabetical",
+                "answers": [
+                    {
+                        "code": "banana",
+                        "languages": {
+                            "de": "Banane",
+                            "en": "Banana"
+                        }
+                    },
+                    {
+                        "code": "apple",
+                        "languages": {
+                            "de": "Apfel",
+                            "en": "Apple"
+                        }
+                    },
+                    {
+                        "code": "pineapple",
+                        "languages": {
+                            "de": "Ananas",
+                            "en": "Pineapple"
+                        }
+                    }
+                ]
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "question-2",
+            "inputType": 6,
+            "required": true,
+            "text": {
+                "de": "Einfachauswahl Frage",
+                "en": "Single Select Question"
+            },
+            "answerset": {
+                "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-2",
+                "order": "default",
+                "answers": [
+                    {
+                        "code": "yes",
+                        "languages": {
+                            "de": "Ja",
+                            "en": "Yes"
+                        }
+                    },
+                    {
+                        "code": "no",
+                        "languages": {
+                            "de": "Nein",
+                            "en": "No"
+                        }
+                    }
+                ]
+            },
+            "enableBehavior": "all",
+            "enableWhen": [
+                {
+                    "question": "question-1",
+                    "operator": 1,
+                    "answerCoding": "apple"
+                },
+                {
+                    "question": "question-1",
+                    "operator": 1,
+                    "answerCoding": "pineapple"
+                }
+            ],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "question-3",
+            "inputType": 8,
+            "required": true,
+            "text": {
+                "de": "Jahr Frage",
+                "en": "Year Question"
+            },
+            "config": {
+                "max": "P0Y",
+                "min": "1800"
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "question-4",
+            "inputType": 5,
+            "required": true,
+            "text": {
+                "de": "Datum Frage",
+                "en": "Date Question"
+            },
+            "config": {
+                "max": "2023-12-24",
+                "min": "2022-04-15"
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "question-5",
+            "inputType": 10,
+            "required": true,
+            "text": {
+                "de": "Skala Frage",
+                "en": "Scale Question"
+            },
+            "config": {
+                "max": 5,
+                "maxLabel": {
+                    "de": "Mehr",
+                    "en": "More"
+                },
+                "min": 1,
+                "minLabel": {
+                    "de": "Weniger",
+                    "en": "Less"
+                }
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "question-6",
+            "inputType": 9,
+            "required": true,
+            "text": {
+                "de": "Numerische Skala Frage",
+                "en": "Numeric Scale Question"
+            },
+            "config": {
+                "max": 4.5,
+                "min": 0,
+                "placeholders": [
+                    "question-2"
+                ],
+                "step": 1.5
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "question-7",
+            "inputType": 11,
+            "required": true,
+            "text": {
+                "de": "Standort-Frage",
+                "en": "Geo Location Question"
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "question-8",
+            "inputType": 12,
+            "required": true,
+            "text": {
+                "de": "Listenfrage",
+                "en": "List Question"
+            },
+            "enableWhen": [],
+            "prepopulate": [
+                "old/question-8"
+            ],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "question-9-group",
+            "inputType": 13,
+            "required": false,
+            "text": {
+                "de": "Mein Titel",
+                "en": "My Title"
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [
+                {
+                    "linkId": "question-9-image",
+                    "inputType": 0,
+                    "required": false,
+                    "text": {
+                        "de": "Ein beschreibender Alt-Text f\u00fcr Screenreader",
+                        "en": "A descriptive alt text for screen readers"
+                    },
+                    "enableWhen": [],
+                    "prepopulate": [],
+                    "items": [],
+                    "image": {
+                        "data": "",
+                        "contentType": "",
+                        "src": "hashAsName",
+                        "alt": ""
+                    },
+                    "input": [],
+                    "output": [],
+                    "itemVariables": [],
+                    "code": []
+                },
+                {
+                    "linkId": "question-9-description",
+                    "inputType": 0,
+                    "required": false,
+                    "text": {
+                        "de": "Dies ist der Beschreibungstext, der unter dem Bild angezeigt wird.",
+                        "en": "This is the description text shown below the image."
+                    },
+                    "enableWhen": [],
+                    "prepopulate": [],
+                    "items": [],
+                    "input": [],
+                    "output": [],
+                    "itemVariables": [],
+                    "code": []
+                }
+            ],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "question-10-matrix",
+            "inputType": 14,
+            "required": true,
+            "text": {
+                "de": "Matrix Frage Text",
+                "en": "Matrix Question Text"
+            },
+            "answerset": {
+                "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-10-matrix",
+                "order": "default",
+                "answers": [
+                    {
+                        "code": "a",
+                        "languages": {
+                            "de": "A",
+                            "en": "A"
+                        }
+                    },
+                    {
+                        "code": "b",
+                        "languages": {
+                            "de": "B",
+                            "en": "B"
+                        }
+                    },
+                    {
+                        "code": "c",
+                        "languages": {
+                            "de": "C",
+                            "en": "C"
+                        }
+                    }
+                ]
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [
+                {
+                    "linkId": "question-10-matrix-0",
+                    "inputType": 15,
+                    "required": true,
+                    "text": {
+                        "de": "Eins",
+                        "en": "One"
+                    },
+                    "enableWhen": [],
+                    "prepopulate": [],
+                    "items": [],
+                    "input": [],
+                    "output": [],
+                    "itemVariables": [],
+                    "code": []
+                },
+                {
+                    "linkId": "question-10-matrix-1",
+                    "inputType": 15,
+                    "required": true,
+                    "text": {
+                        "de": "Zwei",
+                        "en": "Two"
+                    },
+                    "enableWhen": [],
+                    "prepopulate": [],
+                    "items": [],
+                    "input": [],
+                    "output": [],
+                    "itemVariables": [],
+                    "code": []
+                },
+                {
+                    "linkId": "question-10-matrix-2",
+                    "inputType": 15,
+                    "required": true,
+                    "text": {
+                        "de": "Drei",
+                        "en": "Three"
+                    },
+                    "enableWhen": [],
+                    "prepopulate": [],
+                    "items": [],
+                    "input": [],
+                    "output": [],
+                    "itemVariables": [],
+                    "code": []
+                }
+            ],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "question-11",
+            "inputType": 18,
+            "required": true,
+            "text": {
+                "de": "Likert Skala Frage",
+                "en": "Likert Scale Question"
+            },
+            "answerset": {
+                "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-11",
+                "order": "default",
+                "answers": [
+                    {
+                        "code": "1",
+                        "languages": {
+                            "de": "Niedrig",
+                            "en": "Low"
+                        }
+                    },
+                    {
+                        "code": "2",
+                        "languages": {
+                            "de": "Mittel",
+                            "en": "Medium"
+                        }
+                    },
+                    {
+                        "code": "3",
+                        "languages": {
+                            "de": "Hoch",
+                            "en": "High"
+                        }
+                    }
+                ]
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "question-12",
+            "inputType": 6,
+            "required": true,
+            "text": {
+                "de": "Ausdrucksgesteuerte Frage",
+                "en": "Expression Gated Question"
+            },
+            "answerset": {
+                "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-12",
+                "order": "default",
+                "answers": [
+                    {
+                        "code": "yes",
+                        "languages": {
+                            "de": "Ja",
+                            "en": "Yes"
+                        }
+                    },
+                    {
+                        "code": "no",
+                        "languages": {
+                            "de": "Nein",
+                            "en": "No"
+                        }
+                    }
+                ]
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [
+                {
+                    "name": "consent",
+                    "question": "question-2"
+                },
+                {
+                    "name": "birthDate",
+                    "topic": "birthDate",
+                    "scope": 1
+                }
+            ],
+            "enableWhenExpression": "%consent = 'yes' and today() > %birthDate.toDate() + 18 years",
+            "enableBehavior": "all",
+            "code": []
+        }
+    ]
+}
