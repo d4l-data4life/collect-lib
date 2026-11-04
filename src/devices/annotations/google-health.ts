@@ -4,11 +4,11 @@ import {
   DEVICE_ANNOTATION_ITEM_DATA_SOURCE,
   DEVICE_ANNOTATION_ITEM_HRV_RMSSD,
   DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE,
+  DEVICE_ANNOTATION_ITEM_SKIN_TEMPERATURE_DEVIATION,
 } from './base';
 import {
   FITBIT_ANNOTATION_ITEM_BREATHING_RATE,
   FITBIT_ANNOTATION_ITEM_HEART_RATE,
-  FITBIT_ANNOTATION_ITEM_SKIN_TEMPERATURE,
   FITBIT_ANNOTATION_ITEM_SLEEP_LEVEL,
   FITBIT_ANNOTATION_ITEM_SLEEP_LEVEL_DURATION,
   FITBIT_ANNOTATION_ITEM_SPO2,
@@ -37,7 +37,8 @@ export const GOOGLE_HEALTH_ANNOTATION_ITEM_DURATION: DEVICE_ANNOTATION_ITEM = {
 // #region Fitbit-era signals (calories, steps, heart rate, HRV, breathing rate, skin
 // temperature, sleep, SpO2) — the value items are Fitbit's, so the two sources stay
 // comparable; Google adds the data source and, for the interval signals, the duration.
-// HRV is the exception: Google exposes only RMSSD, not Fitbit's coverage/hf/lf.
+// HRV is the exception: Google exposes only RMSSD, not Fitbit's coverage/hf/lf. Skin
+// temperature is the generic deviation item, since Google only reports it against a baseline.
 // Google's active-energy-burned excludes the resting burn, so it is active calories.
 export const GOOGLE_HEALTH_ACTIVE_CALORIES_ANNOTATION: DEVICE_ANNOTATION = [
   DEVICE_ANNOTATION_ITEM_ACTIVE_CALORIES,
@@ -66,8 +67,8 @@ export const GOOGLE_HEALTH_BREATHING_RATE_ANNOTATION: DEVICE_ANNOTATION = [
   DATA_SOURCE,
 ];
 
-export const GOOGLE_HEALTH_SKIN_TEMPERATURE_ANNOTATION: DEVICE_ANNOTATION = [
-  FITBIT_ANNOTATION_ITEM_SKIN_TEMPERATURE,
+export const GOOGLE_HEALTH_SKIN_TEMPERATURE_DEVIATION_ANNOTATION: DEVICE_ANNOTATION = [
+  DEVICE_ANNOTATION_ITEM_SKIN_TEMPERATURE_DEVIATION,
   DATA_SOURCE,
 ];
 
@@ -77,10 +78,7 @@ export const GOOGLE_HEALTH_SLEEP_ANNOTATION: DEVICE_ANNOTATION = [
   DATA_SOURCE,
 ];
 
-export const GOOGLE_HEALTH_SPO2_ANNOTATION: DEVICE_ANNOTATION = [
-  FITBIT_ANNOTATION_ITEM_SPO2,
-  DATA_SOURCE,
-];
+export const GOOGLE_HEALTH_SPO2_ANNOTATION: DEVICE_ANNOTATION = [FITBIT_ANNOTATION_ITEM_SPO2, DATA_SOURCE];
 // #endregion
 
 // #region Resting heart rate (daily-resting-heart-rate)
@@ -209,7 +207,7 @@ export const GOOGLE_HEALTH_SIGNAL_TYPE_ANNOTATIONS: {
   heartRate: GOOGLE_HEALTH_HEART_RATE_ANNOTATION,
   hrvRmssd: GOOGLE_HEALTH_HEART_RATE_VARIABILITY_ANNOTATION,
   respiratoryRate: GOOGLE_HEALTH_BREATHING_RATE_ANNOTATION,
-  skinTemperature: GOOGLE_HEALTH_SKIN_TEMPERATURE_ANNOTATION,
+  skinTemperatureDeviation: GOOGLE_HEALTH_SKIN_TEMPERATURE_DEVIATION_ANNOTATION,
   sleep: GOOGLE_HEALTH_SLEEP_ANNOTATION,
   spo2: GOOGLE_HEALTH_SPO2_ANNOTATION,
   restingHeartRate: GOOGLE_HEALTH_RESTING_HEART_RATE_ANNOTATION,
