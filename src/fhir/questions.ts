@@ -143,7 +143,7 @@ const convertQuestion = (
 
   // Parse extensions
   const {
-    config: questionConfig,
+    config,
     inputType: parsedQuestionInputType,
     prepopulate,
     input,
@@ -161,9 +161,6 @@ const convertQuestion = (
     return undefined;
   }
 
-  // Check questionItem.type not questionInputType because questionInputType can be overwritten by extensions (happens for matrix)
-  const isGroupShaped = questionItem.type === 'group';
-
   const question: Question = {
     linkId: questionItem.linkId,
     itemVariables,
@@ -171,10 +168,12 @@ const convertQuestion = (
     inputType: inputTypeFromJSON(questionInputType),
     required: !!questionItem.required,
     enableWhen: [],
-    items: isGroupShaped
-      ? convertChildQuestions(languages, answerSets, questionItems, questionInputType === InputType.matrix)
-      : [],
-    ...(Object.keys(questionConfig).length && { config: questionConfig }),
+    // Check questionItem.type not questionInputType because questionInputType can be overwritten by extensions (happens for matrix)
+    items:
+      questionItem.type === 'group'
+        ? convertChildQuestions(languages, answerSets, questionItems, questionInputType === InputType.matrix)
+        : [],
+    ...(Object.keys(config).length && { config }),
     prepopulate: prepopulate ?? [],
     input,
     output,
@@ -302,7 +301,7 @@ export const parseExtensions = (
   itemVariables: ItemVariable[];
   image: QuestionImage | undefined;
 } => {
-  let questionConfig: QuestionConfig = {};
+  let config: QuestionConfig = {};
   let questionInputType: InputType | undefined;
   let questionImage: QuestionImage | undefined;
   const prepopulate: Set<string> = new Set();
@@ -315,14 +314,14 @@ export const parseExtensions = (
 
   // maxLength is a native FHIR field, not an extension
   if ((firstItem?.type === 'string' || firstItem?.type === 'text') && firstItem.maxLength !== undefined) {
-    questionConfig = { ...questionConfig, maxLength: firstItem.maxLength };
+    config = { ...config, maxLength: firstItem.maxLength };
   }
 
   for (const extension of extensions) {
     switch (extension.url) {
       case MaxValueExtension:
-        questionConfig = {
-          ...questionConfig,
+        config = {
+          ...config,
           max: getValueFrom([
             extension.valueDate,
             extension.valueDateTime,
@@ -334,8 +333,8 @@ export const parseExtensions = (
         };
         break;
       case MinValueExtension:
-        questionConfig = {
-          ...questionConfig,
+        config = {
+          ...config,
           min: getValueFrom([
             extension.valueDate,
             extension.valueDateTime,
@@ -348,37 +347,37 @@ export const parseExtensions = (
         break;
       case MinLengthExtension:
         if (extension.valueInteger !== undefined) {
-          questionConfig = { ...questionConfig, minLength: extension.valueInteger };
+          config = { ...config, minLength: extension.valueInteger };
         }
         break;
       case SliderMinLabelExtension:
-        questionConfig = {
-          ...questionConfig,
+        config = {
+          ...config,
           minLabel: extractLocalizedString(languages, questionItems, SliderMinLabelExtension),
         };
         break;
       case SliderMaxLabelExtension:
-        questionConfig = {
-          ...questionConfig,
+        config = {
+          ...config,
           maxLabel: extractLocalizedString(languages, questionItems, SliderMaxLabelExtension),
         };
         break;
       case SliderStepSizeExtension:
-        questionConfig = {
-          ...questionConfig,
+        config = {
+          ...config,
           step: extension.valueDecimal,
         };
         break;
       case SliderInputLabel:
-        questionConfig = {
-          ...questionConfig,
+        config = {
+          ...config,
           inputLabel: extractLocalizedString(languages, questionItems, SliderInputLabel),
         };
         break;
       case SliderOrientationExtension: {
         const orientation = extension.valueCode;
         if (orientation === 'horizontal' || orientation === 'vertical') {
-          questionConfig = { ...questionConfig, orientation };
+          config = { ...config, orientation };
         } else {
           console.warn(`Unsupported slider orientation: ${orientation}. It will be ignored.`);
         }
@@ -388,14 +387,14 @@ export const parseExtensions = (
         questionInputType = inputTypeFromJSON(extension.valueCodeableConcept?.coding?.[0].code);
         break;
       case RelativeMinValueExtension:
-        questionConfig = {
-          ...questionConfig,
+        config = {
+          ...config,
           min: extension.valueString,
         };
         break;
       case RelativeMaxValueExtension:
-        questionConfig = {
-          ...questionConfig,
+        config = {
+          ...config,
           max: extension.valueString,
         };
         break;
@@ -454,7 +453,7 @@ export const parseExtensions = (
       case PostalCodeCountrySourceExtension: {
         const countrySource = parsePostalCodeCountrySource(extension);
         if (countrySource) {
-          questionConfig = { ...questionConfig, countrySource };
+          config = { ...config, countrySource };
         } else {
           console.warn(
             `Ignoring malformed postal code country-source extension on ${
@@ -474,10 +473,10 @@ export const parseExtensions = (
     }
   }
   if (placeholders.length > 0) {
-    questionConfig = { ...questionConfig, placeholders };
+    config = { ...config, placeholders };
   }
   return {
-    config: questionConfig,
+    config,
     inputType: questionInputType,
     prepopulate: prepopulate.size > 0 ? Array.from(prepopulate) : undefined,
     input,
