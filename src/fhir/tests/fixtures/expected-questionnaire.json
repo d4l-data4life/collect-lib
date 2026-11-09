@@ -1,45 +1,18 @@
 {
-    "name": "test-questionnaire",
-    "version": "1.0.0",
+    "name": "import",
+    "version": "3.0.0",
     "title": {
-        "de": "Fragebogentitel",
-        "en": "Questionnaire Title"
+        "de": "german title",
+        "en": "Import"
     },
     "questions": [
         {
-            "linkId": "question-1",
-            "inputType": 7,
+            "linkId": "c",
+            "inputType": 16,
             "required": true,
             "text": {
-                "de": "Mehrfachauswahl Frage",
-                "en": "Multi Select Question"
-            },
-            "answerset": {
-                "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-1",
-                "order": "alphabetical",
-                "answers": [
-                    {
-                        "code": "banana",
-                        "languages": {
-                            "de": "Banane",
-                            "en": "Banana"
-                        }
-                    },
-                    {
-                        "code": "apple",
-                        "languages": {
-                            "de": "Apfel",
-                            "en": "Apple"
-                        }
-                    },
-                    {
-                        "code": "pineapple",
-                        "languages": {
-                            "de": "Ananas",
-                            "en": "Pineapple"
-                        }
-                    }
-                ]
+                "de": "Land",
+                "en": "Country"
             },
             "enableWhen": [],
             "prepopulate": [],
@@ -50,84 +23,15 @@
             "code": []
         },
         {
-            "linkId": "question-2",
-            "inputType": 6,
-            "required": true,
-            "text": {
-                "de": "Einfachauswahl Frage",
-                "en": "Single Select Question"
-            },
-            "answerset": {
-                "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-2",
-                "order": "default",
-                "answers": [
-                    {
-                        "code": "yes",
-                        "languages": {
-                            "de": "Ja",
-                            "en": "Yes"
-                        }
-                    },
-                    {
-                        "code": "no",
-                        "languages": {
-                            "de": "Nein",
-                            "en": "No"
-                        }
-                    }
-                ]
-            },
-            "enableBehavior": "all",
-            "enableWhen": [
-                {
-                    "question": "question-1",
-                    "operator": 1,
-                    "answerCoding": "apple"
-                },
-                {
-                    "question": "question-1",
-                    "operator": 1,
-                    "answerCoding": "pineapple"
-                }
-            ],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "question-3",
-            "inputType": 8,
-            "required": true,
-            "text": {
-                "de": "Jahr Frage",
-                "en": "Year Question"
-            },
-            "config": {
-                "max": "P0Y",
-                "min": "1800"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "question-4",
+            "linkId": "d",
             "inputType": 5,
             "required": true,
             "text": {
-                "de": "Datum Frage",
-                "en": "Date Question"
+                "de": "Datum",
+                "en": "date full"
             },
             "config": {
-                "max": "2023-12-24",
-                "min": "2022-04-15"
+                "min": "P3W"
             },
             "enableWhen": [],
             "prepopulate": [],
@@ -138,64 +42,30 @@
             "code": []
         },
         {
-            "linkId": "question-5",
-            "inputType": 10,
+            "linkId": "dd",
+            "inputType": 8,
             "required": true,
             "text": {
-                "de": "Skala Frage",
-                "en": "Scale Question"
-            },
-            "config": {
-                "max": 5,
-                "maxLabel": {
-                    "de": "Mehr",
-                    "en": "More"
-                },
-                "min": 1,
-                "minLabel": {
-                    "de": "Weniger",
-                    "en": "Less"
-                }
+                "de": "Datum",
+                "en": "date year"
             },
             "enableWhen": [],
             "prepopulate": [],
             "items": [],
             "input": [],
-            "output": [],
+            "output": [
+                "topic2"
+            ],
             "itemVariables": [],
             "code": []
         },
         {
-            "linkId": "question-6",
-            "inputType": 9,
-            "required": true,
-            "text": {
-                "de": "Numerische Skala Frage",
-                "en": "Numeric Scale Question"
-            },
-            "config": {
-                "max": 4.5,
-                "min": 0,
-                "placeholders": [
-                    "question-2"
-                ],
-                "step": 1.5
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "question-7",
+            "linkId": "g",
             "inputType": 11,
             "required": true,
             "text": {
-                "de": "Standort-Frage",
-                "en": "Geo Location Question"
+                "de": "Ort",
+                "en": "geo"
             },
             "enableWhen": [],
             "prepopulate": [],
@@ -206,123 +76,88 @@
             "code": []
         },
         {
-            "linkId": "question-8",
+            "linkId": "l",
             "inputType": 12,
             "required": true,
             "text": {
-                "de": "Listenfrage",
-                "en": "List Question"
+                "de": "Liste",
+                "en": "list"
             },
-            "enableWhen": [],
-            "prepopulate": [
-                "old/question-8"
-            ],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "question-9-group",
-            "inputType": 13,
-            "required": false,
-            "text": {
-                "de": "Mein Titel",
-                "en": "My Title"
+            "config": {
+                "maxLength": 150,
+                "minLength": 30
             },
             "enableWhen": [],
             "prepopulate": [],
-            "items": [
+            "items": [],
+            "input": [
                 {
-                    "linkId": "question-9-image",
-                    "inputType": 0,
-                    "required": false,
-                    "text": {
-                        "de": "Ein beschreibender Alt-Text f\u00fcr Screenreader",
-                        "en": "A descriptive alt text for screen readers"
-                    },
-                    "enableWhen": [],
-                    "prepopulate": [],
-                    "items": [],
-                    "image": {
-                        "data": "",
-                        "contentType": "",
-                        "src": "hashAsName",
-                        "alt": ""
-                    },
-                    "input": [],
-                    "output": [],
-                    "itemVariables": [],
-                    "code": []
-                },
-                {
-                    "linkId": "question-9-description",
-                    "inputType": 0,
-                    "required": false,
-                    "text": {
-                        "de": "Dies ist der Beschreibungstext, der unter dem Bild angezeigt wird.",
-                        "en": "This is the description text shown below the image."
-                    },
-                    "enableWhen": [],
-                    "prepopulate": [],
-                    "items": [],
-                    "input": [],
-                    "output": [],
-                    "itemVariables": [],
-                    "code": []
+                    "topic": "topic1",
+                    "scope": 2
                 }
             ],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
+            "output": [
+                "topic1"
+            ],
+            "itemVariables": [
+                {
+                    "name": "c",
+                    "question": "c"
+                },
+                {
+                    "name": "d",
+                    "question": "d"
+                }
+            ],
+            "enableWhenExpression": "(%c contains 'AF') or (%d.exists() and today() >= %d.first().toDate() + 1 years)",
+            "code": [],
+            "enableBehavior": "all"
         },
         {
-            "linkId": "question-10-matrix",
+            "linkId": "m",
             "inputType": 14,
             "required": true,
             "text": {
-                "de": "Matrix Frage Text",
-                "en": "Matrix Question Text"
+                "de": "matrix",
+                "en": "matrix"
             },
             "answerset": {
-                "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-10-matrix",
                 "order": "default",
                 "answers": [
                     {
                         "code": "a",
                         "languages": {
-                            "de": "A",
-                            "en": "A"
+                            "de": "a",
+                            "en": "a"
                         }
                     },
                     {
                         "code": "b",
                         "languages": {
-                            "de": "B",
-                            "en": "B"
+                            "de": "b",
+                            "en": "b"
                         }
                     },
                     {
                         "code": "c",
                         "languages": {
-                            "de": "C",
-                            "en": "C"
+                            "de": "c",
+                            "en": "c"
                         }
                     }
-                ]
+                ],
+                "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/m"
             },
             "enableWhen": [],
             "prepopulate": [],
             "items": [
                 {
-                    "linkId": "question-10-matrix-0",
+                    "linkId": "m-0",
                     "inputType": 15,
                     "required": true,
                     "text": {
-                        "de": "Eins",
-                        "en": "One"
+                        "de": "1",
+                        "en": "1"
                     },
                     "enableWhen": [],
                     "prepopulate": [],
@@ -333,12 +168,12 @@
                     "code": []
                 },
                 {
-                    "linkId": "question-10-matrix-1",
+                    "linkId": "m-1",
                     "inputType": 15,
                     "required": true,
                     "text": {
-                        "de": "Zwei",
-                        "en": "Two"
+                        "de": "2",
+                        "en": "2"
                     },
                     "enableWhen": [],
                     "prepopulate": [],
@@ -349,12 +184,12 @@
                     "code": []
                 },
                 {
-                    "linkId": "question-10-matrix-2",
+                    "linkId": "m-2",
                     "inputType": 15,
                     "required": true,
                     "text": {
-                        "de": "Drei",
-                        "en": "Three"
+                        "de": "3",
+                        "en": "3"
                     },
                     "enableWhen": [],
                     "prepopulate": [],
@@ -367,43 +202,28 @@
             ],
             "input": [],
             "output": [],
-            "itemVariables": [],
-            "code": []
+            "itemVariables": [
+                {
+                    "name": "topic1",
+                    "topic": "topic1",
+                    "scope": 1
+                }
+            ],
+            "enableWhenExpression": "%topic1.first() = 'test'",
+            "code": [],
+            "enableBehavior": "all"
         },
         {
-            "linkId": "question-11",
-            "inputType": 18,
+            "linkId": "n",
+            "inputType": 4,
             "required": true,
             "text": {
-                "de": "Likert Skala Frage",
-                "en": "Likert Scale Question"
+                "de": "Nummer",
+                "en": "number"
             },
-            "answerset": {
-                "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-11",
-                "order": "default",
-                "answers": [
-                    {
-                        "code": "1",
-                        "languages": {
-                            "de": "Niedrig",
-                            "en": "Low"
-                        }
-                    },
-                    {
-                        "code": "2",
-                        "languages": {
-                            "de": "Mittel",
-                            "en": "Medium"
-                        }
-                    },
-                    {
-                        "code": "3",
-                        "languages": {
-                            "de": "Hoch",
-                            "en": "High"
-                        }
-                    }
-                ]
+            "config": {
+                "max": 5,
+                "min": 1
             },
             "enableWhen": [],
             "prepopulate": [],
@@ -414,32 +234,392 @@
             "code": []
         },
         {
-            "linkId": "question-12",
-            "inputType": 6,
+            "linkId": "p",
+            "inputType": 17,
+            "required": false,
+            "text": {
+                "de": "Postleitzahl",
+                "en": "postal from country input"
+            },
+            "config": {
+                "countrySource": {
+                    "fromItem": "c"
+                }
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "pc2",
+            "inputType": 17,
             "required": true,
             "text": {
-                "de": "Ausdrucksgesteuerte Frage",
-                "en": "Expression Gated Question"
+                "de": "Postleitzahl\n",
+                "en": "postal from fixed coutry"
+            },
+            "config": {
+                "countrySource": {
+                    "fixedCountry": {
+                        "code": "AS",
+                        "system": "urn:iso:std:iso:3166"
+                    }
+                }
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "li",
+            "inputType": 18,
+            "required": true,
+            "text": {
+                "de": "Likert",
+                "en": "likert"
             },
             "answerset": {
-                "system": "http://localhost:9288/r5/test-program/CodeSystem/test-questionnaire/question-12",
                 "order": "default",
                 "answers": [
                     {
-                        "code": "yes",
+                        "code": "1",
                         "languages": {
-                            "de": "Ja",
-                            "en": "Yes"
+                            "de": "a",
+                            "en": "a"
                         }
                     },
                     {
-                        "code": "no",
+                        "code": "2",
                         "languages": {
-                            "de": "Nein",
-                            "en": "No"
+                            "de": "b",
+                            "en": "b"
+                        }
+                    },
+                    {
+                        "code": "3",
+                        "languages": {
+                            "de": "c",
+                            "en": "c"
+                        }
+                    },
+                    {
+                        "code": "4",
+                        "languages": {
+                            "de": "d",
+                            "en": "d"
                         }
                     }
-                ]
+                ],
+                "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/li"
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [
+                "topic3"
+            ],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "s",
+            "inputType": 9,
+            "required": true,
+            "text": {
+                "de": "Numerische Skala",
+                "en": "scale numeric"
+            },
+            "config": {
+                "max": 8,
+                "min": 0,
+                "step": 1
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "ac",
+            "inputType": 10,
+            "required": true,
+            "text": {
+                "de": "Skala (ordinal)",
+                "en": "scale ordinal"
+            },
+            "config": {
+                "max": 3,
+                "maxLabel": {
+                    "de": "Max",
+                    "en": "max"
+                },
+                "min": 1,
+                "minLabel": {
+                    "de": "Min",
+                    "en": "min"
+                }
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "mu",
+            "inputType": 7,
+            "required": true,
+            "text": {
+                "de": "Multi-Auswahl",
+                "en": "multi select"
+            },
+            "answerset": {
+                "order": "default",
+                "answers": [
+                    {
+                        "code": "follow-up",
+                        "languages": {
+                            "de": "Follow-Up",
+                            "en": "follow up"
+                        }
+                    },
+                    {
+                        "code": "b",
+                        "languages": {
+                            "de": "b",
+                            "en": "b"
+                        }
+                    },
+                    {
+                        "code": "c",
+                        "languages": {
+                            "de": "c",
+                            "en": "c"
+                        }
+                    },
+                    {
+                        "code": "#other",
+                        "languages": {
+                            "de": "Sonstiges",
+                            "en": "Other"
+                        }
+                    }
+                ],
+                "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/mu"
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "mu#other",
+            "inputType": 1,
+            "required": true,
+            "text": {
+                "de": "Bitte spezifizieren Sie",
+                "en": "Please specify"
+            },
+            "config": {
+                "maxLength": 200,
+                "minLength": 1
+            },
+            "enableWhen": [
+                {
+                    "question": "mu",
+                    "operator": 1,
+                    "answerCoding": "#other"
+                }
+            ],
+            "enableBehavior": "all",
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "ss",
+            "inputType": 6,
+            "required": true,
+            "text": {
+                "de": "Auswahl Single",
+                "en": "select single"
+            },
+            "answerset": {
+                "order": "default",
+                "answers": [
+                    {
+                        "code": "a",
+                        "languages": {
+                            "de": "a",
+                            "en": "a"
+                        }
+                    },
+                    {
+                        "code": "b",
+                        "languages": {
+                            "de": "b",
+                            "en": "b"
+                        }
+                    },
+                    {
+                        "code": "c",
+                        "languages": {
+                            "de": "c",
+                            "en": "c"
+                        }
+                    },
+                    {
+                        "code": "#other",
+                        "languages": {
+                            "de": "Sonstiges",
+                            "en": "Other"
+                        }
+                    }
+                ],
+                "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/ss"
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "ss#other",
+            "inputType": 1,
+            "required": true,
+            "text": {
+                "de": "Bitte spezifizieren Sie",
+                "en": "Please specify"
+            },
+            "config": {
+                "maxLength": 200,
+                "minLength": 1
+            },
+            "enableWhen": [
+                {
+                    "question": "ss",
+                    "operator": 1,
+                    "answerCoding": "#other"
+                }
+            ],
+            "enableBehavior": "all",
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "t",
+            "inputType": 2,
+            "required": true,
+            "text": {
+                "de": "Text Lang",
+                "en": "text long"
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "saf",
+            "inputType": 1,
+            "required": true,
+            "text": {
+                "de": "Text Kurz",
+                "en": "text short"
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "op",
+            "inputType": 1,
+            "required": true,
+            "text": {
+                "de": "Text Optional",
+                "en": "optional text"
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "lt",
+            "inputType": 12,
+            "required": true,
+            "text": {
+                "de": "Input Topics",
+                "en": "list with topic inputs"
+            },
+            "config": {
+                "maxLength": 150
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [
+                {
+                    "topic": "topic1",
+                    "scope": 2
+                },
+                {
+                    "topic": "topic2",
+                    "scope": 2
+                },
+                {
+                    "topic": "topic3",
+                    "scope": 2
+                }
+            ],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "ewa",
+            "inputType": 1,
+            "required": true,
+            "text": {
+                "de": "UND Abhängigkeit",
+                "en": "enable when AND"
             },
             "enableWhen": [],
             "prepopulate": [],
@@ -448,17 +628,164 @@
             "output": [],
             "itemVariables": [
                 {
-                    "name": "consent",
-                    "question": "question-2"
+                    "name": "c",
+                    "question": "c"
                 },
                 {
-                    "name": "birthDate",
-                    "topic": "birthDate",
+                    "name": "topic1",
+                    "topic": "topic1",
                     "scope": 1
                 }
             ],
-            "enableWhenExpression": "%consent = 'yes' and today() > %birthDate.toDate() + 18 years",
+            "enableWhenExpression": "(%c contains 'DZ') and (%topic1.first() = 'a')",
+            "code": [],
+            "enableBehavior": "all"
+        },
+        {
+            "linkId": "or",
+            "inputType": 1,
+            "required": true,
+            "text": {
+                "de": "ODER Abhängigkeit",
+                "en": "enable when OR"
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [
+                {
+                    "name": "c",
+                    "question": "c"
+                },
+                {
+                    "name": "topic2",
+                    "topic": "topic2",
+                    "scope": 1
+                },
+                {
+                    "name": "mu",
+                    "question": "mu"
+                }
+            ],
+            "enableWhenExpression": "(%c contains 'AF') or (%topic2.first().toDate() <= @2001) or (%mu contains 'b')",
+            "code": [],
+            "enableBehavior": "all"
+        },
+        {
+            "linkId": "cover-mxbhbdf",
+            "inputType": 13,
+            "required": false,
+            "text": {
+                "de": "Cover",
+                "en": "Cover"
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [
+                {
+                    "linkId": "cover-mxbhbdf-image",
+                    "inputType": 0,
+                    "required": false,
+                    "text": {
+                        "de": "akt",
+                        "en": "alt text"
+                    },
+                    "enableWhen": [],
+                    "prepopulate": [],
+                    "items": [],
+                    "image": {
+                        "data": "",
+                        "contentType": "",
+                        "src": "cb993cfe46f606c86c80c45e0fd661b3ff09a266c1e204a94eaab5a719f4a614",
+                        "alt": ""
+                    },
+                    "input": [],
+                    "output": [],
+                    "itemVariables": [],
+                    "code": []
+                },
+                {
+                    "linkId": "cover-mxbhbdf-description",
+                    "inputType": 0,
+                    "required": false,
+                    "text": {
+                        "de": "<p>Beschreibung</p>",
+                        "en": "<p>desccription</p>"
+                    },
+                    "enableWhen": [],
+                    "prepopulate": [],
+                    "items": [],
+                    "input": [],
+                    "output": [],
+                    "itemVariables": [],
+                    "code": []
+                }
+            ],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "cover-mlqafwp",
+            "inputType": 13,
+            "required": false,
+            "text": {
+                "de": "Nur Beschreibung",
+                "en": "description only"
+            },
+            "enableWhen": [],
+            "prepopulate": [],
+            "items": [
+                {
+                    "linkId": "cover-mlqafwp-description",
+                    "inputType": 0,
+                    "required": false,
+                    "text": {
+                        "de": "<p>besc</p>",
+                        "en": "<p>desc</p>"
+                    },
+                    "enableWhen": [],
+                    "prepopulate": [],
+                    "items": [],
+                    "input": [],
+                    "output": [],
+                    "itemVariables": [],
+                    "code": []
+                }
+            ],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
+            "code": []
+        },
+        {
+            "linkId": "notopic",
+            "inputType": 1,
+            "required": true,
+            "text": {
+                "de": "Abhängigkeit ohne Topic",
+                "en": "Enable When (No Topic)"
+            },
+            "enableWhen": [
+                {
+                    "question": "d",
+                    "operator": 0
+                },
+                {
+                    "question": "dd",
+                    "operator": 3,
+                    "answerDate": "2000"
+                }
+            ],
             "enableBehavior": "all",
+            "prepopulate": [],
+            "items": [],
+            "input": [],
+            "output": [],
+            "itemVariables": [],
             "code": []
         }
     ]
