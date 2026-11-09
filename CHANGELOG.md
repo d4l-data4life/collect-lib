@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
-- Add `google-health`, `garmin` and `oura` to HealthConnectDataSource
 
 ### Deprecated
 
@@ -19,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.59.2] - 2026-11-09
+
+### Changed
+
+- Add `google-health`, `garmin` and `oura` to HealthConnectDataSource
 
 ## [v1.59.1] - 2026-11-04
 
@@ -641,7 +646,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.59.1...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.59.2...HEAD
+[v1.59.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.59.1...v1.59.2
 [v1.59.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.59.0...v1.59.1
 [v1.59.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.58.1...v1.59.0
 [v1.58.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.58.0...v1.58.1
