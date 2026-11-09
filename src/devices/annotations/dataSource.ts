@@ -8,6 +8,7 @@ export type AppleHealthDataSource = (typeof APPLE_HEALTH_DATA_SOURCES)[number];
 export const HEALTH_CONNECT_DATA_SOURCES = [
   'internal-sensor',
   'google-fit',
+  'google-health',
   'samsung-health',
   'unknown',
 ] as const;
