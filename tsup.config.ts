@@ -5,11 +5,11 @@ export default defineConfig({
   // entry (`@d4l/collect-lib/fhirpath`) so the fhirpath.js engine is loaded only where expressions
   // are evaluated (phoenix; Studio's synthetic-data generator), not on every page that imports the
   // barrel. See the note in src/fhir/enable-when-eval.ts. `fhir-to-questions` is the same idea for
-  // the shared FHIR->proto Question parser (src/fhir/questions.ts).
+  // the shared FHIR->proto Question parser (src/fhir/parser/).
   entry: {
     index: 'src/index.ts',
     fhirpath: 'src/fhir/enable-when-eval.ts',
-    'fhir-to-questions': 'src/fhir/questions.ts',
+    'fhir-to-questions': 'src/fhir/parser/index.ts',
   },
   format: ['cjs', 'esm'], // Build for commonJS and ESmodules
   dts: true, // Generate declaration file (.d.ts)
