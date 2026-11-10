@@ -1,792 +1,788 @@
 {
-    "name": "import",
-    "version": "3.0.0",
-    "title": {
-        "de": "german title",
-        "en": "Import"
+  "name": "import",
+  "title": {
+    "en": "Import",
+    "de": "german title"
+  },
+  "version": "4.0.0",
+  "questions": [
+    {
+      "linkId": "c",
+      "itemVariables": [],
+      "text": {
+        "en": "Country",
+        "de": "Land"
+      },
+      "inputType": 16,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": []
     },
-    "questions": [
+    {
+      "linkId": "d",
+      "itemVariables": [],
+      "text": {
+        "en": "date full",
+        "de": "Datum"
+      },
+      "inputType": 5,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "config": {
+        "min": "P3W"
+      },
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": []
+    },
+    {
+      "linkId": "dd",
+      "itemVariables": [],
+      "text": {
+        "en": "date year",
+        "de": "Datum"
+      },
+      "inputType": 8,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [
+        "topic2"
+      ],
+      "code": []
+    },
+    {
+      "linkId": "g",
+      "itemVariables": [],
+      "text": {
+        "en": "geo",
+        "de": "Ort"
+      },
+      "inputType": 11,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": []
+    },
+    {
+      "linkId": "l",
+      "itemVariables": [
         {
-            "linkId": "c",
-            "inputType": 16,
-            "required": true,
-            "text": {
-                "de": "Land",
-                "en": "Country"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
+          "name": "c",
+          "question": "c"
         },
         {
-            "linkId": "d",
-            "inputType": 5,
-            "required": true,
-            "text": {
-                "de": "Datum",
-                "en": "date full"
-            },
-            "config": {
-                "min": "P3W"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "dd",
-            "inputType": 8,
-            "required": true,
-            "text": {
-                "de": "Datum",
-                "en": "date year"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [
-                "topic2"
-            ],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "g",
-            "inputType": 11,
-            "required": true,
-            "text": {
-                "de": "Ort",
-                "en": "geo"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "l",
-            "inputType": 12,
-            "required": true,
-            "text": {
-                "de": "Liste",
-                "en": "list"
-            },
-            "config": {
-                "maxLength": 150,
-                "minLength": 30
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [
-                {
-                    "topic": "topic1",
-                    "scope": 2
-                }
-            ],
-            "output": [
-                "topic1"
-            ],
-            "itemVariables": [
-                {
-                    "name": "c",
-                    "question": "c"
-                },
-                {
-                    "name": "d",
-                    "question": "d"
-                }
-            ],
-            "enableWhenExpression": "(%c contains 'AF') or (%d.exists() and today() >= %d.first().toDate() + 1 years)",
-            "code": [],
-            "enableBehavior": "all"
-        },
-        {
-            "linkId": "m",
-            "inputType": 14,
-            "required": true,
-            "text": {
-                "de": "matrix",
-                "en": "matrix"
-            },
-            "answerset": {
-                "order": "default",
-                "answers": [
-                    {
-                        "code": "a",
-                        "languages": {
-                            "de": "a",
-                            "en": "a"
-                        }
-                    },
-                    {
-                        "code": "b",
-                        "languages": {
-                            "de": "b",
-                            "en": "b"
-                        }
-                    },
-                    {
-                        "code": "c",
-                        "languages": {
-                            "de": "c",
-                            "en": "c"
-                        }
-                    }
-                ],
-                "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/m"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [
-                {
-                    "linkId": "m-0",
-                    "inputType": 15,
-                    "required": true,
-                    "text": {
-                        "de": "1",
-                        "en": "1"
-                    },
-                    "enableWhen": [],
-                    "prepopulate": [],
-                    "items": [],
-                    "input": [],
-                    "output": [],
-                    "itemVariables": [],
-                    "code": []
-                },
-                {
-                    "linkId": "m-1",
-                    "inputType": 15,
-                    "required": true,
-                    "text": {
-                        "de": "2",
-                        "en": "2"
-                    },
-                    "enableWhen": [],
-                    "prepopulate": [],
-                    "items": [],
-                    "input": [],
-                    "output": [],
-                    "itemVariables": [],
-                    "code": []
-                },
-                {
-                    "linkId": "m-2",
-                    "inputType": 15,
-                    "required": true,
-                    "text": {
-                        "de": "3",
-                        "en": "3"
-                    },
-                    "enableWhen": [],
-                    "prepopulate": [],
-                    "items": [],
-                    "input": [],
-                    "output": [],
-                    "itemVariables": [],
-                    "code": []
-                }
-            ],
-            "input": [],
-            "output": [],
-            "itemVariables": [
-                {
-                    "name": "topic1",
-                    "topic": "topic1",
-                    "scope": 1
-                }
-            ],
-            "enableWhenExpression": "%topic1.first() = 'test'",
-            "code": [],
-            "enableBehavior": "all"
-        },
-        {
-            "linkId": "n",
-            "inputType": 4,
-            "required": true,
-            "text": {
-                "de": "Nummer",
-                "en": "number"
-            },
-            "config": {
-                "max": 5,
-                "min": 1
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "p",
-            "inputType": 17,
-            "required": false,
-            "text": {
-                "de": "Postleitzahl",
-                "en": "postal from country input"
-            },
-            "config": {
-                "countrySource": {
-                    "fromItem": "c"
-                }
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "pc2",
-            "inputType": 17,
-            "required": true,
-            "text": {
-                "de": "Postleitzahl\n",
-                "en": "postal from fixed coutry"
-            },
-            "config": {
-                "countrySource": {
-                    "fixedCountry": {
-                        "code": "AS",
-                        "system": "urn:iso:std:iso:3166"
-                    }
-                }
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "li",
-            "inputType": 18,
-            "required": true,
-            "text": {
-                "de": "Likert",
-                "en": "likert"
-            },
-            "answerset": {
-                "order": "default",
-                "answers": [
-                    {
-                        "code": "1",
-                        "languages": {
-                            "de": "a",
-                            "en": "a"
-                        }
-                    },
-                    {
-                        "code": "2",
-                        "languages": {
-                            "de": "b",
-                            "en": "b"
-                        }
-                    },
-                    {
-                        "code": "3",
-                        "languages": {
-                            "de": "c",
-                            "en": "c"
-                        }
-                    },
-                    {
-                        "code": "4",
-                        "languages": {
-                            "de": "d",
-                            "en": "d"
-                        }
-                    }
-                ],
-                "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/li"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [
-                "topic3"
-            ],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "s",
-            "inputType": 9,
-            "required": true,
-            "text": {
-                "de": "Numerische Skala",
-                "en": "scale numeric"
-            },
-            "config": {
-                "max": 8,
-                "min": 0,
-                "step": 1
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "ac",
-            "inputType": 10,
-            "required": true,
-            "text": {
-                "de": "Skala (ordinal)",
-                "en": "scale ordinal"
-            },
-            "config": {
-                "max": 3,
-                "maxLabel": {
-                    "de": "Max",
-                    "en": "max"
-                },
-                "min": 1,
-                "minLabel": {
-                    "de": "Min",
-                    "en": "min"
-                }
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "mu",
-            "inputType": 7,
-            "required": true,
-            "text": {
-                "de": "Multi-Auswahl",
-                "en": "multi select"
-            },
-            "answerset": {
-                "order": "default",
-                "answers": [
-                    {
-                        "code": "follow-up",
-                        "languages": {
-                            "de": "Follow-Up",
-                            "en": "follow up"
-                        }
-                    },
-                    {
-                        "code": "b",
-                        "languages": {
-                            "de": "b",
-                            "en": "b"
-                        }
-                    },
-                    {
-                        "code": "c",
-                        "languages": {
-                            "de": "c",
-                            "en": "c"
-                        }
-                    },
-                    {
-                        "code": "#other",
-                        "languages": {
-                            "de": "Sonstiges",
-                            "en": "Other"
-                        }
-                    }
-                ],
-                "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/mu"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "mu#other",
-            "inputType": 1,
-            "required": true,
-            "text": {
-                "de": "Bitte spezifizieren Sie",
-                "en": "Please specify"
-            },
-            "config": {
-                "maxLength": 200,
-                "minLength": 1
-            },
-            "enableWhen": [
-                {
-                    "question": "mu",
-                    "operator": 1,
-                    "answerCoding": "#other"
-                }
-            ],
-            "enableBehavior": "all",
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "ss",
-            "inputType": 6,
-            "required": true,
-            "text": {
-                "de": "Auswahl Single",
-                "en": "select single"
-            },
-            "answerset": {
-                "order": "default",
-                "answers": [
-                    {
-                        "code": "a",
-                        "languages": {
-                            "de": "a",
-                            "en": "a"
-                        }
-                    },
-                    {
-                        "code": "b",
-                        "languages": {
-                            "de": "b",
-                            "en": "b"
-                        }
-                    },
-                    {
-                        "code": "c",
-                        "languages": {
-                            "de": "c",
-                            "en": "c"
-                        }
-                    },
-                    {
-                        "code": "#other",
-                        "languages": {
-                            "de": "Sonstiges",
-                            "en": "Other"
-                        }
-                    }
-                ],
-                "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/ss"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "ss#other",
-            "inputType": 1,
-            "required": true,
-            "text": {
-                "de": "Bitte spezifizieren Sie",
-                "en": "Please specify"
-            },
-            "config": {
-                "maxLength": 200,
-                "minLength": 1
-            },
-            "enableWhen": [
-                {
-                    "question": "ss",
-                    "operator": 1,
-                    "answerCoding": "#other"
-                }
-            ],
-            "enableBehavior": "all",
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "t",
-            "inputType": 2,
-            "required": true,
-            "text": {
-                "de": "Text Lang",
-                "en": "text long"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "saf",
-            "inputType": 1,
-            "required": true,
-            "text": {
-                "de": "Text Kurz",
-                "en": "text short"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "op",
-            "inputType": 1,
-            "required": true,
-            "text": {
-                "de": "Text Optional",
-                "en": "optional text"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "lt",
-            "inputType": 12,
-            "required": true,
-            "text": {
-                "de": "Input Topics",
-                "en": "list with topic inputs"
-            },
-            "config": {
-                "maxLength": 150
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [
-                {
-                    "topic": "topic1",
-                    "scope": 2
-                },
-                {
-                    "topic": "topic2",
-                    "scope": 2
-                },
-                {
-                    "topic": "topic3",
-                    "scope": 2
-                }
-            ],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "ewa",
-            "inputType": 1,
-            "required": true,
-            "text": {
-                "de": "UND Abhängigkeit",
-                "en": "enable when AND"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [
-                {
-                    "name": "c",
-                    "question": "c"
-                },
-                {
-                    "name": "topic1",
-                    "topic": "topic1",
-                    "scope": 1
-                }
-            ],
-            "enableWhenExpression": "(%c contains 'DZ') and (%topic1.first() = 'a')",
-            "code": [],
-            "enableBehavior": "all"
-        },
-        {
-            "linkId": "or",
-            "inputType": 1,
-            "required": true,
-            "text": {
-                "de": "ODER Abhängigkeit",
-                "en": "enable when OR"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [
-                {
-                    "name": "c",
-                    "question": "c"
-                },
-                {
-                    "name": "topic2",
-                    "topic": "topic2",
-                    "scope": 1
-                },
-                {
-                    "name": "mu",
-                    "question": "mu"
-                }
-            ],
-            "enableWhenExpression": "(%c contains 'AF') or (%topic2.first().toDate() <= @2001) or (%mu contains 'b')",
-            "code": [],
-            "enableBehavior": "all"
-        },
-        {
-            "linkId": "cover-mxbhbdf",
-            "inputType": 13,
-            "required": false,
-            "text": {
-                "de": "Cover",
-                "en": "Cover"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [
-                {
-                    "linkId": "cover-mxbhbdf-image",
-                    "inputType": 0,
-                    "required": false,
-                    "text": {
-                        "de": "akt",
-                        "en": "alt text"
-                    },
-                    "enableWhen": [],
-                    "prepopulate": [],
-                    "items": [],
-                    "image": {
-                        "data": "",
-                        "contentType": "",
-                        "src": "cb993cfe46f606c86c80c45e0fd661b3ff09a266c1e204a94eaab5a719f4a614",
-                        "alt": ""
-                    },
-                    "input": [],
-                    "output": [],
-                    "itemVariables": [],
-                    "code": []
-                },
-                {
-                    "linkId": "cover-mxbhbdf-description",
-                    "inputType": 0,
-                    "required": false,
-                    "text": {
-                        "de": "<p>Beschreibung</p>",
-                        "en": "<p>desccription</p>"
-                    },
-                    "enableWhen": [],
-                    "prepopulate": [],
-                    "items": [],
-                    "input": [],
-                    "output": [],
-                    "itemVariables": [],
-                    "code": []
-                }
-            ],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "cover-mlqafwp",
-            "inputType": 13,
-            "required": false,
-            "text": {
-                "de": "Nur Beschreibung",
-                "en": "description only"
-            },
-            "enableWhen": [],
-            "prepopulate": [],
-            "items": [
-                {
-                    "linkId": "cover-mlqafwp-description",
-                    "inputType": 0,
-                    "required": false,
-                    "text": {
-                        "de": "<p>besc</p>",
-                        "en": "<p>desc</p>"
-                    },
-                    "enableWhen": [],
-                    "prepopulate": [],
-                    "items": [],
-                    "input": [],
-                    "output": [],
-                    "itemVariables": [],
-                    "code": []
-                }
-            ],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
-        },
-        {
-            "linkId": "notopic",
-            "inputType": 1,
-            "required": true,
-            "text": {
-                "de": "Abhängigkeit ohne Topic",
-                "en": "Enable When (No Topic)"
-            },
-            "enableWhen": [
-                {
-                    "question": "d",
-                    "operator": 0
-                },
-                {
-                    "question": "dd",
-                    "operator": 3,
-                    "answerDate": "2000"
-                }
-            ],
-            "enableBehavior": "all",
-            "prepopulate": [],
-            "items": [],
-            "input": [],
-            "output": [],
-            "itemVariables": [],
-            "code": []
+          "name": "d",
+          "question": "d"
         }
-    ]
+      ],
+      "text": {
+        "en": "list",
+        "de": "Liste"
+      },
+      "inputType": 12,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "config": {
+        "maxLength": 150,
+        "minLength": 30
+      },
+      "prepopulate": [],
+      "input": [
+        {
+          "topic": "topic1",
+          "scope": 2
+        }
+      ],
+      "output": [
+        "topic1"
+      ],
+      "code": [],
+      "enableWhenExpression": "(%c contains 'AF') or (%d.exists() and today() >= %d.first().toDate() + 1 years)"
+    },
+    {
+      "linkId": "m",
+      "itemVariables": [
+        {
+          "name": "topic1",
+          "topic": "topic1",
+          "scope": 1
+        }
+      ],
+      "text": {
+        "en": "matrix",
+        "de": "matrix"
+      },
+      "inputType": 14,
+      "required": true,
+      "enableWhen": [],
+      "items": [
+        {
+          "linkId": "m-0",
+          "itemVariables": [],
+          "text": {
+            "en": "1",
+            "de": "1"
+          },
+          "inputType": 15,
+          "required": true,
+          "enableWhen": [],
+          "items": [],
+          "prepopulate": [],
+          "input": [],
+          "output": [],
+          "code": []
+        },
+        {
+          "linkId": "m-1",
+          "itemVariables": [],
+          "text": {
+            "en": "2",
+            "de": "2"
+          },
+          "inputType": 15,
+          "required": true,
+          "enableWhen": [],
+          "items": [],
+          "prepopulate": [],
+          "input": [],
+          "output": [],
+          "code": []
+        },
+        {
+          "linkId": "m-2",
+          "itemVariables": [],
+          "text": {
+            "en": "3",
+            "de": "3"
+          },
+          "inputType": 15,
+          "required": true,
+          "enableWhen": [],
+          "items": [],
+          "prepopulate": [],
+          "input": [],
+          "output": [],
+          "code": []
+        }
+      ],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "enableWhenExpression": "%topic1.first() = 'test'",
+      "answerset": {
+        "order": "default",
+        "answers": [
+          {
+            "code": "a",
+            "languages": {
+              "en": "a",
+              "de": "a"
+            }
+          },
+          {
+            "code": "b",
+            "languages": {
+              "en": "b",
+              "de": "b"
+            }
+          },
+          {
+            "code": "c",
+            "languages": {
+              "en": "c",
+              "de": "c"
+            }
+          }
+        ],
+        "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/m"
+      }
+    },
+    {
+      "linkId": "n",
+      "itemVariables": [],
+      "text": {
+        "en": "number",
+        "de": "Nummer"
+      },
+      "inputType": 4,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "config": {
+        "min": 1,
+        "max": 5
+      },
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": []
+    },
+    {
+      "linkId": "p",
+      "itemVariables": [],
+      "text": {
+        "en": "postal from country input",
+        "de": "Postleitzahl"
+      },
+      "inputType": 17,
+      "required": false,
+      "enableWhen": [],
+      "items": [],
+      "config": {
+        "countrySource": {
+          "fromItem": "c"
+        }
+      },
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": []
+    },
+    {
+      "linkId": "pc2",
+      "itemVariables": [],
+      "text": {
+        "en": "postal from fixed coutry",
+        "de": "Postleitzahl\n"
+      },
+      "inputType": 17,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "config": {
+        "countrySource": {
+          "fixedCountry": {
+            "system": "urn:iso:std:iso:3166",
+            "code": "AS"
+          }
+        }
+      },
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": []
+    },
+    {
+      "linkId": "li",
+      "itemVariables": [],
+      "text": {
+        "en": "likert",
+        "de": "Likert"
+      },
+      "inputType": 18,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [
+        "topic3"
+      ],
+      "code": [],
+      "answerset": {
+        "order": "default",
+        "answers": [
+          {
+            "code": "1",
+            "languages": {
+              "en": "a",
+              "de": "a"
+            }
+          },
+          {
+            "code": "2",
+            "languages": {
+              "en": "b",
+              "de": "b"
+            }
+          },
+          {
+            "code": "3",
+            "languages": {
+              "en": "c",
+              "de": "c"
+            }
+          },
+          {
+            "code": "4",
+            "languages": {
+              "en": "d",
+              "de": "d"
+            }
+          }
+        ],
+        "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/li"
+      }
+    },
+    {
+      "linkId": "s",
+      "itemVariables": [],
+      "text": {
+        "en": "scale numeric",
+        "de": "Numerische Skala"
+      },
+      "inputType": 9,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "config": {
+        "step": 1,
+        "min": 0,
+        "max": 8
+      },
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": []
+    },
+    {
+      "linkId": "ac",
+      "itemVariables": [],
+      "text": {
+        "en": "scale ordinal",
+        "de": "Skala (ordinal)"
+      },
+      "inputType": 10,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "config": {
+        "minLabel": {
+          "en": "min",
+          "de": "Min"
+        },
+        "maxLabel": {
+          "en": "max",
+          "de": "Max"
+        },
+        "min": 1,
+        "max": 3
+      },
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": []
+    },
+    {
+      "linkId": "mu",
+      "itemVariables": [],
+      "text": {
+        "en": "multi select",
+        "de": "Multi-Auswahl"
+      },
+      "inputType": 7,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "answerset": {
+        "order": "default",
+        "answers": [
+          {
+            "code": "follow-up",
+            "languages": {
+              "en": "follow up",
+              "de": "Follow-Up"
+            }
+          },
+          {
+            "code": "b",
+            "languages": {
+              "en": "b",
+              "de": "b"
+            }
+          },
+          {
+            "code": "c",
+            "languages": {
+              "en": "c",
+              "de": "c"
+            }
+          },
+          {
+            "code": "#other",
+            "languages": {
+              "en": "Other",
+              "de": "Sonstiges"
+            }
+          }
+        ],
+        "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/mu"
+      }
+    },
+    {
+      "linkId": "mu#other",
+      "itemVariables": [],
+      "text": {
+        "en": "Please specify",
+        "de": "Bitte spezifizieren Sie"
+      },
+      "inputType": 1,
+      "required": true,
+      "enableWhen": [
+        {
+          "question": "mu",
+          "operator": 1,
+          "answerCoding": "#other"
+        }
+      ],
+      "items": [],
+      "config": {
+        "maxLength": 200,
+        "minLength": 1
+      },
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "enableBehavior": "all"
+    },
+    {
+      "linkId": "ss",
+      "itemVariables": [],
+      "text": {
+        "en": "select single",
+        "de": "Auswahl Single"
+      },
+      "inputType": 6,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "answerset": {
+        "order": "default",
+        "answers": [
+          {
+            "code": "a",
+            "languages": {
+              "en": "a",
+              "de": "a"
+            }
+          },
+          {
+            "code": "b",
+            "languages": {
+              "en": "b",
+              "de": "b"
+            }
+          },
+          {
+            "code": "c",
+            "languages": {
+              "en": "c",
+              "de": "c"
+            }
+          },
+          {
+            "code": "#other",
+            "languages": {
+              "en": "Other",
+              "de": "Sonstiges"
+            }
+          }
+        ],
+        "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/ss"
+      }
+    },
+    {
+      "linkId": "ss#other",
+      "itemVariables": [],
+      "text": {
+        "en": "Please specify",
+        "de": "Bitte spezifizieren Sie"
+      },
+      "inputType": 1,
+      "required": true,
+      "enableWhen": [
+        {
+          "question": "ss",
+          "operator": 1,
+          "answerCoding": "#other"
+        }
+      ],
+      "items": [],
+      "config": {
+        "maxLength": 200,
+        "minLength": 1
+      },
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "enableBehavior": "all"
+    },
+    {
+      "linkId": "t",
+      "itemVariables": [],
+      "text": {
+        "en": "text long",
+        "de": "Text Lang"
+      },
+      "inputType": 2,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": []
+    },
+    {
+      "linkId": "saf",
+      "itemVariables": [],
+      "text": {
+        "en": "text short",
+        "de": "Text Kurz"
+      },
+      "inputType": 1,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": []
+    },
+    {
+      "linkId": "op",
+      "itemVariables": [],
+      "text": {
+        "en": "optional text",
+        "de": "Text Optional"
+      },
+      "inputType": 1,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": []
+    },
+    {
+      "linkId": "lt",
+      "itemVariables": [],
+      "text": {
+        "en": "list with topic inputs",
+        "de": "Input Topics"
+      },
+      "inputType": 12,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "config": {
+        "maxLength": 150
+      },
+      "prepopulate": [],
+      "input": [
+        {
+          "topic": "topic1",
+          "scope": 2
+        },
+        {
+          "topic": "topic2",
+          "scope": 2
+        },
+        {
+          "topic": "topic3",
+          "scope": 2
+        }
+      ],
+      "output": [],
+      "code": []
+    },
+    {
+      "linkId": "ewa",
+      "itemVariables": [
+        {
+          "name": "c",
+          "question": "c"
+        },
+        {
+          "name": "topic1",
+          "topic": "topic1",
+          "scope": 1
+        }
+      ],
+      "text": {
+        "en": "enable when AND",
+        "de": "UND Abhängigkeit"
+      },
+      "inputType": 1,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "enableWhenExpression": "(%c contains 'DZ') and (%topic1.first() = 'a')"
+    },
+    {
+      "linkId": "or",
+      "itemVariables": [
+        {
+          "name": "c",
+          "question": "c"
+        },
+        {
+          "name": "topic2",
+          "topic": "topic2",
+          "scope": 1
+        },
+        {
+          "name": "mu",
+          "question": "mu"
+        }
+      ],
+      "text": {
+        "en": "enable when OR",
+        "de": "or"
+      },
+      "inputType": 1,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "enableWhenExpression": "(%c contains 'AF') or (%topic2.first().toDate() <= @2001) or (%mu contains 'b')"
+    },
+    {
+      "linkId": "cover-mxbhbdf",
+      "itemVariables": [],
+      "text": {
+        "en": "Cover",
+        "de": "Cover"
+      },
+      "inputType": 13,
+      "required": false,
+      "enableWhen": [],
+      "items": [
+        {
+          "linkId": "cover-mxbhbdf-image",
+          "itemVariables": [],
+          "text": {
+            "en": "alt text",
+            "de": "akt"
+          },
+          "inputType": 0,
+          "required": false,
+          "enableWhen": [],
+          "items": [],
+          "prepopulate": [],
+          "input": [],
+          "output": [],
+          "code": [],
+          "image": {
+            "src": "cb993cfe46f606c86c80c45e0fd661b3ff09a266c1e204a94eaab5a719f4a614",
+            "alt": "",
+            "data": "",
+            "contentType": ""
+          }
+        },
+        {
+          "linkId": "cover-mxbhbdf-description",
+          "itemVariables": [],
+          "text": {
+            "en": "<p>desccription</p>",
+            "de": "<p>Beschreibung</p>"
+          },
+          "inputType": 0,
+          "required": false,
+          "enableWhen": [],
+          "items": [],
+          "prepopulate": [],
+          "input": [],
+          "output": [],
+          "code": []
+        }
+      ],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": []
+    },
+    {
+      "linkId": "cover-mlqafwp",
+      "itemVariables": [],
+      "text": {
+        "en": "description only",
+        "de": "Nur Beschreibung"
+      },
+      "inputType": 13,
+      "required": false,
+      "enableWhen": [],
+      "items": [
+        {
+          "linkId": "cover-mlqafwp-description",
+          "itemVariables": [],
+          "text": {
+            "en": "<p>desc</p>",
+            "de": "<p>besc</p>"
+          },
+          "inputType": 0,
+          "required": false,
+          "enableWhen": [],
+          "items": [],
+          "prepopulate": [],
+          "input": [],
+          "output": [],
+          "code": []
+        }
+      ],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": []
+    },
+    {
+      "linkId": "notopic",
+      "itemVariables": [],
+      "text": {
+        "en": "Enable When (No Topic)",
+        "de": "no topic"
+      },
+      "inputType": 1,
+      "required": true,
+      "enableWhen": [
+        {
+          "question": "d",
+          "operator": 0
+        },
+        {
+          "question": "dd",
+          "operator": 3,
+          "answerDate": "2000"
+        }
+      ],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "enableBehavior": "all"
+    }
+  ]
 }

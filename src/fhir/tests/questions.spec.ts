@@ -29,7 +29,7 @@ import {
   ValuesetSortingExtension,
 } from '../constants';
 import { inputTypeFromJSON, TopicScope } from '@d4l/grpc-modules/research-pillars';
-import { fhirToQuestionnaire, parseExtensions } from '../questions';
+import { fhirToQuestionnaire, parseExtensions } from '../parser';
 
 const TOPIC = 'http://fhir.data4life.care/r5/example/topic/socialNetwork';
 const BAD_TOPIC = 'http://fhir.data4life.care/r5/example/topic/social-network';
@@ -92,7 +92,9 @@ describe('parseExtensions', () => {
 
   describe('RelativeMaxValueExtension', () => {
     it('parses a relative max value string', () => {
-      const items = makeItems({ en: [{ url: RelativeMaxValueExtension, valueString: 'today+30' }] });
+      const items = makeItems({
+        en: [{ url: RelativeMaxValueExtension, valueString: 'today+30' }],
+      });
       const { config } = parseExtensions(['en'], items);
       expect(config).toEqual({ max: 'today+30' });
     });
@@ -108,7 +110,9 @@ describe('parseExtensions', () => {
 
   describe('SliderOrientationExtension', () => {
     it.each(['horizontal', 'vertical'] as const)('parses %s orientation', (orientation) => {
-      const items = makeItems({ en: [{ url: SliderOrientationExtension, valueCode: orientation }] });
+      const items = makeItems({
+        en: [{ url: SliderOrientationExtension, valueCode: orientation }],
+      });
       const { config } = parseExtensions(['en'], items);
       expect(config).toEqual({ orientation });
     });
@@ -124,16 +128,20 @@ describe('parseExtensions', () => {
   });
 
   describe('QItemControlDefinition', () => {
-    it.each(['postal_code', 'scale_ordinal', 'scale_numeric', 'scale_likert', 'year', 'geo_location'] as const)(
-      'parses the input type from a real itemControl code (%s)',
-      (code) => {
-        const items = makeItems({
-          en: [{ url: QItemControlDefinition, valueCodeableConcept: { coding: [{ code }] } }],
-        });
-        const { inputType } = parseExtensions(['en'], items);
-        expect(inputType).toBe(inputTypeFromJSON(code));
-      }
-    );
+    it.each([
+      'postal_code',
+      'scale_ordinal',
+      'scale_numeric',
+      'scale_likert',
+      'year',
+      'geo_location',
+    ] as const)('parses the input type from a real itemControl code (%s)', (code) => {
+      const items = makeItems({
+        en: [{ url: QItemControlDefinition, valueCodeableConcept: { coding: [{ code }] } }],
+      });
+      const { inputType } = parseExtensions(['en'], items);
+      expect(inputType).toBe(inputTypeFromJSON(code));
+    });
   });
 
   describe('ImageExtension', () => {
@@ -158,7 +166,11 @@ describe('parseExtensions', () => {
         en: [
           {
             url: ImageExtension,
-            valueAttachment: { data: 'ZmFrZS1ieXRlcw==', contentType: 'image/png', title: 'A cover photo' },
+            valueAttachment: {
+              data: 'ZmFrZS1ieXRlcw==',
+              contentType: 'image/png',
+              title: 'A cover photo',
+            },
           },
         ],
       });
@@ -172,7 +184,9 @@ describe('parseExtensions', () => {
     });
 
     it('ignores an image extension with neither a url nor inline data', () => {
-      const items = makeItems({ en: [{ url: ImageExtension, valueAttachment: { title: 'Untitled' } }] });
+      const items = makeItems({
+        en: [{ url: ImageExtension, valueAttachment: { title: 'Untitled' } }],
+      });
       const { image } = parseExtensions(['en'], items);
       expect(image).toBeUndefined();
     });
@@ -209,7 +223,9 @@ describe('parseExtensions', () => {
 
   describe('topic input/output', () => {
     it('parses an output extension into a bare topic id', () => {
-      const items = makeItems({ en: [{ url: QuestionnaireItemOutputExtension, valueCanonical: TOPIC }] });
+      const items = makeItems({
+        en: [{ url: QuestionnaireItemOutputExtension, valueCanonical: TOPIC }],
+      });
       const { input, output } = parseExtensions(['en'], items);
       expect(output).toEqual(['socialNetwork']);
       expect(input).toEqual([]);
@@ -233,7 +249,9 @@ describe('parseExtensions', () => {
     });
 
     it('ignores an output topic whose id is not identifier-safe', () => {
-      const items = makeItems({ en: [{ url: QuestionnaireItemOutputExtension, valueCanonical: BAD_TOPIC }] });
+      const items = makeItems({
+        en: [{ url: QuestionnaireItemOutputExtension, valueCanonical: BAD_TOPIC }],
+      });
       expect(parseExtensions(['en'], items).output).toEqual([]);
     });
 
@@ -294,7 +312,9 @@ describe('parseExtensions', () => {
     });
 
     it('ignores maxLength on a non-string/text question', () => {
-      const items = { en: { linkId: 'q1', type: 'decimal' as const, maxLength: 50, extension: [] } };
+      const items = {
+        en: { linkId: 'q1', type: 'decimal' as const, maxLength: 50, extension: [] },
+      };
       expect(parseExtensions(['en'], items).config).toEqual({});
     });
   });
@@ -350,7 +370,9 @@ describe('parseExtensions', () => {
           { url: PlaceholderExtension, valueString: 'studyName' },
         ],
       });
-      expect(parseExtensions(['en'], items).config).toEqual({ placeholders: ['firstName', 'studyName'] });
+      expect(parseExtensions(['en'], items).config).toEqual({
+        placeholders: ['firstName', 'studyName'],
+      });
     });
   });
 });
@@ -371,7 +393,10 @@ describe('enableWhen expression dependencies', () => {
 
   it('parses topic- and question-sourced item variables', () => {
     const items = makeItems({
-      en: [variable('gender', { topic: TOPIC, scope: 'latest' }), variable('smoker', { question: 'smoker' })],
+      en: [
+        variable('gender', { topic: TOPIC, scope: 'latest' }),
+        variable('smoker', { question: 'smoker' }),
+      ],
     });
     expect(parseExtensions(['en'], items).itemVariables).toEqual([
       { name: 'gender', topic: 'socialNetwork', scope: TopicScope.latest },
@@ -424,7 +449,9 @@ describe('enableWhen expression dependencies', () => {
     expect(question.itemVariables).toEqual([
       { name: 'gender', topic: 'socialNetwork', scope: TopicScope.latest },
     ]);
-    expect(question.enableBehavior).toBe('all');
+    // enableBehavior must stay unset for an expression-gated question: the all/any behavior is
+    // already encoded in the expression, and research-pillars' own parser leaves it nil too
+    expect(question.enableBehavior).toBeUndefined();
     expect(question.enableWhen).toEqual([]);
   });
 
@@ -550,7 +577,12 @@ describe('native type resolution (parseInputType)', () => {
   });
 
   it('resolves a repeating string as list', () => {
-    const questionnaire = questionnaireWithItem({ linkId: 'q1', type: 'string', text: 'Hobbies', repeats: true });
+    const questionnaire = questionnaireWithItem({
+      linkId: 'q1',
+      type: 'string',
+      text: 'Hobbies',
+      repeats: true,
+    });
     expect(questionnaire.questions[0].inputType).toBe(inputTypeFromJSON('list'));
   });
 
@@ -560,7 +592,12 @@ describe('native type resolution (parseInputType)', () => {
   });
 
   it('resolves repeating coding as multi_select', () => {
-    const questionnaire = questionnaireWithItem({ linkId: 'q1', type: 'coding', text: 'Pick some', repeats: true });
+    const questionnaire = questionnaireWithItem({
+      linkId: 'q1',
+      type: 'coding',
+      text: 'Pick some',
+      repeats: true,
+    });
     expect(questionnaire.questions[0].inputType).toBe(inputTypeFromJSON('multi_select'));
   });
 
@@ -615,7 +652,10 @@ describe('matrix questions', () => {
             text: 'Rate the following',
             answerValueSet: '#columns',
             extension: [
-              { url: QItemControlDefinition, valueCodeableConcept: { coding: [{ code: 'matrix' }] } },
+              {
+                url: QItemControlDefinition,
+                valueCodeableConcept: { coding: [{ code: 'matrix' }] },
+              },
             ],
             item: [
               { linkId: 'row-1', type: 'coding', text: 'Row one', answerValueSet: '#columns' },
