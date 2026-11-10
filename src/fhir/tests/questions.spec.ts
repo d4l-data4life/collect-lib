@@ -449,8 +449,7 @@ describe('enableWhen expression dependencies', () => {
     expect(question.itemVariables).toEqual([
       { name: 'gender', topic: 'socialNetwork', scope: TopicScope.latest },
     ]);
-    // enableBehavior must stay unset for an expression-gated question: the all/any behavior is
-    // already encoded in the expression, and research-pillars' own parser leaves it nil too
+    // For enableWhenExpressions enableBehaviour must be undefined and enableWhen must be empty, since the expression itself encodes the dependency
     expect(question.enableBehavior).toBeUndefined();
     expect(question.enableWhen).toEqual([]);
   });
