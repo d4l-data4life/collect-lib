@@ -1,5 +1,11 @@
 import { CountryValueSet } from '../constants';
-import { Answerset, InputType, inputTypeFromJSON, Question, Questionnaire } from '@d4l/grpc-modules/research-pillars';
+import {
+  Answerset,
+  InputType,
+  inputTypeFromJSON,
+  Question,
+  Questionnaire,
+} from '@d4l/grpc-modules/research-pillars';
 import { valueSetsToAnswerSets } from './valuesets';
 import { parseCodes, parseEnableWhenExpression, parseExtensions, stringToOperator } from './extensions';
 
@@ -44,12 +50,13 @@ const extractQuestionsFromFHIR = (fhirQuestionnaires: QuestionnaireMap): Questio
 
   const questions: Question[] = [];
   const q = fhirQuestionnaires[languages[0]];
-  if (q.item) {
-    for (const qItem of q.item) {
-      const question = convertQuestion(languages, answerSets, questionItems[qItem.linkId]);
-      if (question) {
-        questions.push(question);
-      }
+  if (!q.item) {
+    return [];
+  }
+  for (const qItem of q.item) {
+    const question = convertQuestion(languages, answerSets, questionItems[qItem.linkId]);
+    if (question) {
+      questions.push(question);
     }
   }
   return questions;
