@@ -7,7 +7,7 @@
   "version": "4.0.0",
   "questions": [
     {
-      "linkId": "c",
+      "linkId": "country",
       "itemVariables": [],
       "text": {
         "en": "Country",
@@ -23,7 +23,7 @@
       "code": []
     },
     {
-      "linkId": "d",
+      "linkId": "date-min-relative",
       "itemVariables": [],
       "text": {
         "en": "date full",
@@ -42,7 +42,7 @@
       "code": []
     },
     {
-      "linkId": "dd",
+      "linkId": "date-year-topic-output",
       "itemVariables": [],
       "text": {
         "en": "date year",
@@ -60,7 +60,7 @@
       "code": []
     },
     {
-      "linkId": "g",
+      "linkId": "geo-location",
       "itemVariables": [],
       "text": {
         "en": "geo",
@@ -76,15 +76,15 @@
       "code": []
     },
     {
-      "linkId": "l",
+      "linkId": "list-enablewhen-expr",
       "itemVariables": [
         {
           "name": "c",
-          "question": "c"
+          "question": "country"
         },
         {
           "name": "d",
-          "question": "d"
+          "question": "date-min-relative"
         }
       ],
       "text": {
@@ -113,7 +113,7 @@
       "enableWhenExpression": "(%c contains 'AF') or (%d.exists() and today() >= %d.first().toDate() + 1 years)"
     },
     {
-      "linkId": "m",
+      "linkId": "matrix",
       "itemVariables": [
         {
           "name": "topic1",
@@ -130,7 +130,7 @@
       "enableWhen": [],
       "items": [
         {
-          "linkId": "m-0",
+          "linkId": "matrix-0",
           "itemVariables": [],
           "text": {
             "en": "1",
@@ -146,7 +146,7 @@
           "code": []
         },
         {
-          "linkId": "m-1",
+          "linkId": "matrix-1",
           "itemVariables": [],
           "text": {
             "en": "2",
@@ -162,7 +162,7 @@
           "code": []
         },
         {
-          "linkId": "m-2",
+          "linkId": "matrix-2",
           "itemVariables": [],
           "text": {
             "en": "3",
@@ -212,7 +212,7 @@
       }
     },
     {
-      "linkId": "n",
+      "linkId": "number",
       "itemVariables": [],
       "text": {
         "en": "number",
@@ -232,7 +232,7 @@
       "code": []
     },
     {
-      "linkId": "p",
+      "linkId": "postal-code-from-country",
       "itemVariables": [],
       "text": {
         "en": "postal from country input",
@@ -244,7 +244,7 @@
       "items": [],
       "config": {
         "countrySource": {
-          "fromItem": "c"
+          "fromItem": "country"
         }
       },
       "prepopulate": [],
@@ -253,7 +253,7 @@
       "code": []
     },
     {
-      "linkId": "pc2",
+      "linkId": "postal-code-fixed-country",
       "itemVariables": [],
       "text": {
         "en": "postal from fixed coutry",
@@ -277,7 +277,7 @@
       "code": []
     },
     {
-      "linkId": "li",
+      "linkId": "likert",
       "itemVariables": [],
       "text": {
         "en": "likert",
@@ -329,7 +329,7 @@
       }
     },
     {
-      "linkId": "s",
+      "linkId": "scale-numeric",
       "itemVariables": [],
       "text": {
         "en": "scale numeric",
@@ -350,7 +350,7 @@
       "code": []
     },
     {
-      "linkId": "ac",
+      "linkId": "scale-ordinal",
       "itemVariables": [],
       "text": {
         "en": "scale ordinal",
@@ -378,7 +378,7 @@
       "code": []
     },
     {
-      "linkId": "mu",
+      "linkId": "multiselect",
       "itemVariables": [],
       "text": {
         "en": "multi select",
@@ -428,7 +428,7 @@
       }
     },
     {
-      "linkId": "mu#other",
+      "linkId": "multiselect#other",
       "itemVariables": [],
       "text": {
         "en": "Please specify",
@@ -438,7 +438,7 @@
       "required": true,
       "enableWhen": [
         {
-          "question": "mu",
+          "question": "multiselect",
           "operator": 1,
           "answerCoding": "#other"
         }
@@ -455,7 +455,7 @@
       "enableBehavior": "all"
     },
     {
-      "linkId": "ss",
+      "linkId": "singleselect",
       "itemVariables": [],
       "text": {
         "en": "select single",
@@ -505,7 +505,7 @@
       }
     },
     {
-      "linkId": "ss#other",
+      "linkId": "singleselect#other",
       "itemVariables": [],
       "text": {
         "en": "Please specify",
@@ -515,7 +515,7 @@
       "required": true,
       "enableWhen": [
         {
-          "question": "ss",
+          "question": "singleselect",
           "operator": 1,
           "answerCoding": "#other"
         }
@@ -532,7 +532,7 @@
       "enableBehavior": "all"
     },
     {
-      "linkId": "t",
+      "linkId": "text-long",
       "itemVariables": [],
       "text": {
         "en": "text long",
@@ -548,7 +548,7 @@
       "code": []
     },
     {
-      "linkId": "saf",
+      "linkId": "text-short",
       "itemVariables": [],
       "text": {
         "en": "text short",
@@ -564,14 +564,14 @@
       "code": []
     },
     {
-      "linkId": "op",
+      "linkId": "text-optional",
       "itemVariables": [],
       "text": {
         "en": "optional text",
         "de": "Text Optional"
       },
       "inputType": 1,
-      "required": true,
+      "required": false,
       "enableWhen": [],
       "items": [],
       "prepopulate": [],
@@ -580,7 +580,7 @@
       "code": []
     },
     {
-      "linkId": "lt",
+      "linkId": "input-topic-linked",
       "itemVariables": [],
       "text": {
         "en": "list with topic inputs",
@@ -612,11 +612,11 @@
       "code": []
     },
     {
-      "linkId": "ewa",
+      "linkId": "enablewhen-expr-and",
       "itemVariables": [
         {
           "name": "c",
-          "question": "c"
+          "question": "country"
         },
         {
           "name": "topic1",
@@ -639,11 +639,11 @@
       "enableWhenExpression": "(%c contains 'DZ') and (%topic1.first() = 'a')"
     },
     {
-      "linkId": "or",
+      "linkId": "enablewhen-expr-or",
       "itemVariables": [
         {
           "name": "c",
-          "question": "c"
+          "question": "country"
         },
         {
           "name": "topic2",
@@ -652,7 +652,7 @@
         },
         {
           "name": "mu",
-          "question": "mu"
+          "question": "multiselect"
         }
       ],
       "text": {
@@ -758,7 +758,7 @@
       "code": []
     },
     {
-      "linkId": "notopic",
+      "linkId": "enablewhen-plain-and",
       "itemVariables": [],
       "text": {
         "en": "Enable When (No Topic)",
@@ -768,11 +768,11 @@
       "required": true,
       "enableWhen": [
         {
-          "question": "d",
+          "question": "date-min-relative",
           "operator": 0
         },
         {
-          "question": "dd",
+          "question": "date-year-topic-output",
           "operator": 3,
           "answerDate": "2000"
         }

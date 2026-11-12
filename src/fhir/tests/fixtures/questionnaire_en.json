@@ -313,7 +313,7 @@
           }
         }
       ],
-      "linkId": "c",
+      "linkId": "country",
       "required": true,
       "text": "Country",
       "type": "coding"
@@ -325,7 +325,7 @@
           "valueString": "P3W"
         }
       ],
-      "linkId": "d",
+      "linkId": "date-min-relative",
       "required": true,
       "text": "date full",
       "type": "date"
@@ -348,7 +348,7 @@
           "valueCanonical": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/topic/topic2"
         }
       ],
-      "linkId": "dd",
+      "linkId": "date-year-topic-output",
       "required": true,
       "text": "date year",
       "type": "date"
@@ -367,7 +367,7 @@
           }
         }
       ],
-      "linkId": "g",
+      "linkId": "geo-location",
       "required": true,
       "text": "geo",
       "type": "string"
@@ -414,7 +414,7 @@
             },
             {
               "url": "question",
-              "valueString": "c"
+              "valueString": "country"
             }
           ],
           "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
@@ -427,13 +427,13 @@
             },
             {
               "url": "question",
-              "valueString": "d"
+              "valueString": "date-min-relative"
             }
           ],
           "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
         }
       ],
-      "linkId": "l",
+      "linkId": "list-enablewhen-expr",
       "maxLength": 150,
       "modifierExtension": [
         {
@@ -484,27 +484,27 @@
       "item": [
         {
           "answerValueSet": "#0",
-          "linkId": "m-0",
+          "linkId": "matrix-0",
           "required": true,
           "text": "1",
           "type": "coding"
         },
         {
           "answerValueSet": "#0",
-          "linkId": "m-1",
+          "linkId": "matrix-1",
           "required": true,
           "text": "2",
           "type": "coding"
         },
         {
           "answerValueSet": "#0",
-          "linkId": "m-2",
+          "linkId": "matrix-2",
           "required": true,
           "text": "3",
           "type": "coding"
         }
       ],
-      "linkId": "m",
+      "linkId": "matrix",
       "modifierExtension": [
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
@@ -529,7 +529,7 @@
           "valueDecimal": 5
         }
       ],
-      "linkId": "n",
+      "linkId": "number",
       "required": true,
       "text": "number",
       "type": "decimal"
@@ -551,13 +551,13 @@
           "extension": [
             {
               "url": "fromItem",
-              "valueString": "c"
+              "valueString": "country"
             }
           ],
           "url": "http://fhir.data4life.care/fhir/StructureDefinition/postalcode-country-source"
         }
       ],
-      "linkId": "p",
+      "linkId": "postal-code-from-country",
       "text": "postal from country input",
       "type": "string"
     },
@@ -587,7 +587,7 @@
           "url": "http://fhir.data4life.care/fhir/StructureDefinition/postalcode-country-source"
         }
       ],
-      "linkId": "pc2",
+      "linkId": "postal-code-fixed-country",
       "required": true,
       "text": "postal from fixed coutry",
       "type": "string"
@@ -611,7 +611,7 @@
           "valueCanonical": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/topic/topic3"
         }
       ],
-      "linkId": "li",
+      "linkId": "likert",
       "required": true,
       "text": "likert",
       "type": "integer"
@@ -642,7 +642,7 @@
           "valueDecimal": 8
         }
       ],
-      "linkId": "s",
+      "linkId": "scale-numeric",
       "required": true,
       "text": "scale numeric",
       "type": "decimal"
@@ -677,14 +677,14 @@
           "valueInteger": 3
         }
       ],
-      "linkId": "ac",
+      "linkId": "scale-ordinal",
       "required": true,
       "text": "scale ordinal",
       "type": "integer"
     },
     {
       "answerValueSet": "#2",
-      "linkId": "mu",
+      "linkId": "multiselect",
       "repeats": true,
       "required": true,
       "text": "multi select",
@@ -699,7 +699,7 @@
             "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/mu"
           },
           "operator": "=",
-          "question": "mu"
+          "question": "multiselect"
         }
       ],
       "extension": [
@@ -708,7 +708,7 @@
           "valueInteger": 1
         }
       ],
-      "linkId": "mu#other",
+      "linkId": "multiselect#other",
       "maxLength": 200,
       "required": true,
       "text": "Please specify",
@@ -716,7 +716,7 @@
     },
     {
       "answerValueSet": "#3",
-      "linkId": "ss",
+      "linkId": "singleselect",
       "required": true,
       "text": "select single",
       "type": "coding"
@@ -730,7 +730,7 @@
             "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/ss"
           },
           "operator": "=",
-          "question": "ss"
+          "question": "singleselect"
         }
       ],
       "extension": [
@@ -739,27 +739,27 @@
           "valueInteger": 1
         }
       ],
-      "linkId": "ss#other",
+      "linkId": "singleselect#other",
       "maxLength": 200,
       "required": true,
       "text": "Please specify",
       "type": "string"
     },
     {
-      "linkId": "t",
+      "linkId": "text-long",
       "required": true,
       "text": "text long",
       "type": "text"
     },
     {
-      "linkId": "saf",
+      "linkId": "text-short",
       "required": true,
       "text": "text short",
       "type": "string"
     },
     {
-      "linkId": "op",
-      "required": true,
+      "linkId": "text-optional",
+      "required": false,
       "text": "optional text",
       "type": "string"
     },
@@ -816,7 +816,7 @@
           "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-input"
         }
       ],
-      "linkId": "lt",
+      "linkId": "input-topic-linked",
       "maxLength": 150,
       "repeats": true,
       "required": true,
@@ -833,7 +833,7 @@
             },
             {
               "url": "question",
-              "valueString": "c"
+              "valueString": "country"
             }
           ],
           "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
@@ -856,7 +856,7 @@
           "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
         }
       ],
-      "linkId": "ewa",
+      "linkId": "enablewhen-expr-and",
       "modifierExtension": [
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
@@ -880,7 +880,7 @@
             },
             {
               "url": "question",
-              "valueString": "c"
+              "valueString": "country"
             }
           ],
           "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
@@ -910,13 +910,13 @@
             },
             {
               "url": "question",
-              "valueString": "mu"
+              "valueString": "multiselect"
             }
           ],
           "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
         }
       ],
-      "linkId": "or",
+      "linkId": "enablewhen-expr-or",
       "modifierExtension": [
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
@@ -972,15 +972,15 @@
       "enableWhen": [
         {
           "operator": "exists",
-          "question": "d"
+          "question": "date-min-relative"
         },
         {
           "answerDate": "2000",
           "operator": ">",
-          "question": "dd"
+          "question": "date-year-topic-output"
         }
       ],
-      "linkId": "notopic",
+      "linkId": "enablewhen-plain-and",
       "required": true,
       "text": "Enable When (No Topic)",
       "type": "string"
