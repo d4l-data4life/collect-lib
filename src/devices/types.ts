@@ -1,3 +1,4 @@
+import { TranslatedString } from '../types';
 import { DEVICE_ANNOTATION_DATA_TYPE } from './annotations/types';
 
 // TODO: This should be consolidated with ProgramDevices
@@ -39,12 +40,10 @@ export interface SDKDeviceConfig extends BaseDeviceConfig {
   dataTypes: DEVICE_SIGNAL_TYPE[];
 }
 
-export interface BleDeviceMetaLabel {
+export type BleDeviceMetaLabel = {
   device: string;
   name: string;
-  de?: string;
-  en?: string;
-}
+} & TranslatedString;
 
 export type DEVICE_KEY = DEVICE_KEY_BLE | DEVICE_KEY_API | DEVICE_KEY_SDK | DEVICE_KEY_INTERNAL;
 
@@ -75,13 +74,13 @@ export type DEVICE_KEY_INTERNAL =
 export type DEVICE_MOVELLA_PAYLOAD_MODES = 'completeEuler' | 'customMode1' | 'rateQuantities';
 
 export type DEVICE_SIGNAL_TYPE_APPLE =
-  | 'stepCount'
+  | 'steps'
   | 'sleepAnalysis'
-  | 'walkingAndRunningDistance'
-  | 'activeEnergy'
+  | 'distance'
+  | 'activeCalories'
   | 'heartRate'
   | 'restingHeartRate'
-  | 'hrv'
+  | 'hrvSdnn'
   | 'respiratoryRate'
   | 'spo2'
   | 'skinTemperature'
@@ -110,13 +109,20 @@ export type DEVICE_SIGNAL_TYPE =
   | 'egvs'
   // Fitbit types
   | 'hrv'
+  | 'hrvRmssd'
   | 'respiratoryRate'
   | 'steps'
   | 'calories'
+  | 'activeCalories'
+  | 'dailyCalories'
+  | 'dailyCaloriesTotal'
   | 'sleep'
   | 'skinTemperature'
+  | 'skinTemperatureDeviation'
   | 'spo2'
   | 'menstrualCycle'
+  | 'dailySteps'
+  | 'dailyStepsTotal'
   | 'dailyFloors'
   | 'dailyDistance'
   | 'bodyBattery'

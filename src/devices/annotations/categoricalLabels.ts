@@ -1,6 +1,6 @@
-import { AppleHealthSleepStates, APPLE_HEALTH_SLEEP_STATE_MAP } from './appleHealth';
-import { FitbitSleepLevelTypes, FITBIT_SLEEP_LEVEL_MAP } from './fitbit';
-import { HealthConnectSleepStages, HEALTH_CONNECT_SLEEP_STAGE_MAP } from './healthConnect';
+import { APPLE_HEALTH_SLEEP_STATE_MAP, AppleHealthSleepStates } from './appleHealth';
+import { FITBIT_SLEEP_LEVEL_MAP, FitbitSleepLevelTypes } from './fitbit';
+import { HEALTH_CONNECT_SLEEP_STAGE_MAP, HealthConnectSleepStages } from './healthConnect';
 import { MENSTRUAL_CYCLE_PHASE, MENSTRUAL_FLOW } from './menstrual';
 
 // Mirrored by hand in data-receiver pkg/models/categorical_labels.go keep in sync when either changes.
@@ -18,12 +18,14 @@ export const SLEEP_LEVEL_LABELS: Record<number, FitbitSleepLevelTypes> =
   invertLabelMap(FITBIT_SLEEP_LEVEL_MAP);
 
 // source: src/devices/annotations/appleHealth.ts:61 (APPLE_HEALTH_SLEEP_STATE_MAP)
-export const APPLE_HEALTH_SLEEP_STATE_LABELS: Record<number, AppleHealthSleepStates> =
-  invertLabelMap(APPLE_HEALTH_SLEEP_STATE_MAP);
+export const APPLE_HEALTH_SLEEP_STATE_LABELS: Record<number, AppleHealthSleepStates> = invertLabelMap(
+  APPLE_HEALTH_SLEEP_STATE_MAP
+);
 
 // source: src/devices/annotations/healthConnect.ts:21 (HEALTH_CONNECT_SLEEP_STAGE_MAP)
-export const HEALTH_CONNECT_SLEEP_STAGE_LABELS: Record<number, HealthConnectSleepStages> =
-  invertLabelMap(HEALTH_CONNECT_SLEEP_STAGE_MAP);
+export const HEALTH_CONNECT_SLEEP_STAGE_LABELS: Record<number, HealthConnectSleepStages> = invertLabelMap(
+  HEALTH_CONNECT_SLEEP_STAGE_MAP
+);
 
 // source: https://developer.android.com/reference/kotlin/androidx/health/services/client/data/UserActivityState
 export type ActivityDetectionTypes = 'unknown' | 'exercise' | 'passive' | 'asleep';
@@ -35,7 +37,7 @@ export const ACTIVITY_DETECTION_LABELS: Record<number, ActivityDetectionTypes> =
   3: 'asleep',
 };
 
-// source: menstrual.ts:17 (MENSTRUAL_CYCLE_PHASE) 
+// source: menstrual.ts:17 (MENSTRUAL_CYCLE_PHASE)
 export const MENSTRUAL_CYCLE_PHASE_LABELS: Record<number, keyof typeof MENSTRUAL_CYCLE_PHASE> =
   invertLabelMap(MENSTRUAL_CYCLE_PHASE);
 
@@ -106,7 +108,7 @@ export const APPLE_HEALTH_CONTRACEPTIVE_TYPE_LABELS: Record<number, AppleHealthC
 };
 
 // source: phoenix/node_modules/@kingstinct/react-native-healthkit@14.0.2/lib/typescript/generated/
-// healthkit.generated.d.ts, `enum WorkoutActivityType` 
+// healthkit.generated.d.ts, `enum WorkoutActivityType`
 export type AppleHealthWorkoutActivityTypes =
   | 'americanFootball'
   | 'archery'

@@ -37,12 +37,14 @@ export function toDeviceConfig(devices: ProgramDevice[]): DeviceConfig[] {
             type: 'ble',
             device: device.type,
             dataTypes: device.dataTypes as DEVICE_ANNOTATION_DATA_TYPE[],
-            labels: (device.labels || []).map((label) => ({
-              device: device.type,
-              de: label.de ?? label.en ?? label.name,
-              en: label.en ?? label.de ?? label.name,
-              name: label.name,
-            })) as BleDeviceMetaLabel[],
+            labels: (device.labels || []).map(
+              (label): BleDeviceMetaLabel => ({
+                ...label,
+                device: device.type,
+                de: label.de ?? label.en ?? label.name,
+                en: label.en ?? label.de ?? label.name,
+              })
+            ),
             outputRate: device.outputRate,
             streamingMode: device.streamingMode,
             sensorDelay: device.sensorDelay,
