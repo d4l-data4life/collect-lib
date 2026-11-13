@@ -29,7 +29,7 @@ import {
   ValuesetSortingExtension,
 } from '../constants';
 import { inputTypeFromJSON, TopicScope } from '@d4l/grpc-modules/research-pillars';
-import { fhirToQuestionnaire, parseExtensions } from '../parser';
+import { parseFHIRQuestionnaire, parseExtensions } from '../parser';
 
 const TOPIC = 'http://fhir.data4life.care/r5/example/topic/socialNetwork';
 const BAD_TOPIC = 'http://fhir.data4life.care/r5/example/topic/social-network';
@@ -420,7 +420,7 @@ describe('enableWhen expression dependencies', () => {
 
   it('imports an expression dependency with its bindings and marks the question as dependent', () => {
     const expression = "%gender.exists() and (%gender contains 'male').not()";
-    const questionnaire = fhirToQuestionnaire({
+    const questionnaire = parseFHIRQuestionnaire({
       en: {
         resourceType: 'Questionnaire',
         status: 'active',
@@ -455,7 +455,7 @@ describe('enableWhen expression dependencies', () => {
   });
 
   it('keeps the item codes of the template', () => {
-    const questionnaire = fhirToQuestionnaire({
+    const questionnaire = parseFHIRQuestionnaire({
       en: {
         resourceType: 'Questionnaire',
         status: 'active',
@@ -489,7 +489,7 @@ describe('enableWhen expression dependencies', () => {
 
 describe('group items (content-step covers)', () => {
   it('recurses into a group item and converts its image/description children', () => {
-    const questionnaire = fhirToQuestionnaire({
+    const questionnaire = parseFHIRQuestionnaire({
       en: {
         resourceType: 'Questionnaire',
         status: 'active',
@@ -537,7 +537,7 @@ describe('group items (content-step covers)', () => {
   });
 
   it('returns an empty items array for a group item with no children', () => {
-    const questionnaire = fhirToQuestionnaire({
+    const questionnaire = parseFHIRQuestionnaire({
       en: {
         resourceType: 'Questionnaire',
         status: 'active',
@@ -553,7 +553,7 @@ describe('group items (content-step covers)', () => {
 
 describe('native type resolution (parseInputType)', () => {
   const questionnaireWithItem = (item: fhir5.QuestionnaireItem) =>
-    fhirToQuestionnaire({
+    parseFHIRQuestionnaire({
       en: {
         resourceType: 'Questionnaire',
         status: 'active',
@@ -621,7 +621,7 @@ describe('native type resolution (parseInputType)', () => {
 
 describe('matrix questions', () => {
   it('resolves matrix rows as matrix_item, with the shared column answerset only on the parent', () => {
-    const questionnaire = fhirToQuestionnaire({
+    const questionnaire = parseFHIRQuestionnaire({
       en: {
         resourceType: 'Questionnaire',
         status: 'active',
@@ -681,7 +681,7 @@ describe('matrix questions', () => {
 
 describe('answerset order', () => {
   const questionnaireWithAnswerset = (extension?: fhir5.Extension[]) =>
-    fhirToQuestionnaire({
+    parseFHIRQuestionnaire({
       en: {
         resourceType: 'Questionnaire',
         status: 'active',

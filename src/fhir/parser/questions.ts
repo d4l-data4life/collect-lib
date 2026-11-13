@@ -13,7 +13,7 @@ export type QuestionnaireMap = {
   [language: string]: fhir5.Questionnaire;
 };
 
-export const fhirToQuestionnaire = (fhirQuestionnaires: QuestionnaireMap): Questionnaire => {
+export const parseFHIRQuestionnaire = (fhirQuestionnaires: QuestionnaireMap): Questionnaire => {
   const first = fhirQuestionnaires[Object.keys(fhirQuestionnaires)[0]];
   if (!first.name || !first.version) {
     throw new Error('FHIR Questionnaire is missing required fields (name, version)');

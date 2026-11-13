@@ -21,6 +21,17 @@ pnpm add file:../collect-lib
 
 After every change in the library a `pnpm install` has to be triggered for the changes to take effect in RS.
 
+## Go module
+
+collect-lib is also a Go module, `github.com/gesundheitscloud/collect-lib`, so Go services can use selected functions without a Go port.
+The TypeScript is bundled and run in-process with [goja](https://github.com/dop251/goja), a pure-Go JavaScript interpreter,
+and the module is versioned with the same release tags as the npm package.
+
+If you change TS code that a Go package wraps, commit the regenerated `pkg/*/bundle/` from
+`yarn build` with it. If you bump `@d4l/grpc-modules`, bump its Go module to the same version.
+
+See **[README_GO.md](README_GO.md)** for usage, how it works, and how to export another function.
+
 ## Types
 
 The type documentation is generated automatically from the `src/types` files.
