@@ -32,9 +32,10 @@ a pseudo-version.
 
 ## Packages
 
-| Package          | Wraps (TypeScript)                        | Go API                                                     |
-| ---------------- | ----------------------------------------- | ---------------------------------------------------------- |
+| Package          | Wraps (TypeScript)                           | Go API                                                     |
+| ---------------- | -------------------------------------------- | ---------------------------------------------------------- |
 | `pkg/fhirparser` | `parseFHIRQuestionnaire` (`src/fhir/parser`) | `ParsePackedQuestionnaire(map[string]fhir5.Questionnaire)` |
+| `pkg/guard`      | `generateStepGuard` (`src/helper/guard.ts`)  | `FulfillmentDate(StepCondition, Params)`                   |
 
 ### pkg/fhirparser
 
@@ -67,6 +68,31 @@ if errors.Is(err, fhirparser.ErrInvalidQuestionnaire) {
   types at least as new as the ones the parser writes.
 - **Speed:** about 4 ms for the 25-question en+de fixture on an Apple M-series laptop.
 - **Concurrency:** safe to call from many goroutines.
+
+### pkg/guard
+
+Works out when a program step condition (`start`, `end`, `requiredCondition`) counts as
+fulfilled, the same way Phoenix does.
+
+```go
+import "github.com/gesundheitscloud/collect-lib/pkg/guard"
+
+cond := guard.StepCondition{Type: "consent", ConsentKey: "study", Offset: "P7D"}
+when, err := guard.FulfillmentDate(cond, guard.Params{
+	ConsentTimes: map[string]*time.Time{"study": &consentGiven},
+})
+// when == nil: not fulfilled (yet)
+```
+
+- **Input:** `StepCondition` mirrors the TS `StepCondition` union, with `Type` deciding which
+  fields apply. `Params` holds what the conditions refer to: survey answers with their dates,
+  and consent, routine and response times.
+- **Unknown condition types** are logged and treated as never fulfilled (`nil`, no error), as
+  in TypeScript. Conditions the TS code can't process, like an `and` without `items`, return
+  `ErrInvalidCondition`.
+- **Time zone:** day, week and month offsets are calendar arithmetic in the service's local
+  time zone (see [Limits](#limits)).
+- **Speed:** under 1 ms per call.
 
 ## How it works
 
@@ -106,174 +132,72 @@ src/…/*.ts ──yarn build (tsup)──▶ pkg/<package>/bundle/bundle.js ─
 
 ### From code that is already bundled
 
-`src/fhir/parser/index.ts` also exports `parseExtensions`, for example. Using it needs only Go:
+If the function is already exported by the entry file of an existing Go package's bundle,
+only Go changes:
 
-1. Add a typed function to the existing package that calls
-   `bundle.Call("parseExtensions", …)` and decodes the result.
-2. Add a test (see [Tests](#tests)).
+1. Add a typed Go function to that package that calls `bundle.Call("<function>", …)` and
+   decodes the result (see step 4 below).
+2. Add tests (see [Tests](#tests)) and update the [Packages](#packages) table.
 
-### From another part of collect-lib
+### As a new Go package
 
-Example: a `guard` package that evaluates step conditions with `src/helper/guard.ts`, so a Go
-service can work out when a program step starts or ends exactly the way Phoenix does.
-
-1. **Check the TS code works in goja.** The code, and everything it imports, ends up in the
-   bundle and runs without Node or browser APIs:
-   - Not available: `Intl`, `Buffer`, `TextEncoder`, `crypto`, `fetch`, `window`, timers,
-     `require`. `console` is provided by `jsbundle` and logs to Go's default `slog` logger.
-   - Libraries count too. `guard.ts` uses luxon, which needs `Intl` to look up the system
-     locale. Setting a fixed locale avoids that (see the entry file below).
-   - Check what the bundle pulls in. luxon makes up nearly all of the guard bundle's 260 KB.
-2. **Write an entry file that takes and returns plain data.** Go can only call functions whose
-   arguments and result survive JSON. `guard.ts` doesn't have any: `generateStepGuard` returns
-   an object with methods, and `getFulfillmentDate` takes and returns `Date`s. So add a small
-   wrapper that turns JSON in into guards and dates, and the result back into JSON. Go-only
-   entry files go in `src/go/<package>.ts`:
-
-   ```ts
-   // src/go/guard.ts: entry for the Go package pkg/guard (see README_GO.md).
-   import { Settings } from 'luxon';
-   import { generateStepGuard } from '../helper/guard';
-   import { Answers, StepCondition } from '../types';
-
-   // goja has no Intl. luxon only needs it to look up the system locale, so set one.
-   Settings.defaultLocale = 'en-US';
-
-   type Times = { [key: string]: string | null };
-
-   export type StepParams = {
-     multiAnswers?: { [surveyName: string]: { date: string | null; answers: Answers } };
-     consentTimes?: Times;
-     routineTimes?: Times;
-     responseTimes?: Times;
-   };
-
-   const toDate = (iso: string | null) => (iso === null ? null : new Date(iso));
-
-   const mapValues = <A, B>(obj: { [key: string]: A } | undefined, f: (a: A) => B) => {
-     if (!obj) return undefined;
-     const out: { [key: string]: B } = {};
-     for (const key of Object.keys(obj)) out[key] = f(obj[key]);
-     return out;
-   };
-
-   // When the step condition counts as fulfilled (ISO 8601), or null if it isn't.
-   export const stepFulfillmentDate = (cond: StepCondition, params: StepParams): string | null => {
-     const date = generateStepGuard(cond).guard.getFulfillmentDate({
-       multiAnswers: mapValues(params.multiAnswers, (s) => ({
-         date: toDate(s.date),
-         answers: s.answers,
-       })),
-       consentTimes: mapValues(params.consentTimes, toDate),
-       routineTimes: mapValues(params.routineTimes, toDate),
-       responseTimes: mapValues(params.responseTimes, toDate),
-     });
-     return date ? date.toISOString() : null;
-   };
-   ```
-
-   The TS target is ES2017, so newer helpers like `Object.fromEntries` don't type-check here.
-
-3. **Add the bundle** to `goBundles` in `tsup.config.ts`:
-   ```ts
-   const goBundles: Record<string, string> = {
-     fhirparser: 'src/fhir/parser/index.ts',
-     guard: 'src/go/guard.ts',
-   };
-   ```
-   Then run `yarn build`, which creates `pkg/guard/bundle/bundle.js`.
-4. **Add the Go package** `pkg/guard/guard.go`:
-
-   ```go
-   // Package guard evaluates collect-lib step conditions (src/helper/guard.ts) in Go.
-   package guard
-
-   import (
-   	_ "embed"
-   	"encoding/json"
-   	"errors"
-   	"fmt"
-   	"time"
-
-   	"github.com/gesundheitscloud/collect-lib/pkg/internal/jsbundle"
-   )
-
-   //go:embed bundle/bundle.js
-   var bundleSource string
-
-   var bundle = jsbundle.MustLoad("guard/bundle.js", bundleSource)
-
-   var ErrInvalidCondition = errors.New("guard: invalid step condition")
-
-   // StepCondition mirrors the TS StepCondition union: Type says which other fields apply.
-   type StepCondition struct {
-   	Type         string          `json:"type"`
-   	Offset       string          `json:"offset,omitempty"`
-   	Date         string          `json:"date,omitempty"`
-   	QuestionType string          `json:"questionType,omitempty"`
-   	SurveyName   string          `json:"surveyName,omitempty"`
-   	LinkID       string          `json:"linkID,omitempty"`
-   	Operator     string          `json:"operator,omitempty"`
-   	Operand      string          `json:"operand,omitempty"`
-   	RoutineName  string          `json:"routineName,omitempty"`
-   	ConsentKey   string          `json:"consentKey,omitempty"`
-   	ResponseName string          `json:"responseName,omitempty"`
-   	Items        []StepCondition `json:"items,omitempty"`
-   	Sorting      string          `json:"sorting,omitempty"`
-   	Item         *StepCondition  `json:"item,omitempty"`
-   }
-
-   type SurveyAnswers struct {
-   	Date    *time.Time     `json:"date"`
-   	Answers map[string]any `json:"answers"` // string or []string per question
-   }
-
-   type Params struct {
-   	MultiAnswers  map[string]SurveyAnswers `json:"multiAnswers,omitempty"`
-   	ConsentTimes  map[string]*time.Time    `json:"consentTimes,omitempty"`
-   	RoutineTimes  map[string]*time.Time    `json:"routineTimes,omitempty"`
-   	ResponseTimes map[string]*time.Time    `json:"responseTimes,omitempty"`
-   }
-
-   // FulfillmentDate returns when cond counts as fulfilled, or nil if it isn't.
-   func FulfillmentDate(cond StepCondition, p Params) (*time.Time, error) {
-   	out, err := bundle.Call("stepFulfillmentDate", cond, p)
-   	if errors.Is(err, jsbundle.ErrThrown) {
-   		return nil, fmt.Errorf("%w: %w", ErrInvalidCondition, err)
-   	}
-   	if err != nil {
-   		return nil, fmt.Errorf("guard: %w", err)
-   	}
-   	var date *time.Time // JSON null → nil
-   	if err := json.Unmarshal(out, &date); err != nil {
-   		return nil, fmt.Errorf("guard: decoding result: %w", err)
-   	}
-   	return date, nil
-   }
-   ```
-
-   - Choose Go types whose `json` tags give exactly the JSON the TS function expects. Prefer
-     existing types (go-fhir, grpc-modules, or the service's own if it already models these)
-     over writing new ones.
-   - `time.Time` encodes as RFC 3339, which `new Date(...)` parses, and decodes the
-     `toISOString()` result. Dates cross the boundary as strings either way.
-   - Decode proto results with `protojson`, everything else with `encoding/json`.
-   - Keep the TS behaviour, including its gaps. An unknown condition type is logged and
-     treated as never fulfilled (`nil`, no error). Only input the TS code throws on, like an
-     `and` without `items`, becomes `ErrInvalidCondition`.
-
+1. **Check that the TS code can run in goja.** The function and everything it imports end up
+   in the bundle, so check all of it, including libraries:
+   - No Node or browser APIs are available: no `Intl`, `Buffer`, `TextEncoder`, `crypto`,
+     `fetch`, `window`, timers or `require`. `console` is provided by `jsbundle` and logs to
+     Go's default `slog` logger.
+   - If a library needs one of these only for something you don't use, configure it to avoid
+     that path in the entry file (e.g. set a fixed locale so it never asks `Intl`).
+   - Look at what the bundle pulls in. Large dependencies make every pooled runtime bigger.
+2. **Write an entry file** `src/go/<package>.ts` that exports only what Go needs, with
+   functions that take and return plain JSON data:
+   - Go calls functions by name with JSON arguments and gets their JSON result back. Classes,
+     methods, functions, `Date`, `Map` and `Set` don't survive that.
+   - Where the TS code works with those, wrap it: convert the JSON input into what the code
+     expects, call it, and convert the result back to JSON. Dates cross as ISO 8601 strings.
+   - Keep the wrapper thin, with no logic of its own, so Go runs the same code as the apps.
+   - The TS target is ES2017. Newer built-ins (e.g. `Object.fromEntries`) don't type-check.
+   - If an existing entry file already exports exactly the right functions with plain-data
+     signatures, use it directly instead.
+3. **Register the bundle** in `goBundles` in `tsup.config.ts`, as
+   `<package>: 'src/go/<package>.ts'`, and run `yarn build`. That creates
+   `pkg/<package>/bundle/bundle.js`.
+4. **Write the Go package** `pkg/<package>/<package>.go`:
+   - Embed the bundle with `//go:embed bundle/bundle.js` and load it once in a package-level
+     variable with `jsbundle.MustLoad("<package>/bundle.js", bundleSource)`.
+   - Define an error sentinel for invalid input, e.g. `ErrInvalid<Thing>`.
+   - Write one typed Go function per exported TS function. It calls
+     `bundle.Call("<tsFunction>", args...)`, wraps `jsbundle.ErrThrown` in the sentinel,
+     wraps every other error with the package name, and decodes the result.
+   - Choose Go input types whose `json` encoding is exactly the JSON the TS function expects.
+     Prefer existing types (go-fhir, grpc-modules) over new ones. `time.Time` works for dates.
+   - Decode proto results with `protojson`, everything else with `encoding/json`. A JSON `null`
+     decodes into a nil pointer.
+   - Keep the TS behaviour, including its gaps.
+   - Document the package: what it wraps, its errors, and anything that differs from running
+     in the browser (e.g. time zone).
 5. **Add tests** (see [Tests](#tests)) and a row to the [Packages](#packages) table.
-6. **Commit** the entry file, `tsup.config.ts`, the generated bundle and the Go package
-   together.
+6. **Commit together:** the entry file with its tests and fixture, `tsup.config.ts`, the
+   generated bundle and the Go package.
+
+`pkg/guard` follows these steps and can serve as a reference.
 
 ### Tests
 
-Each package should prove that Go gives the same result as TypeScript. Use the fixtures the
-Jest tests already check, from `src/**/fixtures`: feed the same input through the Go function
-and compare with the expected output. For an example, see `TestParseQuestionnaires_MatchesTypeScriptFixture`.
-If the input passes through Go types (like `fhir5.Questionnaire`), also check that the fixture
-survives a JSON round trip through them unchanged (`TestFhir5RoundTripIsLossless`); otherwise
-fields Go doesn't model never reach the JS code.
+Each package should prove that Go gives the same result as TypeScript, from one set of test
+data:
+
+1. **Shared fixture.** Put input and expected output in a JSON file next to the entry file,
+   e.g. `src/go/fixtures/<package>.json`. A Jest test runs every case through the entry file,
+   and a Go test runs the same cases through the Go function. If the TS code already has
+   suitable Jest fixtures, use those instead.
+2. **Round trip.** If the input passes through Go types, check that the fixture survives a JSON
+   round trip through them unchanged. Otherwise fields the Go types don't model never reach
+   the JS code.
+3. **Errors.** Check that invalid input returns the package's error sentinel.
+4. **Concurrency.** Call the function from several goroutines, and run the tests with `-race`.
+5. **Time zones,** if dates are involved. Keep fixture dates away from DST changes so the
+   fixture passes in every time zone. Pin time-zone behaviour in a separate Go test.
 
 ## Maintenance
 

@@ -4,6 +4,7 @@ import { defineConfig, type Options } from 'tsup';
 // Each becomes pkg/<package>/bundle/bundle.js, which that package embeds and runs with goja.
 const goBundles: Record<string, string> = {
   fhirparser: 'src/fhir/parser/index.ts',
+  guard: 'src/go/guard.ts',
 };
 
 // goja has no module system, so each bundle is a self-contained IIFE that exposes its exports

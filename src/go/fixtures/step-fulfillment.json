@@ -1,0 +1,251 @@
+{
+  "params": {
+    "multiAnswers": {
+      "survey1": {
+        "date": "2026-06-10T08:00:00.000Z",
+        "answers": { "A1": "yes", "M1": ["a", "b"], "B2": "2026-06-20" }
+      },
+      "survey2": { "date": "2026-06-15T09:00:00.000Z", "answers": { "A1": "no" } },
+      "undated": { "date": null, "answers": { "A1": "yes" } }
+    },
+    "consentTimes": { "c1": "2026-06-01T12:00:00.000Z", "c2": null },
+    "routineTimes": { "r1": "2026-06-05T06:00:00.000Z" },
+    "responseTimes": { "resp1": "2026-06-07T07:30:00.000Z" }
+  },
+  "cases": [
+    {
+      "name": "coding answer matches",
+      "condition": {
+        "type": "question",
+        "questionType": "coding",
+        "surveyName": "survey1",
+        "linkID": "A1",
+        "operator": "=",
+        "operand": "yes"
+      },
+      "expected": "2026-06-10T08:00:00.000Z"
+    },
+    {
+      "name": "coding answer matches, with offset",
+      "condition": {
+        "type": "question",
+        "questionType": "coding",
+        "surveyName": "survey1",
+        "linkID": "A1",
+        "operator": "=",
+        "operand": "yes",
+        "offset": "P2D"
+      },
+      "expected": "2026-06-12T08:00:00.000Z"
+    },
+    {
+      "name": "coding answer matches, with negative offset",
+      "condition": {
+        "type": "question",
+        "questionType": "coding",
+        "surveyName": "survey1",
+        "linkID": "A1",
+        "operator": "=",
+        "operand": "yes",
+        "offset": "-PT12H"
+      },
+      "expected": "2026-06-09T20:00:00.000Z"
+    },
+    {
+      "name": "coding answer does not match",
+      "condition": {
+        "type": "question",
+        "questionType": "coding",
+        "surveyName": "survey2",
+        "linkID": "A1",
+        "operator": "=",
+        "operand": "yes"
+      },
+      "expected": null
+    },
+    {
+      "name": "multi-select answer contains code",
+      "condition": {
+        "type": "question",
+        "questionType": "coding",
+        "surveyName": "survey1",
+        "linkID": "M1",
+        "operator": "=",
+        "operand": "b"
+      },
+      "expected": "2026-06-10T08:00:00.000Z"
+    },
+    {
+      "name": "multi-select answer lacks code",
+      "condition": {
+        "type": "question",
+        "questionType": "coding",
+        "surveyName": "survey1",
+        "linkID": "M1",
+        "operator": "!=",
+        "operand": "a"
+      },
+      "expected": null
+    },
+    {
+      "name": "date answer",
+      "condition": { "type": "question", "questionType": "date", "surveyName": "survey1", "linkID": "B2" },
+      "expected": "2026-06-20T00:00:00.000Z"
+    },
+    {
+      "name": "date answer, with offset",
+      "condition": {
+        "type": "question",
+        "questionType": "date",
+        "surveyName": "survey1",
+        "linkID": "B2",
+        "offset": "P1W"
+      },
+      "expected": "2026-06-27T00:00:00.000Z"
+    },
+    {
+      "name": "date answer that is not a date",
+      "condition": { "type": "question", "questionType": "date", "surveyName": "survey1", "linkID": "A1" },
+      "expected": null
+    },
+    {
+      "name": "unknown question type",
+      "condition": { "type": "question", "questionType": "decimal", "surveyName": "survey1", "linkID": "A1" },
+      "expected": null
+    },
+    {
+      "name": "fixed date, with offset",
+      "condition": { "type": "date", "date": "2026-07-01", "offset": "P3D" },
+      "expected": "2026-07-04T00:00:00.000Z"
+    },
+    {
+      "name": "survey answered",
+      "condition": { "type": "survey", "surveyName": "survey2" },
+      "expected": "2026-06-15T09:00:00.000Z"
+    },
+    {
+      "name": "survey answered without date",
+      "condition": { "type": "survey", "surveyName": "undated" },
+      "expected": null
+    },
+    {
+      "name": "survey not answered",
+      "condition": { "type": "survey", "surveyName": "survey3" },
+      "expected": null
+    },
+    {
+      "name": "consent given, with offset",
+      "condition": { "type": "consent", "consentKey": "c1", "offset": "PT36H" },
+      "expected": "2026-06-03T00:00:00.000Z"
+    },
+    {
+      "name": "consent without time",
+      "condition": { "type": "consent", "consentKey": "c2" },
+      "expected": null
+    },
+    {
+      "name": "consent not given",
+      "condition": { "type": "consent", "consentKey": "c3" },
+      "expected": null
+    },
+    {
+      "name": "routine recorded",
+      "condition": { "type": "routine", "routineName": "r1" },
+      "expected": "2026-06-05T06:00:00.000Z"
+    },
+    {
+      "name": "response received",
+      "condition": { "type": "response", "responseName": "resp1" },
+      "expected": "2026-06-07T07:30:00.000Z"
+    },
+    {
+      "name": "and picks the latest date by default",
+      "condition": {
+        "type": "and",
+        "items": [
+          { "type": "survey", "surveyName": "survey1" },
+          { "type": "survey", "surveyName": "survey2" }
+        ]
+      },
+      "expected": "2026-06-15T09:00:00.000Z"
+    },
+    {
+      "name": "and with sorting earliest",
+      "condition": {
+        "type": "and",
+        "sorting": "earliest",
+        "items": [
+          { "type": "survey", "surveyName": "survey1" },
+          { "type": "survey", "surveyName": "survey2" }
+        ]
+      },
+      "expected": "2026-06-10T08:00:00.000Z"
+    },
+    {
+      "name": "and with one unfulfilled item",
+      "condition": {
+        "type": "and",
+        "items": [
+          { "type": "survey", "surveyName": "survey1" },
+          { "type": "consent", "consentKey": "c3" }
+        ]
+      },
+      "expected": null
+    },
+    {
+      "name": "or picks the earliest date by default",
+      "condition": {
+        "type": "or",
+        "items": [
+          { "type": "routine", "routineName": "r1" },
+          { "type": "consent", "consentKey": "c1" }
+        ]
+      },
+      "expected": "2026-06-01T12:00:00.000Z"
+    },
+    {
+      "name": "or with sorting latest, skipping unfulfilled items",
+      "condition": {
+        "type": "or",
+        "sorting": "latest",
+        "items": [
+          { "type": "routine", "routineName": "r1" },
+          { "type": "consent", "consentKey": "c1" },
+          { "type": "survey", "surveyName": "survey3" }
+        ]
+      },
+      "expected": "2026-06-05T06:00:00.000Z"
+    },
+    {
+      "name": "or with no fulfilled item",
+      "condition": {
+        "type": "or",
+        "items": [
+          { "type": "consent", "consentKey": "c3" },
+          { "type": "survey", "surveyName": "survey3" }
+        ]
+      },
+      "expected": null
+    },
+    {
+      "name": "offset around nested and",
+      "condition": {
+        "type": "offset",
+        "offset": "P1M",
+        "item": {
+          "type": "and",
+          "items": [
+            { "type": "survey", "surveyName": "survey1" },
+            { "type": "date", "date": "2026-06-01" }
+          ]
+        }
+      },
+      "expected": "2026-07-10T08:00:00.000Z"
+    },
+    {
+      "name": "unknown condition type",
+      "condition": { "type": "weather" },
+      "expected": null
+    }
+  ]
+}
