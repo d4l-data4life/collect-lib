@@ -451,10 +451,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bufbuild/protobuf@npm:2.7.0":
+  version: 2.7.0
+  resolution: "@bufbuild/protobuf@npm:2.7.0"
+  checksum: 10c0/9ae9b9ef7f8fd5cc0fdf8c45650c9cbd4324b61ca289feb2e7a28dabda755f025241ce58a88ae269821fd719302a6fc6709bcdb2175b7311ba4feb8af73ed560
+  languageName: node
+  linkType: hard
+
+"@bufbuild/protobuf@npm:^2.0.0, @bufbuild/protobuf@npm:^2.14.1":
+  version: 2.16.0
+  resolution: "@bufbuild/protobuf@npm:2.16.0"
+  checksum: 10c0/ba3bc677e801a71d9cf0bdc138174144e493706efec3a47865eb07e956423315a80ff12301f6835d352202ae4d6599f2946a7c67338cf0079ed2a06af1a18097
+  languageName: node
+  linkType: hard
+
 "@d4l/collect-lib@workspace:.":
   version: 0.0.0-use.local
   resolution: "@d4l/collect-lib@workspace:."
   dependencies:
+    "@d4l/grpc-modules": "npm:1.39.2"
     "@noble/curves": "npm:^1.9.3"
     "@scure/bip39": "npm:^1.5.4"
     "@types/fhir": "npm:^0.0.41"
@@ -478,6 +493,18 @@ __metadata:
     uuid: "npm:^11.1.0"
   languageName: unknown
   linkType: soft
+
+"@d4l/grpc-modules@npm:1.39.2":
+  version: 1.39.2
+  resolution: "@d4l/grpc-modules@npm:1.39.2"
+  dependencies:
+    "@bufbuild/protobuf": "npm:2.7.0"
+    "@improbable-eng/grpc-web": "npm:^0.15.0"
+    ts-proto: "npm:^2.7.7"
+    typescript: "npm:^5.8.3"
+  checksum: 10c0/6faaa75f56c16cde26859b2b3ccbb2c1dab53e33713e56bfaef1dc2b5778dcb334514da4b9f75d1fd4e6b150f35ae4aa7a2e93dcb3f9a13bb0dbc6e00aa6d377
+  languageName: node
+  linkType: hard
 
 "@esbuild/aix-ppc64@npm:0.25.9":
   version: 0.25.9
@@ -658,6 +685,17 @@ __metadata:
   version: 0.25.9
   resolution: "@esbuild/win32-x64@npm:0.25.9"
   conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@improbable-eng/grpc-web@npm:^0.15.0":
+  version: 0.15.0
+  resolution: "@improbable-eng/grpc-web@npm:0.15.0"
+  dependencies:
+    browser-headers: "npm:^0.4.1"
+  peerDependencies:
+    google-protobuf: ^3.14.0
+  checksum: 10c0/98949a73bf98a54e5df02a3a13e3dadad83a610a35ed57600e566a842777e02bec71de413e42a7728267a38c5ccf30af67fe516486e68546c2701e95d2446f5c
   languageName: node
   linkType: hard
 
@@ -1660,6 +1698,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"browser-headers@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "browser-headers@npm:0.4.1"
+  checksum: 10c0/3b08864bb955b295ab3dd6ab775c7798096c2e85486571803b4070ec484de83ccceebe531a8b00d5daf4463fada5e7ca18cd1a71cc1ee0dfdbab705332318cef
+  languageName: node
+  linkType: hard
+
 "browserslist@npm:^4.24.0":
   version: 4.29.1
   resolution: "browserslist@npm:4.29.1"
@@ -1773,6 +1818,13 @@ __metadata:
   version: 1.0.30001812
   resolution: "caniuse-lite@npm:1.0.30001812"
   checksum: 10c0/7f7375d80dbec0c4feeb11a0f655de12d27fd38a5ecff831ef2ceb7a74a87b9fb27d9ffcdd8b114e6f33f951e401ba86cfca489b8e78de505392d3d08e223abe
+  languageName: node
+  linkType: hard
+
+"case-anything@npm:^2.1.13":
+  version: 2.1.13
+  resolution: "case-anything@npm:2.1.13"
+  checksum: 10c0/b02ffa51d7d58b9a32df7b40973836e16afad131eae7d343e64cb3ca7be57a936bf3d6c9d57a7aa242cf2f545d9a33990b755e93bcac2517761d77773a4a6a30
   languageName: node
   linkType: hard
 
@@ -2019,6 +2071,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"detect-libc@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "detect-libc@npm:1.0.3"
+  bin:
+    detect-libc: ./bin/detect-libc.js
+  checksum: 10c0/4da0deae9f69e13bc37a0902d78bf7169480004b1fed3c19722d56cff578d16f0e11633b7fbf5fb6249181236c72e90024cbd68f0b9558ae06e281f47326d50d
+  languageName: node
+  linkType: hard
+
 "detect-newline@npm:^3.0.0":
   version: 3.1.0
   resolution: "detect-newline@npm:3.1.0"
@@ -2030,6 +2091,15 @@ __metadata:
   version: 29.6.3
   resolution: "diff-sequences@npm:29.6.3"
   checksum: 10c0/32e27ac7dbffdf2fb0eb5a84efd98a9ad084fbabd5ac9abb8757c6770d5320d2acd172830b28c4add29bb873d59420601dfc805ac4064330ce59b1adfd0593b2
+  languageName: node
+  linkType: hard
+
+"dprint-node@npm:^1.0.8":
+  version: 1.0.8
+  resolution: "dprint-node@npm:1.0.8"
+  dependencies:
+    detect-libc: "npm:^1.0.3"
+  checksum: 10c0/39c1f8511833226cde773129afc5862dfd05babe062375e6b1f5824e221a5743a4d9c48626f32f7c2080113566270fe80521a50acb9029a20a2e80a3cd5e4106
   languageName: node
   linkType: hard
 
@@ -4599,6 +4669,38 @@ __metadata:
   bin:
     ts-jest: cli.js
   checksum: 10c0/e4881717323c9e03ba9ad2f8726872cd0bede7f3f34095754aa850688b319f50294211cfd330edad878005e70601cbbbb0bb489ed0949a9aa545491e1083e923
+  languageName: node
+  linkType: hard
+
+"ts-poet@npm:^6.12.0":
+  version: 6.12.0
+  resolution: "ts-poet@npm:6.12.0"
+  dependencies:
+    dprint-node: "npm:^1.0.8"
+  checksum: 10c0/605ac770055259b618ba657b88995f7851d8a6106d9c335e71c8442be51a9b8a87c501aa7ab4babb43700a32ff47dc1cd877f78892c15166ded87c311c878735
+  languageName: node
+  linkType: hard
+
+"ts-proto-descriptors@npm:2.1.0":
+  version: 2.1.0
+  resolution: "ts-proto-descriptors@npm:2.1.0"
+  dependencies:
+    "@bufbuild/protobuf": "npm:^2.0.0"
+  checksum: 10c0/5695def6c31b7f3f8561876361a2db9f1ad859613fdcf1c7ffd093c3477fea4552ccccef9c99cd63ca2a215a7187e20e0de1fc942e2996d6671c25c6b190bf31
+  languageName: node
+  linkType: hard
+
+"ts-proto@npm:^2.7.7":
+  version: 2.18.3
+  resolution: "ts-proto@npm:2.18.3"
+  dependencies:
+    "@bufbuild/protobuf": "npm:^2.14.1"
+    case-anything: "npm:^2.1.13"
+    ts-poet: "npm:^6.12.0"
+    ts-proto-descriptors: "npm:2.1.0"
+  bin:
+    protoc-gen-ts_proto: protoc-gen-ts_proto
+  checksum: 10c0/16ea77f35e6c6d9c5064ef455b698c64955705a8fb64b2f08b113a5ed7809a607dff3b5869773cdb9ff5fd6a5037c8c883a1a1addc602a30d6173fb3a31708e3
   languageName: node
   linkType: hard
 

@@ -1,0 +1,1000 @@
+{
+  "contact": [
+    {
+      "name": "D4L data4life gGmbH",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "https://www.data4life.care"
+        }
+      ]
+    }
+  ],
+  "contained": [
+    {
+      "compose": {
+        "include": [
+          {
+            "concept": [
+              {
+                "code": "a"
+              },
+              {
+                "code": "b"
+              },
+              {
+                "code": "c"
+              }
+            ],
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/m"
+          }
+        ]
+      },
+      "contact": [
+        {
+          "name": "D4L data4life gGmbH",
+          "telecom": [
+            {
+              "system": "url",
+              "value": "https://www.data4life.care"
+            }
+          ]
+        }
+      ],
+      "expansion": {
+        "contains": [
+          {
+            "code": "a",
+            "display": "a",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/m"
+          },
+          {
+            "code": "b",
+            "display": "b",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/m"
+          },
+          {
+            "code": "c",
+            "display": "c",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/m"
+          }
+        ],
+        "identifier": "582a34a0-af1a-48df-86ba-8292f4fd391f",
+        "parameter": [
+          {
+            "name": "displayLanguage",
+            "valueCode": "en"
+          }
+        ],
+        "timestamp": "2026-11-10T06:37:58Z"
+      },
+      "id": "0",
+      "language": "en",
+      "name": "m",
+      "publisher": "D4L data4life gGmbH",
+      "resourceType": "ValueSet",
+      "status": "active",
+      "url": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/ValueSet/import/m"
+    },
+    {
+      "compose": {
+        "include": [
+          {
+            "concept": [
+              {
+                "code": "1"
+              },
+              {
+                "code": "2"
+              },
+              {
+                "code": "3"
+              },
+              {
+                "code": "4"
+              }
+            ],
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/li"
+          }
+        ]
+      },
+      "contact": [
+        {
+          "name": "D4L data4life gGmbH",
+          "telecom": [
+            {
+              "system": "url",
+              "value": "https://www.data4life.care"
+            }
+          ]
+        }
+      ],
+      "expansion": {
+        "contains": [
+          {
+            "code": "1",
+            "display": "a",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/li"
+          },
+          {
+            "code": "2",
+            "display": "b",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/li"
+          },
+          {
+            "code": "3",
+            "display": "c",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/li"
+          },
+          {
+            "code": "4",
+            "display": "d",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/li"
+          }
+        ],
+        "identifier": "af1b560a-c185-40ab-b697-e0624dff6f51",
+        "parameter": [
+          {
+            "name": "displayLanguage",
+            "valueCode": "en"
+          }
+        ],
+        "timestamp": "2026-11-10T06:37:58Z"
+      },
+      "id": "1",
+      "language": "en",
+      "name": "li",
+      "publisher": "D4L data4life gGmbH",
+      "resourceType": "ValueSet",
+      "status": "active",
+      "url": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/ValueSet/import/li"
+    },
+    {
+      "compose": {
+        "include": [
+          {
+            "concept": [
+              {
+                "code": "follow-up"
+              },
+              {
+                "code": "b"
+              },
+              {
+                "code": "c"
+              },
+              {
+                "code": "#other"
+              }
+            ],
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/mu"
+          }
+        ]
+      },
+      "contact": [
+        {
+          "name": "D4L data4life gGmbH",
+          "telecom": [
+            {
+              "system": "url",
+              "value": "https://www.data4life.care"
+            }
+          ]
+        }
+      ],
+      "expansion": {
+        "contains": [
+          {
+            "code": "follow-up",
+            "display": "follow up",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/mu"
+          },
+          {
+            "code": "b",
+            "display": "b",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/mu"
+          },
+          {
+            "code": "c",
+            "display": "c",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/mu"
+          },
+          {
+            "code": "#other",
+            "display": "Other",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/mu"
+          }
+        ],
+        "identifier": "f6e51f8d-5869-418e-99d5-41f36d9dcdf0",
+        "parameter": [
+          {
+            "name": "displayLanguage",
+            "valueCode": "en"
+          }
+        ],
+        "timestamp": "2026-11-10T06:37:58Z"
+      },
+      "id": "2",
+      "language": "en",
+      "name": "mu",
+      "publisher": "D4L data4life gGmbH",
+      "resourceType": "ValueSet",
+      "status": "active",
+      "url": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/ValueSet/import/mu"
+    },
+    {
+      "compose": {
+        "include": [
+          {
+            "concept": [
+              {
+                "code": "a"
+              },
+              {
+                "code": "b"
+              },
+              {
+                "code": "c"
+              },
+              {
+                "code": "#other"
+              }
+            ],
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/ss"
+          }
+        ]
+      },
+      "contact": [
+        {
+          "name": "D4L data4life gGmbH",
+          "telecom": [
+            {
+              "system": "url",
+              "value": "https://www.data4life.care"
+            }
+          ]
+        }
+      ],
+      "expansion": {
+        "contains": [
+          {
+            "code": "a",
+            "display": "a",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/ss"
+          },
+          {
+            "code": "b",
+            "display": "b",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/ss"
+          },
+          {
+            "code": "c",
+            "display": "c",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/ss"
+          },
+          {
+            "code": "#other",
+            "display": "Other",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/ss"
+          }
+        ],
+        "identifier": "3d9438c0-35cd-4874-ae3d-3496c5c71d40",
+        "parameter": [
+          {
+            "name": "displayLanguage",
+            "valueCode": "en"
+          }
+        ],
+        "timestamp": "2026-11-10T06:37:58Z"
+      },
+      "id": "3",
+      "language": "en",
+      "name": "ss",
+      "publisher": "D4L data4life gGmbH",
+      "resourceType": "ValueSet",
+      "status": "active",
+      "url": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/ValueSet/import/ss"
+    }
+  ],
+  "date": "2026-11-09T12:23:30Z",
+  "item": [
+    {
+      "answerValueSet": "http://hl7.org/fhir/ValueSet/iso3166-1-2",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "code": "country",
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class"
+              }
+            ]
+          }
+        }
+      ],
+      "linkId": "country",
+      "required": true,
+      "text": "Country",
+      "type": "coding"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/relative-min-value",
+          "valueString": "P3W"
+        }
+      ],
+      "linkId": "date-min-relative",
+      "required": true,
+      "text": "date full",
+      "type": "date"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "code": "year",
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class"
+              }
+            ]
+          }
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-output",
+          "valueCanonical": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/topic/topic2"
+        }
+      ],
+      "linkId": "date-year-topic-output",
+      "required": true,
+      "text": "date year",
+      "type": "date"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "code": "geo_location",
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class"
+              }
+            ]
+          }
+        }
+      ],
+      "linkId": "geo-location",
+      "required": true,
+      "text": "geo",
+      "type": "string"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "code": "list",
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class"
+              }
+            ]
+          }
+        },
+        {
+          "extension": [
+            {
+              "url": "topic",
+              "valueCanonical": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/topic/topic1"
+            },
+            {
+              "url": "scope",
+              "valueCode": "all"
+            }
+          ],
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-input"
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-output",
+          "valueCanonical": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/topic/topic1"
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/minLength",
+          "valueInteger": 30
+        },
+        {
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "c"
+            },
+            {
+              "url": "question",
+              "valueString": "country"
+            }
+          ],
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
+        },
+        {
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "d"
+            },
+            {
+              "url": "question",
+              "valueString": "date-min-relative"
+            }
+          ],
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
+        }
+      ],
+      "linkId": "list-enablewhen-expr",
+      "maxLength": 150,
+      "modifierExtension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
+          "valueExpression": {
+            "expression": "(%c contains 'AF') or (%d.exists() and today() >= %d.first().toDate() + 1 years)",
+            "language": "text/fhirpath"
+          }
+        }
+      ],
+      "repeats": true,
+      "required": true,
+      "text": "list",
+      "type": "string"
+    },
+    {
+      "answerValueSet": "#0",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "code": "matrix",
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class"
+              }
+            ]
+          }
+        },
+        {
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "topic1"
+            },
+            {
+              "url": "topic",
+              "valueCanonical": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/topic/topic1"
+            },
+            {
+              "url": "scope",
+              "valueCode": "latest"
+            }
+          ],
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
+        }
+      ],
+      "item": [
+        {
+          "answerValueSet": "#0",
+          "linkId": "matrix-0",
+          "required": true,
+          "text": "1",
+          "type": "coding"
+        },
+        {
+          "answerValueSet": "#0",
+          "linkId": "matrix-1",
+          "required": true,
+          "text": "2",
+          "type": "coding"
+        },
+        {
+          "answerValueSet": "#0",
+          "linkId": "matrix-2",
+          "required": true,
+          "text": "3",
+          "type": "coding"
+        }
+      ],
+      "linkId": "matrix",
+      "modifierExtension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
+          "valueExpression": {
+            "expression": "%topic1.first() = 'test'",
+            "language": "text/fhirpath"
+          }
+        }
+      ],
+      "required": true,
+      "text": "matrix",
+      "type": "group"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+          "valueDecimal": 1
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+          "valueDecimal": 5
+        }
+      ],
+      "linkId": "number",
+      "required": true,
+      "text": "number",
+      "type": "decimal"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "code": "postal_code",
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class"
+              }
+            ]
+          }
+        },
+        {
+          "extension": [
+            {
+              "url": "fromItem",
+              "valueString": "country"
+            }
+          ],
+          "url": "http://fhir.data4life.care/fhir/StructureDefinition/postalcode-country-source"
+        }
+      ],
+      "linkId": "postal-code-from-country",
+      "text": "postal from country input",
+      "type": "string"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "code": "postal_code",
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class"
+              }
+            ]
+          }
+        },
+        {
+          "extension": [
+            {
+              "url": "fixedCountry",
+              "valueCoding": {
+                "code": "AS",
+                "system": "urn:iso:std:iso:3166"
+              }
+            }
+          ],
+          "url": "http://fhir.data4life.care/fhir/StructureDefinition/postalcode-country-source"
+        }
+      ],
+      "linkId": "postal-code-fixed-country",
+      "required": true,
+      "text": "postal from fixed coutry",
+      "type": "string"
+    },
+    {
+      "answerValueSet": "#1",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "code": "scale_likert",
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class"
+              }
+            ]
+          }
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-output",
+          "valueCanonical": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/topic/topic3"
+        }
+      ],
+      "linkId": "likert",
+      "required": true,
+      "text": "likert",
+      "type": "integer"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "code": "scale_numeric",
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class"
+              }
+            ]
+          }
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/slider-step-size",
+          "valueDecimal": 1
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+          "valueDecimal": 0
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+          "valueDecimal": 8
+        }
+      ],
+      "linkId": "scale-numeric",
+      "required": true,
+      "text": "scale numeric",
+      "type": "decimal"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "code": "scale_ordinal",
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class"
+              }
+            ]
+          }
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/slider-label-min",
+          "valueString": "min"
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/slider-label-max",
+          "valueString": "max"
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+          "valueInteger": 1
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+          "valueInteger": 3
+        }
+      ],
+      "linkId": "scale-ordinal",
+      "required": true,
+      "text": "scale ordinal",
+      "type": "integer"
+    },
+    {
+      "answerValueSet": "#2",
+      "linkId": "multiselect",
+      "repeats": true,
+      "required": true,
+      "text": "multi select",
+      "type": "coding"
+    },
+    {
+      "enableBehavior": "all",
+      "enableWhen": [
+        {
+          "answerCoding": {
+            "code": "#other",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/mu"
+          },
+          "operator": "=",
+          "question": "multiselect"
+        }
+      ],
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/minLength",
+          "valueInteger": 1
+        }
+      ],
+      "linkId": "multiselect#other",
+      "maxLength": 200,
+      "required": true,
+      "text": "Please specify",
+      "type": "string"
+    },
+    {
+      "answerValueSet": "#3",
+      "linkId": "singleselect",
+      "required": true,
+      "text": "select single",
+      "type": "coding"
+    },
+    {
+      "enableBehavior": "all",
+      "enableWhen": [
+        {
+          "answerCoding": {
+            "code": "#other",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/import/ss"
+          },
+          "operator": "=",
+          "question": "singleselect"
+        }
+      ],
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/minLength",
+          "valueInteger": 1
+        }
+      ],
+      "linkId": "singleselect#other",
+      "maxLength": 200,
+      "required": true,
+      "text": "Please specify",
+      "type": "string"
+    },
+    {
+      "linkId": "text-long",
+      "required": true,
+      "text": "text long",
+      "type": "text"
+    },
+    {
+      "linkId": "text-short",
+      "required": true,
+      "text": "text short",
+      "type": "string"
+    },
+    {
+      "linkId": "text-optional",
+      "required": false,
+      "text": "optional text",
+      "type": "string"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "code": "list",
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class"
+              }
+            ]
+          }
+        },
+        {
+          "extension": [
+            {
+              "url": "topic",
+              "valueCanonical": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/topic/topic1"
+            },
+            {
+              "url": "scope",
+              "valueCode": "all"
+            }
+          ],
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-input"
+        },
+        {
+          "extension": [
+            {
+              "url": "topic",
+              "valueCanonical": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/topic/topic2"
+            },
+            {
+              "url": "scope",
+              "valueCode": "all"
+            }
+          ],
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-input"
+        },
+        {
+          "extension": [
+            {
+              "url": "topic",
+              "valueCanonical": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/topic/topic3"
+            },
+            {
+              "url": "scope",
+              "valueCode": "all"
+            }
+          ],
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-input"
+        }
+      ],
+      "linkId": "input-topic-linked",
+      "maxLength": 150,
+      "repeats": true,
+      "required": true,
+      "text": "list with topic inputs",
+      "type": "string"
+    },
+    {
+      "extension": [
+        {
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "c"
+            },
+            {
+              "url": "question",
+              "valueString": "country"
+            }
+          ],
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
+        },
+        {
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "topic1"
+            },
+            {
+              "url": "topic",
+              "valueCanonical": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/topic/topic1"
+            },
+            {
+              "url": "scope",
+              "valueCode": "latest"
+            }
+          ],
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
+        }
+      ],
+      "linkId": "enablewhen-expr-and",
+      "modifierExtension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
+          "valueExpression": {
+            "expression": "(%c contains 'DZ') and (%topic1.first() = 'a')",
+            "language": "text/fhirpath"
+          }
+        }
+      ],
+      "required": true,
+      "text": "enable when AND",
+      "type": "string"
+    },
+    {
+      "extension": [
+        {
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "c"
+            },
+            {
+              "url": "question",
+              "valueString": "country"
+            }
+          ],
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
+        },
+        {
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "topic2"
+            },
+            {
+              "url": "topic",
+              "valueCanonical": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/topic/topic2"
+            },
+            {
+              "url": "scope",
+              "valueCode": "latest"
+            }
+          ],
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
+        },
+        {
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "mu"
+            },
+            {
+              "url": "question",
+              "valueString": "multiselect"
+            }
+          ],
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable"
+        }
+      ],
+      "linkId": "enablewhen-expr-or",
+      "modifierExtension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
+          "valueExpression": {
+            "expression": "(%c contains 'AF') or (%topic2.first().toDate() <= @2001) or (%mu contains 'b')",
+            "language": "text/fhirpath"
+          }
+        }
+      ],
+      "required": true,
+      "text": "enable when OR",
+      "type": "string"
+    },
+    {
+      "item": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemMedia",
+              "valueAttachment": {
+                "url": "https://collect.dev.d4l-dev.de/api/static/programs/import_questionnaire/images/cb993cfe46f606c86c80c45e0fd661b3ff09a266c1e204a94eaab5a719f4a614"
+              }
+            }
+          ],
+          "linkId": "cover-mxbhbdf-image",
+          "text": "alt text",
+          "type": "display"
+        },
+        {
+          "linkId": "cover-mxbhbdf-description",
+          "text": "<p>desccription</p>",
+          "type": "display"
+        }
+      ],
+      "linkId": "cover-mxbhbdf",
+      "text": "Cover",
+      "type": "group"
+    },
+    {
+      "item": [
+        {
+          "linkId": "cover-mlqafwp-description",
+          "text": "<p>desc</p>",
+          "type": "display"
+        }
+      ],
+      "linkId": "cover-mlqafwp",
+      "text": "description only",
+      "type": "group"
+    },
+    {
+      "enableBehavior": "all",
+      "enableWhen": [
+        {
+          "operator": "exists",
+          "question": "date-min-relative"
+        },
+        {
+          "answerDate": "2000",
+          "operator": ">",
+          "question": "date-year-topic-output"
+        }
+      ],
+      "linkId": "enablewhen-plain-and",
+      "required": true,
+      "text": "Enable When (No Topic)",
+      "type": "string"
+    }
+  ],
+  "language": "en",
+  "name": "import",
+  "publisher": "D4L data4life gGmbH",
+  "resourceType": "Questionnaire",
+  "status": "active",
+  "subjectType": [
+    "Patient"
+  ],
+  "title": "Import",
+  "url": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/Questionnaire/import",
+  "version": "4.0.0"
+}

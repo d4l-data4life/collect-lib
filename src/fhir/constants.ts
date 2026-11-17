@@ -84,6 +84,13 @@ export const PostalCodeCountrySourceExtension =
 export const PostalCodeFromItemUrl = 'fromItem';
 export const PostalCodeFixedCountryUrl = 'fixedCountry';
 
+// Free-text placeholder tokens (e.g. `%firstName`) a question's text may contain, filled in at
+// render time from participant/context data.
+export const PlaceholderExtension = 'http://fhir.data4life.care/StructureDefinition/placeholder_reference';
+// Explicit display order for a contained ValueSet's answer options (e.g. 'alphabetical'); absent
+// means the authoring UI's own default order.
+export const ValuesetSortingExtension = 'http://fhir.data4life.care/StructureDefinition/sorting';
+
 export const DEVICE_LABEL_CODING = {
   system: SensorSettingsSystem,
   code: 'device_label',

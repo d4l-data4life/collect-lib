@@ -8,6 +8,9 @@ permissions:
   id-token: write  # Required for OIDC
   contents: read
 
+env:
+  NPM_AUTH_TOKEN: ${{ secrets.NPM_READ_TOKEN }}
+
 jobs:
   publish:
     runs-on: ubuntu-latest

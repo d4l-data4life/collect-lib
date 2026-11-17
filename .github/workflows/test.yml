@@ -10,6 +10,9 @@ permissions:
   checks: write
   pull-requests: write
 
+env:
+  NPM_AUTH_TOKEN: ${{ secrets.NPM_READ_TOKEN }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -28,6 +31,36 @@ jobs:
         with:
           files: |
             junit.xml
+
+  # The Go module (go.mod, pkg/) embeds committed builds of TS code (pkg/*/bundle, see
+  # README_GO.md). Fail if any no longer matches the source, then run the Go tests against them.
+  go-module:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: d4l-data4life/github-actions/build-setup@v1.9.0
+        with:
+          setup-yarn: true
+
+      - uses: actions/setup-go@v6.2.0
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+
+      - name: Go bundles are up to date
+        run: |
+          yarn build
+          if [ -n "$(git status --porcelain -- pkg)" ]; then
+            git status --porcelain -- pkg
+            git diff -- pkg | head -50
+            echo "::error::Go bundles under pkg/ are stale — run 'yarn build' and commit the result"
+            exit 1
+          fi
+
+      - name: Go tests
+        run: |
+          go vet ./...
+          go test -race ./...
 
   # The v4 hybrid format is implemented here and in the public go-crypto; this job checks
   # both directions still agree (see xlang/README.md). Kept separate so the unit-test job

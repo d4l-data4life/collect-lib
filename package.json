@@ -15,6 +15,11 @@
       "import": "./dist/fhirpath.mjs",
       "require": "./dist/fhirpath.js"
     },
+    "./fhir-to-questions": {
+      "types": "./dist/fhir-to-questions.d.ts",
+      "import": "./dist/fhir-to-questions.mjs",
+      "require": "./dist/fhir-to-questions.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -47,6 +52,7 @@
   },
   "packageManager": "yarn@4.9.1",
   "dependencies": {
+    "@d4l/grpc-modules": "1.39.2",
     "@noble/curves": "^1.9.3",
     "@scure/bip39": "^1.5.4",
     "buffer": "^6.0.3",
