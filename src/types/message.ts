@@ -21,7 +21,13 @@ export interface Message {
   updatedAt?: string;
   // sentAt | false | string | ISO Date string when the message was sent
   sentAt?: string;
+  // state | false | 'draft' / 'scheduled' / 'sent' | Lifecycle state, set by the server
+  state?: MessageState;
+  // scheduledAt | false | string | ISO Date string (UTC) when the message should be released
+  scheduledAt?: string;
 }
+
+export type MessageState = 'draft' | 'scheduled' | 'sent';
 
 export type MessagePath = RecursiveKeyOf<Message>;
 
