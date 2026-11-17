@@ -23,7 +23,8 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "dist"
+    "dist",
+    "THIRD_PARTY_NOTICES"
   ],
   "repository": "https://github.com/d4l-data4life/collect-lib.git",
   "license": "MIT",
