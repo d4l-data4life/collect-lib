@@ -2,8 +2,8 @@ github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAw
 github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
 github.com/d4l-data4life/go-fhir v0.0.0-20261104082846-d0c5564dd20c h1:nUdbuVodn5TyHfzLqBbHjNmMt3n4qAWt9RjwG5sEo00=
 github.com/d4l-data4life/go-fhir v0.0.0-20261104082846-d0c5564dd20c/go.mod h1:t1YfOqxwF6KyIRfVR+CDuV2vAFU+g11tw8dI2Jpm6DY=
-github.com/d4l-data4life/grpc-modules v1.39.2 h1:QvNa1rWue/pFiOk+zqIqeba17BYwGNVs522KM6uyL88=
-github.com/d4l-data4life/grpc-modules v1.39.2/go.mod h1:FSnBOSZlaCz04g27o/9qN3Phj6LeKenZhnybl4GJD0Y=
+github.com/d4l-data4life/grpc-modules v1.40.0 h1:V1A5/D52U9f7VNjfbuhhZ1gw/CjTwF78viugoA/ery0=
+github.com/d4l-data4life/grpc-modules v1.40.0/go.mod h1:l/ypEhNipkqqDW+r9mUrwuU1CvDb0nW+PY0GaqscDK4=
 github.com/dlclark/regexp2/v2 v2.11.0 h1:z5uRPHav+eTVpoffDSuUP2KPS4f1ONZaPDK73S8HA0w=
 github.com/dlclark/regexp2/v2 v2.11.0/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
 github.com/dop251/goja v0.0.0-20261110204830-f493a2b600d6 h1:DDvmsz4B72jV6qMPeMl53tCcyvSTe7Te7cci7PPDf8M=
