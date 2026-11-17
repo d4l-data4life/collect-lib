@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `state` and `scheduledAt` on `Message`, and the `MessageState` type, for scheduled messages
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.61.0] - 2026-11-17
+
+### Added
+
+- `state` and `scheduledAt` on `Message`, and the `MessageState` type, for scheduled messages
 
 ## [v1.60.0] - 2026-11-17
 
@@ -656,93 +660,94 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.60.0...HEAD
-[v1.60.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.59.2...v1.60.0
-[v1.59.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.59.1...v1.59.2
-[v1.59.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.59.0...v1.59.1
-[v1.59.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.58.1...v1.59.0
-[v1.58.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.58.0...v1.58.1
-[v1.58.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.57.1...v1.58.0
-[v1.57.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.57.0...v1.57.1
-[v1.57.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.56.0...v1.57.0
-[v1.56.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.55.0...v1.56.0
-[v1.55.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.54.0...v1.55.0
-[v1.54.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.53.0...v1.54.0
-[v1.53.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.52.0...v1.53.0
-[v1.52.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.51.1...v1.52.0
-[v1.51.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.51.0...v1.51.1
-[v1.51.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.50.0...v1.51.0
-[v1.50.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.49.0...v1.50.0
-[v1.49.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.48.0...v1.49.0
-[v1.48.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.47.0...v1.48.0
-[v1.47.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.46.0...v1.47.0
-[v1.46.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.2...v1.46.0
-[v1.45.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.1...v1.45.2
-[v1.45.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.45.0...v1.45.1
-[v1.45.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.2...v1.45.0
-[v1.44.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.1...v1.44.2
-[v1.44.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.44.0...v1.44.1
-[v1.44.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.43.0...v1.44.0
-[v1.43.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.42.0...v1.43.0
-[v1.42.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.41.0...v1.42.0
-[v1.41.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.40.0...v1.41.0
-[v1.40.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.3...v1.40.0
-[v1.39.3]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.2...v1.39.3
-[v1.39.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.1...v1.39.2
-[v1.39.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.39.0...v1.39.1
-[v1.39.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.38.0...v1.39.0
-[v1.38.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.37.0...v1.38.0
-[v1.37.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.36.0...v1.37.0
-[v1.36.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.35.0...v1.36.0
-[v1.35.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.34.1...v1.35.0
-[v1.34.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.34.0...v1.34.1
-[v1.34.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.3...v1.34.0
-[v1.33.3]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.2...v1.33.3
-[v1.33.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.1...v1.33.2
-[v1.33.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.33.0...v1.33.1
-[v1.33.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.32.0...v1.33.0
-[v1.32.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.31.1...v1.32.0
-[v1.31.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.31.0...v1.31.1
-[v1.31.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.30.0...v1.31.0
-[v1.30.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.29.1...v1.30.0
-[v1.29.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.29.0...v1.29.1
-[v1.29.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.28.0...v1.29.0
-[v1.28.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.27.0...v1.28.0
-[v1.27.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.26.0...v1.27.0
-[v1.26.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.25.0...v1.26.0
-[v1.25.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.24.0...v1.25.0
-[v1.24.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.23.0...v1.24.0
-[v1.23.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.22.1...v1.23.0
-[v1.22.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.22.0...v1.22.1
-[v1.22.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.21.0...v1.22.0
-[v1.21.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.20.1...v1.21.0
-[v1.20.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.20.0...v1.20.1
-[v1.20.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.19.0...v1.20.0
-[v1.19.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.18.0...v1.19.0
-[v1.18.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.17.0...v1.18.0
-[v1.17.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.16.0...v1.17.0
-[v1.16.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.15.0...v1.16.0
-[v1.15.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.14.1...v1.15.0
-[v1.14.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.14.0...v1.14.1
-[v1.14.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.13.0...v1.14.0
-[v1.13.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.12.0...v1.13.0
-[v1.12.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.11.0...v1.12.0
-[v1.11.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.10.2...v1.11.0
-[v1.10.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.10.1...v1.10.2
-[v1.10.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.10.0...v1.10.1
-[v1.10.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.9.0...v1.10.0
-[v1.9.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.8.0...v1.9.0
-[v1.8.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.7.1...v1.8.0
-[v1.7.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.7.0...v1.7.1
-[v1.7.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.6.0...v1.7.0
-[v1.6.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.5.1...v1.6.0
-[v1.5.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.5.0...v1.5.1
-[v1.5.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.4.0...v1.5.0
-[v1.4.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.3.1...v1.4.0
-[v1.3.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.3.0...v1.3.1
-[v1.3.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.2.0...v1.3.0
-[v1.2.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.1.2...v1.2.0
-[v1.1.2]: https://github.com/gesundheitscloud/collect-lib/compare/v1.1.1...v1.1.2
-[v1.1.1]: https://github.com/gesundheitscloud/collect-lib/compare/v1.1.0...v1.1.1
-[v1.1.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.0.0...v1.1.0
-[v1.0.0]: https://github.com/gesundheitscloud/collect-lib/releases/tag/v1.0.0
+[Unreleased]: https://github.com/d4l-data4life/collect-lib/compare/v1.61.0...HEAD
+[v1.61.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.60.0...v1.61.0
+[v1.60.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.59.2...v1.60.0
+[v1.59.2]: https://github.com/d4l-data4life/collect-lib/compare/v1.59.1...v1.59.2
+[v1.59.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.59.0...v1.59.1
+[v1.59.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.58.1...v1.59.0
+[v1.58.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.58.0...v1.58.1
+[v1.58.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.57.1...v1.58.0
+[v1.57.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.57.0...v1.57.1
+[v1.57.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.56.0...v1.57.0
+[v1.56.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.55.0...v1.56.0
+[v1.55.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.54.0...v1.55.0
+[v1.54.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.53.0...v1.54.0
+[v1.53.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.52.0...v1.53.0
+[v1.52.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.51.1...v1.52.0
+[v1.51.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.51.0...v1.51.1
+[v1.51.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.50.0...v1.51.0
+[v1.50.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.49.0...v1.50.0
+[v1.49.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.48.0...v1.49.0
+[v1.48.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.47.0...v1.48.0
+[v1.47.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.46.0...v1.47.0
+[v1.46.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.45.2...v1.46.0
+[v1.45.2]: https://github.com/d4l-data4life/collect-lib/compare/v1.45.1...v1.45.2
+[v1.45.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.45.0...v1.45.1
+[v1.45.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.44.2...v1.45.0
+[v1.44.2]: https://github.com/d4l-data4life/collect-lib/compare/v1.44.1...v1.44.2
+[v1.44.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.44.0...v1.44.1
+[v1.44.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.43.0...v1.44.0
+[v1.43.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.42.0...v1.43.0
+[v1.42.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.41.0...v1.42.0
+[v1.41.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.40.0...v1.41.0
+[v1.40.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.39.3...v1.40.0
+[v1.39.3]: https://github.com/d4l-data4life/collect-lib/compare/v1.39.2...v1.39.3
+[v1.39.2]: https://github.com/d4l-data4life/collect-lib/compare/v1.39.1...v1.39.2
+[v1.39.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.39.0...v1.39.1
+[v1.39.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.38.0...v1.39.0
+[v1.38.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.37.0...v1.38.0
+[v1.37.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.36.0...v1.37.0
+[v1.36.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.35.0...v1.36.0
+[v1.35.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.34.1...v1.35.0
+[v1.34.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.34.0...v1.34.1
+[v1.34.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.33.3...v1.34.0
+[v1.33.3]: https://github.com/d4l-data4life/collect-lib/compare/v1.33.2...v1.33.3
+[v1.33.2]: https://github.com/d4l-data4life/collect-lib/compare/v1.33.1...v1.33.2
+[v1.33.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.33.0...v1.33.1
+[v1.33.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.32.0...v1.33.0
+[v1.32.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.31.1...v1.32.0
+[v1.31.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.31.0...v1.31.1
+[v1.31.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.30.0...v1.31.0
+[v1.30.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.29.1...v1.30.0
+[v1.29.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.29.0...v1.29.1
+[v1.29.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.28.0...v1.29.0
+[v1.28.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.27.0...v1.28.0
+[v1.27.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.26.0...v1.27.0
+[v1.26.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.25.0...v1.26.0
+[v1.25.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.24.0...v1.25.0
+[v1.24.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.23.0...v1.24.0
+[v1.23.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.22.1...v1.23.0
+[v1.22.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.22.0...v1.22.1
+[v1.22.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.21.0...v1.22.0
+[v1.21.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.20.1...v1.21.0
+[v1.20.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.20.0...v1.20.1
+[v1.20.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.19.0...v1.20.0
+[v1.19.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.18.0...v1.19.0
+[v1.18.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.17.0...v1.18.0
+[v1.17.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.16.0...v1.17.0
+[v1.16.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.15.0...v1.16.0
+[v1.15.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.14.1...v1.15.0
+[v1.14.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.14.0...v1.14.1
+[v1.14.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.13.0...v1.14.0
+[v1.13.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.12.0...v1.13.0
+[v1.12.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.11.0...v1.12.0
+[v1.11.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.10.2...v1.11.0
+[v1.10.2]: https://github.com/d4l-data4life/collect-lib/compare/v1.10.1...v1.10.2
+[v1.10.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.10.0...v1.10.1
+[v1.10.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.9.0...v1.10.0
+[v1.9.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.8.0...v1.9.0
+[v1.8.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.7.1...v1.8.0
+[v1.7.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.7.0...v1.7.1
+[v1.7.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.6.0...v1.7.0
+[v1.6.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.5.1...v1.6.0
+[v1.5.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.5.0...v1.5.1
+[v1.5.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.4.0...v1.5.0
+[v1.4.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.3.1...v1.4.0
+[v1.3.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.3.0...v1.3.1
+[v1.3.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.2.0...v1.3.0
+[v1.2.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.1.2...v1.2.0
+[v1.1.2]: https://github.com/d4l-data4life/collect-lib/compare/v1.1.1...v1.1.2
+[v1.1.1]: https://github.com/d4l-data4life/collect-lib/compare/v1.1.0...v1.1.1
+[v1.1.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.0.0...v1.1.0
+[v1.0.0]: https://github.com/d4l-data4life/collect-lib/releases/tag/v1.0.0
