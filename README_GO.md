@@ -28,8 +28,6 @@ gives exactly the code published to npm as 1.60.0. Unreleased work can be tried 
 branch or commit (`go get github.com/gesundheitscloud/collect-lib@<branch>`), which resolves to
 a pseudo-version.
 
-**Go version:** the module requires Go 1.27 (see `go.mod`).
-
 ## Packages
 
 | Package          | Wraps (TypeScript)                           | Go API                                                     |

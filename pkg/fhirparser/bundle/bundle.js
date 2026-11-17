@@ -6508,7 +6508,7 @@ var Exports = (() => {
       itemVariables,
       image
     } = parseExtensions(languages, questionItems);
-    if (parsedQuestionInputType) {
+    if (parsedQuestionInputType !== void 0) {
       questionInputType = parsedQuestionInputType;
     }
     if (questionInputType === void 0 || questionInputType === import_research_pillars3.InputType.UNRECOGNIZED) {
