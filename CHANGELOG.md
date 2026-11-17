@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `state` and `scheduledAt` on `Message`, and the `MessageState` type, for scheduled messages
+
 ### Changed
 
 ### Deprecated
