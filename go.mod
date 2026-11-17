@@ -1,4 +1,4 @@
-module github.com/gesundheitscloud/collect-lib
+module github.com/d4l-data4life/collect-lib
 
 go 1.27.0
 

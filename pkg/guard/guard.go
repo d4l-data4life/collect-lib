@@ -15,7 +15,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gesundheitscloud/collect-lib/pkg/internal/jsbundle"
+	"github.com/d4l-data4life/collect-lib/pkg/internal/jsbundle"
 )
 
 //go:embed bundle/bundle.js

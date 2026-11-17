@@ -9,7 +9,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/gesundheitscloud/collect-lib/pkg/internal/jsbundle"
+	"github.com/d4l-data4life/collect-lib/pkg/internal/jsbundle"
 )
 
 // Shaped like the IIFE bundles tsup emits for the Go packages.
