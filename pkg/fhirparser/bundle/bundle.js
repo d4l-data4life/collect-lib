@@ -49,9 +49,9 @@ var Exports = (() => {
   ));
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/varint.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/wire/varint.js
   var require_varint = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/varint.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/wire/varint.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.varint64read = varint64read;
@@ -62,29 +62,40 @@ var Exports = (() => {
       exports.varint32write = varint32write;
       exports.varint32read = varint32read;
       function varint64read() {
-        let lowBits = 0;
-        let highBits = 0;
+        const buf = this.buf;
+        let pos = this.pos;
+        let lo = 0;
+        let hi = 0;
         for (let shift = 0; shift < 28; shift += 7) {
-          let b = this.buf[this.pos++];
-          lowBits |= (b & 127) << shift;
+          const b = buf[pos++];
+          lo |= (b & 127) << shift;
           if ((b & 128) == 0) {
+            this.pos = pos;
             this.assertBounds();
-            return [lowBits, highBits];
+            this.varint64Lo = lo;
+            this.varint64Hi = hi;
+            return;
           }
         }
-        let middleByte = this.buf[this.pos++];
-        lowBits |= (middleByte & 15) << 28;
-        highBits = (middleByte & 112) >> 4;
+        const middleByte = buf[pos++];
+        lo |= (middleByte & 15) << 28;
+        hi = (middleByte & 112) >> 4;
         if ((middleByte & 128) == 0) {
+          this.pos = pos;
           this.assertBounds();
-          return [lowBits, highBits];
+          this.varint64Lo = lo;
+          this.varint64Hi = hi;
+          return;
         }
         for (let shift = 3; shift <= 31; shift += 7) {
-          let b = this.buf[this.pos++];
-          highBits |= (b & 127) << shift;
+          const b = buf[pos++];
+          hi |= (b & 127) << shift;
           if ((b & 128) == 0) {
+            this.pos = pos;
             this.assertBounds();
-            return [lowBits, highBits];
+            this.varint64Lo = lo;
+            this.varint64Hi = hi;
+            return;
           }
         }
         throw new Error("invalid varint");
@@ -191,6 +202,10 @@ var Exports = (() => {
         return "0000000".slice(partial.length) + partial;
       };
       function varint32write(value, bytes) {
+        if (value >>> 0 < 128) {
+          bytes.push(value);
+          return;
+        }
         if (value >= 0) {
           while (value > 127) {
             bytes.push(value & 127 | 128);
@@ -207,26 +222,26 @@ var Exports = (() => {
       }
       function varint32read() {
         let b = this.buf[this.pos++];
-        let result = b & 127;
-        if ((b & 128) == 0) {
+        if ((b & 128) === 0) {
           this.assertBounds();
-          return result;
+          return b;
         }
+        let result = b & 127;
         b = this.buf[this.pos++];
         result |= (b & 127) << 7;
-        if ((b & 128) == 0) {
+        if ((b & 128) === 0) {
           this.assertBounds();
           return result;
         }
         b = this.buf[this.pos++];
         result |= (b & 127) << 14;
-        if ((b & 128) == 0) {
+        if ((b & 128) === 0) {
           this.assertBounds();
           return result;
         }
         b = this.buf[this.pos++];
         result |= (b & 127) << 21;
-        if ((b & 128) == 0) {
+        if ((b & 128) === 0) {
           this.assertBounds();
           return result;
         }
@@ -234,7 +249,7 @@ var Exports = (() => {
         result |= (b & 15) << 28;
         for (let readBytes = 5; (b & 128) !== 0 && readBytes < 10; readBytes++)
           b = this.buf[this.pos++];
-        if ((b & 128) != 0)
+        if ((b & 128) !== 0)
           throw new Error("invalid varint");
         this.assertBounds();
         return result >>> 0;
@@ -242,9 +257,9 @@ var Exports = (() => {
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/proto-int64.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/proto-int64.js
   var require_proto_int64 = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/proto-int64.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/proto-int64.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.protoInt64 = void 0;
@@ -252,7 +267,7 @@ var Exports = (() => {
       exports.protoInt64 = makeInt64Support();
       function makeInt64Support() {
         const dv = new DataView(new ArrayBuffer(8));
-        const ok = typeof BigInt === "function" && typeof dv.getBigInt64 === "function" && typeof dv.getBigUint64 === "function" && typeof dv.setBigInt64 === "function" && typeof dv.setBigUint64 === "function" && (typeof process != "object" || typeof process.env != "object" || process.env.BUF_BIGINT_DISABLE !== "1");
+        const ok = typeof BigInt === "function" && typeof dv.getBigInt64 === "function" && typeof dv.getBigUint64 === "function" && typeof dv.setBigInt64 === "function" && typeof dv.setBigUint64 === "function" && (!!globalThis.Deno || !!globalThis.Bun || typeof process != "object" || typeof process.env != "object" || process.env.BUF_BIGINT_DISABLE !== "1");
         if (ok) {
           const MIN = BigInt("-9223372036854775808");
           const MAX = BigInt("9223372036854775807");
@@ -353,27 +368,42 @@ var Exports = (() => {
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/text-encoding.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/wire/text-encoding.js
   var require_text_encoding = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/text-encoding.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/wire/text-encoding.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.configureTextEncoding = configureTextEncoding;
       exports.getTextEncoding = getTextEncoding;
-      var symbol = Symbol.for("@bufbuild/protobuf/text-encoding");
+      exports.emulateEncodeInto = emulateEncodeInto;
+      var te;
       function configureTextEncoding(textEncoding) {
-        globalThis[symbol] = textEncoding;
+        var _a;
+        te = Object.assign(Object.assign({}, textEncoding), { encodeUtf8Into: (_a = textEncoding.encodeUtf8Into) !== null && _a !== void 0 ? _a : emulateEncodeInto(textEncoding.encodeUtf8.bind(textEncoding)) });
       }
       function getTextEncoding() {
-        if (globalThis[symbol] == void 0) {
-          const te = new globalThis.TextEncoder();
-          const td = new globalThis.TextDecoder();
-          globalThis[symbol] = {
+        if (!te) {
+          const globals = globalThis;
+          if (!globals.TextEncoder || !globals.TextDecoder) {
+            throw new Error("encoding API missing: install TextEncoder and TextDecoder on globalThis");
+          }
+          const textEncoder = new globals.TextEncoder();
+          const textDecoder = new globals.TextDecoder();
+          let textDecoderStrict;
+          const config = {
             encodeUtf8(text) {
-              return te.encode(text);
+              return textEncoder.encode(text);
             },
-            decodeUtf8(bytes) {
-              return td.decode(bytes);
+            decodeUtf8(bytes, strict) {
+              if (strict) {
+                if (!textDecoderStrict) {
+                  textDecoderStrict = new globals.TextDecoder("utf-8", {
+                    fatal: true
+                  });
+                }
+                return textDecoderStrict.decode(bytes);
+              }
+              return textDecoder.decode(bytes);
             },
             checkUtf8(text) {
               try {
@@ -384,15 +414,32 @@ var Exports = (() => {
               }
             }
           };
+          if (textEncoder.encodeInto) {
+            config.encodeUtf8Into = textEncoder.encodeInto.bind(textEncoder);
+          }
+          const nativeStringIsWellFormed = String.prototype.isWellFormed;
+          if (nativeStringIsWellFormed) {
+            config.checkUtf8 = (text) => {
+              return nativeStringIsWellFormed.call(text);
+            };
+          }
+          configureTextEncoding(config);
         }
-        return globalThis[symbol];
+        return te;
+      }
+      function emulateEncodeInto(encodeUtf8) {
+        return (text, dest) => {
+          const bytes = encodeUtf8(text);
+          dest.set(bytes);
+          return { written: bytes.byteLength };
+        };
       }
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/binary-encoding.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/wire/binary-encoding.js
   var require_binary_encoding = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/binary-encoding.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/wire/binary-encoding.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.BinaryReader = exports.BinaryWriter = exports.INT32_MIN = exports.INT32_MAX = exports.UINT32_MAX = exports.FLOAT32_MIN = exports.FLOAT32_MAX = exports.WireType = void 0;
@@ -414,31 +461,46 @@ var Exports = (() => {
       exports.INT32_MAX = 2147483647;
       exports.INT32_MIN = -2147483648;
       var BinaryWriter = class {
-        constructor(encodeUtf8 = (0, text_encoding_js_1.getTextEncoding)().encodeUtf8) {
-          this.encodeUtf8 = encodeUtf8;
-          this.stack = [];
-          this.chunks = [];
-          this.buf = [];
+        constructor(encodeUtf8) {
+          this.stackPos = [];
+          this.encodeUtf8Into = encodeUtf8 ? (0, text_encoding_js_1.emulateEncodeInto)(encodeUtf8) : (0, text_encoding_js_1.getTextEncoding)().encodeUtf8Into;
+          this.buffer = EMPTY_BUFFER;
+          this.viewCache = EMPTY_VIEW;
+          this.pos = 0;
+        }
+        ensureCapacity(size) {
+          const required = this.pos + size;
+          if (required > this.buffer.length) {
+            let newLen = this.buffer.length || INITIAL_SIZE;
+            while (newLen < required)
+              newLen *= 2;
+            const newBuf = new Uint8Array(newLen);
+            if (this.pos > 0)
+              newBuf.set(this.buffer);
+            this.buffer = newBuf;
+          }
+        }
+        /**
+         * The DataView over `buffer`, rebuilt only if the buffer has grown since it
+         * was last used.
+         */
+        view() {
+          const bytes = this.buffer;
+          const view = this.viewCache;
+          if (view.byteLength === bytes.byteLength)
+            return view;
+          const newView = new DataView(bytes.buffer);
+          this.viewCache = newView;
+          return newView;
         }
         /**
          * Return all bytes written and reset this writer.
          */
         finish() {
-          if (this.buf.length) {
-            this.chunks.push(new Uint8Array(this.buf));
-            this.buf = [];
-          }
-          let len = 0;
-          for (let i = 0; i < this.chunks.length; i++)
-            len += this.chunks[i].length;
-          let bytes = new Uint8Array(len);
-          let offset = 0;
-          for (let i = 0; i < this.chunks.length; i++) {
-            bytes.set(this.chunks[i], offset);
-            offset += this.chunks[i].length;
-          }
-          this.chunks = [];
-          return bytes;
+          const result = this.buffer.slice(0, this.pos);
+          this.pos = 0;
+          this.stackPos = [];
+          return result;
         }
         /**
          * Start a new fork for length-delimited data like a message
@@ -447,9 +509,9 @@ var Exports = (() => {
          * Must be joined later with `join()`.
          */
         fork() {
-          this.stack.push({ chunks: this.chunks, buf: this.buf });
-          this.chunks = [];
-          this.buf = [];
+          this.stackPos.push(this.pos);
+          this.ensureCapacity(DEFAULT_LEN_PREFIX_SIZE);
+          this.buffer[this.pos++] = 0;
           return this;
         }
         /**
@@ -457,14 +519,19 @@ var Exports = (() => {
          * return to the previous state.
          */
         join() {
-          let chunk = this.finish();
-          let prev = this.stack.pop();
-          if (!prev)
+          const forkPos = this.stackPos.pop();
+          if (forkPos === void 0)
             throw new Error("invalid state, fork stack empty");
-          this.chunks = prev.chunks;
-          this.buf = prev.buf;
-          this.uint32(chunk.byteLength);
-          return this.raw(chunk);
+          const len = this.pos - forkPos - DEFAULT_LEN_PREFIX_SIZE;
+          const lenPrefixSize = varint32Size(len);
+          if (lenPrefixSize > DEFAULT_LEN_PREFIX_SIZE) {
+            this.ensureCapacity(lenPrefixSize - DEFAULT_LEN_PREFIX_SIZE);
+            this.buffer.copyWithin(forkPos + lenPrefixSize, forkPos + DEFAULT_LEN_PREFIX_SIZE, this.pos);
+          }
+          this.pos = forkPos;
+          this.uint32(len);
+          this.pos += len;
+          return this;
         }
         /**
          * Writes a tag (field number and wire type).
@@ -480,11 +547,9 @@ var Exports = (() => {
          * Write a chunk of raw bytes.
          */
         raw(chunk) {
-          if (this.buf.length) {
-            this.chunks.push(new Uint8Array(this.buf));
-            this.buf = [];
-          }
-          this.chunks.push(chunk);
+          this.ensureCapacity(chunk.length);
+          this.buffer.set(chunk, this.pos);
+          this.pos += chunk.length;
           return this;
         }
         /**
@@ -492,11 +557,16 @@ var Exports = (() => {
          */
         uint32(value) {
           assertUInt32(value);
-          while (value > 127) {
-            this.buf.push(value & 127 | 128);
-            value = value >>> 7;
+          this.ensureCapacity(5);
+          if (value < 128) {
+            this.buffer[this.pos++] = value;
+            return this;
           }
-          this.buf.push(value);
+          while (value > 127) {
+            this.buffer[this.pos++] = value & 127 | 128;
+            value >>>= 7;
+          }
+          this.buffer[this.pos++] = value;
           return this;
         }
         /**
@@ -504,14 +574,23 @@ var Exports = (() => {
          */
         int32(value) {
           assertInt32(value);
-          (0, varint_js_1.varint32write)(value, this.buf);
+          if (value >= 0) {
+            return this.uint32(value);
+          }
+          this.ensureCapacity(10);
+          for (let i = 0; i < 9; i++) {
+            this.buffer[this.pos++] = value & 127 | 128;
+            value >>= 7;
+          }
+          this.buffer[this.pos++] = 1;
           return this;
         }
         /**
-         * Write a `bool` value, a variant.
+         * Write a `bool` value, a varint.
          */
         bool(value) {
-          this.buf.push(value ? 1 : 0);
+          this.ensureCapacity(1);
+          this.buffer[this.pos++] = value ? 1 : 0;
           return this;
         }
         /**
@@ -525,101 +604,194 @@ var Exports = (() => {
          * Write a `string` value, length-delimited data converted to UTF-8 text.
          */
         string(value) {
-          let chunk = this.encodeUtf8(value);
-          this.uint32(chunk.byteLength);
-          return this.raw(chunk);
+          if (typeof value !== "string") {
+            value = String(value);
+          }
+          const len = value.length;
+          if (len <= ASCII_MAX_LENGTH) {
+            this.ensureCapacity(len + 1);
+            const ascii = this.buffer;
+            let pos = this.pos;
+            ascii[pos++] = len;
+            let i = 0;
+            for (; i < len; i++) {
+              const code = value.charCodeAt(i);
+              if (code > 127)
+                break;
+              ascii[pos++] = code;
+            }
+            if (i == len) {
+              this.pos = pos;
+              return this;
+            }
+          }
+          this.ensureCapacity(len * 3 + 5);
+          const lenPrefixSizeGuess = varint32Size(len);
+          const buf = this.buffer;
+          const start = this.pos;
+          const { written } = this.encodeUtf8Into(value, buf.subarray(start + lenPrefixSizeGuess));
+          const lenPrefixSize = varint32Size(written);
+          if (lenPrefixSize != lenPrefixSizeGuess) {
+            buf.copyWithin(start + lenPrefixSize, start + lenPrefixSizeGuess, start + lenPrefixSizeGuess + written);
+          }
+          this.uint32(written);
+          this.pos += written;
+          return this;
         }
         /**
          * Write a `float` value, 32-bit floating point number.
          */
         float(value) {
           assertFloat32(value);
-          let chunk = new Uint8Array(4);
-          new DataView(chunk.buffer).setFloat32(0, value, true);
-          return this.raw(chunk);
+          this.ensureCapacity(4);
+          this.view().setFloat32(this.pos, value, true);
+          this.pos += 4;
+          return this;
         }
         /**
          * Write a `double` value, a 64-bit floating point number.
          */
         double(value) {
-          let chunk = new Uint8Array(8);
-          new DataView(chunk.buffer).setFloat64(0, value, true);
-          return this.raw(chunk);
+          this.ensureCapacity(8);
+          this.view().setFloat64(this.pos, value, true);
+          this.pos += 8;
+          return this;
         }
         /**
          * Write a `fixed32` value, an unsigned, fixed-length 32-bit integer.
          */
         fixed32(value) {
           assertUInt32(value);
-          let chunk = new Uint8Array(4);
-          new DataView(chunk.buffer).setUint32(0, value, true);
-          return this.raw(chunk);
+          this.ensureCapacity(4);
+          this.view().setUint32(this.pos, value, true);
+          this.pos += 4;
+          return this;
         }
         /**
          * Write a `sfixed32` value, a signed, fixed-length 32-bit integer.
          */
         sfixed32(value) {
           assertInt32(value);
-          let chunk = new Uint8Array(4);
-          new DataView(chunk.buffer).setInt32(0, value, true);
-          return this.raw(chunk);
+          this.ensureCapacity(4);
+          this.view().setInt32(this.pos, value, true);
+          this.pos += 4;
+          return this;
         }
         /**
          * Write a `sint32` value, a signed, zigzag-encoded 32-bit varint.
          */
         sint32(value) {
           assertInt32(value);
-          value = (value << 1 ^ value >> 31) >>> 0;
-          (0, varint_js_1.varint32write)(value, this.buf);
-          return this;
+          return this.uint32((value << 1 ^ value >> 31) >>> 0);
         }
         /**
-         * Write a `fixed64` value, a signed, fixed-length 64-bit integer.
+         * Write a `sfixed64` value, a signed, fixed-length 64-bit integer.
          */
         sfixed64(value) {
-          let chunk = new Uint8Array(8), view = new DataView(chunk.buffer), tc = proto_int64_js_1.protoInt64.enc(value);
-          view.setInt32(0, tc.lo, true);
-          view.setInt32(4, tc.hi, true);
-          return this.raw(chunk);
+          const tc = proto_int64_js_1.protoInt64.enc(value);
+          this.ensureCapacity(8);
+          const view = this.view();
+          view.setInt32(this.pos, tc.lo, true);
+          view.setInt32(this.pos + 4, tc.hi, true);
+          this.pos += 8;
+          return this;
         }
         /**
          * Write a `fixed64` value, an unsigned, fixed-length 64 bit integer.
          */
         fixed64(value) {
-          let chunk = new Uint8Array(8), view = new DataView(chunk.buffer), tc = proto_int64_js_1.protoInt64.uEnc(value);
-          view.setInt32(0, tc.lo, true);
-          view.setInt32(4, tc.hi, true);
-          return this.raw(chunk);
+          const tc = proto_int64_js_1.protoInt64.uEnc(value);
+          this.ensureCapacity(8);
+          const view = this.view();
+          view.setInt32(this.pos, tc.lo, true);
+          view.setInt32(this.pos + 4, tc.hi, true);
+          this.pos += 8;
+          return this;
         }
         /**
          * Write a `int64` value, a signed 64-bit varint.
          */
         int64(value) {
-          let tc = proto_int64_js_1.protoInt64.enc(value);
-          (0, varint_js_1.varint64write)(tc.lo, tc.hi, this.buf);
-          return this;
+          const tc = proto_int64_js_1.protoInt64.enc(value);
+          return this.writeVarint64(tc.lo, tc.hi);
         }
         /**
          * Write a `sint64` value, a signed, zig-zag-encoded 64-bit varint.
          */
         sint64(value) {
           const tc = proto_int64_js_1.protoInt64.enc(value), sign = tc.hi >> 31, lo = tc.lo << 1 ^ sign, hi = (tc.hi << 1 | tc.lo >>> 31) ^ sign;
-          (0, varint_js_1.varint64write)(lo, hi, this.buf);
-          return this;
+          return this.writeVarint64(lo, hi);
         }
         /**
          * Write a `uint64` value, an unsigned 64-bit varint.
          */
         uint64(value) {
           const tc = proto_int64_js_1.protoInt64.uEnc(value);
-          (0, varint_js_1.varint64write)(tc.lo, tc.hi, this.buf);
+          return this.writeVarint64(tc.lo, tc.hi);
+        }
+        /**
+         * Write a 64-bit varint directly into the buffer. Accepts the value as
+         * split low/high 32-bit words.
+         *
+         * Ported from varint64write() to avoid the intermediate number[] buffer.
+         * See https://github.com/protocolbuffers/protobuf/blob/8a71927d74a4ce34efe2d8769fda198f52d20d12/js/experimental/runtime/kernel/writer.js#L344
+         */
+        writeVarint64(lo, hi) {
+          this.ensureCapacity(10);
+          const buf = this.buffer;
+          let pos = this.pos;
+          for (let i = 0; i < 28; i = i + 7) {
+            const shift = lo >>> i;
+            const hasNext = !(shift >>> 7 == 0 && hi == 0);
+            buf[pos++] = (hasNext ? shift | 128 : shift) & 255;
+            if (!hasNext) {
+              this.pos = pos;
+              return this;
+            }
+          }
+          const splitBits = lo >>> 28 & 15 | (hi & 7) << 4;
+          const hasMoreBits = !(hi >> 3 == 0);
+          buf[pos++] = (hasMoreBits ? splitBits | 128 : splitBits) & 255;
+          if (!hasMoreBits) {
+            this.pos = pos;
+            return this;
+          }
+          for (let i = 3; i < 31; i = i + 7) {
+            const shift = hi >>> i;
+            const hasNext = !(shift >>> 7 == 0);
+            buf[pos++] = (hasNext ? shift | 128 : shift) & 255;
+            if (!hasNext) {
+              this.pos = pos;
+              return this;
+            }
+          }
+          buf[pos++] = hi >>> 31 & 1;
+          this.pos = pos;
           return this;
         }
       };
       exports.BinaryWriter = BinaryWriter;
+      var INITIAL_SIZE = 128;
+      var DEFAULT_LEN_PREFIX_SIZE = 1;
+      var EMPTY_BUFFER = new Uint8Array(0);
+      var EMPTY_VIEW = new DataView(EMPTY_BUFFER.buffer);
+      var ASCII_MAX_LENGTH = 32;
+      function varint32Size(value) {
+        if (value < 128)
+          return 1;
+        if (value < 16384)
+          return 2;
+        if (value < 2097152)
+          return 3;
+        if (value < 268435456)
+          return 4;
+        return 5;
+      }
       var BinaryReader = class {
         constructor(buf, decodeUtf8 = (0, text_encoding_js_1.getTextEncoding)().decodeUtf8) {
           this.decodeUtf8 = decodeUtf8;
+          this.varint64Lo = 0;
+          this.varint64Hi = 0;
           this.varint64 = varint_js_1.varint64read;
           this.uint32 = varint_js_1.varint32read;
           this.buf = buf;
@@ -628,21 +800,32 @@ var Exports = (() => {
           this.view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
         }
         /**
-         * Reads a tag - field number and wire type.
+         * Reads a tag - field number and wire type. Tags are uint32 varints; values
+         * that do not fit in uint32 are rejected.
          */
         tag() {
-          let tag = this.uint32(), fieldNo = tag >>> 3, wireType = tag & 7;
-          if (fieldNo <= 0 || wireType < 0 || wireType > 5)
+          const start = this.pos;
+          const tag = this.uint32();
+          const bytesRead = this.pos - start;
+          if (bytesRead > 5 || bytesRead == 5 && this.buf[this.pos - 1] > 15) {
+            throw new Error("illegal tag: varint overflows uint32");
+          }
+          const fieldNo = tag >>> 3;
+          const wireType = tag & 7;
+          if (fieldNo <= 0 || wireType > 5) {
             throw new Error("illegal tag: field no " + fieldNo + " wire type " + wireType);
+          }
           return [fieldNo, wireType];
         }
         /**
          * Skip one element and return the skipped data.
          *
          * When skipping StartGroup, provide the tags field number to check for
-         * matching field number in the EndGroup tag.
+         * matching field number in the EndGroup tag. Recursion into nested groups
+         * is guarded by the `recursionLimit` argument: When the limit is reached,
+         * this method throws.
          */
-        skip(wireType, fieldNo) {
+        skip(wireType, fieldNo, recursionLimit = 100) {
           let start = this.pos;
           switch (wireType) {
             case WireType.Varint:
@@ -660,6 +843,9 @@ var Exports = (() => {
               this.pos += len;
               break;
             case WireType.StartGroup:
+              if (recursionLimit <= 0) {
+                throw new Error("maximum recursion depth reached");
+              }
               for (; ; ) {
                 const [fn, wt] = this.tag();
                 if (wt === WireType.EndGroup) {
@@ -668,7 +854,7 @@ var Exports = (() => {
                   }
                   break;
                 }
-                this.skip(wt, fn);
+                this.skip(wt, fn, recursionLimit - 1);
               }
               break;
             default:
@@ -701,19 +887,23 @@ var Exports = (() => {
          * Read a `int64` field, a signed 64-bit varint.
          */
         int64() {
-          return proto_int64_js_1.protoInt64.dec(...this.varint64());
+          this.varint64();
+          return proto_int64_js_1.protoInt64.dec(this.varint64Lo, this.varint64Hi);
         }
         /**
          * Read a `uint64` field, an unsigned 64-bit varint.
          */
         uint64() {
-          return proto_int64_js_1.protoInt64.uDec(...this.varint64());
+          this.varint64();
+          return proto_int64_js_1.protoInt64.uDec(this.varint64Lo, this.varint64Hi);
         }
         /**
          * Read a `sint64` field, a signed, zig-zag-encoded 64-bit varint.
          */
         sint64() {
-          let [lo, hi] = this.varint64();
+          this.varint64();
+          let lo = this.varint64Lo;
+          let hi = this.varint64Hi;
           let s = -(lo & 1);
           lo = (lo >>> 1 | (hi & 1) << 31) ^ s;
           hi = hi >>> 1 ^ s;
@@ -723,8 +913,13 @@ var Exports = (() => {
          * Read a `bool` field, a variant.
          */
         bool() {
-          let [lo, hi] = this.varint64();
-          return lo !== 0 || hi !== 0;
+          const b = this.buf[this.pos];
+          if (b < 128) {
+            this.pos++;
+            return b !== 0;
+          }
+          this.varint64();
+          return this.varint64Lo !== 0 || this.varint64Hi !== 0;
         }
         /**
          * Read a `fixed32` field, an unsigned, fixed-length 32-bit integer.
@@ -772,10 +967,24 @@ var Exports = (() => {
           return this.buf.subarray(start, start + len);
         }
         /**
-         * Read a `string` field, length-delimited data converted to UTF-8 text.
+         * Read a `string` field, length-delimited data converted to UTF-8 text. If
+         * `strict` is true, throw on invalid UTF-8 instead of substituting U+FFFD.
          */
-        string() {
-          return this.decodeUtf8(this.bytes());
+        string(strict) {
+          const bytes = this.bytes();
+          const len = bytes.length;
+          if (len <= ASCII_MAX_LENGTH) {
+            const codes = new Array(len);
+            for (let i = 0; i < len; i++) {
+              const byte = bytes[i];
+              if (byte > 127) {
+                return this.decodeUtf8(bytes, strict);
+              }
+              codes[i] = byte;
+            }
+            return String.fromCharCode.apply(String, codes);
+          }
+          return this.decodeUtf8(bytes, strict);
         }
       };
       exports.BinaryReader = BinaryReader;
@@ -807,27 +1016,46 @@ var Exports = (() => {
         } else if (typeof arg != "number") {
           throw new Error("invalid float32: " + typeof arg);
         }
-        if (Number.isFinite(arg) && (arg > exports.FLOAT32_MAX || arg < exports.FLOAT32_MIN))
+        if (!Number.isFinite(Math.fround(arg)) && Number.isFinite(arg)) {
           throw new Error("invalid float32: " + arg);
+        }
       }
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/base64-encoding.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/wire/base64-encoding.js
   var require_base64_encoding = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/base64-encoding.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/wire/base64-encoding.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.base64Decode = base64Decode;
       exports.base64Encode = base64Encode;
+      var nativeSetFromBase64 = Uint8Array.prototype.setFromBase64;
       function base64Decode(base64Str) {
+        const len = base64Str.length;
+        let size = len - (len + 3 >> 2);
+        if ((len & 3) == 0 && base64Str[len - 1] == "=") {
+          size -= base64Str[len - 2] == "=" ? 2 : 1;
+        }
+        const bytes = new Uint8Array(size);
+        let written = -1;
+        if (nativeSetFromBase64) {
+          try {
+            const result = nativeSetFromBase64.call(bytes, base64Str);
+            if (result.read == len) {
+              written = result.written;
+            }
+          } catch (_a) {
+          }
+        }
+        if (written < 0) {
+          written = setFromBase64(bytes, base64Str);
+        }
+        return written == size ? bytes : bytes.subarray(0, written);
+      }
+      function setFromBase64(bytes, base64Str) {
         const table = getDecodeTable();
-        let es = base64Str.length * 3 / 4;
-        if (base64Str[base64Str.length - 2] == "=")
-          es -= 2;
-        else if (base64Str[base64Str.length - 1] == "=")
-          es -= 1;
-        let bytes = new Uint8Array(es), bytePos = 0, groupPos = 0, b, p = 0;
+        let bytePos = 0, groupPos = 0, b, p = 0;
         for (let i = 0; i < base64Str.length; i++) {
           b = table[base64Str.charCodeAt(i)];
           if (b === void 0) {
@@ -869,9 +1097,18 @@ var Exports = (() => {
         }
         if (groupPos == 1)
           throw Error("invalid base64 string");
-        return bytes.subarray(0, bytePos);
+        return bytePos;
       }
+      var nativeToBase64 = Uint8Array.prototype.toBase64;
+      var toBase64OptionsMap = {
+        std: { alphabet: "base64", omitPadding: false },
+        std_raw: { alphabet: "base64", omitPadding: true },
+        url: { alphabet: "base64url", omitPadding: true }
+      };
       function base64Encode(bytes, encoding = "std") {
+        if (nativeToBase64) {
+          return nativeToBase64.call(bytes, toBase64OptionsMap[encoding]);
+        }
         const table = getEncodeTable(encoding);
         const pad = encoding == "std";
         let base64 = "", groupPos = 0, b, p = 0;
@@ -932,9 +1169,9 @@ var Exports = (() => {
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/descriptors.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/descriptors.js
   var require_descriptors = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/descriptors.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/descriptors.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.ScalarType = void 0;
@@ -959,9 +1196,9 @@ var Exports = (() => {
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/text-format.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/wire/text-format.js
   var require_text_format = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/text-format.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/wire/text-format.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.parseTextFormatEnumValue = parseTextFormatEnumValue;
@@ -1138,28 +1375,9 @@ var Exports = (() => {
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/is-message.js
-  var require_is_message = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/is-message.js"(exports) {
-      "use strict";
-      Object.defineProperty(exports, "__esModule", { value: true });
-      exports.isMessage = isMessage;
-      function isMessage(arg, schema) {
-        const isMessage2 = arg !== null && typeof arg == "object" && "$typeName" in arg && typeof arg.$typeName == "string";
-        if (!isMessage2) {
-          return false;
-        }
-        if (schema === void 0) {
-          return true;
-        }
-        return schema.typeName === arg.$typeName;
-      }
-    }
-  });
-
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/reflect/error.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/reflect/error.js
   var require_error = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/reflect/error.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/reflect/error.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.FieldError = void 0;
@@ -1183,9 +1401,9 @@ var Exports = (() => {
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/reflect/scalar.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/reflect/scalar.js
   var require_scalar = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/reflect/scalar.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/reflect/scalar.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.scalarEquals = scalarEquals;
@@ -1250,6 +1468,9 @@ var Exports = (() => {
             return value === "";
           case descriptors_js_1.ScalarType.BYTES:
             return value instanceof Uint8Array && !value.byteLength;
+          case descriptors_js_1.ScalarType.DOUBLE:
+          case descriptors_js_1.ScalarType.FLOAT:
+            return Object.is(value, 0);
           default:
             return value == 0;
         }
@@ -1257,9 +1478,9 @@ var Exports = (() => {
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/reflect/unsafe.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/reflect/unsafe.js
   var require_unsafe = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/reflect/unsafe.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/reflect/unsafe.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.unsafeLocal = void 0;
@@ -1268,6 +1489,8 @@ var Exports = (() => {
       exports.unsafeIsSetExplicit = unsafeIsSetExplicit;
       exports.unsafeGet = unsafeGet;
       exports.unsafeSet = unsafeSet;
+      exports.setOwn = setOwn;
+      exports.getOwn = getOwn;
       exports.unsafeClear = unsafeClear;
       var scalar_js_1 = require_scalar();
       var IMPLICIT = 2;
@@ -1322,6 +1545,21 @@ var Exports = (() => {
           target[field.localName] = value;
         }
       }
+      function setOwn(obj, key, value) {
+        if (key === "__proto__") {
+          Object.defineProperty(obj, "__proto__", {
+            value,
+            writable: true,
+            enumerable: true,
+            configurable: true
+          });
+        } else {
+          obj[key] = value;
+        }
+      }
+      function getOwn(obj, key) {
+        return Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : void 0;
+      }
       function unsafeClear(target, field) {
         const name = field.localName;
         if (field.oneof) {
@@ -1351,9 +1589,28 @@ var Exports = (() => {
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/reflect/guard.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/is-message.js
+  var require_is_message = __commonJS({
+    "node_modules/@bufbuild/protobuf/dist/commonjs/is-message.js"(exports) {
+      "use strict";
+      Object.defineProperty(exports, "__esModule", { value: true });
+      exports.isMessage = isMessage;
+      function isMessage(arg, schema) {
+        const isMessage2 = arg !== null && typeof arg == "object" && "$typeName" in arg && typeof arg.$typeName == "string";
+        if (!isMessage2) {
+          return false;
+        }
+        if (schema === void 0) {
+          return true;
+        }
+        return schema.typeName === arg.$typeName;
+      }
+    }
+  });
+
+  // node_modules/@bufbuild/protobuf/dist/commonjs/reflect/guard.js
   var require_guard = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/reflect/guard.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/reflect/guard.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.isObject = isObject;
@@ -1397,247 +1654,14 @@ var Exports = (() => {
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/reflect/reflect-check.js
-  var require_reflect_check = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/reflect/reflect-check.js"(exports) {
-      "use strict";
-      Object.defineProperty(exports, "__esModule", { value: true });
-      exports.checkField = checkField;
-      exports.checkListItem = checkListItem;
-      exports.checkMapEntry = checkMapEntry;
-      exports.formatVal = formatVal;
-      var descriptors_js_1 = require_descriptors();
-      var is_message_js_1 = require_is_message();
-      var error_js_1 = require_error();
-      var guard_js_1 = require_guard();
-      var binary_encoding_js_1 = require_binary_encoding();
-      var text_encoding_js_1 = require_text_encoding();
-      var proto_int64_js_1 = require_proto_int64();
-      function checkField(field, value) {
-        const check = field.fieldKind == "list" ? (0, guard_js_1.isReflectList)(value, field) : field.fieldKind == "map" ? (0, guard_js_1.isReflectMap)(value, field) : checkSingular(field, value);
-        if (check === true) {
-          return void 0;
-        }
-        let reason;
-        switch (field.fieldKind) {
-          case "list":
-            reason = `expected ${formatReflectList(field)}, got ${formatVal(value)}`;
-            break;
-          case "map":
-            reason = `expected ${formatReflectMap(field)}, got ${formatVal(value)}`;
-            break;
-          default: {
-            reason = reasonSingular(field, value, check);
-          }
-        }
-        return new error_js_1.FieldError(field, reason);
-      }
-      function checkListItem(field, index, value) {
-        const check = checkSingular(field, value);
-        if (check !== true) {
-          return new error_js_1.FieldError(field, `list item #${index + 1}: ${reasonSingular(field, value, check)}`);
-        }
-        return void 0;
-      }
-      function checkMapEntry(field, key, value) {
-        const checkKey = checkScalarValue(key, field.mapKey);
-        if (checkKey !== true) {
-          return new error_js_1.FieldError(field, `invalid map key: ${reasonSingular({ scalar: field.mapKey }, key, checkKey)}`);
-        }
-        const checkVal = checkSingular(field, value);
-        if (checkVal !== true) {
-          return new error_js_1.FieldError(field, `map entry ${formatVal(key)}: ${reasonSingular(field, value, checkVal)}`);
-        }
-        return void 0;
-      }
-      function checkSingular(field, value) {
-        if (field.scalar !== void 0) {
-          return checkScalarValue(value, field.scalar);
-        }
-        if (field.enum !== void 0) {
-          if (field.enum.open) {
-            return Number.isInteger(value);
-          }
-          return field.enum.values.some((v) => v.number === value);
-        }
-        return (0, guard_js_1.isReflectMessage)(value, field.message);
-      }
-      function checkScalarValue(value, scalar) {
-        switch (scalar) {
-          case descriptors_js_1.ScalarType.DOUBLE:
-            return typeof value == "number";
-          case descriptors_js_1.ScalarType.FLOAT:
-            if (typeof value != "number") {
-              return false;
-            }
-            if (Number.isNaN(value) || !Number.isFinite(value)) {
-              return true;
-            }
-            if (value > binary_encoding_js_1.FLOAT32_MAX || value < binary_encoding_js_1.FLOAT32_MIN) {
-              return `${value.toFixed()} out of range`;
-            }
-            return true;
-          case descriptors_js_1.ScalarType.INT32:
-          case descriptors_js_1.ScalarType.SFIXED32:
-          case descriptors_js_1.ScalarType.SINT32:
-            if (typeof value !== "number" || !Number.isInteger(value)) {
-              return false;
-            }
-            if (value > binary_encoding_js_1.INT32_MAX || value < binary_encoding_js_1.INT32_MIN) {
-              return `${value.toFixed()} out of range`;
-            }
-            return true;
-          case descriptors_js_1.ScalarType.FIXED32:
-          case descriptors_js_1.ScalarType.UINT32:
-            if (typeof value !== "number" || !Number.isInteger(value)) {
-              return false;
-            }
-            if (value > binary_encoding_js_1.UINT32_MAX || value < 0) {
-              return `${value.toFixed()} out of range`;
-            }
-            return true;
-          case descriptors_js_1.ScalarType.BOOL:
-            return typeof value == "boolean";
-          case descriptors_js_1.ScalarType.STRING:
-            if (typeof value != "string") {
-              return false;
-            }
-            return (0, text_encoding_js_1.getTextEncoding)().checkUtf8(value) || "invalid UTF8";
-          case descriptors_js_1.ScalarType.BYTES:
-            return value instanceof Uint8Array;
-          case descriptors_js_1.ScalarType.INT64:
-          case descriptors_js_1.ScalarType.SFIXED64:
-          case descriptors_js_1.ScalarType.SINT64:
-            if (typeof value == "bigint" || typeof value == "number" || typeof value == "string" && value.length > 0) {
-              try {
-                proto_int64_js_1.protoInt64.parse(value);
-                return true;
-              } catch (_) {
-                return `${value} out of range`;
-              }
-            }
-            return false;
-          case descriptors_js_1.ScalarType.FIXED64:
-          case descriptors_js_1.ScalarType.UINT64:
-            if (typeof value == "bigint" || typeof value == "number" || typeof value == "string" && value.length > 0) {
-              try {
-                proto_int64_js_1.protoInt64.uParse(value);
-                return true;
-              } catch (_) {
-                return `${value} out of range`;
-              }
-            }
-            return false;
-        }
-      }
-      function reasonSingular(field, val, details) {
-        details = typeof details == "string" ? `: ${details}` : `, got ${formatVal(val)}`;
-        if (field.scalar !== void 0) {
-          return `expected ${scalarTypeDescription(field.scalar)}` + details;
-        }
-        if (field.enum !== void 0) {
-          return `expected ${field.enum.toString()}` + details;
-        }
-        return `expected ${formatReflectMessage(field.message)}` + details;
-      }
-      function formatVal(val) {
-        switch (typeof val) {
-          case "object":
-            if (val === null) {
-              return "null";
-            }
-            if (val instanceof Uint8Array) {
-              return `Uint8Array(${val.length})`;
-            }
-            if (Array.isArray(val)) {
-              return `Array(${val.length})`;
-            }
-            if ((0, guard_js_1.isReflectList)(val)) {
-              return formatReflectList(val.field());
-            }
-            if ((0, guard_js_1.isReflectMap)(val)) {
-              return formatReflectMap(val.field());
-            }
-            if ((0, guard_js_1.isReflectMessage)(val)) {
-              return formatReflectMessage(val.desc);
-            }
-            if ((0, is_message_js_1.isMessage)(val)) {
-              return `message ${val.$typeName}`;
-            }
-            return "object";
-          case "string":
-            return val.length > 30 ? "string" : `"${val.split('"').join('\\"')}"`;
-          case "boolean":
-            return String(val);
-          case "number":
-            return String(val);
-          case "bigint":
-            return String(val) + "n";
-          default:
-            return typeof val;
-        }
-      }
-      function formatReflectMessage(desc) {
-        return `ReflectMessage (${desc.typeName})`;
-      }
-      function formatReflectList(field) {
-        switch (field.listKind) {
-          case "message":
-            return `ReflectList (${field.message.toString()})`;
-          case "enum":
-            return `ReflectList (${field.enum.toString()})`;
-          case "scalar":
-            return `ReflectList (${descriptors_js_1.ScalarType[field.scalar]})`;
-        }
-      }
-      function formatReflectMap(field) {
-        switch (field.mapKind) {
-          case "message":
-            return `ReflectMap (${descriptors_js_1.ScalarType[field.mapKey]}, ${field.message.toString()})`;
-          case "enum":
-            return `ReflectMap (${descriptors_js_1.ScalarType[field.mapKey]}, ${field.enum.toString()})`;
-          case "scalar":
-            return `ReflectMap (${descriptors_js_1.ScalarType[field.mapKey]}, ${descriptors_js_1.ScalarType[field.scalar]})`;
-        }
-      }
-      function scalarTypeDescription(scalar) {
-        switch (scalar) {
-          case descriptors_js_1.ScalarType.STRING:
-            return "string";
-          case descriptors_js_1.ScalarType.BOOL:
-            return "boolean";
-          case descriptors_js_1.ScalarType.INT64:
-          case descriptors_js_1.ScalarType.SINT64:
-          case descriptors_js_1.ScalarType.SFIXED64:
-            return "bigint (int64)";
-          case descriptors_js_1.ScalarType.UINT64:
-          case descriptors_js_1.ScalarType.FIXED64:
-            return "bigint (uint64)";
-          case descriptors_js_1.ScalarType.BYTES:
-            return "Uint8Array";
-          case descriptors_js_1.ScalarType.DOUBLE:
-            return "number (float64)";
-          case descriptors_js_1.ScalarType.FLOAT:
-            return "number (float32)";
-          case descriptors_js_1.ScalarType.FIXED32:
-          case descriptors_js_1.ScalarType.UINT32:
-            return "number (uint32)";
-          case descriptors_js_1.ScalarType.INT32:
-          case descriptors_js_1.ScalarType.SFIXED32:
-          case descriptors_js_1.ScalarType.SINT32:
-            return "number (int32)";
-        }
-      }
-    }
-  });
-
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wkt/wrappers.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/wkt/wrappers.js
   var require_wrappers = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wkt/wrappers.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/wkt/wrappers.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.isWrapper = isWrapper;
       exports.isWrapperDesc = isWrapperDesc;
+      exports.hasCustomJsonRepresentation = hasCustomJsonRepresentation;
       function isWrapper(arg) {
         return isWrapperTypeName(arg.$typeName);
       }
@@ -1645,25 +1669,40 @@ var Exports = (() => {
         const f = messageDesc.fields[0];
         return isWrapperTypeName(messageDesc.typeName) && f !== void 0 && f.fieldKind == "scalar" && f.name == "value" && f.number == 1;
       }
+      function hasCustomJsonRepresentation(desc) {
+        switch (desc.typeName) {
+          case "google.protobuf.Any":
+          case "google.protobuf.Timestamp":
+          case "google.protobuf.Duration":
+          case "google.protobuf.FieldMask":
+          case "google.protobuf.Struct":
+          case "google.protobuf.Value":
+          case "google.protobuf.ListValue":
+            return true;
+          default:
+            return isWrapperDesc(desc);
+        }
+      }
+      var wrapperTypeNames = /* @__PURE__ */ new Set([
+        "google.protobuf.DoubleValue",
+        "google.protobuf.FloatValue",
+        "google.protobuf.Int64Value",
+        "google.protobuf.UInt64Value",
+        "google.protobuf.Int32Value",
+        "google.protobuf.UInt32Value",
+        "google.protobuf.BoolValue",
+        "google.protobuf.StringValue",
+        "google.protobuf.BytesValue"
+      ]);
       function isWrapperTypeName(name) {
-        return name.startsWith("google.protobuf.") && [
-          "DoubleValue",
-          "FloatValue",
-          "Int64Value",
-          "UInt64Value",
-          "Int32Value",
-          "UInt32Value",
-          "BoolValue",
-          "StringValue",
-          "BytesValue"
-        ].includes(name.substring(16));
+        return wrapperTypeNames.has(name);
       }
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/create.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/create.js
   var require_create = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/create.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/create.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.create = create;
@@ -1680,156 +1719,175 @@ var Exports = (() => {
         if ((0, is_message_js_1.isMessage)(init, schema)) {
           return init;
         }
-        const message = createZeroMessage(schema);
-        if (init !== void 0) {
-          initMessage(schema, message, init);
-        }
-        return message;
+        return compiledCreate(schema)(init);
       }
-      function initMessage(messageDesc, message, init) {
-        for (const member of messageDesc.members) {
-          let value = init[member.localName];
-          if (value == null) {
+      var compiledCreates = /* @__PURE__ */ new WeakMap();
+      function compiledCreate(desc) {
+        let compiled = compiledCreates.get(desc);
+        if (compiled === void 0) {
+          compiled = compileCreate(desc);
+          compiledCreates.set(desc, compiled);
+        }
+        return compiled;
+      }
+      var INIT_SINGULAR = 0;
+      var INIT_LIST = 1;
+      var INIT_MAP = 2;
+      var INIT_ONEOF = 3;
+      function compileCreate(desc) {
+        const typeName = desc.typeName;
+        const { properties, prototype } = compileInitMessage(desc);
+        return (init) => {
+          let message;
+          if (prototype !== void 0) {
+            message = Object.create(prototype);
+            message.$typeName = typeName;
+          } else {
+            message = { $typeName: typeName };
+          }
+          for (let i = 0; i < properties.length; i++) {
+            const property = properties[i];
+            const name = property.name;
+            const initValue = init === null || init === void 0 ? void 0 : init[name];
+            switch (property.kind) {
+              case INIT_SINGULAR:
+                if (initValue != null) {
+                  message[name] = property.convert !== void 0 ? property.convert(initValue) : initValue;
+                } else if (property.constant !== void 0) {
+                  message[name] = property.constant;
+                }
+                break;
+              case INIT_LIST:
+                message[name] = property.convert !== void 0 && Array.isArray(initValue) ? initValue.map(property.convert) : initValue !== null && initValue !== void 0 ? initValue : [];
+                break;
+              case INIT_MAP:
+                if (property.convert === void 0 || !(0, guard_js_1.isObject)(initValue)) {
+                  message[name] = initValue !== null && initValue !== void 0 ? initValue : {};
+                } else {
+                  const converted = {};
+                  const keys = Object.keys(initValue);
+                  for (let k = 0; k < keys.length; k++) {
+                    (0, unsafe_js_1.setOwn)(converted, keys[k], property.convert(initValue[keys[k]]));
+                  }
+                  message[name] = converted;
+                }
+                break;
+              case INIT_ONEOF: {
+                const oneofValue = initValue;
+                if ((oneofValue === null || oneofValue === void 0 ? void 0 : oneofValue.case) != null) {
+                  const convert = property.convert.get(oneofValue.case);
+                  if (convert !== void 0) {
+                    message[name] = {
+                      case: oneofValue.case,
+                      value: convert(oneofValue.value)
+                    };
+                    break;
+                  }
+                }
+                message[name] = { case: void 0 };
+                break;
+              }
+            }
+          }
+          return message;
+        };
+      }
+      function compileInitMessage(desc) {
+        var _a, _b;
+        const properties = [];
+        const prototype = {};
+        const usePrototype = needsPrototypeChain(desc);
+        for (const member of desc.members) {
+          const name = member.localName;
+          if (member.kind == "oneof") {
+            properties.push({
+              name,
+              kind: INIT_ONEOF,
+              constant: void 0,
+              convert: compileConvertOneof(member)
+            });
             continue;
           }
-          let field;
-          if (member.kind == "oneof") {
-            const oneofField = (0, unsafe_js_1.unsafeOneofCase)(init, member);
-            if (!oneofField) {
-              continue;
+          switch (member.fieldKind) {
+            case "message": {
+              properties.push({
+                name,
+                kind: INIT_SINGULAR,
+                constant: void 0,
+                convert: compileConvertMessage(member)
+              });
+              break;
             }
-            field = oneofField;
-            value = (0, unsafe_js_1.unsafeGet)(init, oneofField);
-          } else {
-            field = member;
-          }
-          switch (field.fieldKind) {
-            case "message":
-              value = toMessage(field, value);
+            case "list": {
+              properties.push({
+                name,
+                kind: INIT_LIST,
+                constant: void 0,
+                convert: member.listKind == "message" ? (_a = compileConvertMessage(member)) !== null && _a !== void 0 ? _a : ((value) => value) : member.scalar == descriptors_js_1.ScalarType.BYTES ? toU8Arr : void 0
+              });
               break;
-            case "scalar":
-              value = initScalar(field, value);
+            }
+            case "map": {
+              properties.push({
+                name,
+                kind: INIT_MAP,
+                constant: void 0,
+                convert: member.mapKind == "message" ? (_b = compileConvertMessage(member)) !== null && _b !== void 0 ? _b : ((value) => value) : member.scalar == descriptors_js_1.ScalarType.BYTES ? toU8Arr : void 0
+              });
               break;
-            case "list":
-              value = initList(field, value);
+            }
+            default: {
+              const zeroValue = createZeroValue(member);
+              properties.push({
+                name,
+                kind: INIT_SINGULAR,
+                constant: member.presence == IMPLICIT ? zeroValue : void 0,
+                convert: member.fieldKind == "scalar" && member.scalar == descriptors_js_1.ScalarType.BYTES ? toU8Arr : void 0
+              });
+              if (usePrototype) {
+                prototype[name] = zeroValue;
+              }
               break;
-            case "map":
-              value = initMap(field, value);
-              break;
-          }
-          (0, unsafe_js_1.unsafeSet)(message, field, value);
-        }
-        return message;
-      }
-      function initScalar(field, value) {
-        if (field.scalar == descriptors_js_1.ScalarType.BYTES) {
-          return toU8Arr(value);
-        }
-        return value;
-      }
-      function initMap(field, value) {
-        if ((0, guard_js_1.isObject)(value)) {
-          if (field.scalar == descriptors_js_1.ScalarType.BYTES) {
-            return convertObjectValues(value, toU8Arr);
-          }
-          if (field.mapKind == "message") {
-            return convertObjectValues(value, (val) => toMessage(field, val));
+            }
           }
         }
-        return value;
+        return {
+          properties,
+          prototype: usePrototype ? prototype : void 0
+        };
       }
-      function initList(field, value) {
-        if (Array.isArray(value)) {
-          if (field.scalar == descriptors_js_1.ScalarType.BYTES) {
-            return value.map(toU8Arr);
+      function compileConvertOneof(oneof) {
+        const converters = /* @__PURE__ */ new Map();
+        for (const field of oneof.fields) {
+          let convert;
+          if (field.fieldKind == "message") {
+            convert = compileConvertMessage(field);
+          } else if (field.fieldKind == "scalar" && field.scalar == descriptors_js_1.ScalarType.BYTES) {
+            convert = toU8Arr;
           }
-          if (field.listKind == "message") {
-            return value.map((item) => toMessage(field, item));
-          }
+          converters.set(field.localName, convert !== null && convert !== void 0 ? convert : ((value) => value));
         }
-        return value;
+        return converters;
       }
-      function toMessage(field, value) {
+      function compileConvertMessage(field) {
         if (field.fieldKind == "message" && !field.oneof && (0, wrappers_js_1.isWrapperDesc)(field.message)) {
-          return initScalar(field.message.fields[0], value);
+          return field.message.fields[0].scalar == descriptors_js_1.ScalarType.BYTES ? toU8Arr : void 0;
         }
-        if ((0, guard_js_1.isObject)(value)) {
-          if (field.message.typeName == "google.protobuf.Struct" && field.parent.typeName !== "google.protobuf.Value") {
+        if (field.message.typeName == "google.protobuf.Struct" && field.parent.typeName !== "google.protobuf.Value") {
+          return void 0;
+        }
+        const messageDesc = field.message;
+        let compiled;
+        return (value) => {
+          if (!(0, guard_js_1.isObject)(value) || (0, is_message_js_1.isMessage)(value, messageDesc)) {
             return value;
           }
-          if (!(0, is_message_js_1.isMessage)(value, field.message)) {
-            return create(field.message, value);
-          }
-        }
-        return value;
+          compiled !== null && compiled !== void 0 ? compiled : compiled = compiledCreate(messageDesc);
+          return compiled(value);
+        };
       }
       function toU8Arr(value) {
         return Array.isArray(value) ? new Uint8Array(value) : value;
-      }
-      function convertObjectValues(obj, fn) {
-        const ret = {};
-        for (const entry of Object.entries(obj)) {
-          ret[entry[0]] = fn(entry[1]);
-        }
-        return ret;
-      }
-      var tokenZeroMessageField = Symbol();
-      var messagePrototypes = /* @__PURE__ */ new WeakMap();
-      function createZeroMessage(desc) {
-        let msg;
-        if (!needsPrototypeChain(desc)) {
-          msg = {
-            $typeName: desc.typeName
-          };
-          for (const member of desc.members) {
-            if (member.kind == "oneof" || member.presence == IMPLICIT) {
-              msg[member.localName] = createZeroField(member);
-            }
-          }
-        } else {
-          const cached = messagePrototypes.get(desc);
-          let prototype;
-          let members;
-          if (cached) {
-            ({ prototype, members } = cached);
-          } else {
-            prototype = {};
-            members = /* @__PURE__ */ new Set();
-            for (const member of desc.members) {
-              if (member.kind == "oneof") {
-                continue;
-              }
-              if (member.fieldKind != "scalar" && member.fieldKind != "enum") {
-                continue;
-              }
-              if (member.presence == IMPLICIT) {
-                continue;
-              }
-              members.add(member);
-              prototype[member.localName] = createZeroField(member);
-            }
-            messagePrototypes.set(desc, { prototype, members });
-          }
-          msg = Object.create(prototype);
-          msg.$typeName = desc.typeName;
-          for (const member of desc.members) {
-            if (members.has(member)) {
-              continue;
-            }
-            if (member.kind == "field") {
-              if (member.fieldKind == "message") {
-                continue;
-              }
-              if (member.fieldKind == "scalar" || member.fieldKind == "enum") {
-                if (member.presence != IMPLICIT) {
-                  continue;
-                }
-              }
-            }
-            msg[member.localName] = createZeroField(member);
-          }
-        }
-        return msg;
       }
       function needsPrototypeChain(desc) {
         switch (desc.file.edition) {
@@ -1841,19 +1899,7 @@ var Exports = (() => {
             return desc.fields.some((f) => f.presence != IMPLICIT && f.fieldKind != "message" && !f.oneof);
         }
       }
-      function createZeroField(field) {
-        if (field.kind == "oneof") {
-          return { case: void 0 };
-        }
-        if (field.fieldKind == "list") {
-          return [];
-        }
-        if (field.fieldKind == "map") {
-          return {};
-        }
-        if (field.fieldKind == "message") {
-          return tokenZeroMessageField;
-        }
+      function createZeroValue(field) {
         const defaultValue = field.getDefaultValue();
         if (defaultValue !== void 0) {
           return field.fieldKind == "scalar" && field.longAsString ? defaultValue.toString() : defaultValue;
@@ -1863,390 +1909,48 @@ var Exports = (() => {
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/reflect/reflect.js
-  var require_reflect = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/reflect/reflect.js"(exports) {
+  // node_modules/@bufbuild/protobuf/dist/commonjs/reflect/message.js
+  var require_message = __commonJS({
+    "node_modules/@bufbuild/protobuf/dist/commonjs/reflect/message.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
-      exports.reflect = reflect;
-      exports.reflectList = reflectList;
-      exports.reflectMap = reflectMap;
-      var descriptors_js_1 = require_descriptors();
-      var reflect_check_js_1 = require_reflect_check();
-      var error_js_1 = require_error();
-      var unsafe_js_1 = require_unsafe();
+      exports.localMessageMapper = localMessageMapper;
+      exports.wktStructToReflect = wktStructToReflect;
+      exports.wktStructToLocal = wktStructToLocal;
       var create_js_1 = require_create();
-      var wrappers_js_1 = require_wrappers();
-      var scalar_js_1 = require_scalar();
-      var proto_int64_js_1 = require_proto_int64();
       var guard_js_1 = require_guard();
-      function reflect(messageDesc, message, check = true) {
-        return new ReflectMessageImpl(messageDesc, message, check);
-      }
-      var ReflectMessageImpl = class {
-        get sortedFields() {
-          var _a;
-          return (_a = this._sortedFields) !== null && _a !== void 0 ? _a : (
-            // biome-ignore lint/suspicious/noAssignInExpressions: no
-            this._sortedFields = this.desc.fields.concat().sort((a, b) => a.number - b.number)
-          );
+      var unsafe_js_1 = require_unsafe();
+      var wrappers_js_1 = require_wrappers();
+      var NULL_VALUE = 0;
+      function localMessageMapper(field) {
+        if (usesJsonRepresentation(field)) {
+          return {
+            toMessage: (local) => wktStructToReflect(local),
+            toLocal: (message) => wktStructToLocal(message)
+          };
         }
-        constructor(messageDesc, message, check = true) {
-          this.lists = /* @__PURE__ */ new Map();
-          this.maps = /* @__PURE__ */ new Map();
-          this.check = check;
-          this.desc = messageDesc;
-          this.message = this[unsafe_js_1.unsafeLocal] = message !== null && message !== void 0 ? message : (0, create_js_1.create)(messageDesc);
-          this.fields = messageDesc.fields;
-          this.oneofs = messageDesc.oneofs;
-          this.members = messageDesc.members;
-        }
-        findNumber(number) {
-          if (!this._fieldsByNumber) {
-            this._fieldsByNumber = new Map(this.desc.fields.map((f) => [f.number, f]));
-          }
-          return this._fieldsByNumber.get(number);
-        }
-        oneofCase(oneof) {
-          assertOwn(this.message, oneof);
-          return (0, unsafe_js_1.unsafeOneofCase)(this.message, oneof);
-        }
-        isSet(field) {
-          assertOwn(this.message, field);
-          return (0, unsafe_js_1.unsafeIsSet)(this.message, field);
-        }
-        clear(field) {
-          assertOwn(this.message, field);
-          (0, unsafe_js_1.unsafeClear)(this.message, field);
-        }
-        get(field) {
-          assertOwn(this.message, field);
-          const value = (0, unsafe_js_1.unsafeGet)(this.message, field);
-          switch (field.fieldKind) {
-            case "list":
-              let list = this.lists.get(field);
-              if (!list || list[unsafe_js_1.unsafeLocal] !== value) {
-                this.lists.set(
-                  field,
-                  // biome-ignore lint/suspicious/noAssignInExpressions: no
-                  list = new ReflectListImpl(field, value, this.check)
-                );
+        if (field.fieldKind == "message" && !field.oneof && (0, wrappers_js_1.isWrapperDesc)(field.message)) {
+          const wrapperDesc = field.message;
+          const valueLocalName = wrapperDesc.fields[0].localName;
+          return {
+            toMessage: (local) => {
+              const message = (0, create_js_1.create)(wrapperDesc);
+              if (local !== void 0) {
+                message[valueLocalName] = local;
               }
-              return list;
-            case "map":
-              let map = this.maps.get(field);
-              if (!map || map[unsafe_js_1.unsafeLocal] !== value) {
-                this.maps.set(
-                  field,
-                  // biome-ignore lint/suspicious/noAssignInExpressions: no
-                  map = new ReflectMapImpl(field, value, this.check)
-                );
-              }
-              return map;
-            case "message":
-              return messageToReflect(field, value, this.check);
-            case "scalar":
-              return value === void 0 ? (0, scalar_js_1.scalarZeroValue)(field.scalar, false) : longToReflect(field, value);
-            case "enum":
-              return value !== null && value !== void 0 ? value : field.enum.values[0].number;
-          }
+              return message;
+            },
+            toLocal: (message) => message[valueLocalName]
+          };
         }
-        set(field, value) {
-          assertOwn(this.message, field);
-          if (this.check) {
-            const err = (0, reflect_check_js_1.checkField)(field, value);
-            if (err) {
-              throw err;
-            }
-          }
-          let local;
-          if (field.fieldKind == "message") {
-            local = messageToLocal(field, value);
-          } else if ((0, guard_js_1.isReflectMap)(value) || (0, guard_js_1.isReflectList)(value)) {
-            local = value[unsafe_js_1.unsafeLocal];
-          } else {
-            local = longToLocal(field, value);
-          }
-          (0, unsafe_js_1.unsafeSet)(this.message, field, local);
-        }
-        getUnknown() {
-          return this.message.$unknown;
-        }
-        setUnknown(value) {
-          this.message.$unknown = value;
-        }
-      };
-      function assertOwn(owner, member) {
-        if (member.parent.typeName !== owner.$typeName) {
-          throw new error_js_1.FieldError(member, `cannot use ${member.toString()} with message ${owner.$typeName}`, "ForeignFieldError");
-        }
+        const childDesc = field.message;
+        return {
+          toMessage: (local) => local === void 0 ? (0, create_js_1.create)(childDesc) : local,
+          toLocal: (message) => message
+        };
       }
-      function reflectList(field, unsafeInput, check = true) {
-        return new ReflectListImpl(field, unsafeInput !== null && unsafeInput !== void 0 ? unsafeInput : [], check);
-      }
-      var ReflectListImpl = class {
-        field() {
-          return this._field;
-        }
-        get size() {
-          return this._arr.length;
-        }
-        constructor(field, unsafeInput, check) {
-          this._field = field;
-          this._arr = this[unsafe_js_1.unsafeLocal] = unsafeInput;
-          this.check = check;
-        }
-        get(index) {
-          const item = this._arr[index];
-          return item === void 0 ? void 0 : listItemToReflect(this._field, item, this.check);
-        }
-        set(index, item) {
-          if (index < 0 || index >= this._arr.length) {
-            throw new error_js_1.FieldError(this._field, `list item #${index + 1}: out of range`);
-          }
-          if (this.check) {
-            const err = (0, reflect_check_js_1.checkListItem)(this._field, index, item);
-            if (err) {
-              throw err;
-            }
-          }
-          this._arr[index] = listItemToLocal(this._field, item);
-        }
-        add(item) {
-          if (this.check) {
-            const err = (0, reflect_check_js_1.checkListItem)(this._field, this._arr.length, item);
-            if (err) {
-              throw err;
-            }
-          }
-          this._arr.push(listItemToLocal(this._field, item));
-          return void 0;
-        }
-        clear() {
-          this._arr.splice(0, this._arr.length);
-        }
-        [Symbol.iterator]() {
-          return this.values();
-        }
-        keys() {
-          return this._arr.keys();
-        }
-        *values() {
-          for (const item of this._arr) {
-            yield listItemToReflect(this._field, item, this.check);
-          }
-        }
-        *entries() {
-          for (let i = 0; i < this._arr.length; i++) {
-            yield [i, listItemToReflect(this._field, this._arr[i], this.check)];
-          }
-        }
-      };
-      function reflectMap(field, unsafeInput, check = true) {
-        return new ReflectMapImpl(field, unsafeInput, check);
-      }
-      var ReflectMapImpl = class {
-        constructor(field, unsafeInput, check = true) {
-          this.obj = this[unsafe_js_1.unsafeLocal] = unsafeInput !== null && unsafeInput !== void 0 ? unsafeInput : {};
-          this.check = check;
-          this._field = field;
-        }
-        field() {
-          return this._field;
-        }
-        set(key, value) {
-          if (this.check) {
-            const err = (0, reflect_check_js_1.checkMapEntry)(this._field, key, value);
-            if (err) {
-              throw err;
-            }
-          }
-          this.obj[mapKeyToLocal(key)] = mapValueToLocal(this._field, value);
-          return this;
-        }
-        delete(key) {
-          const k = mapKeyToLocal(key);
-          const has = Object.prototype.hasOwnProperty.call(this.obj, k);
-          if (has) {
-            delete this.obj[k];
-          }
-          return has;
-        }
-        clear() {
-          for (const key of Object.keys(this.obj)) {
-            delete this.obj[key];
-          }
-        }
-        get(key) {
-          let val = this.obj[mapKeyToLocal(key)];
-          if (val !== void 0) {
-            val = mapValueToReflect(this._field, val, this.check);
-          }
-          return val;
-        }
-        has(key) {
-          return Object.prototype.hasOwnProperty.call(this.obj, mapKeyToLocal(key));
-        }
-        *keys() {
-          for (const objKey of Object.keys(this.obj)) {
-            yield mapKeyToReflect(objKey, this._field.mapKey);
-          }
-        }
-        *entries() {
-          for (const objEntry of Object.entries(this.obj)) {
-            yield [
-              mapKeyToReflect(objEntry[0], this._field.mapKey),
-              mapValueToReflect(this._field, objEntry[1], this.check)
-            ];
-          }
-        }
-        [Symbol.iterator]() {
-          return this.entries();
-        }
-        get size() {
-          return Object.keys(this.obj).length;
-        }
-        *values() {
-          for (const val of Object.values(this.obj)) {
-            yield mapValueToReflect(this._field, val, this.check);
-          }
-        }
-        forEach(callbackfn, thisArg) {
-          for (const mapEntry of this.entries()) {
-            callbackfn.call(thisArg, mapEntry[1], mapEntry[0], this);
-          }
-        }
-      };
-      function messageToLocal(field, value) {
-        if (!(0, guard_js_1.isReflectMessage)(value)) {
-          return value;
-        }
-        if ((0, wrappers_js_1.isWrapper)(value.message) && !field.oneof && field.fieldKind == "message") {
-          return value.message.value;
-        }
-        if (value.desc.typeName == "google.protobuf.Struct" && field.parent.typeName != "google.protobuf.Value") {
-          return wktStructToLocal(value.message);
-        }
-        return value.message;
-      }
-      function messageToReflect(field, value, check) {
-        if (value !== void 0) {
-          if ((0, wrappers_js_1.isWrapperDesc)(field.message) && !field.oneof && field.fieldKind == "message") {
-            value = {
-              $typeName: field.message.typeName,
-              value: longToReflect(field.message.fields[0], value)
-            };
-          } else if (field.message.typeName == "google.protobuf.Struct" && field.parent.typeName != "google.protobuf.Value" && (0, guard_js_1.isObject)(value)) {
-            value = wktStructToReflect(value);
-          }
-        }
-        return new ReflectMessageImpl(field.message, value, check);
-      }
-      function listItemToLocal(field, value) {
-        if (field.listKind == "message") {
-          return messageToLocal(field, value);
-        }
-        return longToLocal(field, value);
-      }
-      function listItemToReflect(field, value, check) {
-        if (field.listKind == "message") {
-          return messageToReflect(field, value, check);
-        }
-        return longToReflect(field, value);
-      }
-      function mapValueToLocal(field, value) {
-        if (field.mapKind == "message") {
-          return messageToLocal(field, value);
-        }
-        return longToLocal(field, value);
-      }
-      function mapValueToReflect(field, value, check) {
-        if (field.mapKind == "message") {
-          return messageToReflect(field, value, check);
-        }
-        return value;
-      }
-      function mapKeyToLocal(key) {
-        return typeof key == "string" || typeof key == "number" ? key : String(key);
-      }
-      function mapKeyToReflect(key, type) {
-        switch (type) {
-          case descriptors_js_1.ScalarType.STRING:
-            return key;
-          case descriptors_js_1.ScalarType.INT32:
-          case descriptors_js_1.ScalarType.FIXED32:
-          case descriptors_js_1.ScalarType.UINT32:
-          case descriptors_js_1.ScalarType.SFIXED32:
-          case descriptors_js_1.ScalarType.SINT32: {
-            const n = Number.parseInt(key);
-            if (Number.isFinite(n)) {
-              return n;
-            }
-            break;
-          }
-          case descriptors_js_1.ScalarType.BOOL:
-            switch (key) {
-              case "true":
-                return true;
-              case "false":
-                return false;
-            }
-            break;
-          case descriptors_js_1.ScalarType.UINT64:
-          case descriptors_js_1.ScalarType.FIXED64:
-            try {
-              return proto_int64_js_1.protoInt64.uParse(key);
-            } catch (_a) {
-            }
-            break;
-          default:
-            try {
-              return proto_int64_js_1.protoInt64.parse(key);
-            } catch (_b) {
-            }
-            break;
-        }
-        return key;
-      }
-      function longToReflect(field, value) {
-        switch (field.scalar) {
-          case descriptors_js_1.ScalarType.INT64:
-          case descriptors_js_1.ScalarType.SFIXED64:
-          case descriptors_js_1.ScalarType.SINT64:
-            if ("longAsString" in field && field.longAsString && typeof value == "string") {
-              value = proto_int64_js_1.protoInt64.parse(value);
-            }
-            break;
-          case descriptors_js_1.ScalarType.FIXED64:
-          case descriptors_js_1.ScalarType.UINT64:
-            if ("longAsString" in field && field.longAsString && typeof value == "string") {
-              value = proto_int64_js_1.protoInt64.uParse(value);
-            }
-            break;
-        }
-        return value;
-      }
-      function longToLocal(field, value) {
-        switch (field.scalar) {
-          case descriptors_js_1.ScalarType.INT64:
-          case descriptors_js_1.ScalarType.SFIXED64:
-          case descriptors_js_1.ScalarType.SINT64:
-            if ("longAsString" in field && field.longAsString) {
-              value = String(value);
-            } else if (typeof value == "string" || typeof value == "number") {
-              value = proto_int64_js_1.protoInt64.parse(value);
-            }
-            break;
-          case descriptors_js_1.ScalarType.FIXED64:
-          case descriptors_js_1.ScalarType.UINT64:
-            if ("longAsString" in field && field.longAsString) {
-              value = String(value);
-            } else if (typeof value == "string" || typeof value == "number") {
-              value = proto_int64_js_1.protoInt64.uParse(value);
-            }
-            break;
-        }
-        return value;
+      function usesJsonRepresentation(field) {
+        return field.message.typeName == "google.protobuf.Struct" && field.parent.typeName != "google.protobuf.Value";
       }
       function wktStructToReflect(json) {
         const struct = {
@@ -2254,16 +1958,16 @@ var Exports = (() => {
           fields: {}
         };
         if ((0, guard_js_1.isObject)(json)) {
-          for (const [k, v] of Object.entries(json)) {
-            struct.fields[k] = wktValueToReflect(v);
+          for (const k of Object.keys(json)) {
+            (0, unsafe_js_1.setOwn)(struct.fields, k, wktValueToReflect(json[k]));
           }
         }
         return struct;
       }
       function wktStructToLocal(val) {
         const json = {};
-        for (const [k, v] of Object.entries(val.fields)) {
-          json[k] = wktValueToLocal(v);
+        for (const k of Object.keys(val.fields)) {
+          (0, unsafe_js_1.setOwn)(json, k, wktValueToLocal(val.fields[k]));
         }
         return json;
       }
@@ -2297,8 +2001,7 @@ var Exports = (() => {
             break;
           case "object":
             if (json === null) {
-              const nullValue = 0;
-              value.kind = { case: "nullValue", value: nullValue };
+              value.kind = { case: "nullValue", value: NULL_VALUE };
             } else if (Array.isArray(json)) {
               const listValue = {
                 $typeName: "google.protobuf.ListValue",
@@ -2326,16 +2029,20 @@ var Exports = (() => {
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/to-binary.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/to-binary.js
   var require_to_binary = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/to-binary.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/to-binary.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.toBinary = toBinary;
       exports.writeField = writeField;
-      var reflect_js_1 = require_reflect();
       var binary_encoding_js_1 = require_binary_encoding();
       var descriptors_js_1 = require_descriptors();
+      var error_js_1 = require_error();
+      var unsafe_js_1 = require_unsafe();
+      var message_js_1 = require_message();
+      var proto_int64_js_1 = require_proto_int64();
+      var IMPLICIT = 2;
       var LEGACY_REQUIRED = 3;
       var writeDefaults = {
         writeUnknownFields: true
@@ -2344,150 +2051,334 @@ var Exports = (() => {
         return options ? Object.assign(Object.assign({}, writeDefaults), options) : writeDefaults;
       }
       function toBinary(schema, message, options) {
-        return writeFields(new binary_encoding_js_1.BinaryWriter(), makeWriteOptions(options), (0, reflect_js_1.reflect)(schema, message)).finish();
+        const writer = new binary_encoding_js_1.BinaryWriter();
+        compiledWriter(schema)(writer, makeWriteOptions(options), message);
+        return writer.finish();
       }
-      function writeFields(writer, opts, msg) {
-        var _a;
-        for (const f of msg.sortedFields) {
-          if (!msg.isSet(f)) {
-            if (f.presence == LEGACY_REQUIRED) {
-              throw new Error(`cannot encode ${f} to binary: required field not set`);
+      var compiledWriters = /* @__PURE__ */ new WeakMap();
+      function compiledWriter(desc) {
+        let compiled = compiledWriters.get(desc);
+        if (compiled === void 0) {
+          compiled = compileMessage(desc);
+        }
+        return compiled;
+      }
+      function compileMessage(desc) {
+        const typeName = desc.typeName;
+        const sortedFields = desc.fields.concat().sort((a, b) => a.number - b.number);
+        const foreignField = sortedFields[0];
+        const fieldWriters = [];
+        const compiled = (writer, opts, message) => {
+          if (message.$typeName !== typeName && foreignField !== void 0) {
+            throw new error_js_1.FieldError(foreignField, `cannot use ${foreignField} with message ${message.$typeName}`, "ForeignFieldError");
+          }
+          for (let i = 0; i < fieldWriters.length; i++) {
+            fieldWriters[i](writer, opts, message);
+          }
+          const unknown = message.$unknown;
+          if (unknown !== void 0 && opts.writeUnknownFields) {
+            for (let i = 0; i < unknown.length; i++) {
+              const { no, wireType, data } = unknown[i];
+              writer.tag(no, wireType).raw(data);
             }
-            continue;
           }
-          writeField(writer, opts, msg, f);
+        };
+        compiledWriters.set(desc, compiled);
+        for (const field of sortedFields) {
+          fieldWriters.push(compileField(field));
         }
-        if (opts.writeUnknownFields) {
-          for (const { no, wireType, data } of (_a = msg.getUnknown()) !== null && _a !== void 0 ? _a : []) {
-            writer.tag(no, wireType).raw(data);
+        return compiled;
+      }
+      function compileField(field) {
+        switch (field.fieldKind) {
+          case "message":
+          case "scalar":
+          case "enum":
+            return compileSingularField(field);
+          case "list":
+            return compileListField(field);
+          case "map":
+            return compileMapField(field);
+        }
+      }
+      function compileSingularField(field) {
+        const writeValue = compileSingularValue(field);
+        const localName = field.localName;
+        if (field.oneof) {
+          const oneofLocalName = field.oneof.localName;
+          return (writer, opts, message) => {
+            const oneof = message[oneofLocalName];
+            if (oneof.case === localName) {
+              writeValue(writer, opts, oneof.value);
+            }
+          };
+        }
+        if (field.presence != IMPLICIT) {
+          const requiredError = field.presence == LEGACY_REQUIRED ? `cannot encode ${field} to binary: required field not set` : void 0;
+          return (writer, opts, message) => {
+            const value = message[localName];
+            if (value !== void 0 && Object.prototype.hasOwnProperty.call(message, localName)) {
+              writeValue(writer, opts, value);
+            } else if (requiredError !== void 0) {
+              throw new Error(requiredError);
+            }
+          };
+        }
+        if (field.fieldKind == "enum") {
+          const zero = field.enum.values[0].number;
+          return (writer, opts, message) => {
+            const value = message[localName];
+            if (value !== zero) {
+              writeValue(writer, opts, value);
+            }
+          };
+        }
+        switch (field.scalar) {
+          case descriptors_js_1.ScalarType.BOOL:
+            return (writer, opts, message) => {
+              const value = message[localName];
+              if (value !== false) {
+                writeValue(writer, opts, value);
+              }
+            };
+          case descriptors_js_1.ScalarType.STRING:
+            return (writer, opts, message) => {
+              const value = message[localName];
+              if (value !== "") {
+                writeValue(writer, opts, value);
+              }
+            };
+          case descriptors_js_1.ScalarType.BYTES:
+            return (writer, opts, message) => {
+              const value = message[localName];
+              if (!(value instanceof Uint8Array) || value.byteLength > 0) {
+                writeValue(writer, opts, value);
+              }
+            };
+          case descriptors_js_1.ScalarType.DOUBLE:
+          case descriptors_js_1.ScalarType.FLOAT:
+            return (writer, opts, message) => {
+              const value = message[localName];
+              if (!Object.is(value, 0)) {
+                writeValue(writer, opts, value);
+              }
+            };
+          default:
+            return (writer, opts, message) => {
+              const value = message[localName];
+              if (value != 0) {
+                writeValue(writer, opts, value);
+              }
+            };
+        }
+      }
+      function compileSingularValue(field) {
+        switch (field.fieldKind) {
+          case "message": {
+            const { toMessage } = (0, message_js_1.localMessageMapper)(field);
+            const writeChild = compileChildWriter(field);
+            return (writer, opts, value) => {
+              writeChild(writer, opts, toMessage(value));
+            };
+          }
+          case "scalar":
+          case "enum": {
+            const scalarType = field.fieldKind == "enum" ? descriptors_js_1.ScalarType.INT32 : field.scalar;
+            const fieldNo = field.number;
+            const wireType = writeTypeOfScalar(scalarType);
+            const writeScalar = compileScalarValue(scalarType, field.parent.typeName, field.name);
+            return (writer, opts, value) => {
+              writer.tag(fieldNo, wireType);
+              writeScalar(writer, value);
+            };
           }
         }
-        return writer;
+      }
+      function compileListField(field) {
+        const localName = field.localName;
+        const fieldNo = field.number;
+        switch (field.listKind) {
+          case "message": {
+            const { toMessage } = (0, message_js_1.localMessageMapper)(field);
+            const writeChild = compileChildWriter(field);
+            return (writer, opts, message) => {
+              const items = message[localName];
+              for (let i = 0; i < items.length; i++) {
+                writeChild(writer, opts, toMessage(items[i]));
+              }
+            };
+          }
+          case "scalar":
+          case "enum": {
+            const scalarType = field.listKind == "enum" ? descriptors_js_1.ScalarType.INT32 : field.scalar;
+            const writeScalar = compileScalarValue(scalarType, field.parent.typeName, field.name);
+            if (field.packed) {
+              return (writer, opts, message) => {
+                const items = message[localName];
+                if (items.length == 0) {
+                  return;
+                }
+                writer.tag(fieldNo, binary_encoding_js_1.WireType.LengthDelimited).fork();
+                for (let i = 0; i < items.length; i++) {
+                  writeScalar(writer, items[i]);
+                }
+                writer.join();
+              };
+            }
+            const wireType = writeTypeOfScalar(scalarType);
+            return (writer, opts, message) => {
+              const items = message[localName];
+              for (let i = 0; i < items.length; i++) {
+                writer.tag(fieldNo, wireType);
+                writeScalar(writer, items[i]);
+              }
+            };
+          }
+        }
+      }
+      function compileMapField(field) {
+        const localName = field.localName;
+        const fieldNo = field.number;
+        const writeKey = compileMapKey(field);
+        if (field.mapKind == "message") {
+          const { toMessage } = (0, message_js_1.localMessageMapper)(field);
+          const writeMessage = compiledWriter(field.message);
+          return (writer, opts, message) => {
+            const record = message[localName];
+            const keys = Object.keys(record);
+            for (let i = 0; i < keys.length; i++) {
+              const key = keys[i];
+              writer.tag(fieldNo, binary_encoding_js_1.WireType.LengthDelimited).fork();
+              writeKey(writer, key);
+              writer.tag(2, binary_encoding_js_1.WireType.LengthDelimited).fork();
+              writeMessage(writer, opts, toMessage(record[key]));
+              writer.join();
+              writer.join();
+            }
+          };
+        }
+        const scalarType = field.mapKind == "enum" ? descriptors_js_1.ScalarType.INT32 : field.scalar;
+        const valueWireType = writeTypeOfScalar(scalarType);
+        const writeScalar = compileScalarValue(scalarType, field.parent.typeName, field.name);
+        return (writer, opts, message) => {
+          const record = message[localName];
+          const keys = Object.keys(record);
+          for (let i = 0; i < keys.length; i++) {
+            const key = keys[i];
+            writer.tag(fieldNo, binary_encoding_js_1.WireType.LengthDelimited).fork();
+            writeKey(writer, key);
+            writer.tag(2, valueWireType);
+            writeScalar(writer, record[key]);
+            writer.join();
+          }
+        };
+      }
+      function compileMapKey(field) {
+        const wireType = writeTypeOfScalar(field.mapKey);
+        const writeScalar = compileScalarValue(field.mapKey, field.parent.typeName, field.name);
+        const convertKey = compileMapKeyConverter(field.mapKey);
+        return (writer, key) => {
+          writer.tag(1, wireType);
+          writeScalar(writer, convertKey(key));
+        };
+      }
+      function compileMapKeyConverter(type) {
+        switch (type) {
+          case descriptors_js_1.ScalarType.STRING:
+            return (key) => key;
+          case descriptors_js_1.ScalarType.BOOL:
+            return (key) => key === "true" ? true : key === "false" ? false : key;
+          case descriptors_js_1.ScalarType.UINT64:
+          case descriptors_js_1.ScalarType.FIXED64:
+            return (key) => {
+              try {
+                return proto_int64_js_1.protoInt64.uParse(key);
+              } catch (_a) {
+                return key;
+              }
+            };
+          case descriptors_js_1.ScalarType.INT64:
+          case descriptors_js_1.ScalarType.SFIXED64:
+          case descriptors_js_1.ScalarType.SINT64:
+            return (key) => {
+              try {
+                return proto_int64_js_1.protoInt64.parse(key);
+              } catch (_a) {
+                return key;
+              }
+            };
+          default:
+            return (key) => {
+              const n = Number.parseInt(key);
+              return Number.isFinite(n) ? n : key;
+            };
+        }
+      }
+      function compileScalarValue(type, messageName, fieldName) {
+        const writeScalar = compileScalarWrite(type);
+        return (writer, value) => {
+          try {
+            writeScalar(writer, value);
+          } catch (e) {
+            if (e instanceof Error) {
+              throw new Error(`cannot encode field ${messageName}.${fieldName} to binary: ${e.message}`);
+            }
+            throw e;
+          }
+        };
+      }
+      function compileScalarWrite(type) {
+        switch (type) {
+          case descriptors_js_1.ScalarType.STRING:
+            return (writer, value) => writer.string(value);
+          case descriptors_js_1.ScalarType.BOOL:
+            return (writer, value) => writer.bool(value);
+          case descriptors_js_1.ScalarType.DOUBLE:
+            return (writer, value) => writer.double(value);
+          case descriptors_js_1.ScalarType.FLOAT:
+            return (writer, value) => writer.float(value);
+          case descriptors_js_1.ScalarType.INT32:
+            return (writer, value) => writer.int32(value);
+          case descriptors_js_1.ScalarType.INT64:
+            return (writer, value) => writer.int64(value);
+          case descriptors_js_1.ScalarType.UINT64:
+            return (writer, value) => writer.uint64(value);
+          case descriptors_js_1.ScalarType.FIXED64:
+            return (writer, value) => writer.fixed64(value);
+          case descriptors_js_1.ScalarType.BYTES:
+            return (writer, value) => writer.bytes(value);
+          case descriptors_js_1.ScalarType.FIXED32:
+            return (writer, value) => writer.fixed32(value);
+          case descriptors_js_1.ScalarType.SFIXED32:
+            return (writer, value) => writer.sfixed32(value);
+          case descriptors_js_1.ScalarType.SFIXED64:
+            return (writer, value) => writer.sfixed64(value);
+          case descriptors_js_1.ScalarType.SINT64:
+            return (writer, value) => writer.sint64(value);
+          case descriptors_js_1.ScalarType.UINT32:
+            return (writer, value) => writer.uint32(value);
+          case descriptors_js_1.ScalarType.SINT32:
+            return (writer, value) => writer.sint32(value);
+        }
       }
       function writeField(writer, opts, msg, field) {
-        var _a;
-        switch (field.fieldKind) {
-          case "scalar":
-          case "enum":
-            writeScalar(writer, msg.desc.typeName, field.name, (_a = field.scalar) !== null && _a !== void 0 ? _a : descriptors_js_1.ScalarType.INT32, field.number, msg.get(field));
-            break;
-          case "list":
-            writeListField(writer, opts, field, msg.get(field));
-            break;
-          case "message":
-            writeMessageField(writer, opts, field, msg.get(field));
-            break;
-          case "map":
-            for (const [key, val] of msg.get(field)) {
-              writeMapEntry(writer, opts, field, key, val);
-            }
-            break;
-        }
+        compileField(field)(writer, opts, msg[unsafe_js_1.unsafeLocal]);
       }
-      function writeScalar(writer, msgName, fieldName, scalarType, fieldNo, value) {
-        writeScalarValue(writer.tag(fieldNo, writeTypeOfScalar(scalarType)), msgName, fieldName, scalarType, value);
-      }
-      function writeMessageField(writer, opts, field, message) {
+      function compileChildWriter(field) {
+        const fieldNo = field.number;
+        const writeMessage = compiledWriter(field.message);
         if (field.delimitedEncoding) {
-          writeFields(writer.tag(field.number, binary_encoding_js_1.WireType.StartGroup), opts, message).tag(field.number, binary_encoding_js_1.WireType.EndGroup);
-        } else {
-          writeFields(writer.tag(field.number, binary_encoding_js_1.WireType.LengthDelimited).fork(), opts, message).join();
+          return (writer, opts, child) => {
+            writer.tag(fieldNo, binary_encoding_js_1.WireType.StartGroup);
+            writeMessage(writer, opts, child);
+            writer.tag(fieldNo, binary_encoding_js_1.WireType.EndGroup);
+          };
         }
-      }
-      function writeListField(writer, opts, field, list) {
-        var _a;
-        if (field.listKind == "message") {
-          for (const item of list) {
-            writeMessageField(writer, opts, field, item);
-          }
-          return;
-        }
-        const scalarType = (_a = field.scalar) !== null && _a !== void 0 ? _a : descriptors_js_1.ScalarType.INT32;
-        if (field.packed) {
-          if (!list.size) {
-            return;
-          }
-          writer.tag(field.number, binary_encoding_js_1.WireType.LengthDelimited).fork();
-          for (const item of list) {
-            writeScalarValue(writer, field.parent.typeName, field.name, scalarType, item);
-          }
+        return (writer, opts, child) => {
+          writer.tag(fieldNo, binary_encoding_js_1.WireType.LengthDelimited).fork();
+          writeMessage(writer, opts, child);
           writer.join();
-          return;
-        }
-        for (const item of list) {
-          writeScalar(writer, field.parent.typeName, field.name, scalarType, field.number, item);
-        }
-      }
-      function writeMapEntry(writer, opts, field, key, value) {
-        var _a;
-        writer.tag(field.number, binary_encoding_js_1.WireType.LengthDelimited).fork();
-        writeScalar(writer, field.parent.typeName, field.name, field.mapKey, 1, key);
-        switch (field.mapKind) {
-          case "scalar":
-          case "enum":
-            writeScalar(writer, field.parent.typeName, field.name, (_a = field.scalar) !== null && _a !== void 0 ? _a : descriptors_js_1.ScalarType.INT32, 2, value);
-            break;
-          case "message":
-            writeFields(writer.tag(2, binary_encoding_js_1.WireType.LengthDelimited).fork(), opts, value).join();
-            break;
-        }
-        writer.join();
-      }
-      function writeScalarValue(writer, msgName, fieldName, type, value) {
-        try {
-          switch (type) {
-            case descriptors_js_1.ScalarType.STRING:
-              writer.string(value);
-              break;
-            case descriptors_js_1.ScalarType.BOOL:
-              writer.bool(value);
-              break;
-            case descriptors_js_1.ScalarType.DOUBLE:
-              writer.double(value);
-              break;
-            case descriptors_js_1.ScalarType.FLOAT:
-              writer.float(value);
-              break;
-            case descriptors_js_1.ScalarType.INT32:
-              writer.int32(value);
-              break;
-            case descriptors_js_1.ScalarType.INT64:
-              writer.int64(value);
-              break;
-            case descriptors_js_1.ScalarType.UINT64:
-              writer.uint64(value);
-              break;
-            case descriptors_js_1.ScalarType.FIXED64:
-              writer.fixed64(value);
-              break;
-            case descriptors_js_1.ScalarType.BYTES:
-              writer.bytes(value);
-              break;
-            case descriptors_js_1.ScalarType.FIXED32:
-              writer.fixed32(value);
-              break;
-            case descriptors_js_1.ScalarType.SFIXED32:
-              writer.sfixed32(value);
-              break;
-            case descriptors_js_1.ScalarType.SFIXED64:
-              writer.sfixed64(value);
-              break;
-            case descriptors_js_1.ScalarType.SINT64:
-              writer.sint64(value);
-              break;
-            case descriptors_js_1.ScalarType.UINT32:
-              writer.uint32(value);
-              break;
-            case descriptors_js_1.ScalarType.SINT32:
-              writer.sint32(value);
-              break;
-          }
-        } catch (e) {
-          if (e instanceof Error) {
-            throw new Error(`cannot encode field ${msgName}.${fieldName} to binary: ${e.message}`);
-          }
-          throw e;
-        }
+        };
       }
       function writeTypeOfScalar(type) {
         switch (type) {
@@ -2509,211 +2400,361 @@ var Exports = (() => {
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/from-binary.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/from-binary.js
   var require_from_binary = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/from-binary.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/from-binary.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
+      exports.makeReadContext = makeReadContext;
       exports.fromBinary = fromBinary;
       exports.mergeFromBinary = mergeFromBinary;
       exports.readField = readField;
       var descriptors_js_1 = require_descriptors();
       var scalar_js_1 = require_scalar();
-      var reflect_js_1 = require_reflect();
+      var error_js_1 = require_error();
+      var unsafe_js_1 = require_unsafe();
+      var message_js_1 = require_message();
+      var create_js_1 = require_create();
       var binary_encoding_js_1 = require_binary_encoding();
       var varint_js_1 = require_varint();
-      var readDefaults = {
-        readUnknownFields: true
-      };
-      function makeReadOptions(options) {
-        return options ? Object.assign(Object.assign({}, readDefaults), options) : readDefaults;
+      function makeReadContext(options) {
+        return Object.assign(Object.assign({ readUnknownFields: true, recursionLimit: 100 }, options), { depth: 0 });
       }
       function fromBinary(schema, bytes, options) {
-        const msg = (0, reflect_js_1.reflect)(schema, void 0, false);
-        readMessage(msg, new binary_encoding_js_1.BinaryReader(bytes), makeReadOptions(options), false, bytes.byteLength);
-        return msg.message;
-      }
-      function mergeFromBinary(schema, target, bytes, options) {
-        readMessage((0, reflect_js_1.reflect)(schema, target, false), new binary_encoding_js_1.BinaryReader(bytes), makeReadOptions(options), false, bytes.byteLength);
-        return target;
-      }
-      function readMessage(message, reader, options, delimited, lengthOrDelimitedFieldNo) {
-        var _a;
-        const end = delimited ? reader.len : reader.pos + lengthOrDelimitedFieldNo;
-        let fieldNo;
-        let wireType;
-        const unknownFields = (_a = message.getUnknown()) !== null && _a !== void 0 ? _a : [];
-        while (reader.pos < end) {
-          [fieldNo, wireType] = reader.tag();
-          if (delimited && wireType == binary_encoding_js_1.WireType.EndGroup) {
-            break;
-          }
-          const field = message.findNumber(fieldNo);
-          if (!field) {
-            const data = reader.skip(wireType, fieldNo);
-            if (options.readUnknownFields) {
-              unknownFields.push({ no: fieldNo, wireType, data });
-            }
-            continue;
-          }
-          readField(message, reader, field, wireType, options);
-        }
-        if (delimited) {
-          if (wireType != binary_encoding_js_1.WireType.EndGroup || fieldNo !== lengthOrDelimitedFieldNo) {
-            throw new Error("invalid end group tag");
-          }
-        }
-        if (unknownFields.length > 0) {
-          message.setUnknown(unknownFields);
-        }
-      }
-      function readField(message, reader, field, wireType, options) {
-        var _a;
-        switch (field.fieldKind) {
-          case "scalar":
-            message.set(field, readScalar(reader, field.scalar));
-            break;
-          case "enum":
-            const val = readScalar(reader, descriptors_js_1.ScalarType.INT32);
-            if (field.enum.open) {
-              message.set(field, val);
-            } else {
-              const ok = field.enum.values.some((v) => v.number === val);
-              if (ok) {
-                message.set(field, val);
-              } else if (options.readUnknownFields) {
-                const bytes = [];
-                (0, varint_js_1.varint32write)(val, bytes);
-                const unknownFields = (_a = message.getUnknown()) !== null && _a !== void 0 ? _a : [];
-                unknownFields.push({
-                  no: field.number,
-                  wireType,
-                  data: new Uint8Array(bytes)
-                });
-                message.setUnknown(unknownFields);
-              }
-            }
-            break;
-          case "message":
-            message.set(field, readMessageField(reader, options, field, message.get(field)));
-            break;
-          case "list":
-            readListField(reader, wireType, message.get(field), options);
-            break;
-          case "map":
-            readMapEntry(reader, message.get(field), options);
-            break;
-        }
-      }
-      function readMapEntry(reader, map, options) {
-        const field = map.field();
-        let key;
-        let val;
-        const len = reader.uint32();
-        const end = reader.pos + len;
-        while (reader.pos < end) {
-          const [fieldNo] = reader.tag();
-          switch (fieldNo) {
-            case 1:
-              key = readScalar(reader, field.mapKey);
-              break;
-            case 2:
-              switch (field.mapKind) {
-                case "scalar":
-                  val = readScalar(reader, field.scalar);
-                  break;
-                case "enum":
-                  val = reader.int32();
-                  break;
-                case "message":
-                  val = readMessageField(reader, options, field);
-                  break;
-              }
-              break;
-          }
-        }
-        if (key === void 0) {
-          key = (0, scalar_js_1.scalarZeroValue)(field.mapKey, false);
-        }
-        if (val === void 0) {
-          switch (field.mapKind) {
-            case "scalar":
-              val = (0, scalar_js_1.scalarZeroValue)(field.scalar, false);
-              break;
-            case "enum":
-              val = field.enum.values[0].number;
-              break;
-            case "message":
-              val = (0, reflect_js_1.reflect)(field.message, void 0, false);
-              break;
-          }
-        }
-        map.set(key, val);
-      }
-      function readListField(reader, wireType, list, options) {
-        var _a;
-        const field = list.field();
-        if (field.listKind === "message") {
-          list.add(readMessageField(reader, options, field));
-          return;
-        }
-        const scalarType = (_a = field.scalar) !== null && _a !== void 0 ? _a : descriptors_js_1.ScalarType.INT32;
-        const packed = wireType == binary_encoding_js_1.WireType.LengthDelimited && scalarType != descriptors_js_1.ScalarType.STRING && scalarType != descriptors_js_1.ScalarType.BYTES;
-        if (!packed) {
-          list.add(readScalar(reader, scalarType));
-          return;
-        }
-        const e = reader.uint32() + reader.pos;
-        while (reader.pos < e) {
-          list.add(readScalar(reader, scalarType));
-        }
-      }
-      function readMessageField(reader, options, field, mergeMessage) {
-        const delimited = field.delimitedEncoding;
-        const message = mergeMessage !== null && mergeMessage !== void 0 ? mergeMessage : (0, reflect_js_1.reflect)(field.message, void 0, false);
-        readMessage(message, reader, options, delimited, delimited ? field.number : reader.uint32());
+        const message = (0, create_js_1.create)(schema);
+        compiledReader(schema).read(message, new binary_encoding_js_1.BinaryReader(bytes), makeReadContext(options), bytes.byteLength);
         return message;
       }
-      function readScalar(reader, type) {
+      function mergeFromBinary(schema, target, bytes, options) {
+        if (target.$typeName !== schema.typeName && schema.fields.length > 0) {
+          throw new error_js_1.FieldError(schema.fields[0], `cannot use ${schema.fields[0]} with message ${target.$typeName}`, "ForeignFieldError");
+        }
+        compiledReader(schema).read(target, new binary_encoding_js_1.BinaryReader(bytes), makeReadContext(options), bytes.byteLength);
+        return target;
+      }
+      var compiledReaders = /* @__PURE__ */ new WeakMap();
+      function compiledReader(desc) {
+        let compiled = compiledReaders.get(desc);
+        if (compiled === void 0) {
+          compiled = compileMessage(desc);
+        }
+        return compiled;
+      }
+      function compileMessage(desc) {
+        const descString = String(desc);
+        const fieldReaders = /* @__PURE__ */ new Map();
+        const compiled = {
+          read: compileMessageReader(descString, fieldReaders),
+          readGroup: compileGroupReader(descString, fieldReaders)
+        };
+        compiledReaders.set(desc, compiled);
+        for (const field of desc.fields) {
+          fieldReaders.set(field.number, compileFieldReader(field));
+        }
+        return compiled;
+      }
+      function compileMessageReader(descString, fieldReaders) {
+        return (message, reader, ctx, length) => {
+          var _a;
+          if (++ctx.depth > ctx.recursionLimit) {
+            throw new Error(`cannot decode ${descString} from binary: maximum recursion depth of ${ctx.recursionLimit} reached`);
+          }
+          const end = reader.pos + length;
+          const unknownFields = (_a = message.$unknown) !== null && _a !== void 0 ? _a : [];
+          while (reader.pos < end) {
+            const [fieldNo, wireType] = reader.tag();
+            const fieldReader = fieldReaders.get(fieldNo);
+            if (fieldReader === void 0) {
+              const data = reader.skip(wireType, fieldNo, ctx.recursionLimit - ctx.depth);
+              if (ctx.readUnknownFields) {
+                unknownFields.push({ no: fieldNo, wireType, data });
+              }
+              continue;
+            }
+            fieldReader(message, reader, ctx, wireType);
+          }
+          if (unknownFields.length > 0) {
+            message.$unknown = unknownFields;
+          }
+          ctx.depth--;
+        };
+      }
+      function compileGroupReader(descString, fieldReaders) {
+        return (message, reader, ctx, fieldNo) => {
+          var _a;
+          if (++ctx.depth > ctx.recursionLimit) {
+            throw new Error(`cannot decode ${descString} from binary: maximum recursion depth of ${ctx.recursionLimit} reached`);
+          }
+          let recordFieldNo;
+          let wireType;
+          const unknownFields = (_a = message.$unknown) !== null && _a !== void 0 ? _a : [];
+          while (reader.pos < reader.len) {
+            [recordFieldNo, wireType] = reader.tag();
+            if (wireType == binary_encoding_js_1.WireType.EndGroup) {
+              break;
+            }
+            const fieldReader = fieldReaders.get(recordFieldNo);
+            if (fieldReader === void 0) {
+              const data = reader.skip(wireType, recordFieldNo, ctx.recursionLimit - ctx.depth);
+              if (ctx.readUnknownFields) {
+                unknownFields.push({ no: recordFieldNo, wireType, data });
+              }
+              continue;
+            }
+            fieldReader(message, reader, ctx, wireType);
+          }
+          if (wireType != binary_encoding_js_1.WireType.EndGroup || recordFieldNo !== fieldNo) {
+            throw new Error("invalid end group tag");
+          }
+          if (unknownFields.length > 0) {
+            message.$unknown = unknownFields;
+          }
+          ctx.depth--;
+        };
+      }
+      function readField(message, reader, field, wireType, ctx) {
+        compileFieldReader(field)(message[unsafe_js_1.unsafeLocal], reader, ctx, wireType);
+      }
+      function compileFieldReader(field) {
+        switch (field.fieldKind) {
+          case "scalar":
+            return compileScalarFieldReader(field);
+          case "enum":
+            return compileEnumFieldReader(field);
+          case "message":
+            return compileMessageFieldReader(field);
+          case "list":
+            return compileListFieldReader(field);
+          case "map":
+            return compileMapFieldReader(field);
+        }
+      }
+      function compileScalarFieldReader(field) {
+        const readScalar = compileScalarReader(field.scalar, field.utf8Validation, field.longAsString);
+        const localName = field.localName;
+        if (field.oneof) {
+          const oneofLocalName = field.oneof.localName;
+          return (message, reader) => {
+            message[oneofLocalName] = {
+              case: localName,
+              value: readScalar(reader)
+            };
+          };
+        }
+        return (message, reader) => {
+          message[localName] = readScalar(reader);
+        };
+      }
+      function compileEnumFieldReader(field) {
+        var _a;
+        const localName = field.localName;
+        const oneofLocalName = (_a = field.oneof) === null || _a === void 0 ? void 0 : _a.localName;
+        if (field.enum.open) {
+          if (oneofLocalName !== void 0) {
+            return (message, reader) => {
+              message[oneofLocalName] = { case: localName, value: reader.int32() };
+            };
+          }
+          return (message, reader) => {
+            message[localName] = reader.int32();
+          };
+        }
+        const values = field.enum.values;
+        const fieldNo = field.number;
+        return (message, reader, ctx, wireType) => {
+          var _a2;
+          const val = reader.int32();
+          if (values.some((v) => v.number === val)) {
+            if (oneofLocalName !== void 0) {
+              message[oneofLocalName] = { case: localName, value: val };
+            } else {
+              message[localName] = val;
+            }
+          } else if (ctx.readUnknownFields) {
+            const bytes = [];
+            (0, varint_js_1.varint32write)(val, bytes);
+            const unknownFields = (_a2 = message.$unknown) !== null && _a2 !== void 0 ? _a2 : [];
+            unknownFields.push({
+              no: fieldNo,
+              wireType,
+              data: new Uint8Array(bytes)
+            });
+            message.$unknown = unknownFields;
+          }
+        };
+      }
+      function compileMessageFieldReader(field) {
+        const localName = field.localName;
+        const { toMessage, toLocal } = (0, message_js_1.localMessageMapper)(field);
+        const readChild = compileChildReader(field);
+        if (field.oneof) {
+          const oneofLocalName = field.oneof.localName;
+          return (message, reader, ctx) => {
+            const oneof = message[oneofLocalName];
+            const child = toMessage(oneof.case === localName ? oneof.value : void 0);
+            readChild(child, reader, ctx);
+            message[oneofLocalName] = { case: localName, value: toLocal(child) };
+          };
+        }
+        return (message, reader, ctx) => {
+          const child = toMessage(message[localName]);
+          readChild(child, reader, ctx);
+          message[localName] = toLocal(child);
+        };
+      }
+      function compileChildReader(field) {
+        const compiledChild = compiledReader(field.message);
+        if (field.delimitedEncoding) {
+          const fieldNo = field.number;
+          return (child, reader, ctx) => compiledChild.readGroup(child, reader, ctx, fieldNo);
+        }
+        return (child, reader, ctx) => compiledChild.read(child, reader, ctx, reader.uint32());
+      }
+      function compileListFieldReader(field) {
+        const localName = field.localName;
+        if (field.listKind == "message") {
+          const { toMessage, toLocal } = (0, message_js_1.localMessageMapper)(field);
+          const readChild = compileChildReader(field);
+          return (message, reader, ctx) => {
+            const child = toMessage(void 0);
+            readChild(child, reader, ctx);
+            message[localName].push(toLocal(child));
+          };
+        }
+        const scalarType = field.listKind == "enum" ? descriptors_js_1.ScalarType.INT32 : field.scalar;
+        const longAsString = field.listKind == "scalar" ? field.longAsString : false;
+        const readScalar = compileScalarReader(scalarType, field.utf8Validation, longAsString);
+        const packedPossible = scalarType != descriptors_js_1.ScalarType.STRING && scalarType != descriptors_js_1.ScalarType.BYTES;
+        return (message, reader, ctx, wireType) => {
+          const items = message[localName];
+          if (wireType == binary_encoding_js_1.WireType.LengthDelimited && packedPossible) {
+            const end = reader.uint32() + reader.pos;
+            while (reader.pos < end) {
+              items.push(readScalar(reader));
+            }
+          } else {
+            items.push(readScalar(reader));
+          }
+        };
+      }
+      function compileMapFieldReader(field) {
+        const localName = field.localName;
+        const readKey = compileScalarReader(field.mapKey, field.utf8Validation, false);
+        const keyZero = (0, scalar_js_1.scalarZeroValue)(field.mapKey, false);
+        let readValue;
+        let valueDefault;
+        switch (field.mapKind) {
+          case "scalar": {
+            const scalar = field.scalar;
+            const readScalar = compileScalarReader(scalar, field.utf8Validation, false);
+            readValue = (reader) => readScalar(reader);
+            if (scalar == descriptors_js_1.ScalarType.BYTES) {
+              valueDefault = () => new Uint8Array(0);
+            } else {
+              const zero = (0, scalar_js_1.scalarZeroValue)(scalar, false);
+              valueDefault = () => zero;
+            }
+            break;
+          }
+          case "enum": {
+            const zero = field.enum.values[0].number;
+            readValue = (reader) => reader.int32();
+            valueDefault = () => zero;
+            break;
+          }
+          case "message": {
+            const { toMessage, toLocal } = (0, message_js_1.localMessageMapper)(field);
+            const readChild = compiledReader(field.message).read;
+            readValue = (reader, ctx, existing) => {
+              const child = toMessage(existing);
+              readChild(child, reader, ctx, reader.uint32());
+              return toLocal(child);
+            };
+            valueDefault = () => toLocal(toMessage(void 0));
+            break;
+          }
+        }
+        return (message, reader, ctx) => {
+          const record = message[localName];
+          let key;
+          let val;
+          const len = reader.uint32();
+          const end = reader.pos + len;
+          while (reader.pos < end) {
+            const [fieldNo] = reader.tag();
+            switch (fieldNo) {
+              case 1:
+                key = readKey(reader);
+                break;
+              case 2:
+                val = readValue(reader, ctx, val);
+                break;
+            }
+          }
+          if (key === void 0) {
+            key = keyZero;
+          }
+          if (val === void 0) {
+            val = valueDefault();
+          }
+          (0, unsafe_js_1.setOwn)(record, key, val);
+        };
+      }
+      function compileScalarReader(type, utf8Validation, longAsString) {
         switch (type) {
           case descriptors_js_1.ScalarType.STRING:
-            return reader.string();
+            return (reader) => reader.string(utf8Validation);
           case descriptors_js_1.ScalarType.BOOL:
-            return reader.bool();
+            return (reader) => reader.bool();
           case descriptors_js_1.ScalarType.DOUBLE:
-            return reader.double();
+            return (reader) => reader.double();
           case descriptors_js_1.ScalarType.FLOAT:
-            return reader.float();
+            return (reader) => reader.float();
           case descriptors_js_1.ScalarType.INT32:
-            return reader.int32();
+            return (reader) => reader.int32();
           case descriptors_js_1.ScalarType.INT64:
-            return reader.int64();
+            if (longAsString) {
+              return (reader) => String(reader.int64());
+            }
+            return (reader) => reader.int64();
           case descriptors_js_1.ScalarType.UINT64:
-            return reader.uint64();
+            if (longAsString) {
+              return (reader) => String(reader.uint64());
+            }
+            return (reader) => reader.uint64();
           case descriptors_js_1.ScalarType.FIXED64:
-            return reader.fixed64();
+            if (longAsString) {
+              return (reader) => String(reader.fixed64());
+            }
+            return (reader) => reader.fixed64();
           case descriptors_js_1.ScalarType.BYTES:
-            return reader.bytes();
+            return (reader) => reader.bytes();
           case descriptors_js_1.ScalarType.FIXED32:
-            return reader.fixed32();
+            return (reader) => reader.fixed32();
           case descriptors_js_1.ScalarType.SFIXED32:
-            return reader.sfixed32();
+            return (reader) => reader.sfixed32();
           case descriptors_js_1.ScalarType.SFIXED64:
-            return reader.sfixed64();
+            if (longAsString) {
+              return (reader) => String(reader.sfixed64());
+            }
+            return (reader) => reader.sfixed64();
           case descriptors_js_1.ScalarType.SINT64:
-            return reader.sint64();
+            if (longAsString) {
+              return (reader) => String(reader.sint64());
+            }
+            return (reader) => reader.sint64();
           case descriptors_js_1.ScalarType.UINT32:
-            return reader.uint32();
+            return (reader) => reader.uint32();
           case descriptors_js_1.ScalarType.SINT32:
-            return reader.sint32();
+            return (reader) => reader.sint32();
         }
       }
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/size-delimited.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/wire/size-delimited.js
   var require_size_delimited = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/size-delimited.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/wire/size-delimited.js"(exports) {
       "use strict";
       var __asyncValues = exports && exports.__asyncValues || function(o) {
         if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
@@ -2790,39 +2831,69 @@ var Exports = (() => {
         writer.bytes((0, to_binary_js_1.toBinary)(messageDesc, message, options));
         return writer.finish();
       }
+      var defaultReadMaxBytes = 64 * 1024 * 1024;
+      var ByteBuffer = class {
+        constructor() {
+          this.buffer = new Uint8Array(0);
+          this.length = 0;
+        }
+        get byteLength() {
+          return this.length;
+        }
+        bytes() {
+          return this.buffer.subarray(0, this.length);
+        }
+        append(chunk) {
+          const newByteLength = this.length + chunk.byteLength;
+          if (newByteLength > this.buffer.byteLength) {
+            const grown = new Uint8Array(Math.max(this.buffer.byteLength * 2, newByteLength));
+            grown.set(this.buffer.subarray(0, this.length));
+            this.buffer = grown;
+          }
+          this.buffer.set(chunk, this.length);
+          this.length += chunk.byteLength;
+        }
+      };
       function sizeDelimitedDecodeStream(messageDesc, iterable, options) {
         return __asyncGenerator(this, arguments, function* sizeDelimitedDecodeStream_1() {
           var _a, e_1, _b, _c;
-          function append(buffer2, chunk) {
-            const n = new Uint8Array(buffer2.byteLength + chunk.byteLength);
-            n.set(buffer2);
-            n.set(chunk, buffer2.length);
-            return n;
-          }
-          let buffer = new Uint8Array(0);
+          var _d;
+          const readMaxBytes = (_d = options === null || options === void 0 ? void 0 : options.readMaxBytes) !== null && _d !== void 0 ? _d : defaultReadMaxBytes;
+          let buffer = new ByteBuffer();
           try {
-            for (var _d = true, iterable_1 = __asyncValues(iterable), iterable_1_1; iterable_1_1 = yield __await(iterable_1.next()), _a = iterable_1_1.done, !_a; _d = true) {
+            for (var _e = true, iterable_1 = __asyncValues(iterable), iterable_1_1; iterable_1_1 = yield __await(iterable_1.next()), _a = iterable_1_1.done, !_a; _e = true) {
               _c = iterable_1_1.value;
-              _d = false;
+              _e = false;
               const chunk = _c;
-              buffer = append(buffer, chunk);
+              buffer.append(chunk);
+              const bytes = buffer.bytes();
+              let offset = 0;
               for (; ; ) {
-                const size = sizeDelimitedPeek(buffer);
+                const size = sizeDelimitedPeek(bytes.subarray(offset));
                 if (size.eof) {
                   break;
                 }
-                if (size.offset + size.size > buffer.byteLength) {
+                if (size.size > readMaxBytes) {
+                  throw new Error(`message size ${size.size} is larger than configured readMaxBytes ${readMaxBytes}`);
+                }
+                const messageStart = offset + size.offset;
+                const messageEnd = messageStart + size.size;
+                if (messageEnd > bytes.byteLength) {
                   break;
                 }
-                yield yield __await((0, from_binary_js_1.fromBinary)(messageDesc, buffer.subarray(size.offset, size.offset + size.size), options));
-                buffer = buffer.subarray(size.offset + size.size);
+                yield yield __await((0, from_binary_js_1.fromBinary)(messageDesc, bytes.subarray(messageStart, messageEnd), options));
+                offset = messageEnd;
+              }
+              if (offset > 0) {
+                buffer = new ByteBuffer();
+                buffer.append(bytes.subarray(offset));
               }
             }
           } catch (e_1_1) {
             e_1 = { error: e_1_1 };
           } finally {
             try {
-              if (!_d && !_a && (_b = iterable_1.return)) yield __await(_b.call(iterable_1));
+              if (!_e && !_a && (_b = iterable_1.return)) yield __await(_b.call(iterable_1));
             } finally {
               if (e_1) throw e_1.error;
             }
@@ -2861,9 +2932,9 @@ var Exports = (() => {
     }
   });
 
-  // node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/index.js
+  // node_modules/@bufbuild/protobuf/dist/commonjs/wire/index.js
   var require_wire = __commonJS({
-    "node_modules/@d4l/grpc-modules/node_modules/@bufbuild/protobuf/dist/cjs/wire/index.js"(exports) {
+    "node_modules/@bufbuild/protobuf/dist/commonjs/wire/index.js"(exports) {
       "use strict";
       var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
         if (k2 === void 0) k2 = k;
@@ -2882,9 +2953,16 @@ var Exports = (() => {
         for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p)) __createBinding(exports2, m, p);
       };
       Object.defineProperty(exports, "__esModule", { value: true });
+      exports.configureTextEncoding = exports.getTextEncoding = void 0;
       __exportStar(require_binary_encoding(), exports);
       __exportStar(require_base64_encoding(), exports);
-      __exportStar(require_text_encoding(), exports);
+      var text_encoding_js_1 = require_text_encoding();
+      Object.defineProperty(exports, "getTextEncoding", { enumerable: true, get: function() {
+        return text_encoding_js_1.getTextEncoding;
+      } });
+      Object.defineProperty(exports, "configureTextEncoding", { enumerable: true, get: function() {
+        return text_encoding_js_1.configureTextEncoding;
+      } });
       __exportStar(require_text_format(), exports);
       __exportStar(require_size_delimited(), exports);
     }
@@ -2904,11 +2982,12 @@ var Exports = (() => {
         return to.concat(ar || Array.prototype.slice.call(from));
       };
       Object.defineProperty(exports, "__esModule", { value: true });
-      exports.ListValue = exports.Value = exports.Struct_FieldsEntry = exports.Struct = exports.NullValue = exports.protobufPackage = void 0;
+      exports.ListValue = exports.Value = exports.Struct_FieldsEntry = exports.Struct = exports.NullValue = exports.protobufFileName = exports.protobufPackage = void 0;
       exports.nullValueFromJSON = nullValueFromJSON;
       exports.nullValueToJSON = nullValueToJSON;
       var wire_1 = require_wire();
       exports.protobufPackage = "google.protobuf";
+      exports.protobufFileName = "google/protobuf/struct.proto";
       var NullValue;
       (function(NullValue2) {
         NullValue2[NullValue2["NULL_VALUE"] = 0] = "NULL_VALUE";
@@ -3124,10 +3203,10 @@ var Exports = (() => {
           return exports.Struct_FieldsEntry.fromPartial(base !== null && base !== void 0 ? base : {});
         },
         fromPartial: function(object) {
-          var _a, _b;
+          var _a;
           var message = createBaseStruct_FieldsEntry();
           message.key = (_a = object.key) !== null && _a !== void 0 ? _a : "";
-          message.value = (_b = object.value) !== null && _b !== void 0 ? _b : void 0;
+          message.value = object.value === void 0 ? void 0 : object.value;
           return message;
         }
       };
@@ -3249,7 +3328,7 @@ var Exports = (() => {
             obj.nullValue = nullValueToJSON(message.nullValue);
           }
           if (message.numberValue !== void 0) {
-            obj.numberValue = message.numberValue;
+            obj.numberValue = floatToJson(message.numberValue);
           }
           if (message.stringValue !== void 0) {
             obj.stringValue = message.stringValue;
@@ -3396,6 +3475,9 @@ var Exports = (() => {
           }
         }
       };
+      function floatToJson(value) {
+        return typeof value === "number" && !globalThis.Number.isFinite(value) ? globalThis.String(value) : value;
+      }
       function isObject(value) {
         return typeof value === "object" && value !== null;
       }
@@ -3410,7 +3492,7 @@ var Exports = (() => {
     "node_modules/@d4l/grpc-modules/research-pillars/types.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
-      exports.AccessToken = exports.DeviceToken = exports.Client = exports.ParticipantCode = exports.BlockedProgram = exports.ProgramRole = exports.User = exports.Diff = exports.QuestionImage = exports.ItemVariable = exports.EnableWhen = exports.Answer_LanguagesEntry = exports.Answer = exports.Answerset = exports.TopicInput = exports.Coding = exports.Question_TextEntry = exports.Question = exports.Questionnaire_TitleEntry = exports.Questionnaire = exports.CodeStatus = exports.Role = exports.Operator = exports.InputType = exports.TopicScope = exports.protobufPackage = void 0;
+      exports.AccessToken = exports.DeviceToken = exports.Client = exports.ParticipantCode = exports.BlockedProgram = exports.ProgramRole = exports.User = exports.Diff = exports.QuestionImage = exports.ItemVariable = exports.EnableWhen = exports.Answer_LanguagesEntry = exports.Answer = exports.Answerset = exports.TopicInput = exports.Coding = exports.Question_TextEntry = exports.Question = exports.Questionnaire_TitleEntry = exports.Questionnaire = exports.CodeStatus = exports.Role = exports.Operator = exports.InputType = exports.TopicScope = exports.protobufFileName = exports.protobufPackage = void 0;
       exports.topicScopeFromJSON = topicScopeFromJSON2;
       exports.topicScopeToJSON = topicScopeToJSON;
       exports.inputTypeFromJSON = inputTypeFromJSON3;
@@ -3424,6 +3506,7 @@ var Exports = (() => {
       var wire_1 = require_wire();
       var struct_1 = require_struct();
       exports.protobufPackage = "proto";
+      exports.protobufFileName = "research-pillars/types.proto";
       var TopicScope2;
       (function(TopicScope3) {
         TopicScope3[TopicScope3["session"] = 0] = "session";
@@ -4998,7 +5081,7 @@ var Exports = (() => {
             obj.answerCoding = message.answerCoding;
           }
           if (message.answerDecimal !== void 0) {
-            obj.answerDecimal = message.answerDecimal;
+            obj.answerDecimal = floatToJson(message.answerDecimal);
           }
           if (message.answerDate !== void 0) {
             obj.answerDate = message.answerDate;
@@ -6087,6 +6170,9 @@ var Exports = (() => {
           return message;
         }
       };
+      function floatToJson(value) {
+        return typeof value === "number" && !globalThis.Number.isFinite(value) ? globalThis.String(value) : value;
+      }
       function isObject(value) {
         return typeof value === "object" && value !== null;
       }
