@@ -10,9 +10,6 @@ permissions:
   checks: write
   pull-requests: write
 
-env:
-  NPM_AUTH_TOKEN: ${{ secrets.NPM_READ_TOKEN }}
-
 jobs:
   test:
     runs-on: ubuntu-latest

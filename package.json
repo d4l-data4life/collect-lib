@@ -25,8 +25,8 @@
   "files": [
     "dist"
   ],
-  "repository": "https://github.com/gesundheitscloud/collect-lib.git",
-  "license": "SEE LICENSE IN LICENSE.md",
+  "repository": "https://github.com/d4l-data4life/collect-lib.git",
+  "license": "MIT",
   "homepage": "https://www.d4l.io/",
   "scripts": {
     "start": "tsup --watch",

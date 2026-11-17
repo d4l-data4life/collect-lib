@@ -208,7 +208,7 @@ data:
 Running the Go side locally:
 
 ```sh
-NPM_AUTH_TOKEN=unused yarn build   # yarn needs the variable set; any value works for building
+yarn build
 go vet ./...
 go test -race ./...
 ```
