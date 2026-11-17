@@ -17,7 +17,7 @@ import (
 	"github.com/d4l-data4life/go-fhir/pkg/fhir5"
 	pb "github.com/d4l-data4life/grpc-modules/pkg/research-pillars"
 
-	"github.com/gesundheitscloud/collect-lib/pkg/fhirparser"
+	"github.com/d4l-data4life/collect-lib/pkg/fhirparser"
 )
 
 const repoRoot = "../.."

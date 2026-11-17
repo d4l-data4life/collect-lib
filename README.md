@@ -23,7 +23,7 @@ After every change in the library a `pnpm install` has to be triggered for the c
 
 ## Go module
 
-collect-lib is also a Go module, `github.com/gesundheitscloud/collect-lib`, so Go services can use selected functions without a Go port.
+collect-lib is also a Go module, `github.com/d4l-data4life/collect-lib`, so Go services can use selected functions without a Go port.
 The TypeScript is bundled and run in-process with [goja](https://github.com/dop251/goja), a pure-Go JavaScript interpreter,
 and the module is versioned with the same release tags as the npm package.
 

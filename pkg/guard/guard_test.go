@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gesundheitscloud/collect-lib/pkg/guard"
+	"github.com/d4l-data4life/collect-lib/pkg/guard"
 )
 
 // Shared with src/go/guard.test.ts, which checks the same cases against the TypeScript.

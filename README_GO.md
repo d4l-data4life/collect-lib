@@ -1,6 +1,6 @@
 # collect-lib for Go
 
-collect-lib is also a Go module, `github.com/gesundheitscloud/collect-lib`. Go services use the
+collect-lib is also a Go module, `github.com/d4l-data4life/collect-lib`. Go services use the
 same implementation as Phoenix and Research Studio: there is no Go port. The TypeScript is
 compiled into a JavaScript bundle, embedded in a Go package, and run in-process with
 [goja](https://github.com/dop251/goja), a pure-Go JavaScript interpreter (no cgo, no Node).
@@ -14,19 +14,15 @@ compiled into a JavaScript bundle, embedded in a Go package, and run in-process 
 
 ## Using it
 
-The repository is private, so Go needs to know not to use the public module proxy for it:
-
 ```sh
-go env -w GOPRIVATE=github.com/gesundheitscloud/*
-go get github.com/gesundheitscloud/collect-lib@latest
+go get github.com/d4l-data4life/collect-lib@latest
 ```
 
-CI and Docker builds need the same `GOPRIVATE` setting and git credentials for the repository.
-
-**Versions** are the npm release tags: `go get github.com/gesundheitscloud/collect-lib@v1.60.0`
-gives exactly the code published to npm as 1.60.0. Unreleased work can be tried from any pushed
-branch or commit (`go get github.com/gesundheitscloud/collect-lib@<branch>`), which resolves to
+**Versions** are the npm release tags: `go get github.com/d4l-data4life/collect-lib@vX.Y.Z`
+gives exactly the code published to npm as X.Y.Z. Unreleased work can be tried from any pushed
+branch or commit (`go get github.com/d4l-data4life/collect-lib@<branch>`), which resolves to
 a pseudo-version.
+Tags from before the move to d4l-data4life declare the old module path and don't resolve under this one.
 
 ## Packages
 
@@ -43,8 +39,8 @@ Converts one FHIR R5 Questionnaire per language into the research-pillars `Quest
 import (
 	"errors"
 
+	"github.com/d4l-data4life/collect-lib/pkg/fhirparser"
 	"github.com/d4l-data4life/go-fhir/pkg/fhir5"
-	"github.com/gesundheitscloud/collect-lib/pkg/fhirparser"
 )
 
 // en, de are fhir5.Questionnaire; q is a *researchpillars.Questionnaire from grpc-modules
@@ -73,7 +69,7 @@ Works out when a program step condition (`start`, `end`, `requiredCondition`) co
 fulfilled, the same way Phoenix does.
 
 ```go
-import "github.com/gesundheitscloud/collect-lib/pkg/guard"
+import "github.com/d4l-data4life/collect-lib/pkg/guard"
 
 cond := guard.StepCondition{Type: "consent", ConsentKey: "study", Offset: "P7D"}
 when, err := guard.FulfillmentDate(cond, guard.Params{
@@ -208,7 +204,7 @@ data:
 Running the Go side locally:
 
 ```sh
-NPM_AUTH_TOKEN=unused yarn build   # yarn needs the variable set; any value works for building
+yarn build
 go vet ./...
 go test -race ./...
 ```

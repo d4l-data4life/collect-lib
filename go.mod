@@ -1,4 +1,4 @@
-module github.com/gesundheitscloud/collect-lib
+module github.com/d4l-data4life/collect-lib
 
 go 1.27.0
 
@@ -11,7 +11,7 @@ ignore (
 
 require (
 	github.com/d4l-data4life/go-fhir v0.0.0-20261104082846-d0c5564dd20c
-	github.com/d4l-data4life/grpc-modules v1.39.2
+	github.com/d4l-data4life/grpc-modules v1.40.0
 	github.com/dop251/goja v0.0.0-20261110204830-f493a2b600d6
 	google.golang.org/protobuf v1.36.12
 )

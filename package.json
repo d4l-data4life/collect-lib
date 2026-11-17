@@ -23,10 +23,11 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "dist"
+    "dist",
+    "THIRD_PARTY_NOTICES"
   ],
-  "repository": "https://github.com/gesundheitscloud/collect-lib.git",
-  "license": "SEE LICENSE IN LICENSE.md",
+  "repository": "https://github.com/d4l-data4life/collect-lib.git",
+  "license": "MIT",
   "homepage": "https://www.d4l.io/",
   "scripts": {
     "start": "tsup --watch",
@@ -52,7 +53,7 @@
   },
   "packageManager": "yarn@4.9.1",
   "dependencies": {
-    "@d4l/grpc-modules": "1.39.2",
+    "@d4l/grpc-modules": "1.40.0",
     "@noble/curves": "^1.9.3",
     "@scure/bip39": "^1.5.4",
     "buffer": "^6.0.3",
