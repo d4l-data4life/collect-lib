@@ -83,7 +83,7 @@ const convertQuestion = (
     image,
   } = parseExtensions(languages, questionItems);
   // Update question type from the extensions
-  if (parsedQuestionInputType) {
+  if (parsedQuestionInputType !== undefined) {
     questionInputType = parsedQuestionInputType;
   }
 

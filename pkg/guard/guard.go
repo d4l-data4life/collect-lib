@@ -42,7 +42,7 @@ type StepCondition struct {
 	RoutineName  string          `json:"routineName,omitempty"`
 	ConsentKey   string          `json:"consentKey,omitempty"`
 	ResponseName string          `json:"responseName,omitempty"`
-	Items        []StepCondition `json:"items,omitempty"`
+	Items        []StepCondition `json:"items,omitzero"`
 	Sorting      string          `json:"sorting,omitempty"`
 	Item         *StepCondition  `json:"item,omitempty"`
 }
