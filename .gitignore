@@ -139,3 +139,6 @@ dist
 .pnp.*
 
 junit.xml
+
+# Local agent specs and issues
+.claude/scratch/

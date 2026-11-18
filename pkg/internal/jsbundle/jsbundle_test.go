@@ -1,16 +1,37 @@
 package jsbundle_test
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
-	"log/slog"
+	"fmt"
+	"io"
+	"os"
 	"strings"
 	"sync"
 	"testing"
 
+	"github.com/d4l-data4life/go-svc/pkg/logging"
+
 	"github.com/d4l-data4life/collect-lib/pkg/internal/jsbundle"
 )
+
+// logFile receives everything console.* logs in this test binary. go-svc's logger is a
+// process-wide singleton fixed by its first use, so it is pointed here before any test runs.
+var logFile *os.File
+
+func TestMain(m *testing.M) {
+	f, err := os.CreateTemp("", "jsbundle-log-*")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	logFile = f
+	logging.Logger(logging.OutputFile(f))
+	code := m.Run()
+	_ = f.Close()
+	_ = os.Remove(f.Name())
+	os.Exit(code)
+}
 
 // Shaped like the IIFE bundles tsup emits for the Go packages.
 const testBundle = `"use strict";
@@ -131,12 +152,12 @@ func TestCall_Concurrent(t *testing.T) {
 	wg.Wait()
 }
 
-func TestCall_ConsoleLogsToSlog(t *testing.T) {
+func TestCall_ConsoleLogsToGoSvc(t *testing.T) {
 	// goja has no console of its own; without the shim this call would throw a ReferenceError.
-	var buf bytes.Buffer
-	prev := slog.Default()
-	slog.SetDefault(slog.New(slog.NewTextHandler(&buf, nil)))
-	t.Cleanup(func() { slog.SetDefault(prev) })
+	start, err := logFile.Seek(0, io.SeekEnd)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	got, err := bundle.Call("warn", "x")
 	if err != nil {
@@ -145,7 +166,17 @@ func TestCall_ConsoleLogsToSlog(t *testing.T) {
 	if string(got) != `"done"` {
 		t.Errorf("got %s, want \"done\"", got)
 	}
-	if log := buf.String(); !strings.Contains(log, `level=WARN msg="careful: x 42" bundle=test.js`) {
-		t.Errorf("unexpected log output: %q", log)
+
+	out := make([]byte, 4096)
+	n, _ := logFile.ReadAt(out, start)
+	var entry map[string]any
+	if err := json.Unmarshal(out[:n], &entry); err != nil {
+		t.Fatalf("log output is not one go-svc JSON line: %v: %q", err, out[:n])
+	}
+	if msg := fmt.Sprint(entry["message"]); msg != "test.js: careful: x 42" {
+		t.Errorf("message = %q, want %q; full entry: %v", msg, "test.js: careful: x 42", entry)
+	}
+	if level := fmt.Sprint(entry["log-level"]); !strings.EqualFold(level, "warn") {
+		t.Errorf("log-level = %q, want warn; full entry: %v", level, entry)
 	}
 }

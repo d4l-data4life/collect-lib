@@ -1,0 +1,288 @@
+{
+  "name": "edge-cases",
+  "title": {
+    "en": "Edge cases",
+    "de": "Grenzfälle"
+  },
+  "version": "1.0.0",
+  "questions": [
+    {
+      "linkId": "mood-today",
+      "itemVariables": [],
+      "text": {
+        "en": "Mood today",
+        "de": "Stimmung heute"
+      },
+      "inputType": 6,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "answerset": {
+        "order": "default",
+        "system": "http://example.org/CodeSystem/mood",
+        "answers": [
+          {
+            "code": "good",
+            "languages": {
+              "en": "Good",
+              "de": "Gut"
+            }
+          },
+          {
+            "code": "bad",
+            "languages": {
+              "en": "Bad",
+              "de": "Schlecht"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "linkId": "mood-yesterday",
+      "itemVariables": [],
+      "text": {
+        "en": "Mood yesterday",
+        "de": "Stimmung gestern"
+      },
+      "inputType": 6,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "answerset": {
+        "order": "default",
+        "system": "http://example.org/CodeSystem/mood",
+        "answers": [
+          {
+            "code": "good",
+            "languages": {
+              "en": "Good",
+              "de": "Gut"
+            }
+          },
+          {
+            "code": "bad",
+            "languages": {
+              "en": "Bad",
+              "de": "Schlecht"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "linkId": "mood-reason",
+      "itemVariables": [],
+      "text": {
+        "en": "Why?",
+        "de": "Warum?"
+      },
+      "inputType": 1,
+      "required": true,
+      "enableWhen": [
+        {
+          "question": "mood-today",
+          "operator": 1,
+          "answerCoding": "bad"
+        }
+      ],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "enableBehavior": "all"
+    },
+    {
+      "linkId": "age",
+      "itemVariables": [],
+      "text": {
+        "en": "Age",
+        "de": "Alter"
+      },
+      "inputType": 3,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "30525-0",
+          "display": "Age"
+        }
+      ],
+      "config": {
+        "min": 0,
+        "max": 120
+      }
+    },
+    {
+      "linkId": "support",
+      "itemVariables": [
+        {
+          "name": "mood",
+          "question": "mood-today"
+        },
+        {
+          "name": "age",
+          "question": "age"
+        }
+      ],
+      "text": {
+        "en": "What would help?",
+        "de": "Was würde helfen?"
+      },
+      "inputType": 2,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "enableWhenExpression": "(%mood contains 'bad') or (%age.first().toInteger() >= 18)",
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "custom",
+      "itemVariables": [
+        {
+          "name": "mood",
+          "question": "mood-today"
+        },
+        {
+          "name": "age",
+          "question": "age"
+        }
+      ],
+      "text": {
+        "en": "Custom dependency",
+        "de": "Eigene Abhängigkeit"
+      },
+      "inputType": 1,
+      "required": true,
+      "enableWhen": [],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "enableWhenExpression": "%mood contains 'bad' or %age.empty() and %mood.exists()",
+      "enableBehavior": "all"
+    },
+    {
+      "linkId": "satisfaction",
+      "itemVariables": [],
+      "text": {
+        "en": "Satisfaction",
+        "de": "Zufriedenheit"
+      },
+      "inputType": 14,
+      "required": true,
+      "enableWhen": [],
+      "items": [
+        {
+          "linkId": "satisfaction-0",
+          "itemVariables": [],
+          "text": {
+            "en": "Sleep",
+            "de": "Schlaf"
+          },
+          "inputType": 15,
+          "required": true,
+          "enableWhen": [],
+          "items": [],
+          "prepopulate": [],
+          "input": [],
+          "output": [],
+          "code": []
+        },
+        {
+          "linkId": "satisfaction-1",
+          "itemVariables": [],
+          "text": {
+            "en": "Work",
+            "de": "Arbeit"
+          },
+          "inputType": 15,
+          "required": true,
+          "enableWhen": [],
+          "items": [],
+          "prepopulate": [],
+          "input": [],
+          "output": [],
+          "code": []
+        }
+      ],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "answerset": {
+        "order": "default",
+        "answers": [
+          {
+            "code": "1",
+            "languages": {
+              "en": "Low",
+              "de": "Niedrig"
+            }
+          },
+          {
+            "code": "2",
+            "languages": {
+              "en": "Medium",
+              "de": "Mittel"
+            }
+          },
+          {
+            "code": "3",
+            "languages": {
+              "en": "High",
+              "de": "Hoch"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "linkId": "satisfaction-followup",
+      "itemVariables": [],
+      "text": {
+        "en": "Tell us more",
+        "de": "Erzähl mehr"
+      },
+      "inputType": 1,
+      "required": true,
+      "enableWhen": [
+        {
+          "question": "satisfaction-0",
+          "operator": 1,
+          "answerCoding": "1"
+        },
+        {
+          "question": "age",
+          "operator": 3,
+          "answerDecimal": 65
+        }
+      ],
+      "items": [],
+      "prepopulate": [],
+      "input": [],
+      "output": [],
+      "code": [],
+      "enableBehavior": "any"
+    }
+  ]
+}

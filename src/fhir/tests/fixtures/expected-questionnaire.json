@@ -110,7 +110,8 @@
         "topic1"
       ],
       "code": [],
-      "enableWhenExpression": "(%c contains 'AF') or (%d.exists() and today() >= %d.first().toDate() + 1 years)"
+      "enableWhenExpression": "(%c contains 'AF') or (%d.exists() and today() >= %d.first().toDate() + 1 years)",
+      "enableBehavior": "any"
     },
     {
       "linkId": "matrix",
@@ -183,6 +184,7 @@
       "output": [],
       "code": [],
       "enableWhenExpression": "%topic1.first() = 'test'",
+      "enableBehavior": "all",
       "answerset": {
         "order": "default",
         "answers": [
@@ -636,7 +638,8 @@
       "input": [],
       "output": [],
       "code": [],
-      "enableWhenExpression": "(%c contains 'DZ') and (%topic1.first() = 'a')"
+      "enableWhenExpression": "(%c contains 'DZ') and (%topic1.first() = 'a')",
+      "enableBehavior": "all"
     },
     {
       "linkId": "enablewhen-expr-or",
@@ -667,7 +670,8 @@
       "input": [],
       "output": [],
       "code": [],
-      "enableWhenExpression": "(%c contains 'AF') or (%topic2.first().toDate() <= @2001) or (%mu contains 'b')"
+      "enableWhenExpression": "(%c contains 'AF') or (%topic2.first().toDate() <= @2001) or (%mu contains 'b')",
+      "enableBehavior": "any"
     },
     {
       "linkId": "cover-mxbhbdf",

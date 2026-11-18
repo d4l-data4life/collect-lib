@@ -29,7 +29,7 @@ import {
   ValuesetSortingExtension,
 } from '../constants';
 import { inputTypeFromJSON, TopicScope } from '@d4l/grpc-modules/research-pillars';
-import { parseFHIRQuestionnaire, parseExtensions } from '../parser';
+import { parseFHIRQuestionnaire, parseExtensions } from '../questionnaire';
 
 const TOPIC = 'http://fhir.data4life.care/r5/example/topic/socialNetwork';
 const BAD_TOPIC = 'http://fhir.data4life.care/r5/example/topic/social-network';
@@ -136,8 +136,18 @@ describe('parseExtensions', () => {
       'year',
       'geo_location',
     ] as const)('parses the input type from a real itemControl code (%s)', (code) => {
+      // A postal code needs its country source to parse (pccs-1).
+      const countrySource: fhir5.Extension[] =
+        code === 'postal_code'
+          ? [
+              {
+                url: PostalCodeCountrySourceExtension,
+                extension: [{ url: PostalCodeFromItemUrl, valueString: 'c' }],
+              },
+            ]
+          : [];
       const items = makeItems({
-        en: [{ url: QItemControlDefinition, valueCodeableConcept: { coding: [{ code }] } }],
+        en: [{ url: QItemControlDefinition, valueCodeableConcept: { coding: [{ code }] } }, ...countrySource],
       });
       const { inputType } = parseExtensions(['en'], items);
       expect(inputType).toBe(inputTypeFromJSON(code));
@@ -249,13 +259,17 @@ describe('parseExtensions', () => {
     });
 
     it('ignores an output topic whose id is not identifier-safe', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
       const items = makeItems({
         en: [{ url: QuestionnaireItemOutputExtension, valueCanonical: BAD_TOPIC }],
       });
       expect(parseExtensions(['en'], items).output).toEqual([]);
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('malformed topic output extension'));
+      warn.mockRestore();
     });
 
     it('ignores an input extension with a missing scope', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
       const items = makeItems({
         en: [
           {
@@ -265,9 +279,12 @@ describe('parseExtensions', () => {
         ],
       });
       expect(parseExtensions(['en'], items).input).toEqual([]);
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('malformed topic input extension'));
+      warn.mockRestore();
     });
 
     it('ignores an input extension with an unrecognized scope', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
       const items = makeItems({
         en: [
           {
@@ -280,6 +297,8 @@ describe('parseExtensions', () => {
         ],
       });
       expect(parseExtensions(['en'], items).input).toEqual([]);
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('malformed topic input extension'));
+      warn.mockRestore();
     });
   });
 
@@ -360,6 +379,84 @@ describe('parseExtensions', () => {
       expect(warn).toHaveBeenCalledWith(expect.stringContaining('country-source'));
       warn.mockRestore();
     });
+
+    describe('on a postal code question (pccs-1)', () => {
+      const postalCode: fhir5.Extension = {
+        url: QItemControlDefinition,
+        valueCodeableConcept: { coding: [{ code: 'postal_code' }] },
+      };
+      const fromItem = { url: PostalCodeFromItemUrl, valueString: 'country-question' };
+      const fixedCountry = {
+        url: PostalCodeFixedCountryUrl,
+        valueCoding: { system: 'urn:iso:std:iso:3166', code: 'DE' },
+      };
+      const message =
+        'Question q1: postal_code countrySource must include exactly one of fromItem or fixedCountry';
+
+      it('accepts exactly one country source', () => {
+        const items = makeItems({
+          en: [postalCode, { url: PostalCodeCountrySourceExtension, extension: [fromItem] }],
+        });
+        expect(parseExtensions(['en'], items).config).toEqual({
+          countrySource: { fromItem: 'country-question' },
+        });
+      });
+
+      it('rejects a missing country source', () => {
+        const items = makeItems({ en: [postalCode] });
+        expect(() => parseExtensions(['en'], items)).toThrow(message);
+      });
+
+      it('rejects both sources in one extension', () => {
+        const items = makeItems({
+          en: [postalCode, { url: PostalCodeCountrySourceExtension, extension: [fromItem, fixedCountry] }],
+        });
+        expect(() => parseExtensions(['en'], items)).toThrow(message);
+      });
+
+      it('rejects two country-source extensions', () => {
+        const items = makeItems({
+          en: [
+            postalCode,
+            { url: PostalCodeCountrySourceExtension, extension: [fromItem] },
+            { url: PostalCodeCountrySourceExtension, extension: [fixedCountry] },
+          ],
+        });
+        expect(() => parseExtensions(['en'], items)).toThrow(message);
+      });
+
+      describe('in every language, not only the first', () => {
+        const fromItemSource = { url: PostalCodeCountrySourceExtension, extension: [fromItem] };
+        const fixedCountrySource = { url: PostalCodeCountrySourceExtension, extension: [fixedCountry] };
+
+        it('accepts the same country source in every language', () => {
+          const items = makeItems({ de: [postalCode, fromItemSource], en: [postalCode, fromItemSource] });
+          expect(parseExtensions(['de', 'en'], items).config).toEqual({
+            countrySource: { fromItem: 'country-question' },
+          });
+        });
+
+        it('rejects a missing country source in a later language', () => {
+          const items = makeItems({ de: [postalCode, fromItemSource], en: [postalCode] });
+          expect(() => parseExtensions(['de', 'en'], items)).toThrow(`${message} (language en)`);
+        });
+
+        it('rejects both sources in a later language', () => {
+          const items = makeItems({
+            de: [postalCode, fromItemSource],
+            en: [postalCode, { url: PostalCodeCountrySourceExtension, extension: [fromItem, fixedCountry] }],
+          });
+          expect(() => parseExtensions(['de', 'en'], items)).toThrow(`${message} (language en)`);
+        });
+
+        it('rejects different country sources between languages', () => {
+          const items = makeItems({ de: [postalCode, fromItemSource], en: [postalCode, fixedCountrySource] });
+          expect(() => parseExtensions(['de', 'en'], items)).toThrow(
+            'Question q1: postal_code countrySource differs between languages de and en'
+          );
+        });
+      });
+    });
   });
 
   describe('PlaceholderExtension', () => {
@@ -393,10 +490,7 @@ describe('enableWhen expression dependencies', () => {
 
   it('parses topic- and question-sourced item variables', () => {
     const items = makeItems({
-      en: [
-        variable('gender', { topic: TOPIC, scope: 'latest' }),
-        variable('smoker', { question: 'smoker' }),
-      ],
+      en: [variable('gender', { topic: TOPIC, scope: 'latest' }), variable('smoker', { question: 'smoker' })],
     });
     expect(parseExtensions(['en'], items).itemVariables).toEqual([
       { name: 'gender', topic: 'socialNetwork', scope: TopicScope.latest },
@@ -405,6 +499,7 @@ describe('enableWhen expression dependencies', () => {
   });
 
   it('ignores malformed item variables', () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     const items = makeItems({
       en: [
         variable('', { question: 'q' }),
@@ -416,6 +511,9 @@ describe('enableWhen expression dependencies', () => {
       ],
     });
     expect(parseExtensions(['en'], items).itemVariables).toEqual([]);
+    expect(warn).toHaveBeenCalledTimes(6);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('malformed item variable extension'));
+    warn.mockRestore();
   });
 
   it('imports an expression dependency with its bindings and marks the question as dependent', () => {
@@ -449,9 +547,48 @@ describe('enableWhen expression dependencies', () => {
     expect(question.itemVariables).toEqual([
       { name: 'gender', topic: 'socialNetwork', scope: TopicScope.latest },
     ]);
-    // For enableWhenExpressions enableBehaviour must be undefined and enableWhen must be empty, since the expression itself encodes the dependency
-    expect(question.enableBehavior).toBeUndefined();
+    // Enable Behavior is derived from the expression; enableWhen stays empty since the expression encodes the dependency
+    expect(question.enableBehavior).toBe('all');
     expect(question.enableWhen).toEqual([]);
+  });
+
+  describe('Enable Behavior of an expression dependency', () => {
+    const parseExpression = (expression: string) =>
+      parseFHIRQuestionnaire({
+        en: {
+          resourceType: 'Questionnaire',
+          status: 'active',
+          name: 'health',
+          version: '1.0.0',
+          language: 'en',
+          item: [
+            {
+              linkId: 'dependent',
+              type: 'string',
+              text: 'Dependent',
+              extension: [variable('a', { question: 'a' }), variable('b', { question: 'b' })],
+              modifierExtension: [
+                {
+                  url: EnableWhenExpressionExtension,
+                  valueExpression: { language: 'text/fhirpath', expression },
+                },
+              ],
+            },
+          ],
+        },
+      }).questions[0];
+
+    it("is 'any' for conditions joined with or", () => {
+      expect(parseExpression("(%a contains 'x') or (%b.exists())").enableBehavior).toBe('any');
+    });
+
+    it("is 'all' for conditions joined with and", () => {
+      expect(parseExpression("(%a contains 'x') and (%b.exists())").enableBehavior).toBe('all');
+    });
+
+    it("falls back to 'all' for a custom expression that does not decompile", () => {
+      expect(parseExpression("%a contains 'x' or %b.exists() and %a.empty()").enableBehavior).toBe('all');
+    });
   });
 
   it('keeps the item codes of the template', () => {
@@ -679,6 +816,72 @@ describe('matrix questions', () => {
   });
 });
 
+describe('required', () => {
+  const parse = (item: fhir5.QuestionnaireItem[], contained: fhir5.ValueSet[] = []) =>
+    parseFHIRQuestionnaire({
+      en: {
+        resourceType: 'Questionnaire',
+        status: 'active',
+        name: 'required-q',
+        version: '1.0.0',
+        language: 'en',
+        contained,
+        item,
+      },
+    }).questions;
+
+  it('drops required on groups and display items but keeps it on their children', () => {
+    const [group] = parse([
+      {
+        linkId: 'group',
+        type: 'group',
+        text: 'Group',
+        required: true,
+        item: [
+          { linkId: 'display', type: 'display', text: 'Display', required: true },
+          { linkId: 'string', type: 'string', text: 'String', required: true },
+        ],
+      },
+    ]);
+
+    expect(group.required).toBe(false);
+    expect(group.items.map((q) => [q.linkId, q.required])).toEqual([
+      ['display', false],
+      ['string', true],
+    ]);
+  });
+
+  it('keeps required on a matrix and its rows', () => {
+    const [matrix] = parse(
+      [
+        {
+          linkId: 'matrix',
+          type: 'group',
+          text: 'Matrix',
+          required: true,
+          answerValueSet: '#columns',
+          extension: [
+            { url: QItemControlDefinition, valueCodeableConcept: { coding: [{ code: 'matrix' }] } },
+          ],
+          item: [{ linkId: 'row', type: 'coding', text: 'Row', required: true, answerValueSet: '#columns' }],
+        },
+      ],
+      [
+        {
+          resourceType: 'ValueSet',
+          id: 'columns',
+          status: 'active',
+          compose: { include: [{ system: 'http://example.com/cs' }] },
+          expansion: { timestamp: '2026-01-01T00:00:00Z', contains: [{ code: 'a', display: 'A' }] },
+        },
+      ]
+    );
+
+    expect(matrix.required).toBe(true);
+    expect(matrix.items[0].required).toBe(true);
+  });
+});
+
 describe('answerset order', () => {
   const questionnaireWithAnswerset = (extension?: fhir5.Extension[]) =>
     parseFHIRQuestionnaire({
@@ -716,5 +919,55 @@ describe('answerset order', () => {
   it("defaults to 'default' when no sorting extension is present", () => {
     const questionnaire = questionnaireWithAnswerset(undefined);
     expect(questionnaire.questions[0].answerset?.order).toBe('default');
+  });
+});
+
+describe('answerset system', () => {
+  const BASE = 'https://collect.example.org/fhir/r5/program';
+  const questionnaireWithSystem = (system: string, url = `${BASE}/Questionnaire/q`) =>
+    parseFHIRQuestionnaire({
+      en: {
+        resourceType: 'Questionnaire',
+        status: 'active',
+        name: 'q',
+        version: '1.0.0',
+        language: 'en',
+        url,
+        contained: [
+          {
+            resourceType: 'ValueSet',
+            id: '0',
+            status: 'active',
+            compose: { include: [{ system }] },
+            expansion: {
+              identifier: 'urn:uuid:3',
+              timestamp: '2026-01-01T00:00:00Z',
+              contains: [{ code: 'a', display: 'A', system }],
+            },
+          },
+        ],
+        item: [{ linkId: 'q1', type: 'coding', text: 'Pick one', answerValueSet: '#0' }],
+      },
+    });
+
+  it('drops the Default Code System derived from the questionnaire URL', () => {
+    const questionnaire = questionnaireWithSystem(`${BASE}/CodeSystem/q/q1`);
+    expect(questionnaire.questions[0].answerset).toBeDefined();
+    expect(questionnaire.questions[0].answerset?.system).toBeUndefined();
+  });
+
+  it('keeps a custom system', () => {
+    const questionnaire = questionnaireWithSystem('http://example.org/CodeSystem/mood');
+    expect(questionnaire.questions[0].answerset?.system).toBe('http://example.org/CodeSystem/mood');
+  });
+
+  it("keeps a system that is the default of another question's link id", () => {
+    const questionnaire = questionnaireWithSystem(`${BASE}/CodeSystem/q/other`);
+    expect(questionnaire.questions[0].answerset?.system).toBe(`${BASE}/CodeSystem/q/other`);
+  });
+
+  it('keeps the system when the questionnaire has no URL', () => {
+    const questionnaire = questionnaireWithSystem(`${BASE}/CodeSystem/q/q1`, '');
+    expect(questionnaire.questions[0].answerset?.system).toBe(`${BASE}/CodeSystem/q/q1`);
   });
 });

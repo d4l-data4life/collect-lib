@@ -10,14 +10,13 @@
 package jsbundle
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log/slog"
 	"strings"
 	"sync"
 
+	"github.com/d4l-data4life/go-svc/pkg/logging"
 	"github.com/dop251/goja"
 )
 
@@ -96,23 +95,25 @@ func (b *Bundle) newRuntime() (*runtime, error) {
 
 // installConsole defines the global console, which goja doesn't provide. Without it, every
 // console.warn in collect-lib (e.g. the parser skipping an unsupported item) would throw a
-// ReferenceError instead of logging. Messages go to the default slog logger, tagged with the
-// bundle name.
+// ReferenceError instead of logging. Messages go to go-svc's logging singleton, so they come
+// out in the same format as the calling service's own logs, prefixed with the bundle name.
+// console.debug logs only when the service enabled go-svc's debug logging.
 func (b *Bundle) installConsole(vm *goja.Runtime) {
 	console := vm.NewObject()
-	for name, level := range map[string]slog.Level{
-		"debug": slog.LevelDebug,
-		"log":   slog.LevelInfo,
-		"info":  slog.LevelInfo,
-		"warn":  slog.LevelWarn,
-		"error": slog.LevelError,
+	// The message is always an argument, never the format string: JS text may contain '%'.
+	for name, log := range map[string]func(msg string){
+		"debug": func(msg string) { logging.LogDebugf("%s", msg) },
+		"log":   func(msg string) { logging.LogInfof("%s", msg) },
+		"info":  func(msg string) { logging.LogInfof("%s", msg) },
+		"warn":  func(msg string) { logging.LogWarningf(nil, "%s", msg) },
+		"error": func(msg string) { logging.LogErrorf(nil, "%s", msg) },
 	} {
 		_ = console.Set(name, func(call goja.FunctionCall) goja.Value {
 			parts := make([]string, len(call.Arguments))
 			for i, arg := range call.Arguments {
 				parts[i] = arg.String()
 			}
-			slog.Log(context.Background(), level, strings.Join(parts, " "), "bundle", b.name)
+			log(b.name + ": " + strings.Join(parts, " "))
 			return goja.Undefined()
 		})
 	}
