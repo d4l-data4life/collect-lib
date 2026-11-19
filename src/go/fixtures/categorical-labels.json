@@ -1,0 +1,196 @@
+{
+  "cases": [
+    {
+      "name": "any device: Fitbit sleep level",
+      "deviceName": "Fitbit",
+      "annotationType": "sleepLevel",
+      "column": "sleepLevel",
+      "code": 1,
+      "expected": "rem"
+    },
+    {
+      "name": "any device: Google Health reuses Fitbit sleep levels",
+      "deviceName": "Google Health",
+      "annotationType": "sleepLevel",
+      "column": "sleepLevel",
+      "code": 12,
+      "expected": "asleep"
+    },
+    {
+      "name": "any device: unknown device name falls back",
+      "deviceName": "Some New Watch",
+      "annotationType": "sleepLevel",
+      "column": "sleepLevel",
+      "code": 3,
+      "expected": "deep"
+    },
+    {
+      "name": "per device: Apple sleep state",
+      "deviceName": "Apple HealthKit",
+      "annotationType": "sleepState",
+      "column": "sleepState",
+      "code": 2,
+      "expected": "core"
+    },
+    {
+      "name": "per device: Apple sleep state does not apply to other devices",
+      "deviceName": "Some New Watch",
+      "annotationType": "sleepState",
+      "column": "sleepState",
+      "code": 2,
+      "expected": null
+    },
+    {
+      "name": "per device: Health Connect sleep stage",
+      "deviceName": "Android Health Connect",
+      "annotationType": "sleepStage",
+      "column": "sleepStage",
+      "code": 6,
+      "expected": "sleepingRem"
+    },
+    {
+      "name": "per device: Health Connect sleep stage does not apply to other devices",
+      "deviceName": "Some New Watch",
+      "annotationType": "sleepStage",
+      "column": "sleepStage",
+      "code": 6,
+      "expected": null
+    },
+    {
+      "name": "any device: activity detection",
+      "deviceName": "",
+      "annotationType": "activityDetection",
+      "column": "activityDetection",
+      "code": 3,
+      "expected": "asleep"
+    },
+    {
+      "name": "per device: Oura activity level",
+      "deviceName": "Oura Ring",
+      "annotationType": "activityLevel",
+      "column": "activityLevel",
+      "code": 1,
+      "expected": "rest"
+    },
+    {
+      "name": "per device: Garmin activity level",
+      "deviceName": "Garmin",
+      "annotationType": "activityLevel",
+      "column": "activityLevel",
+      "code": 1,
+      "expected": "active"
+    },
+    {
+      "name": "per device: Google Health activity level",
+      "deviceName": "Google Health",
+      "annotationType": "activityLevel",
+      "column": "activityLevel",
+      "code": 1,
+      "expected": "LIGHTLY_ACTIVE"
+    },
+    {
+      "name": "per device: activity level has no any-device fallback",
+      "deviceName": "Fitbit",
+      "annotationType": "activityLevel",
+      "column": "activityLevel",
+      "code": 1,
+      "expected": null
+    },
+    {
+      "name": "negative code: Garmin cycle phase unknown",
+      "deviceName": "Garmin",
+      "annotationType": "menstrualCycle",
+      "column": "phase",
+      "code": -1,
+      "expected": "unknown"
+    },
+    {
+      "name": "channel column: Apple menstrual state",
+      "deviceName": "Apple HealthKit",
+      "annotationType": "menstrualCycle",
+      "column": "state",
+      "code": 4,
+      "expected": "heavy"
+    },
+    {
+      "name": "channel column: Apple workout activity type",
+      "deviceName": "Apple HealthKit",
+      "annotationType": "workout",
+      "column": "activityType",
+      "code": 3000,
+      "expected": "other"
+    },
+    {
+      "name": "Google Health heart rate zone",
+      "deviceName": "Google Health",
+      "annotationType": "heartRateZone",
+      "column": "heartRateZone",
+      "code": 2,
+      "expected": "CARDIO"
+    },
+    {
+      "name": "Google Health cardio fitness level",
+      "deviceName": "Google Health",
+      "annotationType": "vo2max",
+      "column": "cardioFitnessLevel",
+      "code": 5,
+      "expected": "VERY_GOOD"
+    },
+    {
+      "name": "Google Health cardio fitness level: -1 means not provided",
+      "deviceName": "Google Health",
+      "annotationType": "vo2max",
+      "column": "cardioFitnessLevel",
+      "code": -1,
+      "expected": null
+    },
+    {
+      "name": "Google Health vo2max value channel has no labels",
+      "deviceName": "Google Health",
+      "annotationType": "vo2max",
+      "column": "vo2max",
+      "code": 45,
+      "expected": null
+    },
+    {
+      "name": "Health Connect exercise type",
+      "deviceName": "Android Health Connect",
+      "annotationType": "exerciseType",
+      "column": "exerciseType",
+      "code": 56,
+      "expected": "running"
+    },
+    {
+      "name": "Health Connect exercise type: unassigned code",
+      "deviceName": "Android Health Connect",
+      "annotationType": "exerciseType",
+      "column": "exerciseType",
+      "code": 45,
+      "expected": null
+    },
+    {
+      "name": "Health Connect VO2 max measurement method",
+      "deviceName": "Android Health Connect",
+      "annotationType": "vo2maxMeasurementMethod",
+      "column": "vo2maxMeasurementMethod",
+      "code": 3,
+      "expected": "cooperTest"
+    },
+    {
+      "name": "short name does not match",
+      "deviceName": "Health Connect",
+      "annotationType": "exerciseType",
+      "column": "exerciseType",
+      "code": 56,
+      "expected": null
+    },
+    {
+      "name": "unknown annotation type",
+      "deviceName": "Garmin",
+      "annotationType": "steps",
+      "column": "steps",
+      "code": 1,
+      "expected": null
+    }
+  ]
+}
