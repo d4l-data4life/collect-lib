@@ -5,6 +5,7 @@ import { defineConfig, type Options } from 'tsup';
 const goBundles: Record<string, string> = {
   fhirparser: 'src/fhir/parser/index.ts',
   guard: 'src/go/guard.ts',
+  categoricallabels: 'src/go/categoricalLabels.ts',
 };
 
 // goja has no module system, so each bundle is a self-contained IIFE that exposes its exports
