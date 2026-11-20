@@ -1,7 +1,5 @@
 // Package guard evaluates collect-lib program step conditions (src/helper/guard.ts,
-// generateStepGuard) inside a Go process. Like pkg/fhirparser there is no Go port: the
-// TypeScript entry src/go/guard.ts is compiled into bundle/bundle.js by `yarn build` and run
-// with goja (see pkg/internal/jsbundle), so Go services and Phoenix compute the same dates.
+// generateStepGuard) inside a Go process.
 //
 // Day, week and month offsets are calendar arithmetic in the process's local time zone
 // (time.Local), as they are in the browser in the user's zone. Across a DST change, P1D can

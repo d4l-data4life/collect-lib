@@ -9,11 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `generateFHIRQuestionnaire`, the inverse of `parseFHIRQuestionnaire`, ported from research-pillars `pkg/fhir`
+- Go package `pkg/fhirquestionnaire` with `Generate` and `Parse`, replacing `pkg/fhirparser`
+
 ### Changed
+
+- `parseFHIRQuestionnaire` throws for an invalid postal code question
 
 ### Deprecated
 
 ### Removed
+
+- Go package `pkg/fhirparser`; use `fhirquestionnaire.Parse` instead of `fhirparser.ParsePackedQuestionnaire`
 
 ### Fixed
 

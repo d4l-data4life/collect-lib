@@ -12,7 +12,10 @@ const fixture: {
 
 describe('stepFulfillmentDate (Go entry for pkg/guard)', () => {
   it.each(fixture.cases)('$name', ({ condition, expected }) => {
+    // Unknown condition types are logged and treated as never fulfilled; keep that out of the output.
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     expect(stepFulfillmentDate(condition, fixture.params)).toBe(expected);
+    warn.mockRestore();
   });
 
   it('throws on a malformed condition', () => {

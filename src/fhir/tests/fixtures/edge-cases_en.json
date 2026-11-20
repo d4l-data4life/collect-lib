@@ -1,0 +1,349 @@
+{
+  "resourceType": "Questionnaire",
+  "language": "en",
+  "name": "edge-cases",
+  "url": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/Questionnaire/edge-cases",
+  "status": "active",
+  "publisher": "D4L data4life gGmbH",
+  "contact": [
+    {
+      "name": "D4L data4life gGmbH",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "https://www.data4life.care"
+        }
+      ]
+    }
+  ],
+  "version": "1.0.0",
+  "title": "Edge cases",
+  "date": "2026-11-09T12:23:30Z",
+  "subjectType": [
+    "Patient"
+  ],
+  "contained": [
+    {
+      "resourceType": "ValueSet",
+      "language": "en",
+      "name": "mood-today",
+      "url": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/ValueSet/edge-cases/mood",
+      "status": "active",
+      "publisher": "D4L data4life gGmbH",
+      "contact": [
+        {
+          "name": "D4L data4life gGmbH",
+          "telecom": [
+            {
+              "system": "url",
+              "value": "https://www.data4life.care"
+            }
+          ]
+        }
+      ],
+      "compose": {
+        "include": [
+          {
+            "system": "http://example.org/CodeSystem/mood",
+            "concept": [
+              {
+                "code": "good"
+              },
+              {
+                "code": "bad"
+              }
+            ]
+          }
+        ]
+      },
+      "expansion": {
+        "identifier": "93d830c7-a44a-5159-8b32-edf4e7318853",
+        "timestamp": "2026-11-10T06:37:58Z",
+        "parameter": [
+          {
+            "name": "displayLanguage",
+            "valueCode": "en"
+          }
+        ],
+        "contains": [
+          {
+            "system": "http://example.org/CodeSystem/mood",
+            "code": "good",
+            "display": "Good"
+          },
+          {
+            "system": "http://example.org/CodeSystem/mood",
+            "code": "bad",
+            "display": "Bad"
+          }
+        ]
+      },
+      "id": "0"
+    },
+    {
+      "resourceType": "ValueSet",
+      "language": "en",
+      "name": "satisfaction",
+      "url": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/ValueSet/edge-cases/satisfaction",
+      "status": "active",
+      "publisher": "D4L data4life gGmbH",
+      "contact": [
+        {
+          "name": "D4L data4life gGmbH",
+          "telecom": [
+            {
+              "system": "url",
+              "value": "https://www.data4life.care"
+            }
+          ]
+        }
+      ],
+      "compose": {
+        "include": [
+          {
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/edge-cases/satisfaction",
+            "concept": [
+              {
+                "code": "1"
+              },
+              {
+                "code": "2"
+              },
+              {
+                "code": "3"
+              }
+            ]
+          }
+        ]
+      },
+      "expansion": {
+        "identifier": "5342cf0d-afd2-5a22-a2e1-9216ba6684ef",
+        "timestamp": "2026-11-10T06:37:58Z",
+        "parameter": [
+          {
+            "name": "displayLanguage",
+            "valueCode": "en"
+          }
+        ],
+        "contains": [
+          {
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/edge-cases/satisfaction",
+            "code": "1",
+            "display": "Low"
+          },
+          {
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/edge-cases/satisfaction",
+            "code": "2",
+            "display": "Medium"
+          },
+          {
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/edge-cases/satisfaction",
+            "code": "3",
+            "display": "High"
+          }
+        ]
+      },
+      "id": "1"
+    }
+  ],
+  "item": [
+    {
+      "linkId": "mood-today",
+      "type": "coding",
+      "text": "Mood today",
+      "answerValueSet": "#0",
+      "required": true
+    },
+    {
+      "linkId": "mood-yesterday",
+      "type": "coding",
+      "text": "Mood yesterday",
+      "answerValueSet": "#0",
+      "required": true
+    },
+    {
+      "linkId": "mood-reason",
+      "type": "string",
+      "text": "Why?",
+      "required": true,
+      "enableBehavior": "all",
+      "enableWhen": [
+        {
+          "question": "mood-today",
+          "operator": "=",
+          "answerCoding": {
+            "code": "bad",
+            "system": "http://example.org/CodeSystem/mood"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "age",
+      "type": "integer",
+      "text": "Age",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "30525-0",
+          "display": "Age"
+        }
+      ],
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+          "valueInteger": 0
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+          "valueInteger": 120
+        }
+      ],
+      "required": true
+    },
+    {
+      "linkId": "support",
+      "type": "text",
+      "text": "What would help?",
+      "extension": [
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable",
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "mood"
+            },
+            {
+              "url": "question",
+              "valueString": "mood-today"
+            }
+          ]
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable",
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "age"
+            },
+            {
+              "url": "question",
+              "valueString": "age"
+            }
+          ]
+        }
+      ],
+      "required": true,
+      "modifierExtension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
+          "valueExpression": {
+            "language": "text/fhirpath",
+            "expression": "(%mood contains 'bad') or (%age.first().toInteger() >= 18)"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "custom",
+      "type": "string",
+      "text": "Custom dependency",
+      "extension": [
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable",
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "mood"
+            },
+            {
+              "url": "question",
+              "valueString": "mood-today"
+            }
+          ]
+        },
+        {
+          "url": "http://fhir.data4life.care/StructureDefinition/questionnaire-item-variable",
+          "extension": [
+            {
+              "url": "name",
+              "valueString": "age"
+            },
+            {
+              "url": "question",
+              "valueString": "age"
+            }
+          ]
+        }
+      ],
+      "required": true,
+      "modifierExtension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
+          "valueExpression": {
+            "language": "text/fhirpath",
+            "expression": "%mood contains 'bad' or %age.empty() and %mood.exists()"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "satisfaction",
+      "type": "group",
+      "text": "Satisfaction",
+      "answerValueSet": "#1",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://fhir.data4life.care/r5/CodeSystem/custom-question-class",
+                "code": "matrix"
+              }
+            ]
+          }
+        }
+      ],
+      "required": true,
+      "item": [
+        {
+          "linkId": "satisfaction-0",
+          "type": "coding",
+          "text": "Sleep",
+          "answerValueSet": "#1",
+          "required": true
+        },
+        {
+          "linkId": "satisfaction-1",
+          "type": "coding",
+          "text": "Work",
+          "answerValueSet": "#1",
+          "required": true
+        }
+      ]
+    },
+    {
+      "linkId": "satisfaction-followup",
+      "type": "string",
+      "text": "Tell us more",
+      "required": true,
+      "enableBehavior": "any",
+      "enableWhen": [
+        {
+          "question": "satisfaction-0",
+          "operator": "=",
+          "answerCoding": {
+            "code": "1",
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/edge-cases/satisfaction"
+          }
+        },
+        {
+          "question": "age",
+          "operator": ">",
+          "answerDecimal": 65
+        }
+      ]
+    }
+  ]
+}
