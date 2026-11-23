@@ -3,7 +3,7 @@ import { defineConfig, type Options } from 'tsup';
 // JS bundles for the Go module (see README_GO.md): Go package under pkg/ → TS entry it wraps.
 // Each becomes pkg/<package>/bundle/bundle.js, which that package embeds and runs with goja.
 const goBundles: Record<string, string> = {
-  fhirparser: 'src/fhir/parser/index.ts',
+  fhirquestionnaire: 'src/go/fhirquestionnaire.ts',
   guard: 'src/go/guard.ts',
   categoricallabels: 'src/go/categoricalLabels.ts',
 };
@@ -19,7 +19,7 @@ const goBundle = (pkg: string, entry: string): Options => ({
   format: ['iife'],
   globalName: 'Exports',
   target: 'es2017',
-  platform: 'neutral',
+  platform: 'browser',
   outExtension: () => ({ js: '.js' }), // tsup's default for iife would be .global.js
   dts: false,
   sourcemap: false,
@@ -36,11 +36,11 @@ export default defineConfig([
     // entry (`@d4l/collect-lib/fhirpath`) so the fhirpath.js engine is loaded only where expressions
     // are evaluated (phoenix; Studio's synthetic-data generator), not on every page that imports the
     // barrel. See the note in src/fhir/enable-when-eval.ts. `fhir-to-questions` is the same idea for
-    // the shared FHIR->proto Question parser (src/fhir/parser/).
+    // the shared FHIR Questionnaire Parsing and Generation (src/fhir/questionnaire/).
     entry: {
       index: 'src/index.ts',
       fhirpath: 'src/fhir/enable-when-eval.ts',
-      'fhir-to-questions': 'src/fhir/parser/index.ts',
+      'fhir-to-questions': 'src/fhir/questionnaire/index.ts',
     },
     format: ['cjs', 'esm'], // Build for commonJS and ESmodules
     dts: true, // Generate declaration file (.d.ts)

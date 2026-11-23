@@ -22,6 +22,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [v1.62.0] - 2026-11-20
+
+### Added
+
+- `generateFHIRQuestionnaire`, the inverse of `parseFHIRQuestionnaire`, ported from research-pillars `pkg/fhir`
+- Go package `pkg/fhirquestionnaire` with `Generate` and `Parse`, replacing `pkg/fhirparser`
+
+### Changed
+
+- `parseFHIRQuestionnaire` throws for an invalid postal code question
+
+### Removed
+
+- Go package `pkg/fhirparser`; use `fhirquestionnaire.Parse` instead of `fhirparser.ParsePackedQuestionnaire`
+
 ## [v1.61.0] - 2026-11-17
 
 ### Added
@@ -663,7 +678,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/d4l-data4life/collect-lib/compare/v1.61.0...HEAD
+[Unreleased]: https://github.com/d4l-data4life/collect-lib/compare/v1.62.0...HEAD
+[v1.62.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.61.0...v1.62.0
 [v1.61.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.60.0...v1.61.0
 [v1.60.0]: https://github.com/d4l-data4life/collect-lib/compare/v1.59.2...v1.60.0
 [v1.59.2]: https://github.com/d4l-data4life/collect-lib/compare/v1.59.1...v1.59.2

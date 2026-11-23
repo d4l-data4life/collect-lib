@@ -26,42 +26,56 @@ Tags from before the move to d4l-data4life declare the old module path and don't
 
 ## Packages
 
-| Package                 | Wraps (TypeScript)                                                    | Go API                                                     |
-| ----------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `pkg/fhirparser`        | `parseFHIRQuestionnaire` (`src/fhir/parser`)                          | `ParsePackedQuestionnaire(map[string]fhir5.Questionnaire)` |
-| `pkg/guard`             | `generateStepGuard` (`src/helper/guard.ts`)                           | `FulfillmentDate(StepCondition, Params)`                   |
-| `pkg/categoricallabels` | `CATEGORICAL_LABELS` (`src/devices/annotations/categoricalLabels.ts`) | `Label(deviceName, annotationType, column, code)`          |
+| Package                 | Wraps (TypeScript)                                                               | Go API                                                                       |
+| ----------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `pkg/fhirquestionnaire` | `generateFHIRQuestionnaire`, `parseFHIRQuestionnaire` (`src/fhir/questionnaire`) | `Generate(*Questionnaire, Options)`, `Parse(map[string]fhir5.Questionnaire)` |
+| `pkg/guard`             | `generateStepGuard` (`src/helper/guard.ts`)                                      | `FulfillmentDate(StepCondition, Params)`                                     |
+| `pkg/categoricallabels` | `CATEGORICAL_LABELS` (`src/devices/annotations/categoricalLabels.ts`)            | `Label(deviceName, annotationType, column, code)`                            |
 
-### pkg/fhirparser
+### pkg/fhirquestionnaire
 
-Converts one FHIR R5 Questionnaire per language into the research-pillars `Questionnaire` proto.
+Converts between a Questionnaire Definition (the research-pillars `Questionnaire` proto) and one FHIR R5 Questionnaire per language.
+Generation and Parsing are exact inverses for Canonical Definitions (see `GLOSSARY.md`).
 
 ```go
 import (
 	"errors"
 
-	"github.com/d4l-data4life/collect-lib/pkg/fhirparser"
+	"github.com/d4l-data4life/collect-lib/pkg/fhirquestionnaire"
 	"github.com/d4l-data4life/go-fhir/pkg/fhir5"
 )
 
-// en, de are fhir5.Questionnaire; q is a *researchpillars.Questionnaire from grpc-modules
-q, err := fhirparser.ParsePackedQuestionnaire(map[string]fhir5.Questionnaire{"en": en, "de": de})
-if errors.Is(err, fhirparser.ErrInvalidQuestionnaire) {
-	// the parser rejected the input (e.g. missing name or version) → a client error
+// pq is a *researchpillars.Questionnaire from grpc-modules; fhir maps language → fhir5.Questionnaire
+fhir, err := fhirquestionnaire.Generate(pq, fhirquestionnaire.Options{
+	BaseURL:     "https://example.org/fhir/r5",
+	StaticURL:   "https://example.org/api/static",
+	ProgramName: "my_program",
+	Languages:   []string{"en", "de"},
+	Date:        changedAt.UTC().Format(time.RFC3339),
+	Timestamp:   changedAt.UTC().Format(time.RFC3339),
+})
+if errors.Is(err, fhirquestionnaire.ErrInvalidDefinition) {
+	// Generation rejected the definition (e.g. a missing translation)
+}
+
+q, err := fhirquestionnaire.Parse(map[string]fhir5.Questionnaire{"en": en, "de": de})
+if errors.Is(err, fhirquestionnaire.ErrInvalidQuestionnaire) {
+	// Parsing rejected the input (e.g. missing name or version) → a client error
 }
 ```
 
-- **Languages:** the questionnaires are expected to be translations of each other. Only texts
-  (title, question texts, answer labels) are taken from every language. Everything else
-  (name, version, which items exist and their order, types, `required`, `enableWhen`, codes)
-  comes from the alphabetically first language code, because Go passes the map to the parser
-  with its keys sorted. This only matters if the language versions differ.
-- **Errors:** errors caused by the input wrap `ErrInvalidQuestionnaire`. Any other error
-  points to a bug in collect-lib.
-- **Output types:** the result is decoded strictly into the grpc-modules Go types. `go.mod`
-  requires the same grpc-modules version as `package.json`, so your service always has proto
-  types at least as new as the ones the parser writes.
-- **Speed:** about 4 ms for the 25-question en+de fixture on an Apple M-series laptop.
+- **Deterministic:** Generation reads no environment or clock.
+  URLs, languages, `Questionnaire.date` and `expansion.timestamp` come from `Options`, and `expansion.identifier` is a UUIDv5 of (value set URL, language, timestamp).
+  Equal inputs give equal output.
+- **Languages:** the questionnaires passed to `Parse` are expected to be translations of each other.
+  Only texts (title, question texts, answer labels) are taken from every language.
+  Everything else (name, version, which items exist and their order, types, `required`, `enableWhen`, codes) comes from the alphabetically first language code, because Go passes the map with its keys sorted.
+  This only matters if the language versions differ.
+- **Errors:** errors caused by the input wrap `ErrInvalidDefinition` (`Generate`) or `ErrInvalidQuestionnaire` (`Parse`).
+  Any other error points to a bug in collect-lib.
+- **Output types:** results are decoded strictly into the go-fhir and grpc-modules Go types, so a field they don't model fails loudly instead of being dropped.
+  `go.mod` requires the same grpc-modules version as `package.json`, so your service always has proto types at least as new as the ones the bundle reads and writes.
+- **Speed:** about 9 ms for `Generate` and 4 ms for `Parse` with the 25-question en+de fixture on an Apple M-series laptop.
 - **Concurrency:** safe to call from many goroutines.
 
 ### pkg/guard
@@ -121,6 +135,8 @@ src/…/*.ts ──yarn build (tsup)──▶ pkg/<package>/bundle/bundle.js ─
 1. **Bundling.** `tsup.config.ts` has a `goBundles` map (Go package → TS entry file). For each
    entry, `yarn build` writes a self-contained IIFE to `pkg/<package>/bundle/bundle.js`:
    - The output targets ES2017, the language level goja supports.
+   - It resolves dependencies for the browser, so libraries pick pure-JS code over Node built-ins.
+     For example, `uuid`'s `v5` brings its own SHA-1 instead of `node:crypto`.
    - Its exports end up on the global `Exports`, because goja has no module system.
    - It is left unminified so changes show up readably in PR diffs.
 2. **Committing.** Go modules are downloaded from git, not from a registry. A Go service only
@@ -130,8 +146,8 @@ src/…/*.ts ──yarn build (tsup)──▶ pkg/<package>/bundle/bundle.js ─
    `pkg/internal/jsbundle` keeps a pool of goja runtimes, because one runtime can't be used from
    two goroutines at once. `Bundle.Call(fn, args...)` borrows a runtime, calls the exported
    function and returns the result as JSON. goja has no `console`, so `jsbundle` defines one
-   that logs to Go's default `slog` logger; otherwise every `console.warn` in collect-lib
-   would throw.
+   that logs through go-svc's `logging` package, in the calling service's log format;
+   otherwise every `console.warn` in collect-lib would throw.
 4. **Crossing the boundary as JSON.** Arguments are encoded with `encoding/json`, so `json`
    struct tags apply, and turned into plain JS objects with `JSON.parse`. The JS code sees
    exactly the data it would get in the browser. Results come back through `JSON.stringify`,
@@ -140,8 +156,8 @@ src/…/*.ts ──yarn build (tsup)──▶ pkg/<package>/bundle/bundle.js ─
    wrapper objects instead of plain JS objects.
 5. **Errors.** An error thrown by the JS function comes back wrapped in `jsbundle.ErrThrown`.
    Packages translate it into their own input-error sentinel, e.g.
-   `fhirparser.ErrInvalidQuestionnaire`. Every other error is a bug. A runtime that panicked is
-   thrown away instead of returning to the pool.
+   `fhirquestionnaire.ErrInvalidQuestionnaire`. Every other error is a bug.
+   A runtime that panicked is thrown away instead of returning to the pool.
 
 ## Exporting another function to Go
 
@@ -159,8 +175,8 @@ only Go changes:
 1. **Check that the TS code can run in goja.** The function and everything it imports end up
    in the bundle, so check all of it, including libraries:
    - No Node or browser APIs are available: no `Intl`, `Buffer`, `TextEncoder`, `crypto`,
-     `fetch`, `window`, timers or `require`. `console` is provided by `jsbundle` and logs to
-     Go's default `slog` logger.
+     `fetch`, `window`, timers or `require`. `console` is provided by `jsbundle` and logs
+     through go-svc's `logging` package.
    - If a library needs one of these only for something you don't use, configure it to avoid
      that path in the entry file (e.g. set a fixed locale so it never asks `Intl`).
    - Look at what the bundle pulls in. Large dependencies make every pooled runtime bigger.
@@ -243,5 +259,5 @@ committed is still part of the downloaded module (about 4 MB), but Go only compi
 - **Speed:** goja interprets JavaScript, so expect it to be roughly 10–20× slower than Node.
   That's milliseconds for questionnaire-sized input, but it doesn't fit hot loops over large
   data.
-- **Memory:** every pooled runtime holds the evaluated bundle (about 1.3 MB for `fhirparser`). The pool grows
-  with the number of concurrent calls and shrinks again when the Go GC runs.
+- **Memory:** every pooled runtime holds the evaluated bundle (about 1.3 MB for `fhirquestionnaire`).
+  The pool grows with the number of concurrent calls and shrinks again when the Go GC runs.

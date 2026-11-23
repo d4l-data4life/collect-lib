@@ -16,7 +16,7 @@ export type Program = {
   name: string;
   // tenantID | true | string | Tenant the program belongs to
   tenantID: string;
-  // languages | true | string[] | Language codes that the program is available in. Example: `['en', 'de']`
+  // languages | true | string[] | Language codes that the program is available in. Primary language is listed first. Example: `['en', 'de']`
   languages: string[];
   // type | true | `study` or `sensor` | `sensor` is the new research-studio type, `study` is from the study-builder (and older)
   type: ProgramType;

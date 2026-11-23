@@ -21,8 +21,8 @@ import {
   SliderMinLabelExtension,
   SliderOrientationExtension,
   SliderStepSizeExtension,
-} from '../constants';
-import { isValidTopicCanonical, topicIdFromCanonical } from '../topic-id';
+} from '../../constants';
+import { isValidTopicCanonical, topicIdFromCanonical } from '../../topic-id';
 import { parseItemVariable, parseTopicInput } from './topics';
 import {
   Coding,
@@ -72,6 +72,7 @@ export const parseExtensions = (
   const input: TopicInput[] = [];
   const itemVariables: ItemVariable[] = [];
   const placeholders: string[] = [];
+  const countrySources: PostalCodeCountrySource[] = [];
   const firstItem = questionItems[languages[0]];
   const extensions = firstItem?.extension || [];
 
@@ -214,10 +215,9 @@ export const parseExtensions = (
         }
         break;
       case PostalCodeCountrySourceExtension: {
-        const countrySource = parsePostalCodeCountrySource(extension);
-        if (countrySource) {
-          config = { ...config, countrySource };
-        } else {
+        const sources = parsePostalCodeCountrySources(extension);
+        countrySources.push(...sources);
+        if (sources.length === 0) {
           console.warn(
             `Ignoring malformed postal code country-source extension on ${
               questionItems[languages[0]]?.linkId
@@ -238,6 +238,12 @@ export const parseExtensions = (
   if (placeholders.length > 0) {
     config = { ...config, placeholders };
   }
+  if (questionInputType === InputType.postal_code) {
+    validatePostalCodeCountrySources(languages, questionItems);
+  }
+  if (countrySources.length > 0) {
+    config = { ...config, countrySource: countrySources[0] };
+  }
   return {
     config,
     inputType: questionInputType,
@@ -249,23 +255,54 @@ export const parseExtensions = (
   };
 };
 
-// Mirrors ParsePostalCodeExtensions (research-pillars/pkg/fhir/questionConfig.go)
-const parsePostalCodeCountrySource = (extension: fhir5.Extension): PostalCodeCountrySource | undefined => {
-  for (const sub of extension.extension ?? []) {
-    if (sub.url === PostalCodeFromItemUrl && sub.valueString) {
-      return { fromItem: sub.valueString };
+/**
+ * A postal code needs exactly one country source (StructureDefinition constraint pccs-1), the same in
+ * every language, as in Generation. Parsing reads the config from the first language only, so this
+ * checks every language and rejects the item instead of silently picking one.
+ */
+const validatePostalCodeCountrySources = (
+  languages: string[],
+  questionItems: { [language: string]: fhir5.QuestionnaireItem }
+): void => {
+  const linkId = questionItems[languages[0]]?.linkId;
+  let first: { language: string; source: PostalCodeCountrySource } | undefined;
+  for (const language of languages) {
+    const sources = (questionItems[language]?.extension ?? [])
+      .filter((extension) => extension.url === PostalCodeCountrySourceExtension)
+      .flatMap(parsePostalCodeCountrySources);
+    if (sources.length !== 1) {
+      throw new Error(
+        `Question ${linkId}: postal_code countrySource must include exactly one of fromItem or fixedCountry (language ${language})`
+      );
     }
-    if (sub.url === PostalCodeFixedCountryUrl && sub.valueCoding?.code) {
-      return {
-        fixedCountry: {
-          system: sub.valueCoding.system ?? Iso3166CodeSystem,
-          code: sub.valueCoding.code,
-        },
-      };
+    if (!first) {
+      first = { language, source: sources[0] };
+    } else if (!sameCountrySource(first.source, sources[0])) {
+      throw new Error(
+        `Question ${linkId}: postal_code countrySource differs between languages ${first.language} and ${language}`
+      );
     }
   }
-  return undefined;
 };
+
+const sameCountrySource = (a: PostalCodeCountrySource, b: PostalCodeCountrySource): boolean =>
+  a.fromItem === b.fromItem &&
+  a.fixedCountry?.system === b.fixedCountry?.system &&
+  a.fixedCountry?.code === b.fixedCountry?.code;
+
+/** Every well-formed country source in a postalcode-country-source extension. */
+const parsePostalCodeCountrySources = (extension: fhir5.Extension): PostalCodeCountrySource[] =>
+  (extension.extension ?? []).flatMap((sub): PostalCodeCountrySource[] => {
+    if (sub.url === PostalCodeFromItemUrl && sub.valueString) {
+      return [{ fromItem: sub.valueString }];
+    }
+    if (sub.url === PostalCodeFixedCountryUrl && sub.valueCoding?.code) {
+      return [
+        { fixedCountry: { system: sub.valueCoding.system ?? Iso3166CodeSystem, code: sub.valueCoding.code } },
+      ];
+    }
+    return [];
+  });
 
 /** The terminology codings (e.g. SNOMED) of the item, skipping entries without a system or code. */
 export const parseCodes = (questionItem: fhir5.QuestionnaireItem): Coding[] =>

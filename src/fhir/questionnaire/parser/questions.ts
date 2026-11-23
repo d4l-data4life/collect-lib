@@ -1,70 +1,30 @@
-import { CountryValueSet } from '../constants';
+import { CountryValueSet } from '../../constants';
+import { decompileEnableWhen, EnableWhenBehavior } from '../../enable-when-conditions';
+import { TopicScopeCode } from '../../topic-id';
 import {
   Answerset,
   InputType,
   inputTypeFromJSON,
+  ItemVariable,
   Question,
-  Questionnaire,
+  topicScopeToJSON,
 } from '@d4l/grpc-modules/research-pillars';
-import { valueSetsToAnswerSets } from './valuesets';
+import { DefaultCodeSystem } from './valuesets';
 import { parseCodes, parseEnableWhenExpression, parseExtensions, stringToOperator } from './extensions';
 
-export type QuestionnaireMap = {
-  [language: string]: fhir5.Questionnaire;
+/** The answer set without its system when that system is the question's Default Code System. */
+const withoutDefaultCodeSystem = (answerset: Answerset, defaultCodeSystem: string | undefined): Answerset => {
+  if (answerset.system === undefined || answerset.system !== defaultCodeSystem) {
+    return answerset;
+  }
+  const { system: _, ...rest } = answerset;
+  return rest;
 };
 
-export const parseFHIRQuestionnaire = (fhirQuestionnaires: QuestionnaireMap): Questionnaire => {
-  const first = fhirQuestionnaires[Object.keys(fhirQuestionnaires)[0]];
-  if (!first.name || !first.version) {
-    throw new Error('FHIR Questionnaire is missing required fields (name, version)');
-  }
-  return {
-    name: first.name,
-    title: Object.keys(fhirQuestionnaires).reduce((acc, el) => {
-      return { ...acc, [el]: fhirQuestionnaires[el].title };
-    }, {}),
-    version: first.version,
-    questions: extractQuestionsFromFHIR(fhirQuestionnaires),
-  };
-};
-
-const extractQuestionsFromFHIR = (fhirQuestionnaires: QuestionnaireMap): Question[] => {
-  const languages = Object.keys(fhirQuestionnaires);
-  const valueSets: { [key: string]: { [language: string]: fhir5.ValueSet } } = {};
-  const questionItems: { [key: string]: { [language: string]: fhir5.QuestionnaireItem } } = {};
-  for (const language of languages) {
-    if (fhirQuestionnaires[language]?.contained) {
-      for (const valueset of fhirQuestionnaires[language].contained as fhir5.ValueSet[]) {
-        if (valueset.id) {
-          valueSets[valueset.id] = { ...valueSets[valueset.id], [language]: valueset };
-        }
-      }
-    }
-    if (fhirQuestionnaires[language]?.item) {
-      for (const item of fhirQuestionnaires[language].item) {
-        questionItems[item.linkId] = { ...questionItems[item.linkId], [language]: item };
-      }
-    }
-  }
-  const answerSets = valueSetsToAnswerSets(languages, valueSets);
-
-  const questions: Question[] = [];
-  const q = fhirQuestionnaires[languages[0]];
-  if (!q.item) {
-    return [];
-  }
-  for (const qItem of q.item) {
-    const question = convertQuestion(languages, answerSets, questionItems[qItem.linkId]);
-    if (question) {
-      questions.push(question);
-    }
-  }
-  return questions;
-};
-
-const convertQuestion = (
+export const convertQuestion = (
   languages: string[],
   answerSets: { [key: string]: Answerset },
+  defaultCodeSystem: DefaultCodeSystem,
   questionItems: { [language: string]: fhir5.QuestionnaireItem },
   isMatrixRow = false
 ): Question | undefined => {
@@ -92,17 +52,27 @@ const convertQuestion = (
     return undefined;
   }
 
+  // FHIR forbids required on display items and Generation never writes it on groups; a matrix is a
+  // FHIR group too, but keeps required because it decides whether its rows are checked.
+  const canBeRequired = questionInputType !== InputType.display && questionInputType !== InputType.group;
+
   const question: Question = {
     linkId: questionItem.linkId,
     itemVariables,
     text: languages.reduce((acc, lang) => ({ ...acc, [lang]: questionItems[lang].text }), {}),
     inputType: inputTypeFromJSON(questionInputType),
-    required: !!questionItem.required,
+    required: canBeRequired && !!questionItem.required,
     enableWhen: [],
     // Check questionItem.type not questionInputType because questionInputType can be overwritten by extensions (happens for matrix)
     items:
       questionItem.type === 'group'
-        ? convertChildQuestions(languages, answerSets, questionItems, questionInputType === InputType.matrix)
+        ? convertChildQuestions(
+            languages,
+            answerSets,
+            defaultCodeSystem,
+            questionItems,
+            questionInputType === InputType.matrix
+          )
         : [],
     ...(Object.keys(config).length && { config }),
     prepopulate: prepopulate ?? [],
@@ -127,30 +97,43 @@ const convertQuestion = (
   }
 
   // An expression dependency (topic-sourced or time-relative conditions) is carried as an SDC
-  // modifierExtension; research-pillars emits no enableBehavior for it since the all/any behavior
-  // is already encoded in the expression itself, and nothing downstream reads it in this case.
+  // modifierExtension. FHIR has no enableBehavior for it, so it is derived from the expression.
   const enableWhenExpression = parseEnableWhenExpression(questionItem);
   if (enableWhenExpression) {
     question.enableWhenExpression = enableWhenExpression;
+    question.enableBehavior = expressionEnableBehavior(itemVariables, enableWhenExpression);
   }
 
   // Rows carry their own answerValueSet reference in FHIR, but we only attach the answerset on the parent Question
   if (!isMatrixRow && questionItem.answerValueSet && questionItem.answerValueSet !== CountryValueSet) {
-    question.answerset = answerSets[questionItem.answerValueSet.replace('#', '')];
-    if (!question.answerset) {
+    const answerset = answerSets[questionItem.answerValueSet.replace('#', '')];
+    if (!answerset) {
       console.warn(
         `The answer value set for question ${questionItem.linkId} cannot be found. The question will be ignored.`
       );
       return undefined;
     }
+    question.answerset = withoutDefaultCodeSystem(answerset, defaultCodeSystem(questionItem.linkId));
   }
 
   return question;
 };
 
+/** The behavior a decompiled expression encodes, or 'all' for a custom expression that does not decompile. */
+const expressionEnableBehavior = (itemVariables: ItemVariable[], expression: string): EnableWhenBehavior => {
+  const variables = itemVariables.map(({ name, question, topic, scope }) => ({
+    name,
+    question,
+    topic,
+    scope: scope === undefined ? undefined : (topicScopeToJSON(scope) as TopicScopeCode),
+  }));
+  return decompileEnableWhen(variables, expression)?.behavior ?? 'all';
+};
+
 const convertChildQuestions = (
   languages: string[],
   answerSets: { [key: string]: Answerset },
+  defaultCodeSystem: DefaultCodeSystem,
   questionItems: { [language: string]: fhir5.QuestionnaireItem },
   isMatrixRow: boolean
 ): Question[] => {
@@ -166,7 +149,13 @@ const convertChildQuestions = (
   }
   const children: Question[] = [];
   for (const child of first.item) {
-    const converted = convertQuestion(languages, answerSets, childItemsByLinkId[child.linkId], isMatrixRow);
+    const converted = convertQuestion(
+      languages,
+      answerSets,
+      defaultCodeSystem,
+      childItemsByLinkId[child.linkId],
+      isMatrixRow
+    );
     if (converted) {
       children.push(converted);
     }
