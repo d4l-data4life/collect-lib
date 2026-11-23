@@ -30,6 +30,7 @@ Tags from before the move to d4l-data4life declare the old module path and don't
 | ----------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | `pkg/fhirquestionnaire` | `generateFHIRQuestionnaire`, `parseFHIRQuestionnaire` (`src/fhir/questionnaire`) | `Generate(*Questionnaire, Options)`, `Parse(map[string]fhir5.Questionnaire)` |
 | `pkg/guard`             | `generateStepGuard` (`src/helper/guard.ts`)                                      | `FulfillmentDate(StepCondition, Params)`                                     |
+| `pkg/categoricallabels` | `CATEGORICAL_LABELS` (`src/devices/annotations/categoricalLabels.ts`)            | `Label(deviceName, annotationType, column, code)`                            |
 
 ### pkg/fhirquestionnaire
 
@@ -101,6 +102,26 @@ when, err := guard.FulfillmentDate(cond, guard.Params{
 - **Time zone:** day, week and month offsets are calendar arithmetic in the service's local
   time zone (see [Limits](#limits)).
 - **Speed:** under 1 ms per call.
+
+### pkg/categoricallabels
+
+Turns the codes collect-lib writes for categorical values (sleep stages, activity levels,
+workout types, …) back into their labels, the same way `categoricalLabel` does in TypeScript.
+
+```go
+import "github.com/d4l-data4life/collect-lib/pkg/categoricallabels"
+
+label, ok := categoricallabels.Label("Google Health", "heartRateZone", "heartRateZone", 2)
+// label == "CARDIO", ok == true; ok == false if there is no label for the code
+```
+
+- **Input:** `deviceName` is the device's full name (`DEVICE_KEY_TO_NAME[…].fullName`, as in
+  the recording's Device resource), `annotationType` the annotation item's `type`, and
+  `column` the item type or, for multi-channel items, the channel label.
+- **Lookup:** device-specific tables win over the `AnyDevice` ones.
+- **Speed:** the JS runs once, when the package loads, to read the whole registry. `Label` is
+  a plain map lookup after that, since it is meant to be called for every exported value.
+- **Concurrency:** safe to call from many goroutines.
 
 ## How it works
 

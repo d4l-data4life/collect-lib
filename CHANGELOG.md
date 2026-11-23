@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- code → label tables for Google Health `heartRateZone`, `activityLevel` and `cardioFitnessLevel`, and Health Connect `exerciseType` and `vo2maxMeasurementMethod`
+- Go package `pkg/categoricallabels`, so `data-receiver` no longer needs a hand-kept copy of the label tables
+
 ### Changed
 
 ### Deprecated

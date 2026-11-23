@@ -139,6 +139,16 @@ export const GOOGLE_HEALTH_ELEVATION_GAIN_ANNOTATION: DEVICE_ANNOTATION = [
 // #endregion
 
 // #region Active Zone Minutes (active-zone-minutes)
+export type GoogleHealthHeartRateZone = 'HEART_RATE_ZONE_UNSPECIFIED' | 'FAT_BURN' | 'CARDIO' | 'PEAK';
+
+// Google enum → buffer code for the heartRateZone item.
+export const GOOGLE_HEALTH_HEART_RATE_ZONE_MAP: { [key in GoogleHealthHeartRateZone]: number } = {
+  HEART_RATE_ZONE_UNSPECIFIED: 0,
+  FAT_BURN: 1,
+  CARDIO: 2,
+  PEAK: 3,
+};
+
 // One item per Google interval. Minutes are earned per heart-rate zone (fat burn counts
 // 1×, cardio and peak 2× — Fitbit's AZM rule), so one window can arrive as several items
 // sharing a timestamp, one per zone.
@@ -166,6 +176,24 @@ export const GOOGLE_HEALTH_ACTIVE_ZONE_MINUTES_ANNOTATION: DEVICE_ANNOTATION = [
 // #endregion
 
 // #region Activity level (activity-level)
+export type GoogleHealthActivityLevelType =
+  | 'ACTIVITY_LEVEL_TYPE_UNSPECIFIED'
+  | 'SEDENTARY'
+  | 'LIGHTLY_ACTIVE'
+  | 'MODERATELY_ACTIVE'
+  | 'VERY_ACTIVE';
+
+// Google enum → buffer code for the activityLevel item. No code for "unspecified": such
+// intervals carry no information and are dropped.
+export const GOOGLE_HEALTH_ACTIVITY_LEVEL_MAP: {
+  [key in Exclude<GoogleHealthActivityLevelType, 'ACTIVITY_LEVEL_TYPE_UNSPECIFIED'>]: number;
+} = {
+  SEDENTARY: 0,
+  LIGHTLY_ACTIVE: 1,
+  MODERATELY_ACTIVE: 2,
+  VERY_ACTIVE: 3,
+};
+
 // One item per Google interval. The level uses Google's own 4-step scale — deliberately
 // not Oura's 0-5 or Garmin's 0-2; each device documents its own.
 export const GOOGLE_HEALTH_ANNOTATION_ITEM_ACTIVITY_LEVEL: DEVICE_ANNOTATION_ITEM = {
@@ -183,6 +211,28 @@ export const GOOGLE_HEALTH_ACTIVITY_ANNOTATION: DEVICE_ANNOTATION = [
 // #endregion
 
 // #region VO2 max (daily-vo2-max — Fitbit's Cardio Fitness Score, one per day)
+export type GoogleHealthCardioFitnessLevel =
+  | 'CARDIO_FITNESS_LEVEL_UNSPECIFIED'
+  | 'POOR'
+  | 'FAIR'
+  | 'AVERAGE'
+  | 'GOOD'
+  | 'VERY_GOOD'
+  | 'EXCELLENT';
+
+// Google enum → buffer code for the vo2max item's cardioFitnessLevel channel. "Unspecified"
+// has no code: it is encoded as the annotation's -1 "not provided" sentinel.
+export const GOOGLE_HEALTH_CARDIO_FITNESS_LEVEL_MAP: {
+  [key in Exclude<GoogleHealthCardioFitnessLevel, 'CARDIO_FITNESS_LEVEL_UNSPECIFIED'>]: number;
+} = {
+  POOR: 1,
+  FAIR: 2,
+  AVERAGE: 3,
+  GOOD: 4,
+  VERY_GOOD: 5,
+  EXCELLENT: 6,
+};
+
 export const GOOGLE_HEALTH_ANNOTATION_ITEM_VO2MAX: DEVICE_ANNOTATION_ITEM = {
   type: 'vo2max',
   size: 12,
