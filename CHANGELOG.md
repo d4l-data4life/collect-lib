@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `defaultCodeSystemFactory` export from `fhir-to-questions`, so consumers can re-derive the Default Code System that parsing drops
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [v1.64.0] - 2026-11-23
+
+### Added
+
+- `defaultCodeSystemFactory` export from `fhir-to-questions`, so consumers can re-derive the Default Code System that parsing drops
 
 ## [v1.63.0] - 2026-11-23
 
@@ -684,7 +688,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FHIR generation module
 - Donation SDK including encryption protocols
 
-[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.63.0...HEAD
+[Unreleased]: https://github.com/gesundheitscloud/collect-lib/compare/v1.64.0...HEAD
+[v1.64.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.63.0...v1.64.0
 [v1.63.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.62.0...v1.63.0
 [v1.62.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.61.0...v1.62.0
 [v1.61.0]: https://github.com/gesundheitscloud/collect-lib/compare/v1.60.0...v1.61.0
