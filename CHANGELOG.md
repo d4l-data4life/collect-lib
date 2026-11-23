@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `defaultCodeSystemFactory` export from `fhir-to-questions`, so consumers can re-derive the Default Code System that parsing drops
+
 ### Changed
 
 ### Deprecated
