@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `QuestionConfig` type and `getQuestionConfig` for a proto `Question`'s config
+
 ### Changed
 
 - `generateQuestionGuard` takes proto `EnableWhen` instead of FHIR `enableWhen`

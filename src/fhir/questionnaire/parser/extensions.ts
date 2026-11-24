@@ -23,6 +23,7 @@ import {
   SliderStepSizeExtension,
 } from '../../constants';
 import { isValidTopicCanonical, topicIdFromCanonical } from '../../topic-id';
+import type { PostalCodeCountrySource, QuestionConfig } from '../../question-config';
 import { parseItemVariable, parseTopicInput } from './topics';
 import {
   Coding,
@@ -33,24 +34,6 @@ import {
   QuestionImage,
   TopicInput,
 } from '@d4l/grpc-modules/research-pillars';
-
-export type PostalCodeCountrySource =
-  | { fromItem: string; fixedCountry?: never }
-  | { fromItem?: never; fixedCountry: { system: string; code: string } };
-
-export type QuestionConfig = {
-  max?: number | string;
-  min?: number | string;
-  minLabel?: Record<string, string>;
-  maxLabel?: Record<string, string>;
-  step?: number;
-  orientation?: 'horizontal' | 'vertical';
-  inputLabel?: Record<string, string>;
-  minLength?: number;
-  maxLength?: number;
-  countrySource?: PostalCodeCountrySource;
-  placeholders?: string[];
-};
 
 export const parseExtensions = (
   languages: string[],
