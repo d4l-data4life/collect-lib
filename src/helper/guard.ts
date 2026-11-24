@@ -1,4 +1,5 @@
-import { EnableWhen } from '@d4l/grpc-modules/research-pillars';
+// Type-only import: the main barrel and the Go guard bundle must not load grpc-modules at runtime.
+import type { EnableWhen } from '@d4l/grpc-modules/research-pillars';
 import { DateTime, Duration } from 'luxon';
 import {
   Answers,
