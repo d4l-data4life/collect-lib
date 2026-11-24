@@ -4,10 +4,9 @@ import {
   InputType,
   inputTypeFromJSON,
   inputTypeToJSON,
-  Operator,
-  operatorFromJSON,
   Question,
 } from '@d4l/grpc-modules/research-pillars';
+import { toFhirOperator } from '../../../helper/operator';
 import { GenerationContext } from './context';
 import { generateExtensions, itemVariableExtensions, optional } from './extensions';
 import { generateValueSet } from './valuesets';
@@ -126,19 +125,9 @@ const containValueSet = (valueSet: fhir5.ValueSet, contained: fhir5.ValueSet[]):
   return contained.length - 1;
 };
 
-const OPERATORS: Partial<Record<Operator, fhir5.QuestionnaireItemEnableWhen['operator']>> = {
-  [Operator.exists]: 'exists',
-  [Operator.eq]: '=',
-  [Operator.neq]: '!=',
-  [Operator.gt]: '>',
-  [Operator.lt]: '<',
-  [Operator.gteq]: '>=',
-  [Operator.lteq]: '<=',
-};
-
 const generateEnableWhen = (ew: EnableWhen, ctx: GenerationContext): fhir5.QuestionnaireItemEnableWhen => ({
   question: ew.question,
-  operator: OPERATORS[operatorFromJSON(ew.operator)] ?? '=',
+  operator: toFhirOperator(ew.operator) ?? '=',
   ...(ew.answerCoding !== undefined && {
     answerCoding: { ...optional('code', ew.answerCoding), system: ctx.effectiveCodeSystem(ew.question) },
   }),

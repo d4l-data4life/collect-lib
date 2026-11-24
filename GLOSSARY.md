@@ -38,3 +38,8 @@ An answer set's own system if it has one, otherwise its Default Code System.
 **Enable Behavior**:
 Whether a dependent question is shown when all or any of its conditions hold.
 Its presence on a Questionnaire Definition marks the question as dependent.
+
+**Follow-up Question**:
+A question whose link id is its parent's link id followed by `#other`.
+It is shown only when the parent is answered with "other", to capture what the participant meant.
+_Avoid_: other question, sub-question
