@@ -1,5 +1,6 @@
 // Type-only import: the main barrel must not load grpc-modules at runtime.
 import type { Question } from '@d4l/grpc-modules/research-pillars';
+import type { TranslatedString } from '../types';
 
 export type PostalCodeCountrySource =
   | { fromItem: string; fixedCountry?: never }
@@ -12,11 +13,11 @@ export type PostalCodeCountrySource =
 export type QuestionConfig = {
   max?: number | string;
   min?: number | string;
-  minLabel?: Record<string, string>;
-  maxLabel?: Record<string, string>;
+  minLabel?: TranslatedString;
+  maxLabel?: TranslatedString;
   step?: number;
   orientation?: 'horizontal' | 'vertical';
-  inputLabel?: Record<string, string>;
+  inputLabel?: TranslatedString;
   minLength?: number;
   maxLength?: number;
   countrySource?: PostalCodeCountrySource;
