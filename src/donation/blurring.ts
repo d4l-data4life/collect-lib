@@ -116,9 +116,7 @@ const blurPeriod = (
         ? { start: blurDate(startDate, blurFn).toString() }
         : { start: period.start })),
     ...(period.end &&
-      (endDate && endDate.isValid
-        ? { end: blurDate(endDate, blurFn).toString() }
-        : { end: period.end })),
+      (endDate && endDate.isValid ? { end: blurDate(endDate, blurFn).toString() } : { end: period.end })),
   };
 };
 

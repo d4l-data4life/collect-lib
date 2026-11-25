@@ -157,10 +157,8 @@ const CONVERSION: Record<Exclude<EnableWhenValueType, 'coding' | 'string'>, stri
   year: 'toDate',
 };
 
-const escapeString = (value: string): string =>
-  `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
-const unescapeString = (literal: string): string =>
-  literal.slice(1, -1).replace(/\\(['\\])/g, '$1');
+const escapeString = (value: string): string => `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+const unescapeString = (literal: string): string => literal.slice(1, -1).replace(/\\(['\\])/g, '$1');
 
 const sourceKey = (source: EnableWhenSource): string =>
   source.kind === 'question' ? `q:${source.linkId}` : `t:${source.topic}:${source.scope}`;
@@ -172,16 +170,9 @@ const baseVariableName = (source: EnableWhenSource): string => {
   return /^[A-Za-z_]/.test(cleaned) ? cleaned : `_${cleaned}`;
 };
 
-const assertElapsedUnit = (
-  valueType: EnableWhenValueType,
-  unit: EnableWhenDateUnit,
-  index: number
-): void => {
+const assertElapsedUnit = (valueType: EnableWhenValueType, unit: EnableWhenDateUnit, index: number): void => {
   if (!ELAPSED_UNITS_BY_VALUE_TYPE[valueType]?.includes(unit)) {
-    throw new EnableWhenCompileError(
-      `unit ${unit} is not supported for a ${valueType} source`,
-      index
-    );
+    throw new EnableWhenCompileError(`unit ${unit} is not supported for a ${valueType} source`, index);
   }
 };
 
@@ -191,11 +182,7 @@ const assertNonNegativeInteger = (n: number, what: string, index: number): void 
   }
 };
 
-const formatLiteral = (
-  valueType: EnableWhenValueType,
-  value: string | number,
-  index: number
-): string => {
+const formatLiteral = (valueType: EnableWhenValueType, value: string | number, index: number): string => {
   switch (valueType) {
     case 'coding':
     case 'string':
@@ -278,8 +265,7 @@ const compileCondition = (condition: EnableWhenCondition, v: string, index: numb
       ? `${v} contains ${literal}`
       : `${v}.exists() and (${v} contains ${literal}).not()`;
   }
-  const converted =
-    valueType === 'string' ? `${v}.first()` : `${v}.first().${CONVERSION[valueType]}()`;
+  const converted = valueType === 'string' ? `${v}.first()` : `${v}.first().${CONVERSION[valueType]}()`;
   return predicate.op === 'neq'
     ? `${v}.exists() and ${converted} != ${literal}`
     : `${converted} ${symbol} ${literal}`;
@@ -355,9 +341,7 @@ const CONDITION_NOT_CONTAINS = rx(`${V}\\.exists\\(\\) and \\(${V} contains ${ST
 const CONDITION_STRING_EQ = rx(`${V}\\.first\\(\\) = ${STR}`);
 const CONDITION_STRING_NEQ = rx(`${V}\\.exists\\(\\) and ${V}\\.first\\(\\) != ${STR}`);
 const CONDITION_CONVERTED_CMP = rx(`${V}\\.first\\(\\)\\.${CONV}\\(\\) ${CMP} ${LIT}`);
-const CONDITION_CONVERTED_NEQ = rx(
-  `${V}\\.exists\\(\\) and ${V}\\.first\\(\\)\\.${CONV}\\(\\) != ${LIT}`
-);
+const CONDITION_CONVERTED_NEQ = rx(`${V}\\.exists\\(\\) and ${V}\\.first\\(\\)\\.${CONV}\\(\\) != ${LIT}`);
 const UNIT = `(${SUPPORTED_FHIRPATH_DATE_UNITS.join('|')})`;
 const ELAPSED = `${V}\\.first\\(\\)\\.toDate\\(\\) \\+ ${INT} ${UNIT}`;
 const CONDITION_ELAPSED_AT_LEAST = rx(`${V}\\.exists\\(\\) and today\\(\\) >= ${ELAPSED}`);
@@ -385,10 +369,7 @@ const literalValue = (
   };
 };
 
-const convertedValueType = (
-  conv: string,
-  literalType?: EnableWhenValueType
-): EnableWhenValueType =>
+const convertedValueType = (conv: string, literalType?: EnableWhenValueType): EnableWhenValueType =>
   conv === 'toInteger' ? 'integer' : conv === 'toDecimal' ? 'decimal' : (literalType ?? 'date');
 
 const sameVariable = (...names: string[]): boolean => names.every((n) => n === names[0]);
@@ -439,11 +420,7 @@ const parseCondition = (text: string): ParsedCondition | null => {
     };
   }
   // groups: 1 guard var, 2 var, 3 amount, 4 unit (, 5 var, 6 amount, 7 unit for between)
-  if (
-    (m = text.match(CONDITION_ELAPSED_BETWEEN)) &&
-    sameVariable(m[1], m[2], m[5]) &&
-    m[4] === m[7]
-  ) {
+  if ((m = text.match(CONDITION_ELAPSED_BETWEEN)) && sameVariable(m[1], m[2], m[5]) && m[4] === m[7]) {
     return {
       variable: m[1],
       valueType: 'date',

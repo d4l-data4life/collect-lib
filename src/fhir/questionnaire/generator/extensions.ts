@@ -1,4 +1,12 @@
 import {
+  InputType,
+  inputTypeToJSON,
+  Question,
+  topicScopeFromJSON,
+  topicScopeToJSON,
+} from '@d4l/grpc-modules/research-pillars';
+import {
+  CustomQuestionSystem,
   ImageExtension,
   ItemVariableNameUrl,
   ItemVariableQuestionUrl,
@@ -13,7 +21,6 @@ import {
   PostalCodeFromItemUrl,
   PrepopulateExtension,
   QItemControlDefinition,
-  CustomQuestionSystem,
   QuestionnaireItemInputExtension,
   QuestionnaireItemOutputExtension,
   QuestionnaireItemVariableExtension,
@@ -28,13 +35,6 @@ import {
   TopicInputTopicUrl,
 } from '../../constants';
 import type { QuestionConfig } from '../../question-config';
-import {
-  InputType,
-  inputTypeToJSON,
-  Question,
-  topicScopeFromJSON,
-  topicScopeToJSON,
-} from '@d4l/grpc-modules/research-pillars';
 import { GenerationContext } from './context';
 
 // Input types that need the itemControl extension, since their FHIR type alone does not identify them.

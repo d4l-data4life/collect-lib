@@ -3,8 +3,7 @@ import { toFhirOperator } from './operator';
 
 describe('toFhirOperator', () => {
   const recognized = Object.values(Operator).filter(
-    (operator): operator is Operator =>
-      typeof operator === 'number' && operator !== Operator.UNRECOGNIZED
+    (operator): operator is Operator => typeof operator === 'number' && operator !== Operator.UNRECOGNIZED
   );
 
   it('maps every recognized operator', () => {

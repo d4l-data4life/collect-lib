@@ -7,9 +7,7 @@ describe('toDeviceConfig', () => {
         {
           type: 'DOT',
           dataTypes: ['eulerAngles'],
-          labels: [
-            { name: 'DOT_0', en: 'Left wrist', de: 'Linkes Handgelenk', fr: 'Poignet gauche' },
-          ],
+          labels: [{ name: 'DOT_0', en: 'Left wrist', de: 'Linkes Handgelenk', fr: 'Poignet gauche' }],
         },
       ]);
 

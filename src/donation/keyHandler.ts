@@ -88,9 +88,7 @@ export class KeyHandler {
       encryptionPrivateKey = await this.crypto.deriveEncryptionKey(encryptionPrivateKey, 'encryption');
     }
 
-    const encryptionPublicKey = this.extendPublicKey(
-      secp256k1.getPublicKey(encryptionPrivateKey, false)
-    );
+    const encryptionPublicKey = this.extendPublicKey(secp256k1.getPublicKey(encryptionPrivateKey, false));
 
     return {
       publicKey: encryptionPublicKey,
@@ -110,8 +108,8 @@ export class KeyHandler {
 
     // DER prefix; this is SEQUENCE { SEQUENCE { OID 1.2.840.10045.2.1 (ecPublicKey), OID 1.3.132.0.10 (secp256k1) }, BIT STRING prefix.
     const header = Buffer.from([
-      0x30, 0x56, 0x30, 0x10, 0x06, 0x07, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x02, 0x01, 0x06, 0x05,
-      0x2b, 0x81, 0x04, 0x00, 0x0a, 0x03, 0x42, 0x00, 0x04,
+      0x30, 0x56, 0x30, 0x10, 0x06, 0x07, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x02, 0x01, 0x06, 0x05, 0x2b, 0x81,
+      0x04, 0x00, 0x0a, 0x03, 0x42, 0x00, 0x04,
     ]);
 
     return Buffer.concat([header, key]).toString('base64');

@@ -1,8 +1,8 @@
-import { DonationSDK } from './sdk';
-import { HybridEncrypter } from './hybridEncryption';
 import { CryptoModule, WebConverter } from '..';
 import { TRACKING_RESOURCE_TYPE, TrackingEventsDocument } from '../tracking/types';
 import { Program } from '../types';
+import { HybridEncrypter } from './hybridEncryption';
+import { DonationSDK } from './sdk';
 import { ERROR_CODES } from './types';
 
 // deriveEncryptionKey is not exercised here, so a stub suffices.
@@ -94,19 +94,16 @@ describe('DonationSDK.donateTrackingEvents', () => {
     expect(donations).toHaveLength(1);
     expect(donations[0].id).toBe(batchId);
 
-    const decrypted = new HybridEncrypter(converter).decrypt(
-      donorIdentity.keys.rec,
-      donations[0].data
-    );
+    const decrypted = new HybridEncrypter(converter).decrypt(donorIdentity.keys.rec, donations[0].data);
     expect(JSON.parse(decrypted)).toEqual(document);
   });
 
   it('rejects a program that does not match the donor identity', async () => {
     const sdk = buildSDK();
     const foreignProgram = { ...program, name: 'other-study' } as Program;
-    await expect(
-      sdk.donateTrackingEvents(donorIdentity, foreignProgram, document, batchId)
-    ).rejects.toThrow(ERROR_CODES.STUDY_ID_DOES_NOT_MATCH_DONOR_IDENTITY);
+    await expect(sdk.donateTrackingEvents(donorIdentity, foreignProgram, document, batchId)).rejects.toThrow(
+      ERROR_CODES.STUDY_ID_DOES_NOT_MATCH_DONOR_IDENTITY
+    );
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

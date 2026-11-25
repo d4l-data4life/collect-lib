@@ -1,9 +1,4 @@
-import {
-  ProgramDevicesDataType,
-  ProgramDeviceType,
-  RecursiveKeyOf,
-  TranslatedString,
-} from './index';
+import { ProgramDevicesDataType, ProgramDeviceType, RecursiveKeyOf, TranslatedString } from './index';
 import { TaskFrequency } from './survey';
 
 // ### Display

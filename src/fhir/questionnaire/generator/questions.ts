@@ -1,4 +1,3 @@
-import { CountryValueSet, EnableWhenExpressionExtension, FhirPathLanguage } from '../../constants';
 import {
   EnableWhen,
   InputType,
@@ -7,6 +6,7 @@ import {
   Question,
 } from '@d4l/grpc-modules/research-pillars';
 import { toFhirOperator } from '../../../helper/operator';
+import { CountryValueSet, EnableWhenExpressionExtension, FhirPathLanguage } from '../../constants';
 import { GenerationContext } from './context';
 import { generateExtensions, itemVariableExtensions, optional } from './extensions';
 import { generateValueSet } from './valuesets';

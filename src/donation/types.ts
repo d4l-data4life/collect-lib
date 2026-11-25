@@ -108,11 +108,7 @@ export interface SDKInterface {
    * @param deviceToken The device token for push notifications
    * @returns True, if the registration was successful. Otherwise, false.
    */
-  registerDevice: (
-    donorIdentity: DonorIdentity,
-    program: Program,
-    deviceToken: string
-  ) => Promise<boolean>;
+  registerDevice: (donorIdentity: DonorIdentity, program: Program, deviceToken: string) => Promise<boolean>;
 
   /**
    * Unregister device for push notifications

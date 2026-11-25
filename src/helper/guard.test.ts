@@ -1,5 +1,5 @@
-import { addDays, addWeeks } from 'date-fns';
 import { EnableWhen, Operator } from '@d4l/grpc-modules/research-pillars';
+import { addDays, addWeeks } from 'date-fns';
 import { ConditionOperatorType, StepCondition } from '../types';
 import {
   AnswerCodeGuard,
@@ -274,9 +274,7 @@ describe('Guard', () => {
     });
 
     it('can be constructed with faulty values and not break', () => {
-      expect(
-        new AnswerCodeGuard(answerCodingQuestion, 'exists', 1 as unknown as string)
-      ).toBeTruthy();
+      expect(new AnswerCodeGuard(answerCodingQuestion, 'exists', 1 as unknown as string)).toBeTruthy();
     });
 
     describe('evaluates', () => {
@@ -292,9 +290,7 @@ describe('Guard', () => {
 
       it('with an invalid answer', () => {
         const condition = new AnswerCodeGuard(answerCodingQuestion, '!=', operand);
-        expect(
-          condition.evaluate({ [answerCodingQuestion]: undefined as unknown as string })
-        ).toBeFalsy();
+        expect(condition.evaluate({ [answerCodingQuestion]: undefined as unknown as string })).toBeFalsy();
       });
 
       describe('single-select answers', () => {
@@ -596,9 +592,7 @@ describe('Guard', () => {
       it('works with single condition', () => {
         const condition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
         const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
-        expect(new Conjunction([condition]).getFulfillmentDate({ multiAnswers })).toEqual(
-          firstDate
-        );
+        expect(new Conjunction([condition]).getFulfillmentDate({ multiAnswers })).toEqual(firstDate);
       });
 
       it('works with fulfilled answer condition', () => {
@@ -688,9 +682,7 @@ describe('Guard', () => {
       it('works with single condition', () => {
         const answerCondition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
         const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
-        expect(new Disjunction([answerCondition]).getFulfillmentDate({ multiAnswers })).toEqual(
-          firstDate
-        );
+        expect(new Disjunction([answerCondition]).getFulfillmentDate({ multiAnswers })).toEqual(firstDate);
       });
 
       it('works with fulfilled answer condition', () => {
@@ -759,9 +751,7 @@ describe('Guard', () => {
         const condition = new AnswerCodeGuard('Q0', '=', 'yes', 'survey1');
         const multiAnswers = { survey1: { answers: { Q0: 'yes' }, date: firstDate } };
         const expectedDate = addDays(firstDate, 2);
-        expect(new Offset(condition, 'P2D').getFulfillmentDate({ multiAnswers })).toEqual(
-          expectedDate
-        );
+        expect(new Offset(condition, 'P2D').getFulfillmentDate({ multiAnswers })).toEqual(expectedDate);
       });
 
       it('return null for unfulfilled Condition', () => {
@@ -774,9 +764,7 @@ describe('Guard', () => {
         const condition = newStepDateGuard('D1', 'survey1');
         const multiAnswers = { survey1: { answers: { D1: '2020-07-01' }, date: null } };
         const expectedDate = addWeeks(new Date('2020-07-01'), 2);
-        expect(new Offset(condition, 'P2W').getFulfillmentDate({ multiAnswers })).toEqual(
-          expectedDate
-        );
+        expect(new Offset(condition, 'P2W').getFulfillmentDate({ multiAnswers })).toEqual(expectedDate);
       });
     });
   });
@@ -797,30 +785,28 @@ describe('Guard', () => {
 
       it('returns null if different consent was granted', () => {
         const condition = new ConsentGuard('foo.consent');
-        expect(condition.getFulfillmentDate({ consentTimes: { 'foo.bar': consentDate } })).toBe(
-          null
-        );
+        expect(condition.getFulfillmentDate({ consentTimes: { 'foo.bar': consentDate } })).toBe(null);
       });
 
       it('returns date of consent if offset was not given', () => {
         const condition = new ConsentGuard('foo.consent');
-        expect(
-          condition.getFulfillmentDate({ consentTimes: { 'foo.consent': consentDate } })
-        ).toEqual(consentDate);
+        expect(condition.getFulfillmentDate({ consentTimes: { 'foo.consent': consentDate } })).toEqual(
+          consentDate
+        );
       });
 
       it('adds/subtracts offset to/from date of consent if given', () => {
         const futureCondition = new ConsentGuard('foo.consent', 'P3D');
         const expectedFutureDate = addDays(consentDate, 3);
-        expect(
-          futureCondition.getFulfillmentDate({ consentTimes: { 'foo.consent': consentDate } })
-        ).toEqual(expectedFutureDate);
+        expect(futureCondition.getFulfillmentDate({ consentTimes: { 'foo.consent': consentDate } })).toEqual(
+          expectedFutureDate
+        );
 
         const pastCondition = new ConsentGuard('foo.consent', '-P9W');
         const expectedPastDate = addWeeks(consentDate, -9);
-        expect(
-          pastCondition.getFulfillmentDate({ consentTimes: { 'foo.consent': consentDate } })
-        ).toEqual(expectedPastDate);
+        expect(pastCondition.getFulfillmentDate({ consentTimes: { 'foo.consent': consentDate } })).toEqual(
+          expectedPastDate
+        );
       });
     });
   });
@@ -873,9 +859,7 @@ describe('Guard', () => {
 
       it('returns null if there is a recording for a different routine', () => {
         const condition = new RoutineGuard('routine1');
-        expect(condition.getFulfillmentDate({ routineTimes: { routine2: recordingDate } })).toBe(
-          null
-        );
+        expect(condition.getFulfillmentDate({ routineTimes: { routine2: recordingDate } })).toBe(null);
       });
 
       it('returns date of recording if offset was not given', () => {
@@ -888,15 +872,15 @@ describe('Guard', () => {
       it('adds/subtracts offset to/from date of recording if given', () => {
         const futureCondition = new RoutineGuard('routine1', 'P3D');
         const expectedFutureDate = addDays(recordingDate, 3);
-        expect(
-          futureCondition.getFulfillmentDate({ routineTimes: { routine1: recordingDate } })
-        ).toEqual(expectedFutureDate);
+        expect(futureCondition.getFulfillmentDate({ routineTimes: { routine1: recordingDate } })).toEqual(
+          expectedFutureDate
+        );
 
         const pastCondition = new RoutineGuard('routine1', '-P9W');
         const expectedPastDate = addWeeks(recordingDate, -9);
-        expect(
-          pastCondition.getFulfillmentDate({ routineTimes: { routine1: recordingDate } })
-        ).toEqual(expectedPastDate);
+        expect(pastCondition.getFulfillmentDate({ routineTimes: { routine1: recordingDate } })).toEqual(
+          expectedPastDate
+        );
       });
     });
   });
@@ -917,30 +901,28 @@ describe('Guard', () => {
 
       it('returns null if there is a recording for a different routine', () => {
         const condition = new ResponseGuard('response1');
-        expect(condition.getFulfillmentDate({ responseTimes: { response2: responseDate } })).toBe(
-          null
-        );
+        expect(condition.getFulfillmentDate({ responseTimes: { response2: responseDate } })).toBe(null);
       });
 
       it('returns date of recording if offset was not given', () => {
         const condition = new ResponseGuard('response1');
-        expect(
-          condition.getFulfillmentDate({ responseTimes: { response1: responseDate } })
-        ).toEqual(responseDate);
+        expect(condition.getFulfillmentDate({ responseTimes: { response1: responseDate } })).toEqual(
+          responseDate
+        );
       });
 
       it('adds/subtracts offset to/from date of recording if given', () => {
         const futureCondition = new ResponseGuard('response1', 'P3D');
         const expectedFutureDate = addDays(responseDate, 3);
-        expect(
-          futureCondition.getFulfillmentDate({ responseTimes: { response1: responseDate } })
-        ).toEqual(expectedFutureDate);
+        expect(futureCondition.getFulfillmentDate({ responseTimes: { response1: responseDate } })).toEqual(
+          expectedFutureDate
+        );
 
         const pastCondition = new ResponseGuard('response1', '-P9W');
         const expectedPastDate = addWeeks(responseDate, -9);
-        expect(
-          pastCondition.getFulfillmentDate({ responseTimes: { response1: responseDate } })
-        ).toEqual(expectedPastDate);
+        expect(pastCondition.getFulfillmentDate({ responseTimes: { response1: responseDate } })).toEqual(
+          expectedPastDate
+        );
       });
     });
   });
@@ -1226,10 +1208,7 @@ describe('Guard', () => {
     });
 
     it('creates a code guard from a plain answer code', () => {
-      const guard = generateQuestionGuard(
-        [condition({ operator: Operator.eq, answerCoding: 'yes' })],
-        'all'
-      );
+      const guard = generateQuestionGuard([condition({ operator: Operator.eq, answerCoding: 'yes' })], 'all');
 
       expect(guard).toEqual(new Conjunction([new AnswerCodeGuard('q', '=', 'yes')]));
       expect(guard?.evaluate({ q: 'yes' })).toBe(true);

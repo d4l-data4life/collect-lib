@@ -74,11 +74,7 @@ function createFHIRComposition(
     valueBoolean: recording.isPassive,
   };
 
-  const noteAsAnnotation = createNoteAnnotation(
-    recording.isSkipped,
-    recording.effectiveFrom,
-    recording.note
-  );
+  const noteAsAnnotation = createNoteAnnotation(recording.isSkipped, recording.effectiveFrom, recording.note);
 
   return {
     fullUrl: generateUrn(),

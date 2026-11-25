@@ -1,9 +1,5 @@
 import { AnswerItem, QuestionnaireResponse, ResponseValue } from '../types/questionnaireResponse';
-import {
-  CustomExtensionContextValue,
-  CustomExtensionDate,
-  CustomExtensionStudyName,
-} from './constants';
+import { CustomExtensionContextValue, CustomExtensionDate, CustomExtensionStudyName } from './constants';
 
 export function generateFHIRResponse(
   id: string,
@@ -41,9 +37,7 @@ export function generateFHIRResponse(
   };
 }
 
-export const toQuestionnaireResponseItem = (
-  answer: AnswerItem
-): fhir5.QuestionnaireResponseItem => {
+export const toQuestionnaireResponseItem = (answer: AnswerItem): fhir5.QuestionnaireResponseItem => {
   switch (answer.type) {
     case 'multi-select':
       return {

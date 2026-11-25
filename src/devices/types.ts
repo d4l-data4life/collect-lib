@@ -2,11 +2,7 @@ import { TranslatedString } from '../types';
 import { DEVICE_ANNOTATION_DATA_TYPE } from './annotations/types';
 
 // TODO: This should be consolidated with ProgramDevices
-export type DeviceConfig =
-  | BLEDeviceConfig
-  | InternalDeviceConfig
-  | APIDeviceConfig
-  | SDKDeviceConfig;
+export type DeviceConfig = BLEDeviceConfig | InternalDeviceConfig | APIDeviceConfig | SDKDeviceConfig;
 
 export interface BaseDeviceConfig {
   device: DEVICE_KEY;

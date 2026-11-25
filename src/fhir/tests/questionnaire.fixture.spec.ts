@@ -1,6 +1,6 @@
+import { Questionnaire } from '@d4l/grpc-modules/research-pillars';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Questionnaire } from '@d4l/grpc-modules/research-pillars';
 import { generateFHIRQuestionnaire, parseFHIRQuestionnaire } from '../questionnaire';
 
 const loadFixture = (name: string) =>

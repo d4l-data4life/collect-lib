@@ -145,8 +145,7 @@ export class WebConverter implements Converter {
    * @param string The string that needs to be converted into an Uint8Array
    * @returns A Uint8Array
    */
-  base64ToUint8Array = (string: string): Uint8Array =>
-    new Uint8Array(this.base64ToArrayBuffer(string));
+  base64ToUint8Array = (string: string): Uint8Array => new Uint8Array(this.base64ToArrayBuffer(string));
 
   /**
    * Convert a base64 encoded Uint8Array into a UTF-8 encoded string
@@ -159,8 +158,7 @@ export class WebConverter implements Converter {
     return Buffer.from(str, 'base64').toString('utf8');
   };
 
-  base64ToHex = (base64String: string): string =>
-    Buffer.from(base64String, 'base64').toString('hex');
+  base64ToHex = (base64String: string): string => Buffer.from(base64String, 'base64').toString('hex');
 
   hexToBase64 = (hexString: string): string => Buffer.from(hexString, 'hex').toString('base64');
 }

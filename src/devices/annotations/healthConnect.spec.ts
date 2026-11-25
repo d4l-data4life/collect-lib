@@ -3,10 +3,7 @@ import { DEVICE_ANNOTATION_ITEM_DATA_SOURCE } from './base';
 import { HEALTH_CONNECT_SIGNAL_TYPE_ANNOTATIONS } from './healthConnect';
 
 const annotationSize = (signalType: DEVICE_SIGNAL_TYPE) =>
-  (HEALTH_CONNECT_SIGNAL_TYPE_ANNOTATIONS[signalType] ?? []).reduce(
-    (sum, { size }) => sum + size,
-    0
-  );
+  (HEALTH_CONNECT_SIGNAL_TYPE_ANNOTATIONS[signalType] ?? []).reduce((sum, { size }) => sum + size, 0);
 
 describe('HEALTH_CONNECT_SIGNAL_TYPE_ANNOTATIONS', () => {
   it('ends every annotation with the dataSource item', () => {

@@ -1,8 +1,5 @@
 import { SurveyScoring } from '../../types';
-import {
-  calculateQuestionnaireScoreRange,
-  calculateScoreRangeForItem,
-} from '../questionnaireScore';
+import { calculateQuestionnaireScoreRange, calculateScoreRangeForItem } from '../questionnaireScore';
 import {
   generateContains,
   negativeScoring,

@@ -1,5 +1,3 @@
-import { evaluateEnableWhen } from '../enable-when-eval';
-import { findSubsetViolations } from '../enable-when-expression';
 import {
   ENABLE_WHEN_PREDICATES_BY_VALUE_TYPE,
   EnableWhenCompileError,
@@ -9,6 +7,8 @@ import {
   decompileEnableWhen,
   requiresExpression,
 } from '../enable-when-conditions';
+import { evaluateEnableWhen } from '../enable-when-eval';
+import { findSubsetViolations } from '../enable-when-expression';
 
 const gender: EnableWhenSource = { kind: 'topic', topic: 'gender', scope: 'latest' };
 const birthDate: EnableWhenSource = { kind: 'topic', topic: 'birthDate', scope: 'latest' };
@@ -57,13 +57,10 @@ describe('compileEnableWhen', () => {
         { name: 'smoker', question: 'smoker' },
         { name: 'gender', topic: 'gender', scope: 'latest' },
       ],
-      expression:
-        "(%smoker contains 'yes') and (%gender.exists() and (%gender contains 'male').not())",
+      expression: "(%smoker contains 'yes') and (%gender.exists() and (%gender contains 'male').not())",
     });
 
-    expect(compileEnableWhen([coding(gender, { op: 'empty' })], 'all').expression).toBe(
-      '%gender.empty()'
-    );
+    expect(compileEnableWhen([coding(gender, { op: 'empty' })], 'all').expression).toBe('%gender.empty()');
   });
 
   it('joins conditions with or for behavior any', () => {
@@ -83,17 +80,12 @@ describe('compileEnableWhen', () => {
       'all'
     );
     expect(itemVariables).toEqual([{ name: 'q_1_score', question: 'q-1.score' }]);
-    expect(expression).toBe(
-      '(%q_1_score.first().toInteger() >= 3) and (%q_1_score.first().toInteger() < 8)'
-    );
+    expect(expression).toBe('(%q_1_score.first().toInteger() >= 3) and (%q_1_score.first().toInteger() < 8)');
   });
 
   it('disambiguates a topic and a question that sanitize to the same name', () => {
     const { itemVariables } = compileEnableWhen(
-      [
-        coding(gender, { op: 'exists' }),
-        coding({ kind: 'question', linkId: 'gender' }, { op: 'exists' }),
-      ],
+      [coding(gender, { op: 'exists' }), coding({ kind: 'question', linkId: 'gender' }, { op: 'exists' })],
       'all'
     );
     expect(itemVariables.map((v) => v.name)).toEqual(['gender', 'gender_2']);
@@ -141,10 +133,7 @@ describe('compileEnableWhen', () => {
 
   it('rejects malformed values', () => {
     expect(() =>
-      compileEnableWhen(
-        [{ source: score, valueType: 'integer', predicate: { op: 'eq', value: 1.5 } }],
-        'all'
-      )
+      compileEnableWhen([{ source: score, valueType: 'integer', predicate: { op: 'eq', value: 1.5 } }], 'all')
     ).toThrow(EnableWhenCompileError);
     expect(() =>
       compileEnableWhen(
@@ -172,10 +161,7 @@ describe('compileEnableWhen', () => {
 
   it('reports the offending condition index', () => {
     try {
-      compileEnableWhen(
-        [coding(gender, { op: 'exists' }), coding(gender, { op: 'gt', value: 'x' })],
-        'all'
-      );
+      compileEnableWhen([coding(gender, { op: 'exists' }), coding(gender, { op: 'gt', value: 'x' })], 'all');
       fail('expected a throw');
     } catch (e) {
       expect((e as EnableWhenCompileError).conditionIndex).toBe(1);
@@ -242,18 +228,17 @@ const sampleCondition = (
   return { source, valueType, predicate };
 };
 
-const allConditions: EnableWhenCondition[] = Object.entries(
-  ENABLE_WHEN_PREDICATES_BY_VALUE_TYPE
-).flatMap(([valueType, ops]) =>
-  ops.map((op, i) =>
-    sampleCondition(
-      valueType as EnableWhenCondition['valueType'],
-      op,
-      i % 2 === 0
-        ? { kind: 'topic', topic: `${valueType}Topic`, scope: 'all' }
-        : { kind: 'question', linkId: `${valueType}-q${i}` }
+const allConditions: EnableWhenCondition[] = Object.entries(ENABLE_WHEN_PREDICATES_BY_VALUE_TYPE).flatMap(
+  ([valueType, ops]) =>
+    ops.map((op, i) =>
+      sampleCondition(
+        valueType as EnableWhenCondition['valueType'],
+        op,
+        i % 2 === 0
+          ? { kind: 'topic', topic: `${valueType}Topic`, scope: 'all' }
+          : { kind: 'question', linkId: `${valueType}-q${i}` }
+      )
     )
-  )
 );
 
 describe('compile -> decompile round trip', () => {
@@ -307,12 +292,12 @@ describe('compile -> decompile round trip', () => {
 
   it('defaults an untyped exists condition to string and lets the resolver override it', () => {
     const compiled = compileEnableWhen([coding(gender, { op: 'exists' })], 'all');
+    expect(decompileEnableWhen(compiled.itemVariables, compiled.expression)?.conditions[0].valueType).toBe(
+      'string'
+    );
     expect(
-      decompileEnableWhen(compiled.itemVariables, compiled.expression)?.conditions[0].valueType
-    ).toBe('string');
-    expect(
-      decompileEnableWhen(compiled.itemVariables, compiled.expression, () => 'coding')
-        ?.conditions[0].valueType
+      decompileEnableWhen(compiled.itemVariables, compiled.expression, () => 'coding')?.conditions[0]
+        .valueType
     ).toBe('coding');
   });
 
@@ -344,9 +329,7 @@ describe('decompileEnableWhen returns null for non-canonical input', () => {
   });
 
   it('rejects a binding with both or neither source', () => {
-    expect(
-      decompileEnableWhen([{ name: 'x', topic: 't', question: 'q' }], '%x.exists()')
-    ).toBeNull();
+    expect(decompileEnableWhen([{ name: 'x', topic: 't', question: 'q' }], '%x.exists()')).toBeNull();
     expect(decompileEnableWhen([{ name: 'x' }], '%x.exists()')).toBeNull();
   });
 });
@@ -440,11 +423,7 @@ describe('compiled expressions evaluate as authored', () => {
       coding(smoker, { op: 'eq', value: 'yes' }),
       coding(gender, { op: 'eq', value: 'female' }),
     ];
-    expect(evalAt('2026-08-31', conditions, 'any', { smoker: ['no'], gender: ['female'] })).toBe(
-      true
-    );
-    expect(evalAt('2026-08-31', conditions, 'all', { smoker: ['no'], gender: ['female'] })).toBe(
-      false
-    );
+    expect(evalAt('2026-08-31', conditions, 'any', { smoker: ['no'], gender: ['female'] })).toBe(true);
+    expect(evalAt('2026-08-31', conditions, 'all', { smoker: ['no'], gender: ['female'] })).toBe(false);
   });
 });

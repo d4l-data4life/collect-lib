@@ -150,9 +150,7 @@ export type ProgramDevicesDataType =
 
 export type ProgramDevicesLabel = { name: string } & TranslatedString;
 
-export type ExtendedProgramDevicesDataType =
-  | ProgramDevicesDataType
-  | `${ProgramDevicesDataType}@${string}`;
+export type ExtendedProgramDevicesDataType = ProgramDevicesDataType | `${ProgramDevicesDataType}@${string}`;
 
 export type ProgramClientTarget = 'prod' | 'sandbox';
 

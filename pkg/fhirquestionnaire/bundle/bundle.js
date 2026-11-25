@@ -6201,6 +6201,12 @@ var Exports = (() => {
     parseFHIRQuestionnaire: () => parseFHIRQuestionnaire
   });
 
+  // src/fhir/questionnaire/generator/questionnaire.ts
+  var import_research_pillars4 = __toESM(require_types());
+
+  // src/fhir/questionnaire/generator/context.ts
+  var import_research_pillars = __toESM(require_types());
+
   // src/fhir/constants.ts
   var SliderMinLabelExtension = "http://fhir.data4life.care/StructureDefinition/slider-label-min";
   var SliderMaxLabelExtension = "http://fhir.data4life.care/StructureDefinition/slider-label-max";
@@ -6234,6 +6240,852 @@ var Exports = (() => {
   var PostalCodeFixedCountryUrl = "fixedCountry";
   var PlaceholderExtension = "http://fhir.data4life.care/StructureDefinition/placeholder_reference";
   var ValuesetSortingExtension = "http://fhir.data4life.care/StructureDefinition/sorting";
+
+  // src/fhir/questionnaire/generator/context.ts
+  var createContext = (definition, options) => {
+    const { baseUrl, programName } = options;
+    const questionUrl = (resource, id) => `${baseUrl}/${programName}/${resource}/${definition.name}/${id}`;
+    const systems = /* @__PURE__ */ new Map();
+    const collect = (questions, parent) => {
+      var _a, _b;
+      for (const question of questions) {
+        const owner = parent != null ? parent : question;
+        const isCountry = (0, import_research_pillars.inputTypeFromJSON)(owner.inputType) === import_research_pillars.InputType.country;
+        const system = isCountry ? Iso3166CodeSystem : ((_a = owner.answerset) == null ? void 0 : _a.system) || questionUrl("CodeSystem", owner.linkId);
+        systems.set(question.linkId, system);
+        const isMatrix = (0, import_research_pillars.inputTypeFromJSON)(question.inputType) === import_research_pillars.InputType.matrix;
+        collect((_b = question.items) != null ? _b : [], isMatrix ? question : void 0);
+      }
+    };
+    collect(definition.questions);
+    const valueSetUrls = deriveValueSetUrls(definition.questions, questionUrl);
+    return {
+      staticUrl: options.staticUrl,
+      programName,
+      timestamp: options.timestamp,
+      questionnaireUrl: `${baseUrl}/${programName}/Questionnaire/${definition.name}`,
+      questionUrl,
+      topicUrl: (topic) => `${baseUrl}/${programName}/topic/${topic}`,
+      effectiveCodeSystem: (linkId) => {
+        var _a;
+        return (_a = systems.get(linkId)) != null ? _a : questionUrl("CodeSystem", linkId);
+      },
+      valueSetUrl: (linkId) => {
+        var _a;
+        return (_a = valueSetUrls.get(linkId)) != null ? _a : questionUrl("ValueSet", linkId);
+      }
+    };
+  };
+  var deriveValueSetUrls = (questions, questionUrl) => {
+    var _a;
+    const linkIds = /* @__PURE__ */ new Set();
+    const sets = /* @__PURE__ */ new Map();
+    const walk = (items) => {
+      var _a2, _b, _c;
+      for (const question of items) {
+        linkIds.add(question.linkId);
+        const { answerset } = question;
+        if (answerset && (0, import_research_pillars.inputTypeFromJSON)(question.inputType) !== import_research_pillars.InputType.country) {
+          const key = answerSetKey(answerset, questionUrl("CodeSystem", question.linkId));
+          const set = (_b = sets.get(key)) != null ? _b : {
+            linkIds: [],
+            segment: ((_a2 = answerset.system) == null ? void 0 : _a2.split("/").pop()) || void 0
+          };
+          set.linkIds.push(question.linkId);
+          sets.set(key, set);
+        }
+        walk((_c = question.items) != null ? _c : []);
+      }
+    };
+    walk(questions);
+    const claims = /* @__PURE__ */ new Map();
+    for (const { segment } of sets.values()) {
+      if (segment) {
+        claims.set(segment, ((_a = claims.get(segment)) != null ? _a : 0) + 1);
+      }
+    }
+    const urls = /* @__PURE__ */ new Map();
+    for (const set of sets.values()) {
+      const ownsSegment = set.segment && claims.get(set.segment) === 1 && !linkIds.has(set.segment);
+      const url = questionUrl("ValueSet", ownsSegment ? set.segment : set.linkIds[0]);
+      set.linkIds.forEach((linkId) => urls.set(linkId, url));
+    }
+    return urls;
+  };
+  var answerSetKey = (answerset, defaultCodeSystem) => JSON.stringify([
+    answerset.system || defaultCodeSystem,
+    answerset.order || "default",
+    answerset.answers.map(({ code, languages }) => [code, Object.entries(languages != null ? languages : {}).sort()])
+  ]);
+
+  // src/fhir/questionnaire/generator/extensions.ts
+  var import_research_pillars2 = __toESM(require_types());
+  var SPECIAL_INPUT_TYPES = /* @__PURE__ */ new Set([
+    import_research_pillars2.InputType.year,
+    import_research_pillars2.InputType.scale_numeric,
+    import_research_pillars2.InputType.scale_ordinal,
+    import_research_pillars2.InputType.geo_location,
+    import_research_pillars2.InputType.list,
+    import_research_pillars2.InputType.country,
+    import_research_pillars2.InputType.postal_code,
+    import_research_pillars2.InputType.matrix,
+    import_research_pillars2.InputType.scale_likert
+  ]);
+  var DURATION = /^P((-?[0-9]+Y)?(-?[0-9]+M)?(-?[0-9]+W)?(-?[0-9]+D)?(T(-?[0-9]+H)?(-?[0-9]+M)?(-?[0-9]+(\.?[0-9]+)?S)?)?)?$/;
+  var generateExtensions = (q, inputType, fhirType, language, ctx) => {
+    var _a;
+    const extensions = [];
+    if (SPECIAL_INPUT_TYPES.has(inputType)) {
+      extensions.push({
+        url: QItemControlDefinition,
+        valueCodeableConcept: { coding: [{ system: CustomQuestionSystem, code: (0, import_research_pillars2.inputTypeToJSON)(inputType) }] }
+      });
+    }
+    extensions.push(...topicExtensions(q, inputType, ctx));
+    if (q.image) {
+      extensions.push({
+        url: ImageExtension,
+        valueAttachment: __spreadValues({
+          url: `${ctx.staticUrl}/programs/${ctx.programName}/images/${q.image.src}`
+        }, optional("title", q.image.alt))
+      });
+    }
+    const config = (_a = q.config) != null ? _a : void 0;
+    if (inputType === import_research_pillars2.InputType.postal_code) {
+      extensions.push(...placeholderExtensions(config), postalCodeExtension(q.linkId, config));
+      return { extensions };
+    }
+    extensions.push(...placeholderExtensions(config));
+    if (!config) {
+      return { extensions };
+    }
+    switch (fhirType) {
+      case "string":
+      case "text": {
+        if (positive(config.minLength)) {
+          extensions.push({ url: MinLengthExtension, valueInteger: config.minLength });
+        }
+        return __spreadValues({ extensions }, positive(config.maxLength) && { maxLength: config.maxLength });
+      }
+      case "integer":
+      case "decimal": {
+        const valueKey = fhirType === "integer" ? "valueInteger" : "valueDecimal";
+        extensions.push(...scaleExtensions(config, language));
+        if (config.min !== void 0) {
+          extensions.push({ url: MinValueExtension, [valueKey]: config.min });
+        }
+        if (config.max !== void 0) {
+          extensions.push({ url: MaxValueExtension, [valueKey]: config.max });
+        }
+        return { extensions };
+      }
+      case "date":
+        extensions.push(
+          ...dateBound(config.min, MinValueExtension, RelativeMinValueExtension),
+          ...dateBound(config.max, MaxValueExtension, RelativeMaxValueExtension)
+        );
+        return { extensions };
+      default:
+        return { extensions };
+    }
+  };
+  var itemVariableExtensions = (q, ctx) => q.itemVariables.map((variable) => {
+    const subs = [__spreadValues({ url: ItemVariableNameUrl }, optional("valueString", variable.name))];
+    if (variable.topic !== void 0) {
+      subs.push(
+        __spreadValues({ url: ItemVariableTopicUrl }, optional("valueCanonical", ctx.topicUrl(variable.topic))),
+        { url: ItemVariableScopeUrl, valueCode: scopeCode(variable.scope) }
+      );
+    } else if (variable.question !== void 0) {
+      subs.push(__spreadValues({ url: ItemVariableQuestionUrl }, optional("valueString", variable.question)));
+    }
+    return { url: QuestionnaireItemVariableExtension, extension: subs };
+  });
+  var topicExtensions = (q, inputType, ctx) => [
+    ...q.input.map((input) => ({
+      url: QuestionnaireItemInputExtension,
+      extension: [
+        __spreadValues({ url: TopicInputTopicUrl }, optional("valueCanonical", ctx.topicUrl(input.topic))),
+        { url: TopicInputScopeUrl, valueCode: scopeCode(input.scope) }
+      ]
+    })),
+    ...inputType === import_research_pillars2.InputType.list ? q.prepopulate.map((prepopulate) => __spreadValues({
+      url: PrepopulateExtension
+    }, optional("valueString", prepopulate))) : [],
+    ...q.output.map((topic) => __spreadValues({
+      url: QuestionnaireItemOutputExtension
+    }, optional("valueCanonical", ctx.topicUrl(topic))))
+  ];
+  var placeholderExtensions = (config) => {
+    var _a;
+    return ((_a = config == null ? void 0 : config.placeholders) != null ? _a : []).map((placeholder) => __spreadValues({
+      url: PlaceholderExtension
+    }, optional("valueString", placeholder)));
+  };
+  var scaleExtensions = (config, language) => {
+    const extensions = [];
+    if (config.step !== void 0) {
+      extensions.push({ url: SliderStepSizeExtension, valueDecimal: config.step });
+    }
+    if (config.orientation) {
+      extensions.push({ url: SliderOrientationExtension, valueCode: config.orientation });
+    }
+    const labels = [
+      [config.inputLabel, SliderInputLabel],
+      [config.minLabel, SliderMinLabelExtension],
+      [config.maxLabel, SliderMaxLabelExtension]
+    ];
+    for (const [label, url] of labels) {
+      if (label && language in label) {
+        extensions.push(__spreadValues({ url }, optional("valueString", label[language])));
+      }
+    }
+    return extensions;
+  };
+  var dateBound = (bound, absoluteUrl, relativeUrl) => {
+    if (bound === void 0 || bound === "") {
+      return [];
+    }
+    const value = String(bound);
+    return DURATION.test(value) ? [{ url: relativeUrl, valueString: value }] : [{ url: absoluteUrl, valueDate: value }];
+  };
+  var postalCodeExtension = (linkId, config) => {
+    var _a;
+    const { fromItem, fixedCountry } = (_a = config == null ? void 0 : config.countrySource) != null ? _a : {};
+    if (!!fromItem === !!fixedCountry) {
+      throw new Error(
+        `Question ${linkId}: postal_code countrySource must include exactly one of fromItem or fixedCountry`
+      );
+    }
+    const sub = fromItem ? { url: PostalCodeFromItemUrl, valueString: fromItem } : { url: PostalCodeFixedCountryUrl, valueCoding: fixedCountry };
+    return { url: PostalCodeCountrySourceExtension, extension: [sub] };
+  };
+  var scopeCode = (scope) => (0, import_research_pillars2.topicScopeToJSON)((0, import_research_pillars2.topicScopeFromJSON)(scope != null ? scope : 0));
+  var positive = (value) => value !== void 0 && value > 0;
+  var optional = (key, value) => value ? { [key]: value } : {};
+
+  // src/fhir/questionnaire/generator/questions.ts
+  var import_research_pillars3 = __toESM(require_types());
+
+  // src/helper/operator.ts
+  var FHIR_OPERATORS = /* @__PURE__ */ new Map([
+    [0, "exists"],
+    ["exists", "exists"],
+    [1, "="],
+    ["eq", "="],
+    [2, "!="],
+    ["neq", "!="],
+    [3, ">"],
+    ["gt", ">"],
+    [4, "<"],
+    ["lt", "<"],
+    [5, ">="],
+    ["gteq", ">="],
+    [6, "<="],
+    ["lteq", "<="]
+  ]);
+  var toFhirOperator = (operator) => FHIR_OPERATORS.get(operator != null ? operator : 0);
+
+  // node_modules/uuid/dist/esm-browser/regex.js
+  var regex_default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/i;
+
+  // node_modules/uuid/dist/esm-browser/validate.js
+  function validate(uuid) {
+    return typeof uuid === "string" && regex_default.test(uuid);
+  }
+  var validate_default = validate;
+
+  // node_modules/uuid/dist/esm-browser/parse.js
+  function parse(uuid) {
+    if (!validate_default(uuid)) {
+      throw TypeError("Invalid UUID");
+    }
+    let v;
+    return Uint8Array.of((v = parseInt(uuid.slice(0, 8), 16)) >>> 24, v >>> 16 & 255, v >>> 8 & 255, v & 255, (v = parseInt(uuid.slice(9, 13), 16)) >>> 8, v & 255, (v = parseInt(uuid.slice(14, 18), 16)) >>> 8, v & 255, (v = parseInt(uuid.slice(19, 23), 16)) >>> 8, v & 255, (v = parseInt(uuid.slice(24, 36), 16)) / 1099511627776 & 255, v / 4294967296 & 255, v >>> 24 & 255, v >>> 16 & 255, v >>> 8 & 255, v & 255);
+  }
+  var parse_default = parse;
+
+  // node_modules/uuid/dist/esm-browser/stringify.js
+  var byteToHex = [];
+  for (let i = 0; i < 256; ++i) {
+    byteToHex.push((i + 256).toString(16).slice(1));
+  }
+  function unsafeStringify(arr, offset = 0) {
+    return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+  }
+
+  // node_modules/uuid/dist/esm-browser/v35.js
+  function stringToBytes(str) {
+    str = unescape(encodeURIComponent(str));
+    const bytes = new Uint8Array(str.length);
+    for (let i = 0; i < str.length; ++i) {
+      bytes[i] = str.charCodeAt(i);
+    }
+    return bytes;
+  }
+  var DNS = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
+  var URL = "6ba7b811-9dad-11d1-80b4-00c04fd430c8";
+  function v35(version, hash, value, namespace, buf, offset) {
+    const valueBytes = typeof value === "string" ? stringToBytes(value) : value;
+    const namespaceBytes = typeof namespace === "string" ? parse_default(namespace) : namespace;
+    if (typeof namespace === "string") {
+      namespace = parse_default(namespace);
+    }
+    if ((namespace == null ? void 0 : namespace.length) !== 16) {
+      throw TypeError("Namespace must be array-like (16 iterable integer values, 0-255)");
+    }
+    let bytes = new Uint8Array(16 + valueBytes.length);
+    bytes.set(namespaceBytes);
+    bytes.set(valueBytes, namespaceBytes.length);
+    bytes = hash(bytes);
+    bytes[6] = bytes[6] & 15 | version;
+    bytes[8] = bytes[8] & 63 | 128;
+    if (buf) {
+      offset = offset || 0;
+      for (let i = 0; i < 16; ++i) {
+        buf[offset + i] = bytes[i];
+      }
+      return buf;
+    }
+    return unsafeStringify(bytes);
+  }
+
+  // node_modules/uuid/dist/esm-browser/sha1.js
+  function f(s, x, y, z) {
+    switch (s) {
+      case 0:
+        return x & y ^ ~x & z;
+      case 1:
+        return x ^ y ^ z;
+      case 2:
+        return x & y ^ x & z ^ y & z;
+      case 3:
+        return x ^ y ^ z;
+    }
+  }
+  function ROTL(x, n) {
+    return x << n | x >>> 32 - n;
+  }
+  function sha1(bytes) {
+    const K = [1518500249, 1859775393, 2400959708, 3395469782];
+    const H = [1732584193, 4023233417, 2562383102, 271733878, 3285377520];
+    const newBytes = new Uint8Array(bytes.length + 1);
+    newBytes.set(bytes);
+    newBytes[bytes.length] = 128;
+    bytes = newBytes;
+    const l = bytes.length / 4 + 2;
+    const N = Math.ceil(l / 16);
+    const M = new Array(N);
+    for (let i = 0; i < N; ++i) {
+      const arr = new Uint32Array(16);
+      for (let j = 0; j < 16; ++j) {
+        arr[j] = bytes[i * 64 + j * 4] << 24 | bytes[i * 64 + j * 4 + 1] << 16 | bytes[i * 64 + j * 4 + 2] << 8 | bytes[i * 64 + j * 4 + 3];
+      }
+      M[i] = arr;
+    }
+    M[N - 1][14] = (bytes.length - 1) * 8 / Math.pow(2, 32);
+    M[N - 1][14] = Math.floor(M[N - 1][14]);
+    M[N - 1][15] = (bytes.length - 1) * 8 & 4294967295;
+    for (let i = 0; i < N; ++i) {
+      const W = new Uint32Array(80);
+      for (let t = 0; t < 16; ++t) {
+        W[t] = M[i][t];
+      }
+      for (let t = 16; t < 80; ++t) {
+        W[t] = ROTL(W[t - 3] ^ W[t - 8] ^ W[t - 14] ^ W[t - 16], 1);
+      }
+      let a = H[0];
+      let b = H[1];
+      let c = H[2];
+      let d = H[3];
+      let e = H[4];
+      for (let t = 0; t < 80; ++t) {
+        const s = Math.floor(t / 20);
+        const T = ROTL(a, 5) + f(s, b, c, d) + e + K[s] + W[t] >>> 0;
+        e = d;
+        d = c;
+        c = ROTL(b, 30) >>> 0;
+        b = a;
+        a = T;
+      }
+      H[0] = H[0] + a >>> 0;
+      H[1] = H[1] + b >>> 0;
+      H[2] = H[2] + c >>> 0;
+      H[3] = H[3] + d >>> 0;
+      H[4] = H[4] + e >>> 0;
+    }
+    return Uint8Array.of(H[0] >> 24, H[0] >> 16, H[0] >> 8, H[0], H[1] >> 24, H[1] >> 16, H[1] >> 8, H[1], H[2] >> 24, H[2] >> 16, H[2] >> 8, H[2], H[3] >> 24, H[3] >> 16, H[3] >> 8, H[3], H[4] >> 24, H[4] >> 16, H[4] >> 8, H[4]);
+  }
+  var sha1_default = sha1;
+
+  // node_modules/uuid/dist/esm-browser/v5.js
+  function v5(value, namespace, buf, offset) {
+    return v35(80, sha1_default, value, namespace, buf, offset);
+  }
+  v5.DNS = DNS;
+  v5.URL = URL;
+  var v5_default = v5;
+
+  // src/fhir/questionnaire/generator/valuesets.ts
+  var generateValueSet = (answerset, linkId, language, ctx) => {
+    const url = ctx.valueSetUrl(linkId);
+    const system = answerset.system || ctx.questionUrl("CodeSystem", linkId);
+    const sorted = answerset.order && answerset.order !== "default";
+    return __spreadProps(__spreadValues({
+      resourceType: "ValueSet",
+      language
+    }, sorted && { extension: [{ url: ValuesetSortingExtension, valueCode: answerset.order }] }), {
+      name: linkId,
+      url,
+      status: "active",
+      publisher: PUBLISHER_NAME,
+      contact: [{ name: PUBLISHER_NAME, telecom: [{ system: "url", value: PUBLISHER_URL }] }],
+      compose: { include: [{ system, concept: answerset.answers.map(({ code }) => ({ code })) }] },
+      expansion: {
+        identifier: v5_default([url, language, ctx.timestamp].join("|"), v5_default.URL),
+        timestamp: ctx.timestamp,
+        parameter: [{ name: "displayLanguage", valueCode: language }],
+        contains: answerset.answers.map(({ code, languages }) => __spreadValues(__spreadValues({
+          system
+        }, optional("code", code)), optional("display", languages[language])))
+      }
+    });
+  };
+
+  // src/fhir/questionnaire/generator/questions.ts
+  var FHIR_TYPES = {
+    [import_research_pillars3.InputType.single_select]: "coding",
+    [import_research_pillars3.InputType.multi_select]: "coding",
+    [import_research_pillars3.InputType.country]: "coding",
+    [import_research_pillars3.InputType.matrix_item]: "coding",
+    [import_research_pillars3.InputType.year]: "date",
+    [import_research_pillars3.InputType.scale_numeric]: "decimal",
+    [import_research_pillars3.InputType.scale_ordinal]: "integer",
+    [import_research_pillars3.InputType.geo_location]: "string",
+    [import_research_pillars3.InputType.list]: "string",
+    [import_research_pillars3.InputType.postal_code]: "string",
+    [import_research_pillars3.InputType.matrix]: "group",
+    [import_research_pillars3.InputType.scale_likert]: "integer"
+  };
+  var NATIVE_TYPES = /* @__PURE__ */ new Set([
+    import_research_pillars3.InputType.display,
+    import_research_pillars3.InputType.string,
+    import_research_pillars3.InputType.text,
+    import_research_pillars3.InputType.integer,
+    import_research_pillars3.InputType.decimal,
+    import_research_pillars3.InputType.date,
+    import_research_pillars3.InputType.group
+  ]);
+  var fhirTypeOf = (linkId, inputType) => {
+    const fhirType = FHIR_TYPES[inputType];
+    if (fhirType) {
+      return fhirType;
+    }
+    if (NATIVE_TYPES.has(inputType)) {
+      return (0, import_research_pillars3.inputTypeToJSON)(inputType);
+    }
+    throw new Error(`Question ${linkId} has an unsupported input type: ${(0, import_research_pillars3.inputTypeToJSON)(inputType)}`);
+  };
+  var generateItem = (q, language, contained, ctx, parentValueSet) => {
+    var _a, _b, _c, _d;
+    const inputType = (0, import_research_pillars3.inputTypeFromJSON)(q.inputType);
+    const type = fhirTypeOf(q.linkId, inputType);
+    const { extensions, maxLength } = generateExtensions(q, inputType, type, language, ctx);
+    const text = (_a = q.text) == null ? void 0 : _a[language];
+    if (!text) {
+      throw new Error(`Question ${q.linkId} is missing its ${language} translation`);
+    }
+    let answerValueSet = parentValueSet;
+    if (inputType === import_research_pillars3.InputType.country) {
+      answerValueSet = CountryValueSet;
+    } else if (q.answerset) {
+      answerValueSet = `#${containValueSet(generateValueSet(q.answerset, q.linkId, language, ctx), contained)}`;
+    }
+    const expression = q.enableWhenExpression;
+    if (expression) {
+      extensions.push(...itemVariableExtensions(q, ctx));
+    }
+    const nativeEnableWhen = !expression && ((_b = q.enableWhen) == null ? void 0 : _b.length) > 0;
+    const hasRequired = inputType !== import_research_pillars3.InputType.display && inputType !== import_research_pillars3.InputType.group;
+    const repeats = inputType === import_research_pillars3.InputType.multi_select || inputType === import_research_pillars3.InputType.list;
+    return __spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({
+      linkId: q.linkId,
+      type,
+      text
+    }, answerValueSet && { answerValueSet }), repeats && { repeats }), ((_c = q.code) == null ? void 0 : _c.length) > 0 && {
+      code: q.code.map(({ system, code, display }) => __spreadValues(__spreadValues(__spreadValues({}, optional("system", system)), optional("code", code)), optional("display", display)))
+    }), extensions.length > 0 && { extension: extensions }), maxLength !== void 0 && { maxLength }), hasRequired && q.required && { required: true }), expression && {
+      modifierExtension: [
+        {
+          url: EnableWhenExpressionExtension,
+          valueExpression: { language: FhirPathLanguage, expression }
+        }
+      ]
+    }), nativeEnableWhen && {
+      enableBehavior: q.enableBehavior === "any" ? "any" : "all",
+      enableWhen: q.enableWhen.map((ew) => generateEnableWhen(ew, ctx))
+    }), type === "group" && {
+      item: ((_d = q.items) != null ? _d : []).map((child) => generateItem(child, language, contained, ctx, answerValueSet))
+    });
+  };
+  var containValueSet = (valueSet, contained) => {
+    const index = contained.findIndex((existing) => existing.url === valueSet.url);
+    if (index >= 0) {
+      return index;
+    }
+    contained.push(__spreadProps(__spreadValues({}, valueSet), { id: String(contained.length) }));
+    return contained.length - 1;
+  };
+  var generateEnableWhen = (ew, ctx) => {
+    var _a;
+    return __spreadValues(__spreadValues(__spreadValues({
+      question: ew.question,
+      operator: (_a = toFhirOperator(ew.operator)) != null ? _a : "="
+    }, ew.answerCoding !== void 0 && {
+      answerCoding: __spreadProps(__spreadValues({}, optional("code", ew.answerCoding)), { system: ctx.effectiveCodeSystem(ew.question) })
+    }), ew.answerDate !== void 0 && { answerDate: ew.answerDate }), ew.answerDecimal !== void 0 && { answerDecimal: ew.answerDecimal });
+  };
+
+  // src/fhir/questionnaire/generator/questionnaire.ts
+  var PUBLISHER_NAME = "D4L data4life gGmbH";
+  var PUBLISHER_URL = "https://www.data4life.care";
+  var generateFHIRQuestionnaire = (input, options) => {
+    var _a;
+    const definition = import_research_pillars4.Questionnaire.fromJSON(input);
+    const ctx = createContext(definition, options);
+    const questionnaires = {};
+    for (const language of options.languages) {
+      const contained = [];
+      const item = definition.questions.map((q) => generateItem(q, language, contained, ctx));
+      questionnaires[language] = __spreadValues(__spreadValues(__spreadProps(__spreadValues(__spreadValues(__spreadValues(__spreadProps(__spreadValues({
+        resourceType: "Questionnaire",
+        language
+      }, optional("name", definition.name)), {
+        url: ctx.questionnaireUrl,
+        status: "active",
+        publisher: PUBLISHER_NAME,
+        contact: [{ name: PUBLISHER_NAME, telecom: [{ system: "url", value: PUBLISHER_URL }] }]
+      }), optional("version", definition.version)), optional("title", (_a = definition.title) == null ? void 0 : _a[language])), optional("date", options.date)), {
+        subjectType: ["Patient"]
+      }), item.length > 0 && { item }), contained.length > 0 && { contained });
+    }
+    return questionnaires;
+  };
+
+  // src/fhir/questionnaire/parser/extensions.ts
+  var import_research_pillars6 = __toESM(require_types());
+
+  // src/fhir/topic-id.ts
+  var TOPIC_ID_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
+  var isValidTopicId = (id) => TOPIC_ID_PATTERN.test(id);
+  var topicIdFromCanonical = (canonical) => canonical.substring(canonical.lastIndexOf("/") + 1);
+  var isValidTopicCanonical = (canonical) => isValidTopicId(topicIdFromCanonical(canonical));
+
+  // src/fhir/questionnaire/parser/topics.ts
+  var import_research_pillars5 = __toESM(require_types());
+  var parseItemVariable = (extension) => {
+    var _a, _b, _c, _d;
+    const sub = (url) => {
+      var _a2;
+      return (_a2 = extension.extension) == null ? void 0 : _a2.find((e) => e.url === url);
+    };
+    const name = (_a = sub(ItemVariableNameUrl)) == null ? void 0 : _a.valueString;
+    const topicCanonical = (_b = sub(ItemVariableTopicUrl)) == null ? void 0 : _b.valueCanonical;
+    const question = (_c = sub(ItemVariableQuestionUrl)) == null ? void 0 : _c.valueString;
+    if (!name || topicCanonical === void 0 === (question === void 0)) {
+      return void 0;
+    }
+    if (question !== void 0) {
+      return { name, question };
+    }
+    const scopeCode2 = (_d = sub(ItemVariableScopeUrl)) == null ? void 0 : _d.valueCode;
+    if (!topicCanonical || !isValidTopicCanonical(topicCanonical) || !scopeCode2) {
+      return void 0;
+    }
+    const scope = (0, import_research_pillars5.topicScopeFromJSON)(scopeCode2);
+    if (scope === import_research_pillars5.TopicScope.UNRECOGNIZED) {
+      return void 0;
+    }
+    return { name, topic: topicIdFromCanonical(topicCanonical), scope };
+  };
+  var parseTopicInput = (extension) => {
+    var _a, _b, _c, _d;
+    const topicCanonical = (_b = (_a = extension.extension) == null ? void 0 : _a.find((e) => e.url === TopicInputTopicUrl)) == null ? void 0 : _b.valueCanonical;
+    const scopeCode2 = (_d = (_c = extension.extension) == null ? void 0 : _c.find((e) => e.url === TopicInputScopeUrl)) == null ? void 0 : _d.valueCode;
+    if (!topicCanonical || !isValidTopicCanonical(topicCanonical) || !scopeCode2) {
+      return void 0;
+    }
+    const scope = (0, import_research_pillars5.topicScopeFromJSON)(scopeCode2);
+    if (scope === import_research_pillars5.TopicScope.UNRECOGNIZED) {
+      return void 0;
+    }
+    return { topic: topicIdFromCanonical(topicCanonical), scope };
+  };
+
+  // src/fhir/questionnaire/parser/extensions.ts
+  var parseExtensions = (languages, questionItems) => {
+    var _a, _b, _c, _d, _e, _f, _g, _h;
+    let config = {};
+    let questionInputType;
+    let questionImage;
+    const prepopulate = /* @__PURE__ */ new Set();
+    const output = /* @__PURE__ */ new Set();
+    const input = [];
+    const itemVariables = [];
+    const placeholders = [];
+    const countrySources = [];
+    const firstItem = questionItems[languages[0]];
+    const extensions = (firstItem == null ? void 0 : firstItem.extension) || [];
+    if (((firstItem == null ? void 0 : firstItem.type) === "string" || (firstItem == null ? void 0 : firstItem.type) === "text") && firstItem.maxLength !== void 0) {
+      config = __spreadProps(__spreadValues({}, config), { maxLength: firstItem.maxLength });
+    }
+    for (const extension of extensions) {
+      switch (extension.url) {
+        case MaxValueExtension:
+          config = __spreadProps(__spreadValues({}, config), {
+            max: getValueFrom([
+              extension.valueDate,
+              extension.valueDateTime,
+              extension.valueTime,
+              extension.valueInstant,
+              extension.valueDecimal,
+              extension.valueInteger
+            ])
+          });
+          break;
+        case MinValueExtension:
+          config = __spreadProps(__spreadValues({}, config), {
+            min: getValueFrom([
+              extension.valueDate,
+              extension.valueDateTime,
+              extension.valueTime,
+              extension.valueInstant,
+              extension.valueDecimal,
+              extension.valueInteger
+            ])
+          });
+          break;
+        case MinLengthExtension:
+          if (extension.valueInteger !== void 0) {
+            config = __spreadProps(__spreadValues({}, config), { minLength: extension.valueInteger });
+          }
+          break;
+        case SliderMinLabelExtension:
+          config = __spreadProps(__spreadValues({}, config), {
+            minLabel: extractLocalizedString(languages, questionItems, SliderMinLabelExtension)
+          });
+          break;
+        case SliderMaxLabelExtension:
+          config = __spreadProps(__spreadValues({}, config), {
+            maxLabel: extractLocalizedString(languages, questionItems, SliderMaxLabelExtension)
+          });
+          break;
+        case SliderStepSizeExtension:
+          config = __spreadProps(__spreadValues({}, config), {
+            step: extension.valueDecimal
+          });
+          break;
+        case SliderInputLabel:
+          config = __spreadProps(__spreadValues({}, config), {
+            inputLabel: extractLocalizedString(languages, questionItems, SliderInputLabel)
+          });
+          break;
+        case SliderOrientationExtension: {
+          const orientation = extension.valueCode;
+          if (orientation === "horizontal" || orientation === "vertical") {
+            config = __spreadProps(__spreadValues({}, config), { orientation });
+          } else {
+            console.warn(`Unsupported slider orientation: ${orientation}. It will be ignored.`);
+          }
+          break;
+        }
+        case QItemControlDefinition:
+          questionInputType = (0, import_research_pillars6.inputTypeFromJSON)((_b = (_a = extension.valueCodeableConcept) == null ? void 0 : _a.coding) == null ? void 0 : _b[0].code);
+          break;
+        case RelativeMinValueExtension:
+          config = __spreadProps(__spreadValues({}, config), {
+            min: extension.valueString
+          });
+          break;
+        case RelativeMaxValueExtension:
+          config = __spreadProps(__spreadValues({}, config), {
+            max: extension.valueString
+          });
+          break;
+        // LEGACY(prepopulate) [HUB-6797]: remove this case (and the prepopulate import, accumulator, and return field) when prepopulate is retired.
+        case PrepopulateExtension:
+          if (extension.valueString) {
+            prepopulate.add(extension.valueString);
+          }
+          break;
+        case QuestionnaireItemOutputExtension:
+          if (extension.valueCanonical && isValidTopicCanonical(extension.valueCanonical)) {
+            output.add(topicIdFromCanonical(extension.valueCanonical));
+          } else {
+            console.warn(
+              `Ignoring malformed topic output extension on ${(_c = questionItems[languages[0]]) == null ? void 0 : _c.linkId}.`
+            );
+          }
+          break;
+        case QuestionnaireItemInputExtension: {
+          const topicInput = parseTopicInput(extension);
+          if (topicInput) {
+            input.push(topicInput);
+          } else {
+            console.warn(`Ignoring malformed topic input extension on ${(_d = questionItems[languages[0]]) == null ? void 0 : _d.linkId}.`);
+          }
+          break;
+        }
+        case QuestionnaireItemVariableExtension: {
+          const variable = parseItemVariable(extension);
+          if (variable) {
+            itemVariables.push(variable);
+          } else {
+            console.warn(
+              `Ignoring malformed item variable extension on ${(_e = questionItems[languages[0]]) == null ? void 0 : _e.linkId}.`
+            );
+          }
+          break;
+        }
+        case ImageExtension:
+          if ((_f = extension.valueAttachment) == null ? void 0 : _f.url) {
+            questionImage = {
+              src: extension.valueAttachment.url.split("/").pop() || "",
+              alt: extension.valueAttachment.title || "",
+              data: "",
+              contentType: ""
+            };
+          } else if ((_g = extension.valueAttachment) == null ? void 0 : _g.data) {
+            questionImage = {
+              src: "",
+              alt: extension.valueAttachment.title || "",
+              data: extension.valueAttachment.data,
+              contentType: extension.valueAttachment.contentType || ""
+            };
+          }
+          break;
+        case PostalCodeCountrySourceExtension: {
+          const sources = parsePostalCodeCountrySources(extension);
+          countrySources.push(...sources);
+          if (sources.length === 0) {
+            console.warn(
+              `Ignoring malformed postal code country-source extension on ${(_h = questionItems[languages[0]]) == null ? void 0 : _h.linkId}.`
+            );
+          }
+          break;
+        }
+        case PlaceholderExtension:
+          if (extension.valueString) {
+            placeholders.push(extension.valueString);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+    if (placeholders.length > 0) {
+      config = __spreadProps(__spreadValues({}, config), { placeholders });
+    }
+    if (questionInputType === import_research_pillars6.InputType.postal_code) {
+      validatePostalCodeCountrySources(languages, questionItems);
+    }
+    if (countrySources.length > 0) {
+      config = __spreadProps(__spreadValues({}, config), { countrySource: countrySources[0] });
+    }
+    return {
+      config,
+      inputType: questionInputType,
+      prepopulate: prepopulate.size > 0 ? Array.from(prepopulate) : void 0,
+      input,
+      output: Array.from(output),
+      itemVariables,
+      image: questionImage
+    };
+  };
+  var validatePostalCodeCountrySources = (languages, questionItems) => {
+    var _a, _b, _c;
+    const linkId = (_a = questionItems[languages[0]]) == null ? void 0 : _a.linkId;
+    let first;
+    for (const language of languages) {
+      const sources = ((_c = (_b = questionItems[language]) == null ? void 0 : _b.extension) != null ? _c : []).filter((extension) => extension.url === PostalCodeCountrySourceExtension).flatMap(parsePostalCodeCountrySources);
+      if (sources.length !== 1) {
+        throw new Error(
+          `Question ${linkId}: postal_code countrySource must include exactly one of fromItem or fixedCountry (language ${language})`
+        );
+      }
+      if (!first) {
+        first = { language, source: sources[0] };
+      } else if (!sameCountrySource(first.source, sources[0])) {
+        throw new Error(
+          `Question ${linkId}: postal_code countrySource differs between languages ${first.language} and ${language}`
+        );
+      }
+    }
+  };
+  var sameCountrySource = (a, b) => {
+    var _a, _b, _c, _d;
+    return a.fromItem === b.fromItem && ((_a = a.fixedCountry) == null ? void 0 : _a.system) === ((_b = b.fixedCountry) == null ? void 0 : _b.system) && ((_c = a.fixedCountry) == null ? void 0 : _c.code) === ((_d = b.fixedCountry) == null ? void 0 : _d.code);
+  };
+  var parsePostalCodeCountrySources = (extension) => {
+    var _a;
+    return ((_a = extension.extension) != null ? _a : []).flatMap((sub) => {
+      var _a2, _b;
+      if (sub.url === PostalCodeFromItemUrl && sub.valueString) {
+        return [{ fromItem: sub.valueString }];
+      }
+      if (sub.url === PostalCodeFixedCountryUrl && ((_a2 = sub.valueCoding) == null ? void 0 : _a2.code)) {
+        return [
+          { fixedCountry: { system: (_b = sub.valueCoding.system) != null ? _b : Iso3166CodeSystem, code: sub.valueCoding.code } }
+        ];
+      }
+      return [];
+    });
+  };
+  var parseCodes = (questionItem) => {
+    var _a;
+    return ((_a = questionItem.code) != null ? _a : []).filter((coding) => coding.system && coding.code).map(({ system, code, display }) => __spreadValues({ system, code }, display && { display }));
+  };
+  var parseEnableWhenExpression = (questionItem) => {
+    var _a, _b;
+    const extension = (_a = questionItem.modifierExtension) == null ? void 0 : _a.find((e) => e.url === EnableWhenExpressionExtension);
+    const expression = (_b = extension == null ? void 0 : extension.valueExpression) == null ? void 0 : _b.expression;
+    return expression && expression.trim() !== "" ? expression : void 0;
+  };
+  var extractLocalizedString = (languages, questionItems, url) => languages.reduce(
+    (localisedExt, lang) => {
+      var _a, _b;
+      const extension = (_b = (_a = questionItems[lang]) == null ? void 0 : _a.extension) == null ? void 0 : _b.find((e) => e.url === url);
+      if ((extension == null ? void 0 : extension.valueString) === void 0) {
+        return localisedExt;
+      }
+      return __spreadProps(__spreadValues({}, localisedExt), { [lang]: extension.valueString });
+    },
+    {}
+  );
+  var getValueFrom = (values) => values.find((value) => value !== void 0);
+  function stringToOperator(op) {
+    switch (op) {
+      case "exists":
+        return (0, import_research_pillars6.operatorFromJSON)("exists");
+      case "=":
+        return (0, import_research_pillars6.operatorFromJSON)("eq");
+      case "!=":
+        return (0, import_research_pillars6.operatorFromJSON)("neq");
+      case ">":
+        return (0, import_research_pillars6.operatorFromJSON)("gt");
+      case "<":
+        return (0, import_research_pillars6.operatorFromJSON)("lt");
+      case ">=":
+        return (0, import_research_pillars6.operatorFromJSON)("gteq");
+      case "<=":
+        return (0, import_research_pillars6.operatorFromJSON)("lteq");
+      default:
+        return (0, import_research_pillars6.operatorFromJSON)("eq");
+    }
+  }
+
+  // src/fhir/questionnaire/parser/questions.ts
+  var import_research_pillars7 = __toESM(require_types());
 
   // src/fhir/enable-when-expression.ts
   var SUPPORTED_FHIRPATH_FUNCTIONS = [
@@ -6299,9 +7151,7 @@ var Exports = (() => {
   var CONDITION_STRING_EQ = rx(`${V}\\.first\\(\\) = ${STR}`);
   var CONDITION_STRING_NEQ = rx(`${V}\\.exists\\(\\) and ${V}\\.first\\(\\) != ${STR}`);
   var CONDITION_CONVERTED_CMP = rx(`${V}\\.first\\(\\)\\.${CONV}\\(\\) ${CMP} ${LIT}`);
-  var CONDITION_CONVERTED_NEQ = rx(
-    `${V}\\.exists\\(\\) and ${V}\\.first\\(\\)\\.${CONV}\\(\\) != ${LIT}`
-  );
+  var CONDITION_CONVERTED_NEQ = rx(`${V}\\.exists\\(\\) and ${V}\\.first\\(\\)\\.${CONV}\\(\\) != ${LIT}`);
   var UNIT = `(${SUPPORTED_FHIRPATH_DATE_UNITS.join("|")})`;
   var ELAPSED = `${V}\\.first\\(\\)\\.toDate\\(\\) \\+ ${INT} ${UNIT}`;
   var CONDITION_ELAPSED_AT_LEAST = rx(`${V}\\.exists\\(\\) and today\\(\\) >= ${ELAPSED}`);
@@ -6502,316 +7352,6 @@ var Exports = (() => {
   };
 
   // src/fhir/questionnaire/parser/questions.ts
-  var import_research_pillars3 = __toESM(require_types());
-
-  // src/fhir/topic-id.ts
-  var TOPIC_ID_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
-  var isValidTopicId = (id) => TOPIC_ID_PATTERN.test(id);
-  var topicIdFromCanonical = (canonical) => canonical.substring(canonical.lastIndexOf("/") + 1);
-  var isValidTopicCanonical = (canonical) => isValidTopicId(topicIdFromCanonical(canonical));
-
-  // src/fhir/questionnaire/parser/topics.ts
-  var import_research_pillars = __toESM(require_types());
-  var parseItemVariable = (extension) => {
-    var _a, _b, _c, _d;
-    const sub = (url) => {
-      var _a2;
-      return (_a2 = extension.extension) == null ? void 0 : _a2.find((e) => e.url === url);
-    };
-    const name = (_a = sub(ItemVariableNameUrl)) == null ? void 0 : _a.valueString;
-    const topicCanonical = (_b = sub(ItemVariableTopicUrl)) == null ? void 0 : _b.valueCanonical;
-    const question = (_c = sub(ItemVariableQuestionUrl)) == null ? void 0 : _c.valueString;
-    if (!name || topicCanonical === void 0 === (question === void 0)) {
-      return void 0;
-    }
-    if (question !== void 0) {
-      return { name, question };
-    }
-    const scopeCode2 = (_d = sub(ItemVariableScopeUrl)) == null ? void 0 : _d.valueCode;
-    if (!topicCanonical || !isValidTopicCanonical(topicCanonical) || !scopeCode2) {
-      return void 0;
-    }
-    const scope = (0, import_research_pillars.topicScopeFromJSON)(scopeCode2);
-    if (scope === import_research_pillars.TopicScope.UNRECOGNIZED) {
-      return void 0;
-    }
-    return { name, topic: topicIdFromCanonical(topicCanonical), scope };
-  };
-  var parseTopicInput = (extension) => {
-    var _a, _b, _c, _d;
-    const topicCanonical = (_b = (_a = extension.extension) == null ? void 0 : _a.find((e) => e.url === TopicInputTopicUrl)) == null ? void 0 : _b.valueCanonical;
-    const scopeCode2 = (_d = (_c = extension.extension) == null ? void 0 : _c.find((e) => e.url === TopicInputScopeUrl)) == null ? void 0 : _d.valueCode;
-    if (!topicCanonical || !isValidTopicCanonical(topicCanonical) || !scopeCode2) {
-      return void 0;
-    }
-    const scope = (0, import_research_pillars.topicScopeFromJSON)(scopeCode2);
-    if (scope === import_research_pillars.TopicScope.UNRECOGNIZED) {
-      return void 0;
-    }
-    return { topic: topicIdFromCanonical(topicCanonical), scope };
-  };
-
-  // src/fhir/questionnaire/parser/extensions.ts
-  var import_research_pillars2 = __toESM(require_types());
-  var parseExtensions = (languages, questionItems) => {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
-    let config = {};
-    let questionInputType;
-    let questionImage;
-    const prepopulate = /* @__PURE__ */ new Set();
-    const output = /* @__PURE__ */ new Set();
-    const input = [];
-    const itemVariables = [];
-    const placeholders = [];
-    const countrySources = [];
-    const firstItem = questionItems[languages[0]];
-    const extensions = (firstItem == null ? void 0 : firstItem.extension) || [];
-    if (((firstItem == null ? void 0 : firstItem.type) === "string" || (firstItem == null ? void 0 : firstItem.type) === "text") && firstItem.maxLength !== void 0) {
-      config = __spreadProps(__spreadValues({}, config), { maxLength: firstItem.maxLength });
-    }
-    for (const extension of extensions) {
-      switch (extension.url) {
-        case MaxValueExtension:
-          config = __spreadProps(__spreadValues({}, config), {
-            max: getValueFrom([
-              extension.valueDate,
-              extension.valueDateTime,
-              extension.valueTime,
-              extension.valueInstant,
-              extension.valueDecimal,
-              extension.valueInteger
-            ])
-          });
-          break;
-        case MinValueExtension:
-          config = __spreadProps(__spreadValues({}, config), {
-            min: getValueFrom([
-              extension.valueDate,
-              extension.valueDateTime,
-              extension.valueTime,
-              extension.valueInstant,
-              extension.valueDecimal,
-              extension.valueInteger
-            ])
-          });
-          break;
-        case MinLengthExtension:
-          if (extension.valueInteger !== void 0) {
-            config = __spreadProps(__spreadValues({}, config), { minLength: extension.valueInteger });
-          }
-          break;
-        case SliderMinLabelExtension:
-          config = __spreadProps(__spreadValues({}, config), {
-            minLabel: extractLocalizedString(languages, questionItems, SliderMinLabelExtension)
-          });
-          break;
-        case SliderMaxLabelExtension:
-          config = __spreadProps(__spreadValues({}, config), {
-            maxLabel: extractLocalizedString(languages, questionItems, SliderMaxLabelExtension)
-          });
-          break;
-        case SliderStepSizeExtension:
-          config = __spreadProps(__spreadValues({}, config), {
-            step: extension.valueDecimal
-          });
-          break;
-        case SliderInputLabel:
-          config = __spreadProps(__spreadValues({}, config), {
-            inputLabel: extractLocalizedString(languages, questionItems, SliderInputLabel)
-          });
-          break;
-        case SliderOrientationExtension: {
-          const orientation = extension.valueCode;
-          if (orientation === "horizontal" || orientation === "vertical") {
-            config = __spreadProps(__spreadValues({}, config), { orientation });
-          } else {
-            console.warn(`Unsupported slider orientation: ${orientation}. It will be ignored.`);
-          }
-          break;
-        }
-        case QItemControlDefinition:
-          questionInputType = (0, import_research_pillars2.inputTypeFromJSON)((_b = (_a = extension.valueCodeableConcept) == null ? void 0 : _a.coding) == null ? void 0 : _b[0].code);
-          break;
-        case RelativeMinValueExtension:
-          config = __spreadProps(__spreadValues({}, config), {
-            min: extension.valueString
-          });
-          break;
-        case RelativeMaxValueExtension:
-          config = __spreadProps(__spreadValues({}, config), {
-            max: extension.valueString
-          });
-          break;
-        // LEGACY(prepopulate) [HUB-6797]: remove this case (and the prepopulate import, accumulator, and return field) when prepopulate is retired.
-        case PrepopulateExtension:
-          if (extension.valueString) {
-            prepopulate.add(extension.valueString);
-          }
-          break;
-        case QuestionnaireItemOutputExtension:
-          if (extension.valueCanonical && isValidTopicCanonical(extension.valueCanonical)) {
-            output.add(topicIdFromCanonical(extension.valueCanonical));
-          } else {
-            console.warn(
-              `Ignoring malformed topic output extension on ${(_c = questionItems[languages[0]]) == null ? void 0 : _c.linkId}.`
-            );
-          }
-          break;
-        case QuestionnaireItemInputExtension: {
-          const topicInput = parseTopicInput(extension);
-          if (topicInput) {
-            input.push(topicInput);
-          } else {
-            console.warn(`Ignoring malformed topic input extension on ${(_d = questionItems[languages[0]]) == null ? void 0 : _d.linkId}.`);
-          }
-          break;
-        }
-        case QuestionnaireItemVariableExtension: {
-          const variable = parseItemVariable(extension);
-          if (variable) {
-            itemVariables.push(variable);
-          } else {
-            console.warn(
-              `Ignoring malformed item variable extension on ${(_e = questionItems[languages[0]]) == null ? void 0 : _e.linkId}.`
-            );
-          }
-          break;
-        }
-        case ImageExtension:
-          if ((_f = extension.valueAttachment) == null ? void 0 : _f.url) {
-            questionImage = {
-              src: extension.valueAttachment.url.split("/").pop() || "",
-              alt: extension.valueAttachment.title || "",
-              data: "",
-              contentType: ""
-            };
-          } else if ((_g = extension.valueAttachment) == null ? void 0 : _g.data) {
-            questionImage = {
-              src: "",
-              alt: extension.valueAttachment.title || "",
-              data: extension.valueAttachment.data,
-              contentType: extension.valueAttachment.contentType || ""
-            };
-          }
-          break;
-        case PostalCodeCountrySourceExtension: {
-          const sources = parsePostalCodeCountrySources(extension);
-          countrySources.push(...sources);
-          if (sources.length === 0) {
-            console.warn(
-              `Ignoring malformed postal code country-source extension on ${(_h = questionItems[languages[0]]) == null ? void 0 : _h.linkId}.`
-            );
-          }
-          break;
-        }
-        case PlaceholderExtension:
-          if (extension.valueString) {
-            placeholders.push(extension.valueString);
-          }
-          break;
-        default:
-          break;
-      }
-    }
-    if (placeholders.length > 0) {
-      config = __spreadProps(__spreadValues({}, config), { placeholders });
-    }
-    if (questionInputType === import_research_pillars2.InputType.postal_code) {
-      validatePostalCodeCountrySources(languages, questionItems);
-    }
-    if (countrySources.length > 0) {
-      config = __spreadProps(__spreadValues({}, config), { countrySource: countrySources[0] });
-    }
-    return {
-      config,
-      inputType: questionInputType,
-      prepopulate: prepopulate.size > 0 ? Array.from(prepopulate) : void 0,
-      input,
-      output: Array.from(output),
-      itemVariables,
-      image: questionImage
-    };
-  };
-  var validatePostalCodeCountrySources = (languages, questionItems) => {
-    var _a, _b, _c;
-    const linkId = (_a = questionItems[languages[0]]) == null ? void 0 : _a.linkId;
-    let first;
-    for (const language of languages) {
-      const sources = ((_c = (_b = questionItems[language]) == null ? void 0 : _b.extension) != null ? _c : []).filter((extension) => extension.url === PostalCodeCountrySourceExtension).flatMap(parsePostalCodeCountrySources);
-      if (sources.length !== 1) {
-        throw new Error(
-          `Question ${linkId}: postal_code countrySource must include exactly one of fromItem or fixedCountry (language ${language})`
-        );
-      }
-      if (!first) {
-        first = { language, source: sources[0] };
-      } else if (!sameCountrySource(first.source, sources[0])) {
-        throw new Error(
-          `Question ${linkId}: postal_code countrySource differs between languages ${first.language} and ${language}`
-        );
-      }
-    }
-  };
-  var sameCountrySource = (a, b) => {
-    var _a, _b, _c, _d;
-    return a.fromItem === b.fromItem && ((_a = a.fixedCountry) == null ? void 0 : _a.system) === ((_b = b.fixedCountry) == null ? void 0 : _b.system) && ((_c = a.fixedCountry) == null ? void 0 : _c.code) === ((_d = b.fixedCountry) == null ? void 0 : _d.code);
-  };
-  var parsePostalCodeCountrySources = (extension) => {
-    var _a;
-    return ((_a = extension.extension) != null ? _a : []).flatMap((sub) => {
-      var _a2, _b;
-      if (sub.url === PostalCodeFromItemUrl && sub.valueString) {
-        return [{ fromItem: sub.valueString }];
-      }
-      if (sub.url === PostalCodeFixedCountryUrl && ((_a2 = sub.valueCoding) == null ? void 0 : _a2.code)) {
-        return [
-          { fixedCountry: { system: (_b = sub.valueCoding.system) != null ? _b : Iso3166CodeSystem, code: sub.valueCoding.code } }
-        ];
-      }
-      return [];
-    });
-  };
-  var parseCodes = (questionItem) => {
-    var _a;
-    return ((_a = questionItem.code) != null ? _a : []).filter((coding) => coding.system && coding.code).map(({ system, code, display }) => __spreadValues({ system, code }, display && { display }));
-  };
-  var parseEnableWhenExpression = (questionItem) => {
-    var _a, _b;
-    const extension = (_a = questionItem.modifierExtension) == null ? void 0 : _a.find((e) => e.url === EnableWhenExpressionExtension);
-    const expression = (_b = extension == null ? void 0 : extension.valueExpression) == null ? void 0 : _b.expression;
-    return expression && expression.trim() !== "" ? expression : void 0;
-  };
-  var extractLocalizedString = (languages, questionItems, url) => languages.reduce((localisedExt, lang) => {
-    var _a, _b;
-    const extension = (_b = (_a = questionItems[lang]) == null ? void 0 : _a.extension) == null ? void 0 : _b.find((e) => e.url === url);
-    if ((extension == null ? void 0 : extension.valueString) === void 0) {
-      return localisedExt;
-    }
-    return __spreadProps(__spreadValues({}, localisedExt), { [lang]: extension.valueString });
-  }, {});
-  var getValueFrom = (values) => values.find((value) => value !== void 0);
-  function stringToOperator(op) {
-    switch (op) {
-      case "exists":
-        return (0, import_research_pillars2.operatorFromJSON)("exists");
-      case "=":
-        return (0, import_research_pillars2.operatorFromJSON)("eq");
-      case "!=":
-        return (0, import_research_pillars2.operatorFromJSON)("neq");
-      case ">":
-        return (0, import_research_pillars2.operatorFromJSON)("gt");
-      case "<":
-        return (0, import_research_pillars2.operatorFromJSON)("lt");
-      case ">=":
-        return (0, import_research_pillars2.operatorFromJSON)("gteq");
-      case "<=":
-        return (0, import_research_pillars2.operatorFromJSON)("lteq");
-      default:
-        return (0, import_research_pillars2.operatorFromJSON)("eq");
-    }
-  }
-
-  // src/fhir/questionnaire/parser/questions.ts
   var withoutDefaultCodeSystem = (answerset, defaultCodeSystem) => {
     if (answerset.system === void 0 || answerset.system !== defaultCodeSystem) {
       return answerset;
@@ -6835,16 +7375,16 @@ var Exports = (() => {
     if (parsedQuestionInputType !== void 0) {
       questionInputType = parsedQuestionInputType;
     }
-    if (questionInputType === void 0 || questionInputType === import_research_pillars3.InputType.UNRECOGNIZED) {
+    if (questionInputType === void 0 || questionInputType === import_research_pillars7.InputType.UNRECOGNIZED) {
       console.warn(`Question ${questionItem.linkId} has an invalid type. It will be ignored.`);
       return void 0;
     }
-    const canBeRequired = questionInputType !== import_research_pillars3.InputType.display && questionInputType !== import_research_pillars3.InputType.group;
+    const canBeRequired = questionInputType !== import_research_pillars7.InputType.display && questionInputType !== import_research_pillars7.InputType.group;
     const question = __spreadProps(__spreadValues({
       linkId: questionItem.linkId,
       itemVariables,
       text: languages.reduce((acc, lang) => __spreadProps(__spreadValues({}, acc), { [lang]: questionItems[lang].text }), {}),
-      inputType: (0, import_research_pillars3.inputTypeFromJSON)(questionInputType),
+      inputType: (0, import_research_pillars7.inputTypeFromJSON)(questionInputType),
       required: canBeRequired && !!questionItem.required,
       enableWhen: [],
       // Check questionItem.type not questionInputType because questionInputType can be overwritten by extensions (happens for matrix)
@@ -6853,7 +7393,7 @@ var Exports = (() => {
         answerSets,
         defaultCodeSystem,
         questionItems,
-        questionInputType === import_research_pillars3.InputType.matrix
+        questionInputType === import_research_pillars7.InputType.matrix
       ) : []
     }, Object.keys(config).length && { config }), {
       prepopulate: prepopulate != null ? prepopulate : [],
@@ -6896,7 +7436,7 @@ var Exports = (() => {
       name,
       question,
       topic,
-      scope: scope === void 0 ? void 0 : (0, import_research_pillars3.topicScopeToJSON)(scope)
+      scope: scope === void 0 ? void 0 : (0, import_research_pillars7.topicScopeToJSON)(scope)
     }));
     return (_b = (_a = decompileEnableWhen(variables, expression)) == null ? void 0 : _a.behavior) != null ? _b : "all";
   };
@@ -6930,23 +7470,23 @@ var Exports = (() => {
   var DEFAULT_TYPE_NAMES = /* @__PURE__ */ new Set(["display", "text", "integer", "decimal", "date", "group"]);
   var parseInputType = (questionItem, isMatrixRow) => {
     if (isMatrixRow) {
-      return import_research_pillars3.InputType.matrix_item;
+      return import_research_pillars7.InputType.matrix_item;
     }
     const { type, repeats, answerValueSet } = questionItem;
     switch (type) {
       case "coding":
         if (answerValueSet === CountryValueSet) {
-          return import_research_pillars3.InputType.country;
+          return import_research_pillars7.InputType.country;
         }
-        return repeats ? import_research_pillars3.InputType.multi_select : import_research_pillars3.InputType.single_select;
+        return repeats ? import_research_pillars7.InputType.multi_select : import_research_pillars7.InputType.single_select;
       case "string":
-        return repeats ? import_research_pillars3.InputType.list : import_research_pillars3.InputType.string;
+        return repeats ? import_research_pillars7.InputType.list : import_research_pillars7.InputType.string;
       default:
         if (type && DEFAULT_TYPE_NAMES.has(type)) {
-          return (0, import_research_pillars3.inputTypeFromJSON)(type);
+          return (0, import_research_pillars7.inputTypeFromJSON)(type);
         }
         console.warn("Question has an unsupported type:", type);
-        return import_research_pillars3.InputType.UNRECOGNIZED;
+        return import_research_pillars7.InputType.UNRECOGNIZED;
     }
   };
 
@@ -7038,541 +7578,6 @@ var Exports = (() => {
       }
     }
     return questions;
-  };
-
-  // src/fhir/questionnaire/generator/questionnaire.ts
-  var import_research_pillars7 = __toESM(require_types());
-
-  // src/fhir/questionnaire/generator/context.ts
-  var import_research_pillars4 = __toESM(require_types());
-  var createContext = (definition, options) => {
-    const { baseUrl, programName } = options;
-    const questionUrl = (resource, id) => `${baseUrl}/${programName}/${resource}/${definition.name}/${id}`;
-    const systems = /* @__PURE__ */ new Map();
-    const collect = (questions, parent) => {
-      var _a, _b;
-      for (const question of questions) {
-        const owner = parent != null ? parent : question;
-        const isCountry = (0, import_research_pillars4.inputTypeFromJSON)(owner.inputType) === import_research_pillars4.InputType.country;
-        const system = isCountry ? Iso3166CodeSystem : ((_a = owner.answerset) == null ? void 0 : _a.system) || questionUrl("CodeSystem", owner.linkId);
-        systems.set(question.linkId, system);
-        const isMatrix = (0, import_research_pillars4.inputTypeFromJSON)(question.inputType) === import_research_pillars4.InputType.matrix;
-        collect((_b = question.items) != null ? _b : [], isMatrix ? question : void 0);
-      }
-    };
-    collect(definition.questions);
-    const valueSetUrls = deriveValueSetUrls(definition.questions, questionUrl);
-    return {
-      staticUrl: options.staticUrl,
-      programName,
-      timestamp: options.timestamp,
-      questionnaireUrl: `${baseUrl}/${programName}/Questionnaire/${definition.name}`,
-      questionUrl,
-      topicUrl: (topic) => `${baseUrl}/${programName}/topic/${topic}`,
-      effectiveCodeSystem: (linkId) => {
-        var _a;
-        return (_a = systems.get(linkId)) != null ? _a : questionUrl("CodeSystem", linkId);
-      },
-      valueSetUrl: (linkId) => {
-        var _a;
-        return (_a = valueSetUrls.get(linkId)) != null ? _a : questionUrl("ValueSet", linkId);
-      }
-    };
-  };
-  var deriveValueSetUrls = (questions, questionUrl) => {
-    var _a;
-    const linkIds = /* @__PURE__ */ new Set();
-    const sets = /* @__PURE__ */ new Map();
-    const walk = (items) => {
-      var _a2, _b, _c;
-      for (const question of items) {
-        linkIds.add(question.linkId);
-        const { answerset } = question;
-        if (answerset && (0, import_research_pillars4.inputTypeFromJSON)(question.inputType) !== import_research_pillars4.InputType.country) {
-          const key = answerSetKey(answerset, questionUrl("CodeSystem", question.linkId));
-          const set = (_b = sets.get(key)) != null ? _b : {
-            linkIds: [],
-            segment: ((_a2 = answerset.system) == null ? void 0 : _a2.split("/").pop()) || void 0
-          };
-          set.linkIds.push(question.linkId);
-          sets.set(key, set);
-        }
-        walk((_c = question.items) != null ? _c : []);
-      }
-    };
-    walk(questions);
-    const claims = /* @__PURE__ */ new Map();
-    for (const { segment } of sets.values()) {
-      if (segment) {
-        claims.set(segment, ((_a = claims.get(segment)) != null ? _a : 0) + 1);
-      }
-    }
-    const urls = /* @__PURE__ */ new Map();
-    for (const set of sets.values()) {
-      const ownsSegment = set.segment && claims.get(set.segment) === 1 && !linkIds.has(set.segment);
-      const url = questionUrl("ValueSet", ownsSegment ? set.segment : set.linkIds[0]);
-      set.linkIds.forEach((linkId) => urls.set(linkId, url));
-    }
-    return urls;
-  };
-  var answerSetKey = (answerset, defaultCodeSystem) => JSON.stringify([
-    answerset.system || defaultCodeSystem,
-    answerset.order || "default",
-    answerset.answers.map(({ code, languages }) => [code, Object.entries(languages != null ? languages : {}).sort()])
-  ]);
-
-  // src/fhir/questionnaire/generator/extensions.ts
-  var import_research_pillars5 = __toESM(require_types());
-  var SPECIAL_INPUT_TYPES = /* @__PURE__ */ new Set([
-    import_research_pillars5.InputType.year,
-    import_research_pillars5.InputType.scale_numeric,
-    import_research_pillars5.InputType.scale_ordinal,
-    import_research_pillars5.InputType.geo_location,
-    import_research_pillars5.InputType.list,
-    import_research_pillars5.InputType.country,
-    import_research_pillars5.InputType.postal_code,
-    import_research_pillars5.InputType.matrix,
-    import_research_pillars5.InputType.scale_likert
-  ]);
-  var DURATION = /^P((-?[0-9]+Y)?(-?[0-9]+M)?(-?[0-9]+W)?(-?[0-9]+D)?(T(-?[0-9]+H)?(-?[0-9]+M)?(-?[0-9]+(\.?[0-9]+)?S)?)?)?$/;
-  var generateExtensions = (q, inputType, fhirType, language, ctx) => {
-    var _a;
-    const extensions = [];
-    if (SPECIAL_INPUT_TYPES.has(inputType)) {
-      extensions.push({
-        url: QItemControlDefinition,
-        valueCodeableConcept: { coding: [{ system: CustomQuestionSystem, code: (0, import_research_pillars5.inputTypeToJSON)(inputType) }] }
-      });
-    }
-    extensions.push(...topicExtensions(q, inputType, ctx));
-    if (q.image) {
-      extensions.push({
-        url: ImageExtension,
-        valueAttachment: __spreadValues({
-          url: `${ctx.staticUrl}/programs/${ctx.programName}/images/${q.image.src}`
-        }, optional("title", q.image.alt))
-      });
-    }
-    const config = (_a = q.config) != null ? _a : void 0;
-    if (inputType === import_research_pillars5.InputType.postal_code) {
-      extensions.push(...placeholderExtensions(config), postalCodeExtension(q.linkId, config));
-      return { extensions };
-    }
-    extensions.push(...placeholderExtensions(config));
-    if (!config) {
-      return { extensions };
-    }
-    switch (fhirType) {
-      case "string":
-      case "text": {
-        if (positive(config.minLength)) {
-          extensions.push({ url: MinLengthExtension, valueInteger: config.minLength });
-        }
-        return __spreadValues({ extensions }, positive(config.maxLength) && { maxLength: config.maxLength });
-      }
-      case "integer":
-      case "decimal": {
-        const valueKey = fhirType === "integer" ? "valueInteger" : "valueDecimal";
-        extensions.push(...scaleExtensions(config, language));
-        if (config.min !== void 0) {
-          extensions.push({ url: MinValueExtension, [valueKey]: config.min });
-        }
-        if (config.max !== void 0) {
-          extensions.push({ url: MaxValueExtension, [valueKey]: config.max });
-        }
-        return { extensions };
-      }
-      case "date":
-        extensions.push(
-          ...dateBound(config.min, MinValueExtension, RelativeMinValueExtension),
-          ...dateBound(config.max, MaxValueExtension, RelativeMaxValueExtension)
-        );
-        return { extensions };
-      default:
-        return { extensions };
-    }
-  };
-  var itemVariableExtensions = (q, ctx) => q.itemVariables.map((variable) => {
-    const subs = [__spreadValues({ url: ItemVariableNameUrl }, optional("valueString", variable.name))];
-    if (variable.topic !== void 0) {
-      subs.push(
-        __spreadValues({ url: ItemVariableTopicUrl }, optional("valueCanonical", ctx.topicUrl(variable.topic))),
-        { url: ItemVariableScopeUrl, valueCode: scopeCode(variable.scope) }
-      );
-    } else if (variable.question !== void 0) {
-      subs.push(__spreadValues({ url: ItemVariableQuestionUrl }, optional("valueString", variable.question)));
-    }
-    return { url: QuestionnaireItemVariableExtension, extension: subs };
-  });
-  var topicExtensions = (q, inputType, ctx) => [
-    ...q.input.map((input) => ({
-      url: QuestionnaireItemInputExtension,
-      extension: [
-        __spreadValues({ url: TopicInputTopicUrl }, optional("valueCanonical", ctx.topicUrl(input.topic))),
-        { url: TopicInputScopeUrl, valueCode: scopeCode(input.scope) }
-      ]
-    })),
-    ...inputType === import_research_pillars5.InputType.list ? q.prepopulate.map((prepopulate) => __spreadValues({
-      url: PrepopulateExtension
-    }, optional("valueString", prepopulate))) : [],
-    ...q.output.map((topic) => __spreadValues({
-      url: QuestionnaireItemOutputExtension
-    }, optional("valueCanonical", ctx.topicUrl(topic))))
-  ];
-  var placeholderExtensions = (config) => {
-    var _a;
-    return ((_a = config == null ? void 0 : config.placeholders) != null ? _a : []).map((placeholder) => __spreadValues({
-      url: PlaceholderExtension
-    }, optional("valueString", placeholder)));
-  };
-  var scaleExtensions = (config, language) => {
-    const extensions = [];
-    if (config.step !== void 0) {
-      extensions.push({ url: SliderStepSizeExtension, valueDecimal: config.step });
-    }
-    if (config.orientation) {
-      extensions.push({ url: SliderOrientationExtension, valueCode: config.orientation });
-    }
-    const labels = [
-      [config.inputLabel, SliderInputLabel],
-      [config.minLabel, SliderMinLabelExtension],
-      [config.maxLabel, SliderMaxLabelExtension]
-    ];
-    for (const [label, url] of labels) {
-      if (label && language in label) {
-        extensions.push(__spreadValues({ url }, optional("valueString", label[language])));
-      }
-    }
-    return extensions;
-  };
-  var dateBound = (bound, absoluteUrl, relativeUrl) => {
-    if (bound === void 0 || bound === "") {
-      return [];
-    }
-    const value = String(bound);
-    return DURATION.test(value) ? [{ url: relativeUrl, valueString: value }] : [{ url: absoluteUrl, valueDate: value }];
-  };
-  var postalCodeExtension = (linkId, config) => {
-    var _a;
-    const { fromItem, fixedCountry } = (_a = config == null ? void 0 : config.countrySource) != null ? _a : {};
-    if (!!fromItem === !!fixedCountry) {
-      throw new Error(
-        `Question ${linkId}: postal_code countrySource must include exactly one of fromItem or fixedCountry`
-      );
-    }
-    const sub = fromItem ? { url: PostalCodeFromItemUrl, valueString: fromItem } : { url: PostalCodeFixedCountryUrl, valueCoding: fixedCountry };
-    return { url: PostalCodeCountrySourceExtension, extension: [sub] };
-  };
-  var scopeCode = (scope) => (0, import_research_pillars5.topicScopeToJSON)((0, import_research_pillars5.topicScopeFromJSON)(scope != null ? scope : 0));
-  var positive = (value) => value !== void 0 && value > 0;
-  var optional = (key, value) => value ? { [key]: value } : {};
-
-  // src/fhir/questionnaire/generator/questions.ts
-  var import_research_pillars6 = __toESM(require_types());
-
-  // src/helper/operator.ts
-  var FHIR_OPERATORS = /* @__PURE__ */ new Map([
-    [0, "exists"],
-    ["exists", "exists"],
-    [1, "="],
-    ["eq", "="],
-    [2, "!="],
-    ["neq", "!="],
-    [3, ">"],
-    ["gt", ">"],
-    [4, "<"],
-    ["lt", "<"],
-    [5, ">="],
-    ["gteq", ">="],
-    [6, "<="],
-    ["lteq", "<="]
-  ]);
-  var toFhirOperator = (operator) => FHIR_OPERATORS.get(operator != null ? operator : 0);
-
-  // node_modules/uuid/dist/esm-browser/regex.js
-  var regex_default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/i;
-
-  // node_modules/uuid/dist/esm-browser/validate.js
-  function validate(uuid) {
-    return typeof uuid === "string" && regex_default.test(uuid);
-  }
-  var validate_default = validate;
-
-  // node_modules/uuid/dist/esm-browser/parse.js
-  function parse(uuid) {
-    if (!validate_default(uuid)) {
-      throw TypeError("Invalid UUID");
-    }
-    let v;
-    return Uint8Array.of((v = parseInt(uuid.slice(0, 8), 16)) >>> 24, v >>> 16 & 255, v >>> 8 & 255, v & 255, (v = parseInt(uuid.slice(9, 13), 16)) >>> 8, v & 255, (v = parseInt(uuid.slice(14, 18), 16)) >>> 8, v & 255, (v = parseInt(uuid.slice(19, 23), 16)) >>> 8, v & 255, (v = parseInt(uuid.slice(24, 36), 16)) / 1099511627776 & 255, v / 4294967296 & 255, v >>> 24 & 255, v >>> 16 & 255, v >>> 8 & 255, v & 255);
-  }
-  var parse_default = parse;
-
-  // node_modules/uuid/dist/esm-browser/stringify.js
-  var byteToHex = [];
-  for (let i = 0; i < 256; ++i) {
-    byteToHex.push((i + 256).toString(16).slice(1));
-  }
-  function unsafeStringify(arr, offset = 0) {
-    return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
-  }
-
-  // node_modules/uuid/dist/esm-browser/v35.js
-  function stringToBytes(str) {
-    str = unescape(encodeURIComponent(str));
-    const bytes = new Uint8Array(str.length);
-    for (let i = 0; i < str.length; ++i) {
-      bytes[i] = str.charCodeAt(i);
-    }
-    return bytes;
-  }
-  var DNS = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
-  var URL = "6ba7b811-9dad-11d1-80b4-00c04fd430c8";
-  function v35(version, hash, value, namespace, buf, offset) {
-    const valueBytes = typeof value === "string" ? stringToBytes(value) : value;
-    const namespaceBytes = typeof namespace === "string" ? parse_default(namespace) : namespace;
-    if (typeof namespace === "string") {
-      namespace = parse_default(namespace);
-    }
-    if ((namespace == null ? void 0 : namespace.length) !== 16) {
-      throw TypeError("Namespace must be array-like (16 iterable integer values, 0-255)");
-    }
-    let bytes = new Uint8Array(16 + valueBytes.length);
-    bytes.set(namespaceBytes);
-    bytes.set(valueBytes, namespaceBytes.length);
-    bytes = hash(bytes);
-    bytes[6] = bytes[6] & 15 | version;
-    bytes[8] = bytes[8] & 63 | 128;
-    if (buf) {
-      offset = offset || 0;
-      for (let i = 0; i < 16; ++i) {
-        buf[offset + i] = bytes[i];
-      }
-      return buf;
-    }
-    return unsafeStringify(bytes);
-  }
-
-  // node_modules/uuid/dist/esm-browser/sha1.js
-  function f(s, x, y, z) {
-    switch (s) {
-      case 0:
-        return x & y ^ ~x & z;
-      case 1:
-        return x ^ y ^ z;
-      case 2:
-        return x & y ^ x & z ^ y & z;
-      case 3:
-        return x ^ y ^ z;
-    }
-  }
-  function ROTL(x, n) {
-    return x << n | x >>> 32 - n;
-  }
-  function sha1(bytes) {
-    const K = [1518500249, 1859775393, 2400959708, 3395469782];
-    const H = [1732584193, 4023233417, 2562383102, 271733878, 3285377520];
-    const newBytes = new Uint8Array(bytes.length + 1);
-    newBytes.set(bytes);
-    newBytes[bytes.length] = 128;
-    bytes = newBytes;
-    const l = bytes.length / 4 + 2;
-    const N = Math.ceil(l / 16);
-    const M = new Array(N);
-    for (let i = 0; i < N; ++i) {
-      const arr = new Uint32Array(16);
-      for (let j = 0; j < 16; ++j) {
-        arr[j] = bytes[i * 64 + j * 4] << 24 | bytes[i * 64 + j * 4 + 1] << 16 | bytes[i * 64 + j * 4 + 2] << 8 | bytes[i * 64 + j * 4 + 3];
-      }
-      M[i] = arr;
-    }
-    M[N - 1][14] = (bytes.length - 1) * 8 / Math.pow(2, 32);
-    M[N - 1][14] = Math.floor(M[N - 1][14]);
-    M[N - 1][15] = (bytes.length - 1) * 8 & 4294967295;
-    for (let i = 0; i < N; ++i) {
-      const W = new Uint32Array(80);
-      for (let t = 0; t < 16; ++t) {
-        W[t] = M[i][t];
-      }
-      for (let t = 16; t < 80; ++t) {
-        W[t] = ROTL(W[t - 3] ^ W[t - 8] ^ W[t - 14] ^ W[t - 16], 1);
-      }
-      let a = H[0];
-      let b = H[1];
-      let c = H[2];
-      let d = H[3];
-      let e = H[4];
-      for (let t = 0; t < 80; ++t) {
-        const s = Math.floor(t / 20);
-        const T = ROTL(a, 5) + f(s, b, c, d) + e + K[s] + W[t] >>> 0;
-        e = d;
-        d = c;
-        c = ROTL(b, 30) >>> 0;
-        b = a;
-        a = T;
-      }
-      H[0] = H[0] + a >>> 0;
-      H[1] = H[1] + b >>> 0;
-      H[2] = H[2] + c >>> 0;
-      H[3] = H[3] + d >>> 0;
-      H[4] = H[4] + e >>> 0;
-    }
-    return Uint8Array.of(H[0] >> 24, H[0] >> 16, H[0] >> 8, H[0], H[1] >> 24, H[1] >> 16, H[1] >> 8, H[1], H[2] >> 24, H[2] >> 16, H[2] >> 8, H[2], H[3] >> 24, H[3] >> 16, H[3] >> 8, H[3], H[4] >> 24, H[4] >> 16, H[4] >> 8, H[4]);
-  }
-  var sha1_default = sha1;
-
-  // node_modules/uuid/dist/esm-browser/v5.js
-  function v5(value, namespace, buf, offset) {
-    return v35(80, sha1_default, value, namespace, buf, offset);
-  }
-  v5.DNS = DNS;
-  v5.URL = URL;
-  var v5_default = v5;
-
-  // src/fhir/questionnaire/generator/valuesets.ts
-  var generateValueSet = (answerset, linkId, language, ctx) => {
-    const url = ctx.valueSetUrl(linkId);
-    const system = answerset.system || ctx.questionUrl("CodeSystem", linkId);
-    const sorted = answerset.order && answerset.order !== "default";
-    return __spreadProps(__spreadValues({
-      resourceType: "ValueSet",
-      language
-    }, sorted && { extension: [{ url: ValuesetSortingExtension, valueCode: answerset.order }] }), {
-      name: linkId,
-      url,
-      status: "active",
-      publisher: PUBLISHER_NAME,
-      contact: [{ name: PUBLISHER_NAME, telecom: [{ system: "url", value: PUBLISHER_URL }] }],
-      compose: { include: [{ system, concept: answerset.answers.map(({ code }) => ({ code })) }] },
-      expansion: {
-        identifier: v5_default([url, language, ctx.timestamp].join("|"), v5_default.URL),
-        timestamp: ctx.timestamp,
-        parameter: [{ name: "displayLanguage", valueCode: language }],
-        contains: answerset.answers.map(({ code, languages }) => __spreadValues(__spreadValues({
-          system
-        }, optional("code", code)), optional("display", languages[language])))
-      }
-    });
-  };
-
-  // src/fhir/questionnaire/generator/questions.ts
-  var FHIR_TYPES = {
-    [import_research_pillars6.InputType.single_select]: "coding",
-    [import_research_pillars6.InputType.multi_select]: "coding",
-    [import_research_pillars6.InputType.country]: "coding",
-    [import_research_pillars6.InputType.matrix_item]: "coding",
-    [import_research_pillars6.InputType.year]: "date",
-    [import_research_pillars6.InputType.scale_numeric]: "decimal",
-    [import_research_pillars6.InputType.scale_ordinal]: "integer",
-    [import_research_pillars6.InputType.geo_location]: "string",
-    [import_research_pillars6.InputType.list]: "string",
-    [import_research_pillars6.InputType.postal_code]: "string",
-    [import_research_pillars6.InputType.matrix]: "group",
-    [import_research_pillars6.InputType.scale_likert]: "integer"
-  };
-  var NATIVE_TYPES = /* @__PURE__ */ new Set([
-    import_research_pillars6.InputType.display,
-    import_research_pillars6.InputType.string,
-    import_research_pillars6.InputType.text,
-    import_research_pillars6.InputType.integer,
-    import_research_pillars6.InputType.decimal,
-    import_research_pillars6.InputType.date,
-    import_research_pillars6.InputType.group
-  ]);
-  var fhirTypeOf = (linkId, inputType) => {
-    const fhirType = FHIR_TYPES[inputType];
-    if (fhirType) {
-      return fhirType;
-    }
-    if (NATIVE_TYPES.has(inputType)) {
-      return (0, import_research_pillars6.inputTypeToJSON)(inputType);
-    }
-    throw new Error(`Question ${linkId} has an unsupported input type: ${(0, import_research_pillars6.inputTypeToJSON)(inputType)}`);
-  };
-  var generateItem = (q, language, contained, ctx, parentValueSet) => {
-    var _a, _b, _c, _d;
-    const inputType = (0, import_research_pillars6.inputTypeFromJSON)(q.inputType);
-    const type = fhirTypeOf(q.linkId, inputType);
-    const { extensions, maxLength } = generateExtensions(q, inputType, type, language, ctx);
-    const text = (_a = q.text) == null ? void 0 : _a[language];
-    if (!text) {
-      throw new Error(`Question ${q.linkId} is missing its ${language} translation`);
-    }
-    let answerValueSet = parentValueSet;
-    if (inputType === import_research_pillars6.InputType.country) {
-      answerValueSet = CountryValueSet;
-    } else if (q.answerset) {
-      answerValueSet = `#${containValueSet(generateValueSet(q.answerset, q.linkId, language, ctx), contained)}`;
-    }
-    const expression = q.enableWhenExpression;
-    if (expression) {
-      extensions.push(...itemVariableExtensions(q, ctx));
-    }
-    const nativeEnableWhen = !expression && ((_b = q.enableWhen) == null ? void 0 : _b.length) > 0;
-    const hasRequired = inputType !== import_research_pillars6.InputType.display && inputType !== import_research_pillars6.InputType.group;
-    const repeats = inputType === import_research_pillars6.InputType.multi_select || inputType === import_research_pillars6.InputType.list;
-    return __spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({
-      linkId: q.linkId,
-      type,
-      text
-    }, answerValueSet && { answerValueSet }), repeats && { repeats }), ((_c = q.code) == null ? void 0 : _c.length) > 0 && {
-      code: q.code.map(({ system, code, display }) => __spreadValues(__spreadValues(__spreadValues({}, optional("system", system)), optional("code", code)), optional("display", display)))
-    }), extensions.length > 0 && { extension: extensions }), maxLength !== void 0 && { maxLength }), hasRequired && q.required && { required: true }), expression && {
-      modifierExtension: [
-        {
-          url: EnableWhenExpressionExtension,
-          valueExpression: { language: FhirPathLanguage, expression }
-        }
-      ]
-    }), nativeEnableWhen && {
-      enableBehavior: q.enableBehavior === "any" ? "any" : "all",
-      enableWhen: q.enableWhen.map((ew) => generateEnableWhen(ew, ctx))
-    }), type === "group" && {
-      item: ((_d = q.items) != null ? _d : []).map((child) => generateItem(child, language, contained, ctx, answerValueSet))
-    });
-  };
-  var containValueSet = (valueSet, contained) => {
-    const index = contained.findIndex((existing) => existing.url === valueSet.url);
-    if (index >= 0) {
-      return index;
-    }
-    contained.push(__spreadProps(__spreadValues({}, valueSet), { id: String(contained.length) }));
-    return contained.length - 1;
-  };
-  var generateEnableWhen = (ew, ctx) => {
-    var _a;
-    return __spreadValues(__spreadValues(__spreadValues({
-      question: ew.question,
-      operator: (_a = toFhirOperator(ew.operator)) != null ? _a : "="
-    }, ew.answerCoding !== void 0 && {
-      answerCoding: __spreadProps(__spreadValues({}, optional("code", ew.answerCoding)), { system: ctx.effectiveCodeSystem(ew.question) })
-    }), ew.answerDate !== void 0 && { answerDate: ew.answerDate }), ew.answerDecimal !== void 0 && { answerDecimal: ew.answerDecimal });
-  };
-
-  // src/fhir/questionnaire/generator/questionnaire.ts
-  var PUBLISHER_NAME = "D4L data4life gGmbH";
-  var PUBLISHER_URL = "https://www.data4life.care";
-  var generateFHIRQuestionnaire = (input, options) => {
-    var _a;
-    const definition = import_research_pillars7.Questionnaire.fromJSON(input);
-    const ctx = createContext(definition, options);
-    const questionnaires = {};
-    for (const language of options.languages) {
-      const contained = [];
-      const item = definition.questions.map((q) => generateItem(q, language, contained, ctx));
-      questionnaires[language] = __spreadValues(__spreadValues(__spreadProps(__spreadValues(__spreadValues(__spreadValues(__spreadProps(__spreadValues({
-        resourceType: "Questionnaire",
-        language
-      }, optional("name", definition.name)), {
-        url: ctx.questionnaireUrl,
-        status: "active",
-        publisher: PUBLISHER_NAME,
-        contact: [{ name: PUBLISHER_NAME, telecom: [{ system: "url", value: PUBLISHER_URL }] }]
-      }), optional("version", definition.version)), optional("title", (_a = definition.title) == null ? void 0 : _a[language])), optional("date", options.date)), {
-        subjectType: ["Patient"]
-      }), item.length > 0 && { item }), contained.length > 0 && { contained });
-    }
-    return questionnaires;
   };
   return __toCommonJS(fhirquestionnaire_exports);
 })();

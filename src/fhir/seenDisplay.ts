@@ -19,11 +19,7 @@ export function generateFHIRSeenDisplay(id: string, seenDisplay: SeenDisplay): f
   if (hasBlocks) {
     contentData = JSON.stringify(seenDisplay.content!.blocks!);
   } else {
-    contentData = getText<DisplayContentPath>(
-      seenDisplay.content,
-      'default.message',
-      seenDisplay.lng
-    );
+    contentData = getText<DisplayContentPath>(seenDisplay.content, 'default.message', seenDisplay.lng);
   }
 
   const payload: fhir5.Communication['payload'] = seenDisplay.content
@@ -32,11 +28,7 @@ export function generateFHIRSeenDisplay(id: string, seenDisplay: SeenDisplay): f
           contentAttachment: {
             contentType: 'text/plain',
             language: seenDisplay.lng,
-            title: getText<DisplayContentPath>(
-              seenDisplay.content,
-              'default.title',
-              seenDisplay.lng
-            ),
+            title: getText<DisplayContentPath>(seenDisplay.content, 'default.title', seenDisplay.lng),
             data: Buffer.from(contentData).toString('base64'),
           },
           contentCodeableConcept,

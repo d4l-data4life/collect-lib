@@ -1,6 +1,3 @@
-import { CountryValueSet } from '../../constants';
-import { decompileEnableWhen, EnableWhenBehavior } from '../../enable-when-conditions';
-import { TopicScopeCode } from '../../topic-id';
 import {
   Answerset,
   InputType,
@@ -9,8 +6,11 @@ import {
   Question,
   topicScopeToJSON,
 } from '@d4l/grpc-modules/research-pillars';
-import { DefaultCodeSystem } from './valuesets';
+import { CountryValueSet } from '../../constants';
+import { decompileEnableWhen, EnableWhenBehavior } from '../../enable-when-conditions';
+import { TopicScopeCode } from '../../topic-id';
 import { parseCodes, parseEnableWhenExpression, parseExtensions, stringToOperator } from './extensions';
+import { DefaultCodeSystem } from './valuesets';
 
 /** The answer set without its system when that system is the question's Default Code System. */
 const withoutDefaultCodeSystem = (answerset: Answerset, defaultCodeSystem: string | undefined): Answerset => {

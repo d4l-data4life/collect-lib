@@ -17,15 +17,9 @@ export const filterRecords = (
   donation: ProgramDonation
 ): DonationRecord[] => {
   return records
-    .filter(
-      (record) =>
-        record.status === 'Deleted' || isValidDocument(record.document, programName)
-    )
+    .filter((record) => record.status === 'Deleted' || isValidDocument(record.document, programName))
     .map((record) => {
-      const blurredDocument = blurDocument(
-        record.document as fhir5.Resource,
-        donation.anonymization
-      );
+      const blurredDocument = blurDocument(record.document as fhir5.Resource, donation.anonymization);
       return {
         document: blurredDocument,
         status: record.status,
@@ -80,9 +74,7 @@ export const isValidDocument = (document: unknown, programName: string): boolean
  * Checks if a document is a FHIR QuestionnaireResponse
  * @param document The document to check
  */
-export const isQuestionnaireResponse = (
-  document: unknown
-): document is fhir5.QuestionnaireResponse =>
+export const isQuestionnaireResponse = (document: unknown): document is fhir5.QuestionnaireResponse =>
   (document as fhir5.QuestionnaireResponse).resourceType === 'QuestionnaireResponse';
 
 /**
@@ -120,10 +112,7 @@ const isRecording = (document: unknown): document is fhir5.Bundle =>
 const isCommunication = (document: unknown): document is fhir5.Communication =>
   (document as fhir5.Communication)?.resourceType === 'Communication';
 
-const isAllowedResearchSubject = (
-  document: fhir5.ResearchSubject,
-  programName: string
-): boolean => {
+const isAllowedResearchSubject = (document: fhir5.ResearchSubject, programName: string): boolean => {
   if (!document.study || !document.subject || !document.study.identifier) {
     return false;
   }

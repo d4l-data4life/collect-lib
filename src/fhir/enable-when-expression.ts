@@ -200,8 +200,7 @@ export const ENABLE_WHEN_CONFORMANCE_CASES: EnableWhenConformanceCase[] = [
     expected: true,
   },
   {
-    description:
-      'coding equals: multi-value topic (scope all / multi_select) holds the code -> shown',
+    description: 'coding equals: multi-value topic (scope all / multi_select) holds the code -> shown',
     expression: "%gender contains 'male'",
     variables: { gender: ['female', 'male'] },
     now: '2026-08-31',
@@ -459,16 +458,14 @@ export const ENABLE_WHEN_CONFORMANCE_CASES: EnableWhenConformanceCase[] = [
   // combining conditions: each condition parenthesized, one connector.
   {
     description: 'all of: local smoker yes and topic gender not male -> shown',
-    expression:
-      "(%smoker contains 'yes') and (%gender.exists() and (%gender contains 'male').not())",
+    expression: "(%smoker contains 'yes') and (%gender.exists() and (%gender contains 'male').not())",
     variables: { smoker: ['yes'], gender: ['female'] },
     now: '2026-08-31',
     expected: true,
   },
   {
     description: 'all of: local smoker no -> hidden',
-    expression:
-      "(%smoker contains 'yes') and (%gender.exists() and (%gender contains 'male').not())",
+    expression: "(%smoker contains 'yes') and (%gender.exists() and (%gender contains 'male').not())",
     variables: { smoker: ['no'], gender: ['female'] },
     now: '2026-08-31',
     expected: false,

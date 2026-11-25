@@ -53,9 +53,7 @@ describe('isNotBeforeStartDate', () => {
 describe('isBeforeStartDate', () => {
   it('works', () => {
     const effectiveStartDate = new Date('2021-02-03T00:00:00.000Z');
-    expect(
-      isBeforeStartDate(effectiveStartDate, new Date('2021-02-02T15:12:16.123Z'))
-    ).toBeTruthy();
+    expect(isBeforeStartDate(effectiveStartDate, new Date('2021-02-02T15:12:16.123Z'))).toBeTruthy();
     expect(isBeforeStartDate(effectiveStartDate, new Date('2021-02-03T09:15:16.123Z'))).toBeFalsy();
     expect(isBeforeStartDate(undefined, new Date('2021-02-03T09:15:16.123Z'))).toBeFalsy();
   });

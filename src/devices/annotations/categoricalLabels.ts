@@ -1,3 +1,4 @@
+import { DEVICE_KEY_TO_NAME } from '../types';
 import { APPLE_HEALTH_SLEEP_STATE_MAP, AppleHealthSleepStates } from './appleHealth';
 import { FITBIT_SLEEP_LEVEL_MAP, FitbitSleepLevelTypes } from './fitbit';
 import {
@@ -10,7 +11,6 @@ import {
 } from './google-health';
 import { HEALTH_CONNECT_SLEEP_STAGE_MAP, HealthConnectSleepStages } from './healthConnect';
 import { MENSTRUAL_CYCLE_PHASE, MENSTRUAL_FLOW } from './menstrual';
-import { DEVICE_KEY_TO_NAME } from '../types';
 
 // CATEGORICAL_LABELS (bottom of this file) is exported to Go as pkg/categoricallabels (see
 // README_GO.md), which data-receiver uses to write labels instead of codes into its CSV export.

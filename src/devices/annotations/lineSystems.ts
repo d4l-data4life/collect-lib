@@ -51,10 +51,7 @@ export const LINE_SYSTEMS_BGM_ANNOTATION: DEVICE_ANNOTATION = [
  * Glucose annotation with the unit reported by Line Portal for the stored samples.
  * Falls back to the default unit when the response carries none.
  */
-export const lineSystemsGlucoseAnnotation = (
-  type: 'cgm' | 'bgm',
-  unit?: string
-): DEVICE_ANNOTATION => {
+export const lineSystemsGlucoseAnnotation = (type: 'cgm' | 'bgm', unit?: string): DEVICE_ANNOTATION => {
   const base = type === 'cgm' ? LINE_SYSTEMS_CGM_ANNOTATION : LINE_SYSTEMS_BGM_ANNOTATION;
   return base.map((item) =>
     item.type === type ? { ...item, unit: unit || LINE_SYSTEMS_GLUCOSE_DEFAULT_UNIT } : item
