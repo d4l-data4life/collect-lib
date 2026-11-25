@@ -87,6 +87,12 @@ describe('generateFHIRQuestionnaire', () => {
       );
     });
 
+    it('writes the contained value sets after the items', () => {
+      const { en } = generate(question({ inputType: InputType.single_select, answerset: answerset() }));
+
+      expect(Object.keys(en).slice(-2)).toEqual(['item', 'contained']);
+    });
+
     it('shares one contained value set between questions with the same custom system and answers', () => {
       const system = 'http://example.org/CodeSystem/mood';
       const { en } = generate(

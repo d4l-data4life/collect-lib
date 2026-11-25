@@ -38,8 +38,8 @@ export const generateFHIRQuestionnaire = (
       ...optional('title', definition.title?.[language]),
       ...optional('date', options.date),
       subjectType: ['Patient'],
-      ...(contained.length > 0 && { contained }),
       ...(item.length > 0 && { item }),
+      ...(contained.length > 0 && { contained }),
     };
   }
   return questionnaires;

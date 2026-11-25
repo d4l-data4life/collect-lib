@@ -1,5 +1,6 @@
 import { addDays, addWeeks } from 'date-fns';
-import { StepCondition } from '../types';
+import { EnableWhen, Operator } from '@d4l/grpc-modules/research-pillars';
+import { ConditionOperatorType, StepCondition } from '../types';
 import {
   AnswerCodeGuard,
   AnswerDateGuard,
@@ -1163,31 +1164,160 @@ describe('Guard', () => {
   });
 
   describe('generateQuestionGuard', () => {
+    const condition = (ew: Partial<EnableWhen>): EnableWhen => ({
+      question: 'q',
+      operator: Operator.eq,
+      ...ew,
+    });
+
+    it('returns no guard without conditions', () => {
+      expect(generateQuestionGuard(undefined, 'all')).toBeUndefined();
+      expect(generateQuestionGuard([], 'all')).toBeUndefined();
+    });
+
+    it('maps every operator', () => {
+      const cases: [Operator, ConditionOperatorType][] = [
+        [Operator.eq, '='],
+        [Operator.neq, '!='],
+        [Operator.gt, '>'],
+        [Operator.lt, '<'],
+        [Operator.gteq, '>='],
+        [Operator.lteq, '<='],
+      ];
+      for (const [operator, expected] of cases) {
+        const guard = generateQuestionGuard([condition({ operator, answerDecimal: 3 })], 'all');
+        expect(guard).toEqual(new Conjunction([new DecimalGuard('q', 3, expected)]));
+      }
+    });
+
+    it('accepts the operator by its JSON name', () => {
+      const operator = 'gteq' as unknown as Operator;
+      const guard = generateQuestionGuard([condition({ operator, answerDecimal: 3 })], 'all');
+
+      expect(guard).toEqual(new Conjunction([new DecimalGuard('q', 3, '>=')]));
+    });
+
+    it('creates an exists guard for the exists operator', () => {
+      const guard = generateQuestionGuard([condition({ operator: Operator.exists })], 'all');
+
+      expect(guard).toEqual(new Conjunction([new ExistsGuard('q')]));
+      expect(guard?.evaluate({ q: 'anything' })).toBe(true);
+      expect(guard?.evaluate({})).toBe(false);
+    });
+
+    // Proto JSON omits the default operator, so exists is missing in a definition read from JSON.
+    it('creates an exists guard for an operator omitted from JSON', () => {
+      const ew = EnableWhen.toJSON(condition({ operator: Operator.exists })) as EnableWhen;
+      const guard = generateQuestionGuard([ew], 'all');
+
+      expect(ew.operator).toBeUndefined();
+      expect(guard).toEqual(new Conjunction([new ExistsGuard('q')]));
+    });
+
+    it('keeps an exists condition omitted from JSON in an all dependency', () => {
+      const conditions = [
+        condition({ question: 'a', operator: Operator.exists }),
+        condition({ question: 'b', operator: Operator.eq, answerCoding: 'yes' }),
+      ].map((ew) => EnableWhen.toJSON(ew) as EnableWhen);
+      const guard = generateQuestionGuard(conditions, 'all');
+
+      expect(guard?.evaluate({ a: 'x', b: 'yes' })).toBe(true);
+      expect(guard?.evaluate({ b: 'yes' })).toBe(false);
+    });
+
+    it('creates a code guard from a plain answer code', () => {
+      const guard = generateQuestionGuard(
+        [condition({ operator: Operator.eq, answerCoding: 'yes' })],
+        'all'
+      );
+
+      expect(guard).toEqual(new Conjunction([new AnswerCodeGuard('q', '=', 'yes')]));
+      expect(guard?.evaluate({ q: 'yes' })).toBe(true);
+      expect(guard?.evaluate({ q: ['no', 'yes'] })).toBe(true);
+      expect(guard?.evaluate({ q: 'no' })).toBe(false);
+    });
+
+    it('creates a date guard for a full date', () => {
+      const guard = generateQuestionGuard(
+        [condition({ operator: Operator.gt, answerDate: '2020-01-01' })],
+        'all'
+      );
+
+      expect(guard).toEqual(new Conjunction([new AnswerDateGuard('q', '2020-01-01', '>')]));
+      expect(guard?.evaluate({ q: '2020-06-01' })).toBe(true);
+      expect(guard?.evaluate({ q: '2019-06-01' })).toBe(false);
+    });
+
+    it('creates a year guard for a 4-digit date', () => {
+      const guard = generateQuestionGuard(
+        [condition({ operator: Operator.lteq, answerDate: '2000' })],
+        'all'
+      );
+
+      expect(guard).toEqual(new Conjunction([new YearGuard('q', '2000', '<=')]));
+      expect(guard?.evaluate({ q: '1999' })).toBe(true);
+      expect(guard?.evaluate({ q: '2001' })).toBe(false);
+    });
+
     it('creates a decimal guard when answerDecimal is 0', () => {
       const guard = generateQuestionGuard(
-        [{ question: 'pain-level', operator: '!=', answerDecimal: 0 }],
+        [condition({ question: 'pain-level', operator: Operator.neq, answerDecimal: 0 })],
         'all'
       );
 
       expect(guard).toEqual(new Conjunction([new DecimalGuard('pain-level', 0, '!=')]));
-    });
-
-    it('does not show a question when the answer equals 0 and condition is != 0', () => {
-      const guard = generateQuestionGuard(
-        [{ question: 'pain-level', operator: '!=', answerDecimal: 0 }],
-        'all'
-      );
-
       expect(guard?.evaluate({ 'pain-level': '0' })).toBe(false);
+      expect(guard?.evaluate({ 'pain-level': '5' })).toBe(true);
     });
 
-    it('shows a question when the answer is not 0 and condition is != 0', () => {
-      const guard = generateQuestionGuard(
-        [{ question: 'pain-level', operator: '!=', answerDecimal: 0 }],
-        'all'
-      );
+    describe('enableBehavior', () => {
+      const conditions = [
+        condition({ question: 'a', answerCoding: 'yes' }),
+        condition({ question: 'b', answerCoding: 'yes' }),
+      ];
 
-      expect(guard?.evaluate({ 'pain-level': '5' })).toBe(true);
+      it('combines conditions with AND for "all"', () => {
+        const guard = generateQuestionGuard(conditions, 'all');
+
+        expect(guard).toBeInstanceOf(Conjunction);
+        expect(guard?.evaluate({ a: 'yes', b: 'yes' })).toBe(true);
+        expect(guard?.evaluate({ a: 'yes', b: 'no' })).toBe(false);
+      });
+
+      it('combines conditions with OR for "any"', () => {
+        const guard = generateQuestionGuard(conditions, 'any');
+
+        expect(guard).toBeInstanceOf(Disjunction);
+        expect(guard?.evaluate({ a: 'yes', b: 'no' })).toBe(true);
+        expect(guard?.evaluate({ a: 'no', b: 'no' })).toBe(false);
+      });
+
+      it('combines conditions with AND without an enableBehavior', () => {
+        expect(generateQuestionGuard(conditions, undefined)).toBeInstanceOf(Conjunction);
+      });
+    });
+
+    describe('Operator.UNRECOGNIZED', () => {
+      it('ignores the condition', () => {
+        const guard = generateQuestionGuard(
+          [
+            condition({ question: 'a', answerCoding: 'yes' }),
+            condition({ question: 'b', operator: Operator.UNRECOGNIZED, answerCoding: 'yes' }),
+          ],
+          'all'
+        );
+
+        expect(guard).toEqual(new Conjunction([new AnswerCodeGuard('a', '=', 'yes')]));
+      });
+
+      it('returns no guard when no other condition is left', () => {
+        const guard = generateQuestionGuard(
+          [condition({ operator: Operator.UNRECOGNIZED, answerCoding: 'yes' })],
+          'any'
+        );
+
+        expect(guard).toBeUndefined();
+      });
     });
   });
 });

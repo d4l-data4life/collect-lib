@@ -22,130 +22,6 @@
   "subjectType": [
     "Patient"
   ],
-  "contained": [
-    {
-      "resourceType": "ValueSet",
-      "language": "de",
-      "name": "mood-today",
-      "url": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/ValueSet/edge-cases/mood",
-      "status": "active",
-      "publisher": "D4L data4life gGmbH",
-      "contact": [
-        {
-          "name": "D4L data4life gGmbH",
-          "telecom": [
-            {
-              "system": "url",
-              "value": "https://www.data4life.care"
-            }
-          ]
-        }
-      ],
-      "compose": {
-        "include": [
-          {
-            "system": "http://example.org/CodeSystem/mood",
-            "concept": [
-              {
-                "code": "good"
-              },
-              {
-                "code": "bad"
-              }
-            ]
-          }
-        ]
-      },
-      "expansion": {
-        "identifier": "f1e3d903-dd14-5ea4-93c2-8e92874a3595",
-        "timestamp": "2026-11-10T06:37:58Z",
-        "parameter": [
-          {
-            "name": "displayLanguage",
-            "valueCode": "de"
-          }
-        ],
-        "contains": [
-          {
-            "system": "http://example.org/CodeSystem/mood",
-            "code": "good",
-            "display": "Gut"
-          },
-          {
-            "system": "http://example.org/CodeSystem/mood",
-            "code": "bad",
-            "display": "Schlecht"
-          }
-        ]
-      },
-      "id": "0"
-    },
-    {
-      "resourceType": "ValueSet",
-      "language": "de",
-      "name": "satisfaction",
-      "url": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/ValueSet/edge-cases/satisfaction",
-      "status": "active",
-      "publisher": "D4L data4life gGmbH",
-      "contact": [
-        {
-          "name": "D4L data4life gGmbH",
-          "telecom": [
-            {
-              "system": "url",
-              "value": "https://www.data4life.care"
-            }
-          ]
-        }
-      ],
-      "compose": {
-        "include": [
-          {
-            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/edge-cases/satisfaction",
-            "concept": [
-              {
-                "code": "1"
-              },
-              {
-                "code": "2"
-              },
-              {
-                "code": "3"
-              }
-            ]
-          }
-        ]
-      },
-      "expansion": {
-        "identifier": "2bd1d96e-9a70-5106-afd0-f28d410ee06e",
-        "timestamp": "2026-11-10T06:37:58Z",
-        "parameter": [
-          {
-            "name": "displayLanguage",
-            "valueCode": "de"
-          }
-        ],
-        "contains": [
-          {
-            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/edge-cases/satisfaction",
-            "code": "1",
-            "display": "Niedrig"
-          },
-          {
-            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/edge-cases/satisfaction",
-            "code": "2",
-            "display": "Mittel"
-          },
-          {
-            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/edge-cases/satisfaction",
-            "code": "3",
-            "display": "Hoch"
-          }
-        ]
-      },
-      "id": "1"
-    }
-  ],
   "item": [
     {
       "linkId": "mood-today",
@@ -344,6 +220,130 @@
           "answerDecimal": 65
         }
       ]
+    }
+  ],
+  "contained": [
+    {
+      "resourceType": "ValueSet",
+      "language": "de",
+      "name": "mood-today",
+      "url": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/ValueSet/edge-cases/mood",
+      "status": "active",
+      "publisher": "D4L data4life gGmbH",
+      "contact": [
+        {
+          "name": "D4L data4life gGmbH",
+          "telecom": [
+            {
+              "system": "url",
+              "value": "https://www.data4life.care"
+            }
+          ]
+        }
+      ],
+      "compose": {
+        "include": [
+          {
+            "system": "http://example.org/CodeSystem/mood",
+            "concept": [
+              {
+                "code": "good"
+              },
+              {
+                "code": "bad"
+              }
+            ]
+          }
+        ]
+      },
+      "expansion": {
+        "identifier": "f1e3d903-dd14-5ea4-93c2-8e92874a3595",
+        "timestamp": "2026-11-10T06:37:58Z",
+        "parameter": [
+          {
+            "name": "displayLanguage",
+            "valueCode": "de"
+          }
+        ],
+        "contains": [
+          {
+            "system": "http://example.org/CodeSystem/mood",
+            "code": "good",
+            "display": "Gut"
+          },
+          {
+            "system": "http://example.org/CodeSystem/mood",
+            "code": "bad",
+            "display": "Schlecht"
+          }
+        ]
+      },
+      "id": "0"
+    },
+    {
+      "resourceType": "ValueSet",
+      "language": "de",
+      "name": "satisfaction",
+      "url": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/ValueSet/edge-cases/satisfaction",
+      "status": "active",
+      "publisher": "D4L data4life gGmbH",
+      "contact": [
+        {
+          "name": "D4L data4life gGmbH",
+          "telecom": [
+            {
+              "system": "url",
+              "value": "https://www.data4life.care"
+            }
+          ]
+        }
+      ],
+      "compose": {
+        "include": [
+          {
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/edge-cases/satisfaction",
+            "concept": [
+              {
+                "code": "1"
+              },
+              {
+                "code": "2"
+              },
+              {
+                "code": "3"
+              }
+            ]
+          }
+        ]
+      },
+      "expansion": {
+        "identifier": "2bd1d96e-9a70-5106-afd0-f28d410ee06e",
+        "timestamp": "2026-11-10T06:37:58Z",
+        "parameter": [
+          {
+            "name": "displayLanguage",
+            "valueCode": "de"
+          }
+        ],
+        "contains": [
+          {
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/edge-cases/satisfaction",
+            "code": "1",
+            "display": "Niedrig"
+          },
+          {
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/edge-cases/satisfaction",
+            "code": "2",
+            "display": "Mittel"
+          },
+          {
+            "system": "https://collect.dev.d4l-dev.de/fhir/r5/import_questionnaire/CodeSystem/edge-cases/satisfaction",
+            "code": "3",
+            "display": "Hoch"
+          }
+        ]
+      },
+      "id": "1"
     }
   ]
 }

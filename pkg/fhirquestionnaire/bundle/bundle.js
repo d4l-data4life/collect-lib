@@ -3509,7 +3509,7 @@ var Exports = (() => {
       exports.topicScopeToJSON = topicScopeToJSON3;
       exports.inputTypeFromJSON = inputTypeFromJSON5;
       exports.inputTypeToJSON = inputTypeToJSON3;
-      exports.operatorFromJSON = operatorFromJSON3;
+      exports.operatorFromJSON = operatorFromJSON2;
       exports.operatorToJSON = operatorToJSON;
       exports.roleFromJSON = roleFromJSON;
       exports.roleToJSON = roleToJSON;
@@ -3689,63 +3689,63 @@ var Exports = (() => {
             return "UNRECOGNIZED";
         }
       }
-      var Operator2;
-      (function(Operator3) {
-        Operator3[Operator3["exists"] = 0] = "exists";
-        Operator3[Operator3["eq"] = 1] = "eq";
-        Operator3[Operator3["neq"] = 2] = "neq";
-        Operator3[Operator3["gt"] = 3] = "gt";
-        Operator3[Operator3["lt"] = 4] = "lt";
-        Operator3[Operator3["gteq"] = 5] = "gteq";
-        Operator3[Operator3["lteq"] = 6] = "lteq";
-        Operator3[Operator3["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
-      })(Operator2 || (exports.Operator = Operator2 = {}));
-      function operatorFromJSON3(object) {
+      var Operator;
+      (function(Operator2) {
+        Operator2[Operator2["exists"] = 0] = "exists";
+        Operator2[Operator2["eq"] = 1] = "eq";
+        Operator2[Operator2["neq"] = 2] = "neq";
+        Operator2[Operator2["gt"] = 3] = "gt";
+        Operator2[Operator2["lt"] = 4] = "lt";
+        Operator2[Operator2["gteq"] = 5] = "gteq";
+        Operator2[Operator2["lteq"] = 6] = "lteq";
+        Operator2[Operator2["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
+      })(Operator || (exports.Operator = Operator = {}));
+      function operatorFromJSON2(object) {
         switch (object) {
           case 0:
           case "exists":
-            return Operator2.exists;
+            return Operator.exists;
           case 1:
           case "eq":
-            return Operator2.eq;
+            return Operator.eq;
           case 2:
           case "neq":
-            return Operator2.neq;
+            return Operator.neq;
           case 3:
           case "gt":
-            return Operator2.gt;
+            return Operator.gt;
           case 4:
           case "lt":
-            return Operator2.lt;
+            return Operator.lt;
           case 5:
           case "gteq":
-            return Operator2.gteq;
+            return Operator.gteq;
           case 6:
           case "lteq":
-            return Operator2.lteq;
+            return Operator.lteq;
           case -1:
           case "UNRECOGNIZED":
           default:
-            return Operator2.UNRECOGNIZED;
+            return Operator.UNRECOGNIZED;
         }
       }
       function operatorToJSON(object) {
         switch (object) {
-          case Operator2.exists:
+          case Operator.exists:
             return "exists";
-          case Operator2.eq:
+          case Operator.eq:
             return "eq";
-          case Operator2.neq:
+          case Operator.neq:
             return "neq";
-          case Operator2.gt:
+          case Operator.gt:
             return "gt";
-          case Operator2.lt:
+          case Operator.lt:
             return "lt";
-          case Operator2.gteq:
+          case Operator.gteq:
             return "gteq";
-          case Operator2.lteq:
+          case Operator.lteq:
             return "lteq";
-          case Operator2.UNRECOGNIZED:
+          case Operator.UNRECOGNIZED:
           default:
             return "UNRECOGNIZED";
         }
@@ -5075,7 +5075,7 @@ var Exports = (() => {
         fromJSON: function(object) {
           return {
             question: isSet(object.question) ? globalThis.String(object.question) : "",
-            operator: isSet(object.operator) ? operatorFromJSON3(object.operator) : 0,
+            operator: isSet(object.operator) ? operatorFromJSON2(object.operator) : 0,
             answerCoding: isSet(object.answerCoding) ? globalThis.String(object.answerCoding) : isSet(object.answer_coding) ? globalThis.String(object.answer_coding) : void 0,
             answerDecimal: isSet(object.answerDecimal) ? globalThis.Number(object.answerDecimal) : isSet(object.answer_decimal) ? globalThis.Number(object.answer_decimal) : void 0,
             answerDate: isSet(object.answerDate) ? globalThis.String(object.answerDate) : isSet(object.answer_date) ? globalThis.String(object.answer_date) : void 0
@@ -7270,6 +7270,25 @@ var Exports = (() => {
   // src/fhir/questionnaire/generator/questions.ts
   var import_research_pillars6 = __toESM(require_types());
 
+  // src/helper/operator.ts
+  var FHIR_OPERATORS = /* @__PURE__ */ new Map([
+    [0, "exists"],
+    ["exists", "exists"],
+    [1, "="],
+    ["eq", "="],
+    [2, "!="],
+    ["neq", "!="],
+    [3, ">"],
+    ["gt", ">"],
+    [4, "<"],
+    ["lt", "<"],
+    [5, ">="],
+    ["gteq", ">="],
+    [6, "<="],
+    ["lteq", "<="]
+  ]);
+  var toFhirOperator = (operator) => FHIR_OPERATORS.get(operator != null ? operator : 0);
+
   // node_modules/uuid/dist/esm-browser/regex.js
   var regex_default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/i;
 
@@ -7520,20 +7539,11 @@ var Exports = (() => {
     contained.push(__spreadProps(__spreadValues({}, valueSet), { id: String(contained.length) }));
     return contained.length - 1;
   };
-  var OPERATORS = {
-    [import_research_pillars6.Operator.exists]: "exists",
-    [import_research_pillars6.Operator.eq]: "=",
-    [import_research_pillars6.Operator.neq]: "!=",
-    [import_research_pillars6.Operator.gt]: ">",
-    [import_research_pillars6.Operator.lt]: "<",
-    [import_research_pillars6.Operator.gteq]: ">=",
-    [import_research_pillars6.Operator.lteq]: "<="
-  };
   var generateEnableWhen = (ew, ctx) => {
     var _a;
     return __spreadValues(__spreadValues(__spreadValues({
       question: ew.question,
-      operator: (_a = OPERATORS[(0, import_research_pillars6.operatorFromJSON)(ew.operator)]) != null ? _a : "="
+      operator: (_a = toFhirOperator(ew.operator)) != null ? _a : "="
     }, ew.answerCoding !== void 0 && {
       answerCoding: __spreadProps(__spreadValues({}, optional("code", ew.answerCoding)), { system: ctx.effectiveCodeSystem(ew.question) })
     }), ew.answerDate !== void 0 && { answerDate: ew.answerDate }), ew.answerDecimal !== void 0 && { answerDecimal: ew.answerDecimal });
@@ -7560,7 +7570,7 @@ var Exports = (() => {
         contact: [{ name: PUBLISHER_NAME, telecom: [{ system: "url", value: PUBLISHER_URL }] }]
       }), optional("version", definition.version)), optional("title", (_a = definition.title) == null ? void 0 : _a[language])), optional("date", options.date)), {
         subjectType: ["Patient"]
-      }), contained.length > 0 && { contained }), item.length > 0 && { item });
+      }), item.length > 0 && { item }), contained.length > 0 && { contained });
     }
     return questionnaires;
   };

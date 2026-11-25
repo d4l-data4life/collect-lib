@@ -1,3 +1,5 @@
+// Type-only import: the main barrel and the Go guard bundle must not load grpc-modules at runtime.
+import type { EnableWhen } from '@d4l/grpc-modules/research-pillars';
 import { DateTime, Duration } from 'luxon';
 import {
   Answers,
@@ -10,6 +12,7 @@ import {
   StepCondition,
 } from '../types';
 import { stringToDate, stringToYear } from './datetime';
+import { toFhirOperator } from './operator';
 
 export type GuardParameters = {
   multiAnswers?: MultiAnswers;
@@ -576,36 +579,47 @@ export class DateGuard implements Guard {
   }
 }
 
+const generateConditionGuard = (condition: EnableWhen): Guard | undefined => {
+  const operator = toFhirOperator(condition.operator);
+  if (!operator) {
+    return undefined;
+  }
+  if (operator === 'exists') {
+    return new ExistsGuard(condition.question);
+  }
+  if (condition.answerDate && condition.answerDate.length === 4) {
+    return new YearGuard(condition.question, condition.answerDate, operator);
+  }
+  if (condition.answerDate) {
+    return new AnswerDateGuard(condition.question, condition.answerDate, operator);
+  }
+  if (condition.answerCoding) {
+    return new AnswerCodeGuard(condition.question, operator, condition.answerCoding);
+  }
+  if (condition.answerDecimal !== undefined) {
+    return new DecimalGuard(condition.question, condition.answerDecimal, operator);
+  }
+  return undefined;
+};
+
+/**
+ * Builds the guard of a question from the enable conditions of the Questionnaire Definition.
+ * Conditions with an unrecognized operator are ignored. Returns no guard without conditions.
+ * @param enableWhen the question's enable conditions
+ * @param enableBehavior 'any' combines the conditions with OR, anything else with AND
+ */
 export const generateQuestionGuard = (
-  enableWhen: fhir5.QuestionnaireItemEnableWhen[] | undefined,
-  enableBehavior: fhir5.QuestionnaireItem['enableBehavior']
+  enableWhen: EnableWhen[] | undefined,
+  enableBehavior: string | undefined
 ): Guard | undefined => {
-  if (!enableWhen || !enableWhen.length || !enableBehavior) {
+  const guards = (enableWhen ?? [])
+    .map(generateConditionGuard)
+    .filter((guard): guard is Guard => guard !== undefined);
+  if (!guards.length) {
     return undefined;
   }
 
-  const guards: Guard[] = [];
-  for (const condition of enableWhen) {
-    if (condition.operator === 'exists') {
-      guards.push(new ExistsGuard(condition.question));
-    } else if (condition.answerDate && condition.answerDate.length === 4) {
-      guards.push(new YearGuard(condition.question, condition.answerDate, condition.operator));
-    } else if (condition.answerDate) {
-      guards.push(
-        new AnswerDateGuard(condition.question, condition.answerDate, condition.operator)
-      );
-    } else if (condition.answerCoding) {
-      guards.push(
-        new AnswerCodeGuard(condition.question, condition.operator, condition.answerCoding.code)
-      );
-    } else if (condition.answerDecimal !== undefined) {
-      guards.push(
-        new DecimalGuard(condition.question, condition.answerDecimal, condition.operator)
-      );
-    }
-  }
-
-  return enableBehavior === 'all' ? new Conjunction(guards) : new Disjunction(guards);
+  return enableBehavior === 'any' ? new Disjunction(guards) : new Conjunction(guards);
 };
 
 export const generateStepGuard = (cond: StepCondition): GuardContext => {

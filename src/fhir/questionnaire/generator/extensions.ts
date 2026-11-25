@@ -27,7 +27,7 @@ import {
   TopicInputScopeUrl,
   TopicInputTopicUrl,
 } from '../../constants';
-import type { QuestionConfig } from '../parser/extensions';
+import type { QuestionConfig } from '../../question-config';
 import {
   InputType,
   inputTypeToJSON,
