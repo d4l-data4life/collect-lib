@@ -133,21 +133,18 @@ function calculateValueSetScore(
     return { min: 0, max: 0 };
   }
 
-  const uniqueCodesystems = (valueSet.expansion?.contains || []).reduce<string[]>(
-    (acc, { system }) => {
-      if (system && !acc.includes(system)) {
-        acc.push(system);
-      }
-      return acc;
-    },
-    []
-  );
+  const uniqueCodesystems = (valueSet.expansion?.contains || []).reduce<string[]>((acc, { system }) => {
+    if (system && !acc.includes(system)) {
+      acc.push(system);
+    }
+    return acc;
+  }, []);
   const scoringSystems = scoring.scores?.valueset ?? {};
   const possibleValues = uniqueCodesystems.flatMap((system) => {
     return Object.values(scoringSystems[system] ?? {});
   });
 
-  if(possibleValues.length === 0) {
+  if (possibleValues.length === 0) {
     return { min: 0, max: 0 };
   }
 

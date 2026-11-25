@@ -58,12 +58,7 @@ export class DonationSDK implements SDKInterface {
   /** In-flight access token requests per donor, shared by concurrent callers */
   private accessTokenRequests: Map<string, Promise<string>> = new Map();
 
-  constructor(
-    selfSignSecret: string,
-    donationAPIurl: string,
-    converter: Converter,
-    crypto: CryptoModule
-  ) {
+  constructor(selfSignSecret: string, donationAPIurl: string, converter: Converter, crypto: CryptoModule) {
     this.selfSignSecret = selfSignSecret;
     this.donationAPI = new Requester(donationAPIurl, () => Promise.resolve(''), false);
     this.hybridEncrypter = new HybridEncrypter(converter);
@@ -159,24 +154,17 @@ export class DonationSDK implements SDKInterface {
    * @param pub A public base64 encoded key - the donorId
    * @returns True if the authentication token is valid. Otherwise, false.
    */
-  private validateAuthToken = async (
-    authToken: string,
-    token: string,
-    pub: string
-  ): Promise<boolean> => {
+  private validateAuthToken = async (authToken: string, token: string, pub: string): Promise<boolean> => {
     // Get signature and message
-    const { signature, messageJSON: message }: { signature: string; messageJSON: string } =
-      JSON.parse(window.atob(authToken));
+    const { signature, messageJSON: message }: { signature: string; messageJSON: string } = JSON.parse(
+      window.atob(authToken)
+    );
 
     // Get the token
     const { token: extractedToken } = JSON.parse(message);
 
     // Validated the signature and signed message
-    const valid = await this.keyHandler.verify(
-      message,
-      this.converter.base64ToUint8Array(signature),
-      pub
-    );
+    const valid = await this.keyHandler.verify(message, this.converter.base64ToUint8Array(signature), pub);
 
     // Validate the token
     return valid && extractedToken === token;
@@ -319,11 +307,7 @@ export class DonationSDK implements SDKInterface {
     }
   }
 
-  async donate(
-    donorIdentity: DonorIdentity,
-    program: Program,
-    records: DonationRecord[]
-  ): Promise<boolean> {
+  async donate(donorIdentity: DonorIdentity, program: Program, records: DonationRecord[]): Promise<boolean> {
     ////////
     // Check prerequisites
     ////////
@@ -342,11 +326,7 @@ export class DonationSDK implements SDKInterface {
     // Encrypt documents
     ////////
 
-    const donations = await this.encryptDonations(
-      donatableRecords,
-      donorIdentity,
-      program.donation.target
-    );
+    const donations = await this.encryptDonations(donatableRecords, donorIdentity, program.donation.target);
 
     ////////
     // Donate
@@ -460,10 +440,7 @@ export class DonationSDK implements SDKInterface {
    * @returns The total size of the donations and the size of each individual donation that can be restored
    * @throws Error if the donation service is not available or if there is an internal server error
    */
-  async getRestorationSize(
-    donorIdentity: DonorIdentity,
-    programName: string
-  ): Promise<RestorationSize> {
+  async getRestorationSize(donorIdentity: DonorIdentity, programName: string): Promise<RestorationSize> {
     ////////
     // Check prerequisites
     ////////
@@ -588,11 +565,7 @@ export class DonationSDK implements SDKInterface {
     validateProgramName(program.name, donorIdentity);
 
     // Filter out every document that does not fit the requirements and blur the remaining ones
-    const donatableRecords: DonationRecord[] = filterRecords(
-      records,
-      program.name,
-      program.donation
-    );
+    const donatableRecords: DonationRecord[] = filterRecords(records, program.name, program.donation);
 
     if (includedResearchSubjects(donatableRecords).length < 1) {
       throw new Error(ERROR_CODES.MISSING_RESEARCH_SUBJECT);
@@ -602,11 +575,7 @@ export class DonationSDK implements SDKInterface {
     // Encrypt documents
     ////////
 
-    const donations = await this.encryptDonations(
-      donatableRecords,
-      donorIdentity,
-      program.donation.target
-    );
+    const donations = await this.encryptDonations(donatableRecords, donorIdentity, program.donation.target);
 
     ////////
     // Revoke

@@ -1,3 +1,5 @@
+import { secp256k1 } from '@noble/curves/secp256k1';
+import crypto from 'node:crypto';
 import {
   CryptoModule,
   KeyHandler,
@@ -6,8 +8,6 @@ import {
   uint8ArrayToBinaryString,
 } from '..';
 import { WORDLIST_LANGUAGES, getLanguageOfPassPhrase } from '../helper/wordlists';
-import { secp256k1 } from '@noble/curves/secp256k1';
-import crypto from 'node:crypto';
 
 class NodeCrypto implements CryptoModule {
   generateKey(size: number): Uint8Array {

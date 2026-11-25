@@ -223,10 +223,7 @@ describe('timeFuncs', () => {
 
       it('works with overwritten startDate for NY location', () => {
         Settings.defaultZone = NY;
-        dayFuncs = getTimeFuncs(
-          { factor: 3, start: frequencyStart, type: 'daily' },
-          new Date(baseDateNY)
-        );
+        dayFuncs = getTimeFuncs({ factor: 3, start: frequencyStart, type: 'daily' }, new Date(baseDateNY));
         expect(dayFuncs.window(baseDate)).toEqual({
           start: new Date('2020-07-01T10:00:00.000-04:00'),
           end: new Date('2020-07-03T23:59:59.999-04:00'),

@@ -1,3 +1,7 @@
+import { secp256k1 } from '@noble/curves/secp256k1';
+import * as forge from 'node-forge';
+import { WebConverter } from '..';
+import { binaryStringToUint8Array, uint8ArrayToBinaryString, utf8ToUint8Array } from '../helper/converter';
 import {
   HybridEncrypter,
   V4_DECRYPTER_DATA_RECEIVER,
@@ -9,14 +13,6 @@ import {
   v4RsaKey,
   v4RsaSlot,
 } from './hybridEncryption';
-import { secp256k1 } from '@noble/curves/secp256k1';
-import { WebConverter } from '..';
-import * as forge from 'node-forge';
-import {
-  binaryStringToUint8Array,
-  uint8ArrayToBinaryString,
-  utf8ToUint8Array,
-} from '../helper/converter';
 
 const donorIdentity = {
   t: 'data-donation',
@@ -163,15 +159,11 @@ describe('HybridEncrypter v4 encrypt + backward compatibility', () => {
   const converter = new WebConverter();
   const encrypter = new HybridEncrypter(converter);
   const recoveryKey = donorIdentity.keys.rec; // base64 AES-256 key
-  const anyScalar = converter.hexToBase64(
-    'c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa'
-  );
+  const anyScalar = converter.hexToBase64('c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa');
 
   it('encryptV4 + decryptV4 round-trip through the AES recovery slot', () => {
     const plaintext = '{"steps":1234,"spo2":97}';
-    const ciphertext = encrypter.encryptV4(plaintext, [
-      v4AesSlot(V4_DECRYPTER_MOBILE_APP, recoveryKey),
-    ]);
+    const ciphertext = encrypter.encryptV4(plaintext, [v4AesSlot(V4_DECRYPTER_MOBILE_APP, recoveryKey)]);
     expect(encrypter.decryptV4(anyScalar, ciphertext, recoveryKey)).toBe(plaintext);
   });
 
@@ -195,9 +187,7 @@ describe('HybridEncrypter v4 malformed-record handling', () => {
   const converter = new WebConverter();
   const encrypter = new HybridEncrypter(converter);
   const recoveryKey = donorIdentity.keys.rec;
-  const anyScalar = converter.hexToBase64(
-    'c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa'
-  );
+  const anyScalar = converter.hexToBase64('c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa');
 
   const truncate = (b64: string, bytes: number): string => {
     const full = new Uint8Array(converter.base64ToArrayBuffer(b64));
@@ -207,18 +197,14 @@ describe('HybridEncrypter v4 malformed-record handling', () => {
   // Lengths inside a v4 record are attacker-controllable, so a truncated blob must fail
   // as a clear format error rather than a raw RangeError or a silently short slice.
   it('rejects a truncated payload with a descriptive error', () => {
-    const ciphertext = encrypter.encryptV4('{"a":1}', [
-      v4AesSlot(V4_DECRYPTER_MOBILE_APP, recoveryKey),
-    ]);
+    const ciphertext = encrypter.encryptV4('{"a":1}', [v4AesSlot(V4_DECRYPTER_MOBILE_APP, recoveryKey)]);
     expect(() => encrypter.decryptV4(anyScalar, truncate(ciphertext, 8), recoveryKey)).toThrow(
       /Malformed v4 record/
     );
   });
 
   it('rejects a record truncated inside its slots', () => {
-    const ciphertext = encrypter.encryptV4('{"a":1}', [
-      v4AesSlot(V4_DECRYPTER_MOBILE_APP, recoveryKey),
-    ]);
+    const ciphertext = encrypter.encryptV4('{"a":1}', [v4AesSlot(V4_DECRYPTER_MOBILE_APP, recoveryKey)]);
     // Cut deep enough to land inside the slot body + payload header.
     expect(() => encrypter.decryptV4(anyScalar, truncate(ciphertext, 60), recoveryKey)).toThrow(
       /Malformed v4 record/
@@ -234,9 +220,7 @@ describe('HybridEncrypter v4 malformed-record handling', () => {
     const currentKey = converter.uint8ArrayToBase64(new Uint8Array(32).fill(0x0b));
     const plaintext = '{"rotated":true}';
     // One slot, encrypted to the key that was current at the time.
-    const ciphertext = encrypter.encryptV4(plaintext, [
-      v4AesSlot(V4_DECRYPTER_MOBILE_APP, retiredKey),
-    ]);
+    const ciphertext = encrypter.encryptV4(plaintext, [v4AesSlot(V4_DECRYPTER_MOBILE_APP, retiredKey)]);
 
     // Keychain lists the current key first; the retired one still opens the old record.
     expect(
@@ -269,9 +253,9 @@ describe('HybridEncrypter v4 generic keychain (all slot types)', () => {
       v4EcSlot(V4_DECRYPTER_MOBILE_APP, converter.uint8ArrayToBase64(phonePubRaw)),
     ]);
     expect(encrypter.decryptV4(phonePriv, ciphertext)).toBe(plaintext);
-    expect(
-      encrypter.decryptV4WithKeys(ciphertext, [v4EcKey(V4_DECRYPTER_MOBILE_APP, phonePriv)])
-    ).toBe(plaintext);
+    expect(encrypter.decryptV4WithKeys(ciphertext, [v4EcKey(V4_DECRYPTER_MOBILE_APP, phonePriv)])).toBe(
+      plaintext
+    );
   });
 
   it('round-trips an RSA slot via the keychain (receiver-side decryption)', () => {
@@ -325,9 +309,7 @@ describe('HybridEncrypter v4 large payloads', () => {
   const converter = new WebConverter();
   const encrypter = new HybridEncrypter(converter);
   const recoveryKey = donorIdentity.keys.rec;
-  const anyScalar = converter.hexToBase64(
-    'c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa'
-  );
+  const anyScalar = converter.hexToBase64('c87509a1c067115d2a8f8e7c1f3a9b6d4e2f0a1b3c5d7e9f00112233445566aa');
 
   // A single Garmin sync blob (detailed HR / activity JSON) easily passes the ~128 KB
   // point where String.fromCharCode.apply over the whole payload throws

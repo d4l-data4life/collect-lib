@@ -52,9 +52,7 @@ const DEVICE_MOVELLA_ANNOTATION_ITEM_ANGULAR_VELOCITY: DEVICE_ANNOTATION_ITEM = 
 };
 
 export function getMovellaAnnotation(config: BLEDeviceConfig): DEVICE_ANNOTATION {
-  return DEVICE_MOVELLA_SUPPORTED_PAYLOAD_MODES[
-    config.streamingMode ?? 'customMode1'
-  ].annotation.filter(
+  return DEVICE_MOVELLA_SUPPORTED_PAYLOAD_MODES[config.streamingMode ?? 'customMode1'].annotation.filter(
     ({ type }) => (config?.dataTypes || []).includes(type) || type === 'timestamp'
   );
 }

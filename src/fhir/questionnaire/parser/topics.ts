@@ -1,3 +1,4 @@
+import { ItemVariable, TopicInput, TopicScope, topicScopeFromJSON } from '@d4l/grpc-modules/research-pillars';
 import {
   ItemVariableNameUrl,
   ItemVariableQuestionUrl,
@@ -7,7 +8,6 @@ import {
   TopicInputTopicUrl,
 } from '../../constants';
 import { isValidTopicCanonical, topicIdFromCanonical } from '../../topic-id';
-import { ItemVariable, TopicInput, TopicScope, topicScopeFromJSON } from '@d4l/grpc-modules/research-pillars';
 
 // name plus exactly one source (topic canonical + scope, or local linkId); undefined if malformed.
 export const parseItemVariable = (extension: fhir5.Extension): ItemVariable | undefined => {

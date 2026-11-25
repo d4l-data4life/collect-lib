@@ -6979,9 +6979,7 @@ var Exports = (() => {
             };
         }
       case "offset":
-        const { guard, surveyNames, routineNames, consentKeys, responseNames } = generateStepGuard(
-          cond.item
-        );
+        const { guard, surveyNames, routineNames, consentKeys, responseNames } = generateStepGuard(cond.item);
         return {
           guard: new Offset(guard, cond.offset),
           surveyNames,

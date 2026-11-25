@@ -211,11 +211,8 @@ export class AnswerDateGuard implements Guard {
  * Wrapper around the constructor for the creation of the stepcondition version
  * Does not need operator and operand as it just returns a given date answer
  */
-export const newStepDateGuard = (
-  questionID: string,
-  surveyName: string,
-  offset?: string
-): AnswerDateGuard => new AnswerDateGuard(questionID, 'irrelevant', 'exists', surveyName, offset);
+export const newStepDateGuard = (questionID: string, surveyName: string, offset?: string): AnswerDateGuard =>
+  new AnswerDateGuard(questionID, 'irrelevant', 'exists', surveyName, offset);
 
 /**
  * Assumption: Year answers in the questionnaire are formatted like this: YYYY
@@ -625,8 +622,7 @@ export const generateQuestionGuard = (
 export const generateStepGuard = (cond: StepCondition): GuardContext => {
   if (cond.type === 'and' || cond.type === 'or') {
     // Define guard outside to add conditions and use in reduce result via reference
-    const guard =
-      cond.type === 'and' ? new Conjunction([], cond.sorting) : new Disjunction([], cond.sorting);
+    const guard = cond.type === 'and' ? new Conjunction([], cond.sorting) : new Disjunction([], cond.sorting);
     return cond.items.reduce(
       (result, condition) => {
         const item = generateStepGuard(condition);
@@ -662,9 +658,7 @@ export const generateStepGuard = (cond: StepCondition): GuardContext => {
           };
       }
     case 'offset':
-      const { guard, surveyNames, routineNames, consentKeys, responseNames } = generateStepGuard(
-        cond.item
-      );
+      const { guard, surveyNames, routineNames, consentKeys, responseNames } = generateStepGuard(cond.item);
       return {
         guard: new Offset(guard, cond.offset),
         surveyNames,

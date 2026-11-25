@@ -1,8 +1,5 @@
 import { Buffer } from 'buffer/';
-import {
-  DEVICE_ANNOTATION_ITEM_UNIX_TIMESTAMP,
-  DEVICE_ANNOTATION_TIMESTAMP_SIZE,
-} from '../devices';
+import { DEVICE_ANNOTATION_ITEM_UNIX_TIMESTAMP, DEVICE_ANNOTATION_TIMESTAMP_SIZE } from '../devices';
 import { DEVICE_ANNOTATION_ITEM } from '../devices/annotations/types';
 import { RecordingSignal } from '../types';
 import {
@@ -113,8 +110,7 @@ function deviceToFHIRBundleEntries(
 }
 
 function deviceToFHIR(signal: RecordingSignal, serialNumber?: string): fhir5.Device {
-  const { deviceFullName, deviceShortName, peripheralId, deviceKey, manufacturerName, type } =
-    signal;
+  const { deviceFullName, deviceShortName, peripheralId, deviceKey, manufacturerName, type } = signal;
   const deviceName = deviceFullName ?? deviceShortName;
 
   return {

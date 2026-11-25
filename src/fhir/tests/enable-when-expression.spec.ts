@@ -13,9 +13,10 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 describe('referencedVariables', () => {
   it('extracts distinct %variables', () => {
-    expect(
-      referencedVariables("%smoker = 'yes' and %gender.exists() and %gender != 'male'")
-    ).toEqual(['smoker', 'gender']);
+    expect(referencedVariables("%smoker = 'yes' and %gender.exists() and %gender != 'male'")).toEqual([
+      'smoker',
+      'gender',
+    ]);
   });
 
   it('returns empty for an expression with no variables', () => {

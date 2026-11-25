@@ -1,5 +1,5 @@
-import type { QuestionnaireMap } from '../parser/questionnaire';
 import { DeepPartial, Questionnaire } from '@d4l/grpc-modules/research-pillars';
+import type { QuestionnaireMap } from '../parser/questionnaire';
 import { createContext, GenerationOptions } from './context';
 import { optional } from './extensions';
 import { generateItem } from './questions';

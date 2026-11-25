@@ -25,6 +25,42 @@ var Exports = (() => {
     categoricalLabels: () => categoricalLabels
   });
 
+  // src/devices/types.ts
+  var DEVICE_KEY_TO_NAME = {
+    DOT: { shortName: "Movella DOT", fullName: "Movella DOT" },
+    OH1: { shortName: "Polar OH1", fullName: "Polar OH1" },
+    H10: { shortName: "Polar H10", fullName: "Polar H10" },
+    EstimoteUWB: { shortName: "Estimote", fullName: "Estimote UWB" },
+    PixelWatch: { shortName: "Pixel Watch", fullName: "Google Pixel Watch" },
+    GalaxyWatch6: { shortName: "Galaxy Watch", fullName: "Samsung Galaxy Watch 6" },
+    FITBIT: { shortName: "fitbit", fullName: "fitbit" },
+    GOOGLE_HEALTH: { shortName: "Google Health", fullName: "Google Health" },
+    OURA: { shortName: "Oura", fullName: "Oura Ring" },
+    GARMIN: { shortName: "Garmin", fullName: "Garmin" },
+    LINE_SYSTEMS: { shortName: "Line Systems", fullName: "Line Systems" },
+    DEXCOM: { shortName: "Dexcom", fullName: "Dexcom" },
+    dexcom_g4: { shortName: "Dexcom G4", fullName: "Dexcom G4" },
+    dexcom_g5: { shortName: "Dexcom G5", fullName: "Dexcom G5" },
+    dexcom_g6: { shortName: "Dexcom G6", fullName: "Dexcom G6" },
+    "dexcom_g6+": { shortName: "Dexcom G6+", fullName: "Dexcom G6+" },
+    dexcom_g7: { shortName: "Dexcom G7", fullName: "Dexcom G7" },
+    INTERNAL: { shortName: "Internal", fullName: "Internal Device" },
+    // Placeholder, there is no such device
+    internal_accelerometer: {
+      shortName: "Internal Accelerometer",
+      fullName: "Internal Accelerometer"
+    },
+    internal_gyroscope: { shortName: "Internal Gyroscope", fullName: "Internal Gyroscope" },
+    internal_magnetometer: { shortName: "Internal Magnetometer", fullName: "Internal Magnetometer" },
+    internal_beacon_sensing: {
+      shortName: "Internal Beacon Sensing",
+      fullName: "Internal Beacon Sensing"
+    },
+    // Placeholder, there is no such device
+    AppleHealth: { shortName: "Apple HealthKit", fullName: "Apple HealthKit" },
+    HealthConnect: { shortName: "Health Connect", fullName: "Android Health Connect" }
+  };
+
   // src/devices/annotations/appleHealth.ts
   var APPLE_HEALTH_SLEEP_STATE_MAP = {
     awake: 0,
@@ -97,42 +133,6 @@ var Exports = (() => {
     light: 3,
     medium: 4,
     heavy: 5
-  };
-
-  // src/devices/types.ts
-  var DEVICE_KEY_TO_NAME = {
-    DOT: { shortName: "Movella DOT", fullName: "Movella DOT" },
-    OH1: { shortName: "Polar OH1", fullName: "Polar OH1" },
-    H10: { shortName: "Polar H10", fullName: "Polar H10" },
-    EstimoteUWB: { shortName: "Estimote", fullName: "Estimote UWB" },
-    PixelWatch: { shortName: "Pixel Watch", fullName: "Google Pixel Watch" },
-    GalaxyWatch6: { shortName: "Galaxy Watch", fullName: "Samsung Galaxy Watch 6" },
-    FITBIT: { shortName: "fitbit", fullName: "fitbit" },
-    GOOGLE_HEALTH: { shortName: "Google Health", fullName: "Google Health" },
-    OURA: { shortName: "Oura", fullName: "Oura Ring" },
-    GARMIN: { shortName: "Garmin", fullName: "Garmin" },
-    LINE_SYSTEMS: { shortName: "Line Systems", fullName: "Line Systems" },
-    DEXCOM: { shortName: "Dexcom", fullName: "Dexcom" },
-    dexcom_g4: { shortName: "Dexcom G4", fullName: "Dexcom G4" },
-    dexcom_g5: { shortName: "Dexcom G5", fullName: "Dexcom G5" },
-    dexcom_g6: { shortName: "Dexcom G6", fullName: "Dexcom G6" },
-    "dexcom_g6+": { shortName: "Dexcom G6+", fullName: "Dexcom G6+" },
-    dexcom_g7: { shortName: "Dexcom G7", fullName: "Dexcom G7" },
-    INTERNAL: { shortName: "Internal", fullName: "Internal Device" },
-    // Placeholder, there is no such device
-    internal_accelerometer: {
-      shortName: "Internal Accelerometer",
-      fullName: "Internal Accelerometer"
-    },
-    internal_gyroscope: { shortName: "Internal Gyroscope", fullName: "Internal Gyroscope" },
-    internal_magnetometer: { shortName: "Internal Magnetometer", fullName: "Internal Magnetometer" },
-    internal_beacon_sensing: {
-      shortName: "Internal Beacon Sensing",
-      fullName: "Internal Beacon Sensing"
-    },
-    // Placeholder, there is no such device
-    AppleHealth: { shortName: "Apple HealthKit", fullName: "Apple HealthKit" },
-    HealthConnect: { shortName: "Health Connect", fullName: "Android Health Connect" }
   };
 
   // src/devices/annotations/categoricalLabels.ts

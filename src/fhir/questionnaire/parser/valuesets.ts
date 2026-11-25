@@ -1,5 +1,5 @@
-import { ValuesetSortingExtension } from '../../constants';
 import { Answerset } from '@d4l/grpc-modules/research-pillars';
+import { ValuesetSortingExtension } from '../../constants';
 
 export const valueSetsToAnswerSets = (
   languages: string[],

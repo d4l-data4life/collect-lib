@@ -595,10 +595,7 @@ export const phq9Questionnaire: fhir5.Questionnaire = {
   version: '1.0.0',
 };
 
-export function generateContains(
-  system: string,
-  codes: string[]
-): fhir5.ValueSetExpansionContains[] {
+export function generateContains(system: string, codes: string[]): fhir5.ValueSetExpansionContains[] {
   return codes.map((code) => ({
     system,
     code,

@@ -1,4 +1,13 @@
 import {
+  Coding,
+  InputType,
+  inputTypeFromJSON,
+  ItemVariable,
+  operatorFromJSON,
+  QuestionImage,
+  TopicInput,
+} from '@d4l/grpc-modules/research-pillars';
+import {
   EnableWhenExpressionExtension,
   ImageExtension,
   Iso3166CodeSystem,
@@ -22,18 +31,9 @@ import {
   SliderOrientationExtension,
   SliderStepSizeExtension,
 } from '../../constants';
-import { isValidTopicCanonical, topicIdFromCanonical } from '../../topic-id';
 import type { PostalCodeCountrySource, QuestionConfig } from '../../question-config';
+import { isValidTopicCanonical, topicIdFromCanonical } from '../../topic-id';
 import { parseItemVariable, parseTopicInput } from './topics';
-import {
-  Coding,
-  InputType,
-  inputTypeFromJSON,
-  ItemVariable,
-  operatorFromJSON,
-  QuestionImage,
-  TopicInput,
-} from '@d4l/grpc-modules/research-pillars';
 
 export const parseExtensions = (
   languages: string[],
@@ -305,13 +305,16 @@ const extractLocalizedString = (
   questionItems: { [language: string]: fhir5.QuestionnaireItem },
   url: string
 ): Record<string, string> =>
-  languages.reduce((localisedExt, lang) => {
-    const extension = questionItems[lang]?.extension?.find((e) => e.url === url);
-    if (extension?.valueString === undefined) {
-      return localisedExt;
-    }
-    return { ...localisedExt, [lang]: extension.valueString };
-  }, {} as Record<string, string>);
+  languages.reduce(
+    (localisedExt, lang) => {
+      const extension = questionItems[lang]?.extension?.find((e) => e.url === url);
+      if (extension?.valueString === undefined) {
+        return localisedExt;
+      }
+      return { ...localisedExt, [lang]: extension.valueString };
+    },
+    {} as Record<string, string>
+  );
 const getValueFrom = (values: any[]): any => values.find((value) => value !== undefined);
 
 export function stringToOperator(op: string): number {

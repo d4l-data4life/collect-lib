@@ -1,3 +1,4 @@
+import { inputTypeFromJSON, TopicScope } from '@d4l/grpc-modules/research-pillars';
 import {
   CountryValueSet,
   EnableWhenExpressionExtension,
@@ -28,8 +29,7 @@ import {
   TopicInputTopicUrl,
   ValuesetSortingExtension,
 } from '../constants';
-import { inputTypeFromJSON, TopicScope } from '@d4l/grpc-modules/research-pillars';
-import { parseFHIRQuestionnaire, parseExtensions } from '../questionnaire';
+import { parseExtensions, parseFHIRQuestionnaire } from '../questionnaire';
 
 const TOPIC = 'http://fhir.data4life.care/r5/example/topic/socialNetwork';
 const BAD_TOPIC = 'http://fhir.data4life.care/r5/example/topic/social-network';

@@ -1,6 +1,6 @@
+import { Answerset } from '@d4l/grpc-modules/research-pillars';
 import { v5 as uuidv5 } from 'uuid';
 import { ValuesetSortingExtension } from '../../constants';
-import { Answerset } from '@d4l/grpc-modules/research-pillars';
 import { GenerationContext } from './context';
 import { optional } from './extensions';
 import { PUBLISHER_NAME, PUBLISHER_URL } from './questionnaire';

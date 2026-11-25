@@ -1,24 +1,24 @@
 import { DEVICE_SIGNAL_TYPE } from '../types';
 import {
+  DEVICE_ANNOTATION_HRV_RMSSD,
+  DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE,
+  DEVICE_ANNOTATION_SKIN_TEMPERATURE_DEVIATION,
+} from './base';
+import {
   FITBIT_BREATHING_RATE_ANNOTATION,
   FITBIT_HEART_RATE_ANNOTATION,
   FITBIT_SLEEP_ANNOTATION,
   FITBIT_SPO2_ANNOTATION,
 } from './fitbit';
-import {
-  DEVICE_ANNOTATION_HRV_RMSSD,
-  DEVICE_ANNOTATION_ITEM_RESTING_HEART_RATE,
-  DEVICE_ANNOTATION_SKIN_TEMPERATURE_DEVIATION,
-} from './base';
 import { MENSTRUAL_CYCLE_ANNOTATION } from './menstrual';
 import { OURA_STRESS_ANNOTATION } from './oura';
+import { DEVICE_ANNOTATION, DEVICE_ANNOTATION_ITEM } from './types';
 import {
   BLE_CPMS_ANNOTATION_ITEM_DAILY_CALORIES,
   BLE_CPMS_ANNOTATION_ITEM_DAILY_DISTANCE,
   BLE_CPMS_ANNOTATION_ITEM_DAILY_FLOORS,
   BLE_CPMS_ANNOTATION_ITEM_DAILY_STEPS,
 } from './wearOS3';
-import { DEVICE_ANNOTATION, DEVICE_ANNOTATION_ITEM } from './types';
 
 // Body Battery: Garmin's 0-100 energy level, sampled alongside stress
 // (stressDetails.timeOffsetBodyBatteryValues).
@@ -28,9 +28,7 @@ export const GARMIN_ANNOTATION_ITEM_BODY_BATTERY: DEVICE_ANNOTATION_ITEM = {
   format: 'unsignedInt',
   note: 'charge level 0-100',
 };
-export const GARMIN_BODY_BATTERY_ANNOTATION: DEVICE_ANNOTATION = [
-  GARMIN_ANNOTATION_ITEM_BODY_BATTERY,
-];
+export const GARMIN_BODY_BATTERY_ANNOTATION: DEVICE_ANNOTATION = [GARMIN_ANNOTATION_ITEM_BODY_BATTERY];
 
 // Overall sleep score (0-100), one per sleep summary, anchored at wake.
 export const GARMIN_ANNOTATION_ITEM_SLEEP_SCORE: DEVICE_ANNOTATION_ITEM = {
@@ -39,9 +37,7 @@ export const GARMIN_ANNOTATION_ITEM_SLEEP_SCORE: DEVICE_ANNOTATION_ITEM = {
   format: 'unsignedInt',
   note: 'overall sleep score 0-100',
 };
-export const GARMIN_SLEEP_SCORE_ANNOTATION: DEVICE_ANNOTATION = [
-  GARMIN_ANNOTATION_ITEM_SLEEP_SCORE,
-];
+export const GARMIN_SLEEP_SCORE_ANNOTATION: DEVICE_ANNOTATION = [GARMIN_ANNOTATION_ITEM_SLEEP_SCORE];
 
 // VO2 max + fitness age from userMetrics summaries (per calendar day).
 export const GARMIN_ANNOTATION_ITEM_VO2MAX: DEVICE_ANNOTATION_ITEM = {
@@ -87,9 +83,7 @@ export const GARMIN_ANNOTATION_ITEM_BLOOD_PRESSURE: DEVICE_ANNOTATION_ITEM = {
   unit: 'mmHg / bpm',
   note: '-1 means not provided',
 };
-export const GARMIN_BLOOD_PRESSURE_ANNOTATION: DEVICE_ANNOTATION = [
-  GARMIN_ANNOTATION_ITEM_BLOOD_PRESSURE,
-];
+export const GARMIN_BLOOD_PRESSURE_ANNOTATION: DEVICE_ANNOTATION = [GARMIN_ANNOTATION_ITEM_BLOOD_PRESSURE];
 
 // Activity epochs (/epochs): 15-minute monitoring windows, one item per epoch,
 // anchored at the epoch start. A window split across activity types arrives as one

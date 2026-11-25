@@ -24,8 +24,7 @@ describe('CollectorClient', () => {
     accessToken = jest.fn().mockResolvedValue('dispatcher-jwt');
   });
 
-  const headersOf = (call: number) =>
-    fetchMock.mock.calls[call][1].headers as Record<string, string>;
+  const headersOf = (call: number) => fetchMock.mock.calls[call][1].headers as Record<string, string>;
 
   it('authenticates every donor endpoint with the provided access token as Bearer', async () => {
     const client = new CollectorClient(accessToken, collectorURL);

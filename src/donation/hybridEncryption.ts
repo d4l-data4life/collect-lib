@@ -255,9 +255,7 @@ export class HybridEncrypter {
     // Extract version
     const version = dataView.getUint8(offset);
     if (version !== HYBRID_ENCRYPTION_VERSION_RECOVERY) {
-      throw new Error(
-        `Version mismatch: Only version ${HYBRID_ENCRYPTION_VERSION_RECOVERY} is supported`
-      );
+      throw new Error(`Version mismatch: Only version ${HYBRID_ENCRYPTION_VERSION_RECOVERY} is supported`);
     }
     offset++;
 
@@ -285,9 +283,7 @@ export class HybridEncrypter {
     target.encryptedDataKeyLength = dataView.getUint16(offset, true);
     offset += 2;
     // - Read encrypted data key
-    target.encryptedDataKey = new Uint8Array(
-      cipher.slice(offset, target.encryptedDataKeyLength + offset)
-    );
+    target.encryptedDataKey = new Uint8Array(cipher.slice(offset, target.encryptedDataKeyLength + offset));
     offset += target.encryptedDataKeyLength;
 
     // Read donation
@@ -303,26 +299,16 @@ export class HybridEncrypter {
     donation.encryptedDonationLength = dataView.getUint32(offset, true);
     offset += 8;
     // - Read encrypted donation
-    donation.encrypted = new Uint8Array(
-      cipher.slice(offset, donation.encryptedDonationLength + offset)
-    );
+    donation.encrypted = new Uint8Array(cipher.slice(offset, donation.encryptedDonationLength + offset));
     offset += donation.encryptedDonationLength;
 
     // Decrypt data key using recover key
-    const decryptedDataKey = this.decryptWithRecoveryKey(
-      rec,
-      recovery.encryptedDataKey,
-      recovery.iv
-    );
+    const decryptedDataKey = this.decryptWithRecoveryKey(rec, recovery.encryptedDataKey, recovery.iv);
 
     // Note: Don't decrypt the target-encrypted data key since we don't have the private key to do so
 
     // Decrypt the encrypted donation
-    const decryptedDonation = this.decryptDonation(
-      decryptedDataKey,
-      donation.encrypted,
-      donation.iv
-    );
+    const decryptedDonation = this.decryptDonation(decryptedDataKey, donation.encrypted, donation.iv);
 
     // Buffer decoding works across browser and React Native via the existing buffer polyfill.
     return Buffer.from(decryptedDonation).toString('utf8');
@@ -487,8 +473,7 @@ export class HybridEncrypter {
         );
       case V4_KEY_ALG_RSA_OAEP:
         // Reuse the existing RSA-OAEP wrap; the blob is the wrapped data key.
-        return this.encryptWithTargetKey(slot.key, uint8ArrayToBinaryString(dataKey))
-          .encryptedDataKey;
+        return this.encryptWithTargetKey(slot.key, uint8ArrayToBinaryString(dataKey)).encryptedDataKey;
       case V4_KEY_ALG_EC:
         return this.wrapV4EcDataKey(slot.key, dataKey);
       default:
@@ -568,9 +553,7 @@ export class HybridEncrypter {
         throw new Error(`encryptV4: keyAlg ${slot.keyAlg} does not fit in a byte`);
       }
       if (slot.blob.length > 0xffff) {
-        throw new Error(
-          `encryptV4: wrapped key of ${slot.blob.length} bytes exceeds the slot limit`
-        );
+        throw new Error(`encryptV4: wrapped key of ${slot.blob.length} bytes exceeds the slot limit`);
       }
     }
 
@@ -713,11 +696,7 @@ export class HybridEncrypter {
   /**
    * Decrypt an AES-256-GCM ciphertext (ciphertext||tag) with a 12-byte nonce.
    */
-  private decryptAESGCM = (
-    key: Uint8Array,
-    iv: Uint8Array,
-    ciphertextWithTag: Uint8Array
-  ): Uint8Array => {
+  private decryptAESGCM = (key: Uint8Array, iv: Uint8Array, ciphertextWithTag: Uint8Array): Uint8Array => {
     const ciphertext = ciphertextWithTag.slice(0, -V4_GCM_TAG_LENGTH);
     const tag = ciphertextWithTag.slice(-V4_GCM_TAG_LENGTH);
     // forge is driven with binary strings (its native representation) — the typed-array
@@ -789,10 +768,7 @@ export class HybridEncrypter {
    * @param dataKey The random data key
    * @returns The encrypted data key
    */
-  private encryptWithTargetKey = (
-    targetKey: string,
-    dataKey: string
-  ): { encryptedDataKey: Uint8Array } => {
+  private encryptWithTargetKey = (targetKey: string, dataKey: string): { encryptedDataKey: Uint8Array } => {
     const publicKey = forge.pki.publicKeyFromPem(targetKey);
     const enc = publicKey.encrypt(dataKey, 'RSA-OAEP', { md: forge.md.sha256.create() });
     return { encryptedDataKey: binaryStringToUint8Array(enc) };
@@ -822,10 +798,7 @@ export class HybridEncrypter {
 
     return {
       iv: binaryStringToUint8Array(iv),
-      encrypted: Buffer.concat([
-        binaryStringToUint8Array(encrypted),
-        binaryStringToUint8Array(tag),
-      ]),
+      encrypted: Buffer.concat([binaryStringToUint8Array(encrypted), binaryStringToUint8Array(tag)]),
     };
   };
 
@@ -858,11 +831,7 @@ export class HybridEncrypter {
  * @param offset The offset where the values should be added
  * @param values The values that should be added
  */
-const setUint8Array = (
-  dataView: DataView,
-  offset: number,
-  values: Uint8Array
-): [DataView, number] => {
+const setUint8Array = (dataView: DataView, offset: number, values: Uint8Array): [DataView, number] => {
   for (const value of values) {
     dataView.setUint8(offset, value);
     offset++;

@@ -71,9 +71,7 @@ export abstract class TimeFuncs {
 
   private startOfUnit(date: Date): Date {
     let luxonDate = DateTime.fromJSDate(date);
-    return (
-      overwriteTime(luxonDate.startOf(this.unit).toJSDate(), this.start) ?? luxonDate.toJSDate()
-    );
+    return overwriteTime(luxonDate.startOf(this.unit).toJSDate(), this.start) ?? luxonDate.toJSDate();
   }
 
   private endOfUnit(date: Date): Date {
@@ -108,8 +106,7 @@ class DayFuncs extends TimeFuncs {
 
 class WeekFuncs extends TimeFuncs {
   unit = 'week' as DateTimeUnit;
-  addFunc = (base: Date, x: number): Date =>
-    DateTime.fromJSDate(base).plus({ weeks: x }).toJSDate();
+  addFunc = (base: Date, x: number): Date => DateTime.fromJSDate(base).plus({ weeks: x }).toJSDate();
   diffFunc = (later: Date, earlier: Date): number =>
     DateTime.fromJSDate(later).diff(DateTime.fromJSDate(earlier), 'weeks').weeks;
   formatFunc = dayFormat;
@@ -121,8 +118,7 @@ class WeekFuncs extends TimeFuncs {
 
 class MonthFuncs extends TimeFuncs {
   unit = 'month' as DateTimeUnit;
-  addFunc = (base: Date, x: number): Date =>
-    DateTime.fromJSDate(base).plus({ months: x }).toJSDate();
+  addFunc = (base: Date, x: number): Date => DateTime.fromJSDate(base).plus({ months: x }).toJSDate();
   diffFunc = (later: Date, earlier: Date): number =>
     DateTime.fromJSDate(later).diff(DateTime.fromJSDate(earlier), 'months').months;
   formatFunc = (date: Date) => DateTime.fromJSDate(date).toFormat('yyyy-MM');

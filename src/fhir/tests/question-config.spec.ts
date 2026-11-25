@@ -1,6 +1,6 @@
 import { MinValueExtension, SliderMinLabelExtension } from '../constants';
-import { parseFHIRQuestionnaire } from '../questionnaire';
 import { getQuestionConfig, QuestionConfig } from '../question-config';
+import { parseFHIRQuestionnaire } from '../questionnaire';
 
 const questionnaire = (language: string, minLabel: string): fhir5.Questionnaire => ({
   resourceType: 'Questionnaire',

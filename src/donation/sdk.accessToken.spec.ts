@@ -1,5 +1,5 @@
-import { DonationSDK } from './sdk';
 import { CryptoModule, WebConverter } from '..';
+import { DonationSDK } from './sdk';
 import { ERROR_CODES } from './types';
 
 // deriveEncryptionKey is not exercised here, so a stub suffices.
@@ -33,9 +33,7 @@ describe('DonationSDK access tokens', () => {
   let issued: number;
 
   const accessTokenCalls = () =>
-    fetchMock.mock.calls.filter(
-      ([url, init]) => url.endsWith('/access-token') && init?.method === 'POST'
-    );
+    fetchMock.mock.calls.filter(([url, init]) => url.endsWith('/access-token') && init?.method === 'POST');
 
   beforeEach(() => {
     now = 1_760_000_000_000;
@@ -75,9 +73,7 @@ describe('DonationSDK access tokens', () => {
       const bearer = (init.headers as Record<string, string>).Authorization;
       expect(bearer).toMatch(/^Bearer /);
       // Self-signed scheme: base64({messageJSON, signature}), message = {token, donorID}
-      const decoded = JSON.parse(
-        Buffer.from(bearer.slice('Bearer '.length), 'base64').toString('utf8')
-      );
+      const decoded = JSON.parse(Buffer.from(bearer.slice('Bearer '.length), 'base64').toString('utf8'));
       expect(JSON.parse(decoded.messageJSON)).toEqual({
         token: 'nonce-token',
         donorID: donorIdentity.keys.pub,
