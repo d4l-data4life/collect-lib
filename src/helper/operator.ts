@@ -24,7 +24,8 @@ const FHIR_OPERATORS = new Map<Operator | string, FhirOperator>([
 /**
  * Maps a proto enable condition operator to its FHIR operator.
  * Accepts the operator's JSON name too, as in a Questionnaire Definition read from JSON.
+ * A missing operator is exists (0): proto JSON omits the default value.
  * Returns undefined for an unrecognized operator.
  */
-export const toFhirOperator = (operator: Operator): FhirOperator | undefined =>
-  FHIR_OPERATORS.get(operator);
+export const toFhirOperator = (operator: Operator | undefined): FhirOperator | undefined =>
+  FHIR_OPERATORS.get(operator ?? 0);

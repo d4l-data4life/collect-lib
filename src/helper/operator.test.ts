@@ -18,6 +18,10 @@ describe('toFhirOperator', () => {
     }
   });
 
+  it('maps an omitted operator to exists, the proto default', () => {
+    expect(toFhirOperator(undefined)).toBe('exists');
+  });
+
   it('returns undefined for an unrecognized operator', () => {
     expect(toFhirOperator(Operator.UNRECOGNIZED)).toBeUndefined();
     expect(toFhirOperator('toString' as unknown as Operator)).toBeUndefined();

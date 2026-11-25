@@ -1205,6 +1205,26 @@ describe('Guard', () => {
       expect(guard?.evaluate({})).toBe(false);
     });
 
+    // Proto JSON omits the default operator, so exists is missing in a definition read from JSON.
+    it('creates an exists guard for an operator omitted from JSON', () => {
+      const ew = EnableWhen.toJSON(condition({ operator: Operator.exists })) as EnableWhen;
+      const guard = generateQuestionGuard([ew], 'all');
+
+      expect(ew.operator).toBeUndefined();
+      expect(guard).toEqual(new Conjunction([new ExistsGuard('q')]));
+    });
+
+    it('keeps an exists condition omitted from JSON in an all dependency', () => {
+      const conditions = [
+        condition({ question: 'a', operator: Operator.exists }),
+        condition({ question: 'b', operator: Operator.eq, answerCoding: 'yes' }),
+      ].map((ew) => EnableWhen.toJSON(ew) as EnableWhen);
+      const guard = generateQuestionGuard(conditions, 'all');
+
+      expect(guard?.evaluate({ a: 'x', b: 'yes' })).toBe(true);
+      expect(guard?.evaluate({ b: 'yes' })).toBe(false);
+    });
+
     it('creates a code guard from a plain answer code', () => {
       const guard = generateQuestionGuard(
         [condition({ operator: Operator.eq, answerCoding: 'yes' })],
