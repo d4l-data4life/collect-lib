@@ -7570,7 +7570,7 @@ var Exports = (() => {
         contact: [{ name: PUBLISHER_NAME, telecom: [{ system: "url", value: PUBLISHER_URL }] }]
       }), optional("version", definition.version)), optional("title", (_a = definition.title) == null ? void 0 : _a[language])), optional("date", options.date)), {
         subjectType: ["Patient"]
-      }), contained.length > 0 && { contained }), item.length > 0 && { item });
+      }), item.length > 0 && { item }), contained.length > 0 && { contained });
     }
     return questionnaires;
   };
