@@ -327,13 +327,6 @@ export const BLE_PSMS_ANNOTATION_ITEM_ACCELERATION: DEVICE_ANNOTATION_ITEM = {
   channelLabels: ['x', 'y', 'z'],
 };
 
-export const BLE_PSMS_ANNOTATION_ITEM_IBI_INDEX: DEVICE_ANNOTATION_ITEM = {
-  type: 'samsungSdkIbiIndex',
-  size: 2,
-  format: 'unsignedInt',
-  littleEndian: true,
-};
-
 export const BLE_PSMS_ANNOTATION_ITEM_IBI_VALUE: DEVICE_ANNOTATION_ITEM = {
   type: 'samsungSdkInterbeatInterval',
   size: 4,
@@ -451,10 +444,9 @@ export const PSMSAccelerationAnnotation: DEVICE_ANNOTATION = [
   BLE_PSMS_ANNOTATION_ITEM_ACCELERATION,
 ];
 
-// One row per IBI: the timestamp is the SDK reading that carried the IBI, the index keeps the beat order
+// One row per IBI: the timestamp is the SDK reading that carried the IBI, the row order keeps the beat order
 export const PSMSIBIAnnotation: DEVICE_ANNOTATION = [
   DEVICE_D4L_COMPANION_ANNOTATION_ITEM_TIMESTAMP,
-  BLE_PSMS_ANNOTATION_ITEM_IBI_INDEX,
   BLE_PSMS_ANNOTATION_ITEM_IBI_VALUE,
   BLE_PSMS_ANNOTATION_ITEM_IBI_STATUS,
 ];
