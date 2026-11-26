@@ -327,6 +327,20 @@ export const BLE_PSMS_ANNOTATION_ITEM_ACCELERATION: DEVICE_ANNOTATION_ITEM = {
   channelLabels: ['x', 'y', 'z'],
 };
 
+export const BLE_PSMS_ANNOTATION_ITEM_IBI_VALUE: DEVICE_ANNOTATION_ITEM = {
+  type: 'samsungSdkInterbeatInterval',
+  size: 4,
+  format: 'signedInt',
+  littleEndian: true,
+  unit: 'ms',
+};
+
+export const BLE_PSMS_ANNOTATION_ITEM_IBI_STATUS: DEVICE_ANNOTATION_ITEM = {
+  type: 'samsungSdkIbiStatus',
+  size: 1,
+  format: 'unsignedInt',
+};
+
 export const BLE_PSMS_ANNOTATION_ITEM_SKIN_TEMPERATURE: DEVICE_ANNOTATION_ITEM = {
   type: 'skinTemperature',
   size: 4,
@@ -430,6 +444,13 @@ export const PSMSAccelerationAnnotation: DEVICE_ANNOTATION = [
   BLE_PSMS_ANNOTATION_ITEM_ACCELERATION,
 ];
 
+// One row per IBI: the timestamp is the SDK reading that carried the IBI, the row order keeps the beat order
+export const PSMSIBIAnnotation: DEVICE_ANNOTATION = [
+  DEVICE_D4L_COMPANION_ANNOTATION_ITEM_TIMESTAMP,
+  BLE_PSMS_ANNOTATION_ITEM_IBI_VALUE,
+  BLE_PSMS_ANNOTATION_ITEM_IBI_STATUS,
+];
+
 // #endregion
 
 export const WearOS3AnnotationMap: { [key in DEVICE_SIGNAL_TYPE]?: DEVICE_ANNOTATION[] } = {
@@ -453,5 +474,6 @@ export const WearOS3AnnotationMap: { [key in DEVICE_SIGNAL_TYPE]?: DEVICE_ANNOTA
     PSMSPPGRedAnnotation,
     PSMSPPGIRAnnotation,
     PSMSAccelerationAnnotation,
+    PSMSIBIAnnotation,
   ],
 };

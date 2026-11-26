@@ -46,6 +46,8 @@ export type DEVICE_ANNOTATION_DATA_TYPE =
   | 'ppgRed'
   | 'ppgInfrared'
   | 'samsungSdkAcceleration'
+  | 'samsungSdkInterbeatInterval'
+  | 'samsungSdkIbiStatus'
   // Fitbit types
   | 'skinTemperature'
   | 'sleepLevel'
